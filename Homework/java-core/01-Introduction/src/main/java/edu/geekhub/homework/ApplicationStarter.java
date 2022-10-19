@@ -2,5 +2,7 @@ package edu.geekhub.homework;
 
 public class ApplicationStarter {
 
-    // Write code here :)
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
 }
