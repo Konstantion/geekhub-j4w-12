@@ -3,6 +3,9 @@ package edu.geekhub.homework;
 import static  java.lang.Math.PI;
 
 public class ApplicationStarter {
+    private static final double SECOND_POW = 2;
+    private static final double ANGLE_OF_EQUILATERAL_TRIANGLE = 60;
+
     public static void main(String[] args) {
         double calculated = calculate(12);
     }
@@ -13,15 +16,15 @@ public class ApplicationStarter {
     }
 
     private static double calculateSquareAreaBySide(int side) {
-        return Math.pow(side, 2);
+        return Math.pow(side, SECOND_POW);
     }
 
     private static double calculateCircleAreaByRadius(int radius) {
-        return PI * Math.pow(radius, 2);
+        return PI * Math.pow(radius, SECOND_POW);
     }
 
     private static double calculateEquilateralTriangleAreaBySide(int side) {
-        double h = side * Math.sin(Math.toRadians(60));
+        double h = side * Math.sin(Math.toRadians(ANGLE_OF_EQUILATERAL_TRIANGLE));
         return (side * h) / 2;
     }
 }
