@@ -7,31 +7,35 @@ public class ApplicationStarter {
     private static final double ANGLE_OF_EQUILATERAL_TRIANGLE = 60;
 
     public static void main(String[] args) {
-        int input = 6;
+        int input = 9;
         double calculated = calculate(input);
         System.out.printf("For input value %d result is: %f", input, calculated);
     }
 
     private static double calculate(int n) {
         if (n % 2 == 0) {
-            return calculateSquareAreaBySide(n);
+            return calculateSquareAreaViaSide(n);
         } else if (n % 3 == 0) {
-            return calculateCircleAreaByRadius(n);
+            return calculateCircleAreaViaRadius(n);
         } else {
-            return calculateEquilateralTriangleAreaBySide(n);
+            return calculateEquilateralTriangleAreaViaSide(n);
         }
     }
 
-    private static double calculateSquareAreaBySide(int side) {
+    private static double calculateSquareAreaViaSide(int side) {
         return Math.pow(side, SECOND_POW);
     }
 
-    private static double calculateCircleAreaByRadius(int radius) {
+    private static double calculateCircleAreaViaRadius(int radius) {
         return PI * Math.pow(radius, SECOND_POW);
     }
 
-    private static double calculateEquilateralTriangleAreaBySide(int side) {
-        double h = side * Math.sin(Math.toRadians(ANGLE_OF_EQUILATERAL_TRIANGLE));
-        return (side * h) / 2;
+    private static double calculateEquilateralTriangleAreaViaSide(int side) {
+        double height = side * Math.sin(Math.toRadians(ANGLE_OF_EQUILATERAL_TRIANGLE));
+        return calculateTriangleAreaViaSideAndHeight(side, height);
+    }
+
+    private static double calculateTriangleAreaViaSideAndHeight(double side, double height) {
+        return (side * height) / 2;
     }
 }
