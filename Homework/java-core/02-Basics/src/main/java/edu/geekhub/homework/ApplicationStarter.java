@@ -11,8 +11,13 @@ public class ApplicationStarter {
     }
 
     private static double calculate(int n) {
-        // Write code here :)
-        return 0;
+        if (n % 2 == 0) {
+            return calculateSquareAreaBySide(n);
+        } else if (n % 3 == 0) {
+            return calculateCircleAreaByRadius(n);
+        } else {
+            return calculateEquilateralTriangleAreaBySide(n);
+        }
     }
 
     private static double calculateSquareAreaBySide(int side) {
