@@ -19,4 +19,9 @@ public class ApplicationStarter {
     private static double calculateCircleAreaByRadius(int radius) {
         return PI * Math.pow(radius, 2);
     }
+
+    private static double calculateEquilateralTriangleAreaBySide(int side) {
+        double h = side * Math.sin(Math.toRadians(60));
+        return (side * h) / 2;
+    }
 }
