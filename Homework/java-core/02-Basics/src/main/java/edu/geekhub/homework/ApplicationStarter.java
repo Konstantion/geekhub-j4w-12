@@ -7,7 +7,9 @@ public class ApplicationStarter {
     private static final double ANGLE_OF_EQUILATERAL_TRIANGLE = 60;
 
     public static void main(String[] args) {
-        double calculated = calculate(12);
+        int input = 6;
+        double calculated = calculate(input);
+        System.out.printf("For input value %d result is: %f", input, calculated);
     }
 
     private static double calculate(int n) {
