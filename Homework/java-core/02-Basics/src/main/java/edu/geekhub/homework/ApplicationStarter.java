@@ -1,5 +1,7 @@
 package edu.geekhub.homework;
 
+import static  java.lang.Math.PI;
+
 public class ApplicationStarter {
     public static void main(String[] args) {
         double calculated = calculate(12);
@@ -12,5 +14,9 @@ public class ApplicationStarter {
 
     private static double calculateSquareAreaBySide(int side) {
         return Math.pow(side, 2);
+    }
+
+    private static double calculateCircleAreaByRadius(int radius) {
+        return PI * Math.pow(radius, 2);
     }
 }
