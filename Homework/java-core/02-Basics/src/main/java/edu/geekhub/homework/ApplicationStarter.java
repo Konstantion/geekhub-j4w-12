@@ -9,4 +9,8 @@ public class ApplicationStarter {
         // Write code here :)
         return 0;
     }
+
+    private static double calculateSquareAreaBySide(int side) {
+        return Math.pow(side, 2);
+    }
 }
