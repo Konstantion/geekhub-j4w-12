@@ -2,14 +2,26 @@ package edu.geekhub.homework;
 
 import static  java.lang.Math.PI;
 
+import java.util.Scanner;
+
+
+
 public class ApplicationStarter {
     private static final double SECOND_POW = 2;
     private static final double ANGLE_OF_EQUILATERAL_TRIANGLE = 60;
 
     public static void main(String[] args) {
-        int input = 9;
-        double calculated = calculate(input);
-        System.out.printf("For input value %d result is: %f", input, calculated);
+        Scanner scanner = new Scanner(System.in);
+        int j = 0;
+        while (true) {
+            j++;
+            int input = scanner.nextInt();
+            double calculated = calculate(input);
+            System.out.printf("For input value %d result is: %f%n", input, calculated);
+            if (j == Integer.MIN_VALUE) {
+                break;
+            }
+        }
     }
 
     private static double calculate(int n) {
