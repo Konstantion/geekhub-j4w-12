@@ -12,15 +12,10 @@ public class ApplicationStarter {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int j = 0;
-        while (true) {
-            j++;
+        while (scanner.hasNextInt()) {
             int input = scanner.nextInt();
             double calculated = calculate(input);
             System.out.printf("For input value %d result is: %f%n", input, calculated);
-            if (j == Integer.MIN_VALUE) {
-                break;
-            }
         }
     }
 
