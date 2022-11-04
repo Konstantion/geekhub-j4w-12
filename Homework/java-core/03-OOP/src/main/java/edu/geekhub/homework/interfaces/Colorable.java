@@ -1,6 +1,7 @@
 package edu.geekhub.homework.interfaces;
 
-import java.awt.Color;
+
+import edu.geekhub.homework.enums.Color;
 
 public interface Colorable {
     void setColor(Color color);
