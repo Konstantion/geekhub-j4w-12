@@ -38,7 +38,7 @@ public class Circle extends Figure {
 
     @Override
     public Color getColor() {
-        return this.color;
+        return color;
     }
 
     @Override
