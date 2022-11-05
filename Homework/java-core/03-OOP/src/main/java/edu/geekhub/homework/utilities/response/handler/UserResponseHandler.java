@@ -23,7 +23,7 @@ public class UserResponseHandler {
     }
 
     public static Square generateSquare() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage(SQUARE, SQUARE_INPUT));
+        System.out.print(UserInteractionMessages.userChoiceMessage(SQUARE, SQUARE_INPUT));
         double side = getDoubleSideFromConsole();
         System.out.println(SUCCESSFULLY_CREATED);
         return Square.builder()
@@ -32,7 +32,7 @@ public class UserResponseHandler {
     }
 
     public static Circle generateCircle() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage(CIRCLE, CIRCLE_INPUT));
+        System.out.print(UserInteractionMessages.userChoiceMessage(CIRCLE, CIRCLE_INPUT));
         double radius = getDoubleSideFromConsole();
         System.out.println(SUCCESSFULLY_CREATED);
         return Circle.builder()
@@ -41,7 +41,7 @@ public class UserResponseHandler {
     }
 
     public static Rectangle generateRectangle() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage(RECTANGLE, RECTANGLE_INPUT));
+        System.out.print(UserInteractionMessages.userChoiceMessage(RECTANGLE, RECTANGLE_INPUT));
 
         System.out.println(getSideMessage(1));
         double height = getDoubleSideFromConsole();
@@ -57,7 +57,7 @@ public class UserResponseHandler {
     }
 
     public static Triangle generateTriangle() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage(TRIANGLE, TRIANGLE_INPUT));
+        System.out.print(UserInteractionMessages.userChoiceMessage(TRIANGLE, TRIANGLE_INPUT));
         double sideA;
         double sideB;
         double sideC;
@@ -75,7 +75,7 @@ public class UserResponseHandler {
             boolean isTriangle = FigureInputChecker
                     .isTriangleExist(sideA, sideB, sideC);
             if (!isTriangle) {
-                System.out.printf(UserInteractionMessages
+                System.out.print(UserInteractionMessages
                         .wrongInputMessage(MUST_BE_GREATER_THAT_THIRD));
             } else {
                 System.out.println(SUCCESSFULLY_CREATED);
@@ -96,11 +96,11 @@ public class UserResponseHandler {
                     scanner.nextLine();
                     return radius;
                 } else {
-                    System.out.printf(UserInteractionMessages
+                    System.out.print(UserInteractionMessages
                             .wrongInputMessage(MUST_BE_GREATER_THAN_ZERO));
                 }
             } else {
-                System.out.printf(UserInteractionMessages
+                System.out.print(UserInteractionMessages
                         .wrongInputMessage(WRONG_INPUT_FORMAT));
                 scanner.next();
             }
