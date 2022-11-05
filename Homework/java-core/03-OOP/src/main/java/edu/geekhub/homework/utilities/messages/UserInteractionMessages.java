@@ -1,5 +1,6 @@
 package edu.geekhub.homework.utilities.messages;
 
+import edu.geekhub.homework.figures.comparators.FigureComparator;
 import edu.geekhub.homework.implementation.Figure;
 import java.util.Comparator;
 
@@ -40,23 +41,15 @@ public class UserInteractionMessages {
     }
 
     public static String compareFiguresMessage(Figure figure1, Figure figure2,
-                                        Comparator<Figure> comparator, String parameter) {
+                                               FigureComparator comparator, String parameter) {
         return String.format(
                 "figure1's %s is %s figure2's %s%n",
                 parameter,
-                convertComparatorResultToString(comparator.compare(figure1, figure2)),
+                FigureComparator.convertComparatorResultToString(
+                        comparator.compare(figure1, figure2)
+                ),
                 parameter
         );
-    }
-
-    private static String convertComparatorResultToString(int result) {
-        if (result > 0) {
-            return "bigger";
-        } else if (result < 0) {
-            return "smaller";
-        } else {
-            return "equal";
-        }
     }
 
     private UserInteractionMessages() {
