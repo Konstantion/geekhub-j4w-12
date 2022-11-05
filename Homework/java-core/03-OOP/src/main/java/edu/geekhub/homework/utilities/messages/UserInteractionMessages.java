@@ -3,20 +3,19 @@ package edu.geekhub.homework.utilities.messages;
 import edu.geekhub.homework.figures.comparators.FigureComparator;
 import edu.geekhub.homework.implementation.Figure;
 
-import java.util.Comparator;
 
-import static edu.geekhub.homework.utilities.messages.WrongInputMessages.*;
+import static edu.geekhub.homework.utilities.messages.MessagesColors.*;
 
 public class UserInteractionMessages {
     public static String selectShapeMessage(int index) {
         return String.format(
                 ANSI_YELLOW
-                + "You are selecting the %d shape:%n"
-                + "Press 1 if you want to select CIRCLE%n"
-                + "Press 2 if you want to select TRIANGLE%n"
-                + "Press 3 if you want to select SQUARE%n"
-                + "Press 4 if you want to select RECTANGLE%n"
-                + ANSI_RESET,
+                    + "You are selecting the %d shape:%n"
+                    + "Press 1 if you want to select CIRCLE%n"
+                    + "Press 2 if you want to select TRIANGLE%n"
+                    + "Press 3 if you want to select SQUARE%n"
+                    + "Press 4 if you want to select RECTANGLE%n"
+                    + ANSI_RESET,
                 index
         );
     }
@@ -64,14 +63,18 @@ public class UserInteractionMessages {
                 parameter
         );
     }
-    public static String userChoiceMessage(){
+
+    public static String userChoiceMessage(String figure, String data) {
         return String.format(
                 ANSI_YELLOW
                 + "You chose a %s%n"
                 + "Enter the %s, console will read only numeric value:%n"
-                + ANSI_RESET
+                + ANSI_RESET,
+                figure,
+                data
         );
     }
+
     private UserInteractionMessages() {
 
     }
