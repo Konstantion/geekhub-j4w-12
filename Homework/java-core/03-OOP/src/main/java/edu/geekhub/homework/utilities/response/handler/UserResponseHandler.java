@@ -1,7 +1,7 @@
 package edu.geekhub.homework.utilities.response.handler;
 
-import static edu.geekhub.homework.utilities.messages.WrongInputMessages.MUST_BE_GREATER_THAN_ZERO;
-import static edu.geekhub.homework.utilities.messages.WrongInputMessages.WRONG_INPUT_FORMAT;
+import static edu.geekhub.homework.utilities.messages.FigureInputMessages.*;
+import static edu.geekhub.homework.utilities.messages.WrongInputMessages.*;
 
 import edu.geekhub.homework.figures.Circle;
 import edu.geekhub.homework.figures.Rectangle;
@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 
 public class UserResponseHandler {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static Figure selectedFigureHandler(int index) {
         //todo: finish method
@@ -23,30 +23,33 @@ public class UserResponseHandler {
     }
 
     public static Square generateSquare() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage());
+        System.out.printf(UserInteractionMessages.userChoiceMessage(SQUARE, SQUARE_INPUT));
         double side = getDoubleSideFromConsole();
-        System.out.printf("Successfully build square with side %f%n", side);
+        System.out.println(SUCCESSFULLY_CREATED);
         return Square.builder()
                 .side(side)
                 .build();
     }
 
     public static Circle generateCircle() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage());
+        System.out.printf(UserInteractionMessages.userChoiceMessage(CIRCLE, CIRCLE_INPUT));
         double radius = getDoubleSideFromConsole();
-        System.out.printf("Successfully build circle with radius %f%n", radius);
+        System.out.println(SUCCESSFULLY_CREATED);
         return Circle.builder()
                 .radius(radius)
                 .build();
     }
 
     public static Rectangle generateRectangle() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage());
-        System.out.printf("Enter first side length:%n");
+        System.out.printf(UserInteractionMessages.userChoiceMessage(RECTANGLE, RECTANGLE_INPUT));
+
+        System.out.println(getSideMessage(1));
         double height = getDoubleSideFromConsole();
-        System.out.printf("Enter second side length:%n");
+
+        System.out.println(getSideMessage(2));
         double width = getDoubleSideFromConsole();
-        System.out.printf("Successfully build rectangle with sides %f %f%n", height, width);
+
+        System.out.println(SUCCESSFULLY_CREATED);
         return Rectangle.builder()
                 .width(width)
                 .height(height)
@@ -54,16 +57,35 @@ public class UserResponseHandler {
     }
 
     public static Triangle generateTriangle() {
-        System.out.printf(UserInteractionMessages.userChoiceMessage());
-        double sideA = getDoubleSideFromConsole();
-        double sideB = getDoubleSideFromConsole();
-        double sideC = getDoubleSideFromConsole();
-        System.out.printf("Successfully build triangle with sides %f %f %f%n", sideA, sideB, sideC);
-        return Triangle.builder()
-                .sideA(sideA)
-                .sideB(sideB)
-                .sideC(sideC)
-                .build();
+        System.out.printf(UserInteractionMessages.userChoiceMessage(TRIANGLE, TRIANGLE_INPUT));
+        double sideA;
+        double sideB;
+        double sideC;
+        while (true) {
+
+            System.out.println(getSideMessage(1));
+            sideA = getDoubleSideFromConsole();
+
+            System.out.println(getSideMessage(2));
+            sideB = getDoubleSideFromConsole();
+
+            System.out.println(getSideMessage(3));
+            sideC = getDoubleSideFromConsole();
+
+            boolean isTriangle = FigureInputChecker
+                    .isTriangleExist(sideA, sideB, sideC);
+            if (!isTriangle) {
+                System.out.printf(UserInteractionMessages
+                        .wrongInputMessage(MUST_BE_GREATER_THAT_THIRD));
+            } else {
+                System.out.println(SUCCESSFULLY_CREATED);
+                return Triangle.builder()
+                        .sideA(sideA)
+                        .sideB(sideB)
+                        .sideC(sideC)
+                        .build();
+            }
+        }
     }
 
     private static double getDoubleSideFromConsole() {
