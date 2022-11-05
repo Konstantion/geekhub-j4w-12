@@ -1,10 +1,10 @@
 package edu.geekhub.homework.utilities.checkers;
 
 public class ChooseShapeChecker {
-    private static String[] possibleChoices = {"1", "2", "3", "4"};
+    private static Integer[] possibleChoices = {1, 2, 3, 4};
 
-    public static boolean isPossibleChoice(String choice) {
-        for (String possibleChoice : possibleChoices) {
+    public static boolean isPossibleChoice(Integer choice) {
+        for (Integer possibleChoice : possibleChoices) {
             if (possibleChoice.equals(choice)) {
                 return true;
             }
