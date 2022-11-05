@@ -3,6 +3,7 @@ package edu.geekhub.homework.utilities.response.handler;
 import static edu.geekhub.homework.utilities.messages.FigureInputMessages.*;
 import static edu.geekhub.homework.utilities.messages.WrongInputMessages.*;
 
+import edu.geekhub.homework.enums.Color;
 import edu.geekhub.homework.figures.Circle;
 import edu.geekhub.homework.figures.Rectangle;
 import edu.geekhub.homework.figures.Square;
@@ -12,6 +13,7 @@ import edu.geekhub.homework.utilities.checkers.ChooseShapeChecker;
 import edu.geekhub.homework.utilities.checkers.FigureInputChecker;
 import edu.geekhub.homework.utilities.messages.UserInteractionMessages;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -30,6 +32,14 @@ public class UserResponseHandler {
         };
         System.out.println(UserInteractionMessages.showFigureMessage(index, figure));
         return figure;
+    }
+
+    public static void selectColorHandler(Figure figure, int index) {
+        System.out.print(UserInteractionMessages.selectColorMessage());
+        Color color = getSelectedColor();
+        figure.setColor(color);
+        System.out.println(SUCCESSFULLY_PAINTED);
+        System.out.println(UserInteractionMessages.showFigureMessage(index, figure));
     }
 
     public static Square generateSquare() {
@@ -127,7 +137,7 @@ public class UserResponseHandler {
                     return userChoice;
                 } else {
                     System.out.print(UserInteractionMessages
-                            .wrongInputMessage(MUST_BE_GREATER_THAN_ZERO));
+                            .wrongInputMessage(WRONG_INPUT_FORMAT));
                 }
             } else {
                 System.out.print(UserInteractionMessages
@@ -136,6 +146,21 @@ public class UserResponseHandler {
             }
         }
         return Integer.MIN_VALUE;
+    }
+
+    private static Color getSelectedColor() {
+        String colorTitle;
+        while ((colorTitle = scanner.nextLine()) != null) {
+            if (Color.contains(colorTitle)) {
+                return Color.valueOf(colorTitle.toUpperCase(Locale.ROOT));
+            } else if (colorTitle.equals("")) {
+                return Color.BLACK;
+            } else {
+                System.out.print(UserInteractionMessages
+                        .wrongInputMessage(NO_SUCH_COLOR));
+            }
+        }
+        return Color.BLACK;
     }
 
     private UserResponseHandler() {
