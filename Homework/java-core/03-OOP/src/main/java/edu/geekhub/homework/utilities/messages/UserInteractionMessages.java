@@ -1,21 +1,21 @@
 package edu.geekhub.homework.utilities.messages;
 
+import static edu.geekhub.homework.utilities.messages.MessagesColors.*;
+
 import edu.geekhub.homework.figures.comparators.FigureComparator;
 import edu.geekhub.homework.implementation.Figure;
-
-
-import static edu.geekhub.homework.utilities.messages.MessagesColors.*;
+import edu.geekhub.homework.utilities.string.StringUtilities;
 
 public class UserInteractionMessages {
     public static String selectShapeMessage(int index) {
         return String.format(
                 ANSI_YELLOW
-                    + "You are selecting the %d shape:%n"
-                    + "Press 1 if you want to select CIRCLE%n"
-                    + "Press 2 if you want to select TRIANGLE%n"
-                    + "Press 3 if you want to select SQUARE%n"
-                    + "Press 4 if you want to select RECTANGLE%n"
-                    + ANSI_RESET,
+                + "You are selecting the %d shape:%n"
+                + "Press 1 if you want to select CIRCLE%n"
+                + "Press 2 if you want to select TRIANGLE%n"
+                + "Press 3 if you want to select SQUARE%n"
+                + "Press 4 if you want to select RECTANGLE%n"
+                + ANSI_RESET,
                 index
         );
     }
@@ -30,9 +30,10 @@ public class UserInteractionMessages {
         );
     }
 
-    public static String showFigureMessage(int index, Figure figure) {
+    public static String showFigureMessage(Figure figure, int index) {
         return String.format(
                 ANSI_BLUE
+                + "%n"
                 + "figure %d:%n"
                 + "%s"
                 + ANSI_RESET,
@@ -45,7 +46,8 @@ public class UserInteractionMessages {
         return String.format(
                 ANSI_YELLOW
                 + "You are selecting color of the shape:%n"
-                + "Type the title of the color, or if you want it to be default press `ENTER`%n"
+                + "Type the title of the color,"
+                + " or if you want it to be default press `ENTER`%n"
                 + ANSI_RESET
         );
     }
@@ -63,7 +65,8 @@ public class UserInteractionMessages {
                 parameter
         );
     }
-    public static String textColorMeaning(){
+
+    public static String textColorMeaning() {
         return String.format(
                 ANSI_YELLOW
                 + "[YELLOW] - Interaction with user%n"
@@ -74,9 +77,10 @@ public class UserInteractionMessages {
                 + ANSI_GREEN
                 + "[GREEN] - Operation successfully done%n"
                 + ANSI_PURPLE
-                + "[PURPLE] - Comparison result"
+                + "[PURPLE] - Comparison result%n"
+                + ANSI_CYAN
+                + "[CYAN] - Header"
                 + ANSI_RESET
-                + "%n"
         );
     }
 
@@ -88,6 +92,17 @@ public class UserInteractionMessages {
                 + ANSI_RESET,
                 figure,
                 data
+        );
+    }
+
+    public static String headerMessage(String header) {
+        return String.format(
+                ANSI_CYAN
+                + "%n"
+                + "%S"
+                + ANSI_RESET + "%n",
+                StringUtilities.center(header, 60)
+
         );
     }
 
