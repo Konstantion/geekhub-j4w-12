@@ -8,6 +8,7 @@ import edu.geekhub.homework.figures.Rectangle;
 import edu.geekhub.homework.figures.Square;
 import edu.geekhub.homework.figures.Triangle;
 import edu.geekhub.homework.implementation.Figure;
+import edu.geekhub.homework.utilities.checkers.ChooseShapeChecker;
 import edu.geekhub.homework.utilities.checkers.FigureInputChecker;
 import edu.geekhub.homework.utilities.messages.UserInteractionMessages;
 
@@ -17,9 +18,18 @@ import java.util.Scanner;
 public class UserResponseHandler {
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static Figure selectedFigureHandler(int index) {
-        //todo: finish method
-        return null;
+    public static Figure selectFigureHandler(int index) {
+        System.out.print(UserInteractionMessages.selectShapeMessage(index));
+        Integer userInput = getSelectedFigureChoice();
+        Figure figure = switch (userInput) {
+            case 1 -> generateCircle();
+            case 2 -> generateTriangle();
+            case 3 -> generateSquare();
+            case 4 -> generateRectangle();
+            default -> null;
+        };
+        System.out.println(UserInteractionMessages.showFigureMessage(index, figure));
+        return figure;
     }
 
     public static Square generateSquare() {
@@ -106,6 +116,26 @@ public class UserResponseHandler {
             }
         }
         return Double.MIN_VALUE;
+    }
+
+    private static Integer getSelectedFigureChoice() {
+        while (scanner.hasNext()) {
+            if (scanner.hasNextInt()) {
+                Integer userChoice = scanner.nextInt();
+                if (ChooseShapeChecker.isPossibleChoice(userChoice)) {
+                    scanner.nextLine();
+                    return userChoice;
+                } else {
+                    System.out.print(UserInteractionMessages
+                            .wrongInputMessage(MUST_BE_GREATER_THAN_ZERO));
+                }
+            } else {
+                System.out.print(UserInteractionMessages
+                        .wrongInputMessage(WRONG_INPUT_FORMAT));
+                scanner.next();
+            }
+        }
+        return Integer.MIN_VALUE;
     }
 
     private UserResponseHandler() {
