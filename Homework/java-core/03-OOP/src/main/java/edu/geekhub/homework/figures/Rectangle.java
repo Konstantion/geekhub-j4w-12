@@ -2,7 +2,6 @@ package edu.geekhub.homework.figures;
 
 import edu.geekhub.homework.enums.Color;
 import edu.geekhub.homework.implementation.Figure;
-
 import java.util.Locale;
 
 public class Rectangle extends Figure {
