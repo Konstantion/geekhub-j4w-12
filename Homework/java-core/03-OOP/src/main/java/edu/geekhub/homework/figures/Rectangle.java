@@ -2,25 +2,26 @@ package edu.geekhub.homework.figures;
 
 import edu.geekhub.homework.enums.Color;
 import edu.geekhub.homework.implementation.Figure;
+
 import java.util.Locale;
 
 public class Rectangle extends Figure {
-    private double length;
+    private double height;
     private double width;
     private Color color;
 
-    public Rectangle(double length, double width) {
-        this.length = length;
+    public Rectangle(double height, double width) {
+        this.height = height;
         this.width = width;
         this.color = super.getColor();
     }
 
-    public double getLength() {
-        return length;
+    public double getHeight() {
+        return height;
     }
 
-    public void setLength(double length) {
-        this.length = length;
+    public void setHeight(double height) {
+        this.height = height;
     }
 
     public double getWidth() {
@@ -33,12 +34,12 @@ public class Rectangle extends Figure {
 
     @Override
     public double getPerimeter() {
-        return 2 * (length + width);
+        return 2 * (height + width);
     }
 
     @Override
     public double getArea() {
-        return length * width;
+        return height * width;
     }
 
     @Override
@@ -55,9 +56,9 @@ public class Rectangle extends Figure {
     public String toString() {
         return String.format(
                 "-a rectangle%n"
-                + "-area - %f%n"
-                + "-perimeter - %f%n"
-                + "-color - %s%n",
+                        + "-area - %f%n"
+                        + "-perimeter - %f%n"
+                        + "-color - %s%n",
                 getArea(),
                 getPerimeter(),
                 color.toString().toLowerCase(Locale.ROOT)
@@ -69,14 +70,14 @@ public class Rectangle extends Figure {
     }
 
     public static final class Builder {
-        private double length;
+        private double height;
         private double width;
 
         private Builder() {
         }
 
-        public Builder length(double length) {
-            this.length = length;
+        public Builder height(double height) {
+            this.height = height;
             return this;
         }
 
@@ -86,7 +87,7 @@ public class Rectangle extends Figure {
         }
 
         public Rectangle build() {
-            return new Rectangle(length, width);
+            return new Rectangle(height, width);
         }
     }
 }

@@ -14,5 +14,6 @@ public class FigureInputChecker {
         return (sideA + sideB > sideC) && (sideA + sideC > sideB) && (sideB + sideC > sideA);
     }
 
-    private FigureInputChecker() {}
+    private FigureInputChecker() {
+    }
 }
