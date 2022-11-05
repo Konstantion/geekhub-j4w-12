@@ -63,6 +63,22 @@ public class UserInteractionMessages {
                 parameter
         );
     }
+    public static String textColorMeaning(){
+        return String.format(
+                ANSI_YELLOW
+                + "[YELLOW] - Interaction with user%n"
+                + ANSI_RED
+                + "[RED] - Wrong input data%n"
+                + ANSI_BLUE
+                + "[BLUE] - Figure status%n"
+                + ANSI_GREEN
+                + "[GREEN] - Operation successfully done%n"
+                + ANSI_PURPLE
+                + "[PURPLE] - Comparison result"
+                + ANSI_RESET
+                + "%n"
+        );
+    }
 
     public static String userChoiceMessage(String figure, String data) {
         return String.format(
