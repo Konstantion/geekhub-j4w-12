@@ -13,8 +13,11 @@ public class FigureInputMessages {
     public static final String RECTANGLE_INPUT = "rectangle sides length in separated lines";
     public static final String TRIANGLE_INPUT = "triangle sides length in separated lines";
     public static final String SUCCESSFULLY_CREATED = ANSI_GREEN
-                            + "Figure successfully created"
+                            + "Figure successfully created:"
                             + ANSI_RESET;
+    public static final String SUCCESSFULLY_PAINTED = ANSI_GREEN
+            + "Figure successfully painted:"
+            + ANSI_RESET;
     public static String getSideMessage(int index){
         return String.format(
                 ANSI_YELLOW
