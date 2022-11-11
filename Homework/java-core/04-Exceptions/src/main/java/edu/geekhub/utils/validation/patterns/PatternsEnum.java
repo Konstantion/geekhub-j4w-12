@@ -2,7 +2,7 @@ package edu.geekhub.utils.validation.patterns;
 
 public enum PatternsEnum {
     SPECIAL_CHARACTERS("[(){}`//\\]\\['”]+"),
-    ONE_WORD("^([\\w]+)$"),
+    ONE_WORD("^([\\S]+)$"),
     LOWERCASE("^([a-z0-9]+)$"),
     TWO_WORDS_SEPARATED_BY_SPACE("^([\\w]+)\\s([\\w]+)$"),
     ONLY_LETTERS("[a-zA-Z]+"),
