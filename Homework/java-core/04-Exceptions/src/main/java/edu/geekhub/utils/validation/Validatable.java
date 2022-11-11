@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 public interface Validatable {
 
+    boolean isUserValid(User user, User[] users) throws UserValidationException;
+
     default boolean isNotNull(Object object, ValidationParameter parameter)
             throws UserValidationException {
         if (Objects.isNull(object)) {
@@ -28,7 +30,7 @@ public interface Validatable {
     default boolean isNotEmpty(String string, ValidationParameter parameter)
             throws UserValidationException {
         if (string.isEmpty()) {
-            throw new UserValidationException(cannotBeEmpty(parameter));
+            throw new UserValidationException(cannotBeEmpty(parameter), string);
         } else {
             return true;
         }
@@ -48,7 +50,7 @@ public interface Validatable {
         Pattern pattern = Pattern.compile(EMAIL.getPattern());
         Matcher matcher = pattern.matcher(email);
         if (matcher.matches()) {
-            throw new UserValidationException(mustBeValid(parameter));
+            throw new UserValidationException(mustBeValid(parameter), email);
         } else {
             return true;
         }
@@ -60,7 +62,8 @@ public interface Validatable {
         Matcher matcher = pattern.matcher(input);
         if (matcher.matches()) {
             throw new UserValidationException(cannotContainSpecialCharacters(
-                    parameter, SPECIFIC_CHARACTERS)
+                    parameter, SPECIFIC_CHARACTERS),
+                    input
             );
         } else {
             return true;
@@ -70,7 +73,7 @@ public interface Validatable {
     default boolean isWithoutSpaces(String input, ValidationParameter parameter)
             throws UserValidationException {
         if (input.contains(" ")) {
-            throw new UserValidationException(cannotContainSpaces(parameter));
+            throw new UserValidationException(cannotContainSpaces(parameter), input);
         } else {
             return true;
         }
@@ -81,7 +84,7 @@ public interface Validatable {
         Pattern pattern = Pattern.compile(ONE_WORD.getPattern());
         Matcher matcher = pattern.matcher(input);
         if (!matcher.matches()) {
-            throw new UserValidationException(mustOneWord(parameter));
+            throw new UserValidationException(mustOneWord(parameter), input);
         } else {
             return true;
         }
@@ -92,7 +95,7 @@ public interface Validatable {
         Pattern pattern = Pattern.compile(ONLY_LETTERS.getPattern());
         Matcher matcher = pattern.matcher(input);
         if (!matcher.matches()) {
-            throw new UserValidationException(mustContainOnlyLetters(parameter));
+            throw new UserValidationException(mustContainOnlyLetters(parameter), input);
         } else {
             return true;
         }
@@ -103,7 +106,7 @@ public interface Validatable {
         Pattern pattern = Pattern.compile(LOWERCASE.getPattern());
         Matcher matcher = pattern.matcher(input);
         if (!matcher.matches()) {
-            throw new UserValidationException(mustBeInLowercase(parameter));
+            throw new UserValidationException(mustBeInLowercase(parameter), input);
         } else {
             return true;
         }
@@ -114,7 +117,7 @@ public interface Validatable {
         Pattern pattern = Pattern.compile(CAMEL_CASE.getPattern());
         Matcher matcher = pattern.matcher(input);
         if (!matcher.matches()) {
-            throw new UserValidationException(mustBeWrittenInCamelCase(parameter));
+            throw new UserValidationException(mustBeWrittenInCamelCase(parameter), input);
         } else {
             return true;
         }
@@ -125,7 +128,7 @@ public interface Validatable {
         Pattern pattern = Pattern.compile(TWO_WORDS_SEPARATED_BY_SPACE.getPattern());
         Matcher matcher = pattern.matcher(input);
         if (!matcher.matches()) {
-            throw new UserValidationException(mustBeTwoWordsSeparatedBySpace(parameter));
+            throw new UserValidationException(mustBeTwoWordsSeparatedBySpace(parameter), input);
         } else {
             return true;
         }
@@ -134,7 +137,7 @@ public interface Validatable {
     default boolean isOverThan(Integer input, Integer than, ValidationParameter parameter)
             throws UserValidationException {
         if (input < than) {
-            throw new UserValidationException(mustBeOver(parameter, than.toString()));
+            throw new UserValidationException(mustBeOver(parameter, than.toString()), input);
         } else {
             return true;
         }
@@ -143,7 +146,7 @@ public interface Validatable {
     default boolean isLessThan(Integer input, Integer than, ValidationParameter parameter)
             throws UserValidationException {
         if (input > than) {
-            throw new UserValidationException(mustBeLess(parameter, than.toString()));
+            throw new UserValidationException(mustBeLess(parameter, than.toString()), input);
         } else {
             return true;
         }
@@ -152,7 +155,7 @@ public interface Validatable {
     default boolean isLonerThan(String input, Integer than, ValidationParameter parameter)
             throws UserValidationException {
         if (input.length() > than) {
-            throw new UserValidationException(cannotBeLonger(parameter, than.toString()));
+            throw new UserValidationException(cannotBeLonger(parameter, than.toString()), input);
         } else {
             return true;
         }
@@ -161,7 +164,7 @@ public interface Validatable {
     default boolean isZeroOrBigger(Long input, ValidationParameter parameter)
             throws UserValidationException {
         if (input < 0) {
-            throw new UserValidationException(mustBeZeroOrBigger(parameter));
+            throw new UserValidationException(mustBeZeroOrBigger(parameter), input);
         } else {
             return true;
         }

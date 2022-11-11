@@ -10,6 +10,7 @@ import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.
 import static edu.geekhub.utils.validation.messages.ValidationParameter.*;
 
 public class UserValidator implements Validatable {
+    @Override
     public boolean isUserValid(User user, User[] users) throws UserValidationException {
         return isUserIdValid(user.getId(), users) &&
                 isUserEmailValid(user.getEmail(), users) &&
@@ -80,7 +81,7 @@ public class UserValidator implements Validatable {
     public boolean isIdUnique(UUID id, User[] users, ValidationParameter parameter) throws UserValidationException {
         for (User user : users) {
             if (user.getId().equals(id)) {
-                throw new UserValidationException(mustBeUnique(USER_ID));
+                throw new UserValidationException(mustBeUnique(USER_ID), id);
             }
         }
         return true;
@@ -90,7 +91,7 @@ public class UserValidator implements Validatable {
     public boolean isEmailUnique(String email, User[] users, ValidationParameter parameter) throws UserValidationException {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
-                throw new UserValidationException(mustBeUnique(USER_EMAIL));
+                throw new UserValidationException(mustBeUnique(USER_EMAIL), email);
             }
         }
         return true;
@@ -100,7 +101,7 @@ public class UserValidator implements Validatable {
     public boolean isUsernameUnique(String username, User[] users, ValidationParameter parameter) throws UserValidationException {
         for (User user : users) {
             if (user.getUserName().equals(username)) {
-                throw new UserValidationException(mustBeUnique(USERNAME));
+                throw new UserValidationException(mustBeUnique(USERNAME), username);
             }
         }
         return true;
