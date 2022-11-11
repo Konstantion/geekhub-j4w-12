@@ -7,6 +7,7 @@ import static edu.geekhub.utils.validation.patterns.PatternsEnum.*;
 import edu.geekhub.exceptions.UserValidationException;
 import edu.geekhub.models.User;
 import edu.geekhub.utils.validation.messages.ValidationParameter;
+
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;

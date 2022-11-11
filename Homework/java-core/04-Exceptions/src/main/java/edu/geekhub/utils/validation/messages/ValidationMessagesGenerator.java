@@ -116,6 +116,7 @@ public class ValidationMessagesGenerator {
                 number
         );
     }
+
     public static String mustBeZeroOrBigger(ValidationParameter parameter) {
         return String.format(
                 "%s must be zero or bigger!"
