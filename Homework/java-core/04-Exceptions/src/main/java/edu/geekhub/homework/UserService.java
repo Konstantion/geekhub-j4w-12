@@ -22,11 +22,22 @@ public class UserService {
             User user = (User) request.getData();
             userValidator.isUserValid(user, repository.tryToGetAll());
             repository.tryToAdd(user);
-            return Response.ok(successResponseMessage(user));
+            return Response.ok(
+                    successResponseMessage(user)
+            );
         } catch (ClassCastException classCastException) {
-            return Response.fail(failedResponseMessage(classCastException.getMessage(), request.getData()));
-        }catch (ConnectionInterruptedException storageException) {
-            return Response.fail(failedResponseMessage(storageException.getMessage(), repository));
+            return Response.fail(
+                    failedResponseMessage(
+                            classCastException.getMessage(),
+                            request.getData()
+                    )
+            );
+        } catch (ConnectionInterruptedException storageException) {
+            return Response.fail(
+                    failedResponseMessage(
+                            storageException.getMessage(),
+                            repository)
+            );
         } catch (UserValidationException validationException) {
             return Response.fail(failedResponseMessage(validationException.getMessage(),
                     validationException.getData()));

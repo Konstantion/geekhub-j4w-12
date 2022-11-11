@@ -14,7 +14,7 @@ import static edu.geekhub.utils.validation.messages.ValidationParameter.*;
 public class UserValidator implements Validatable {
     @Override
     public boolean isUserValid(User user, User[] users) throws UserValidationException {
-        if(Objects.isNull(user)) {
+        if (Objects.isNull(user)) {
             throw new UserValidationException(cannotBeNull(USER));
         }
         return isUserIdValid(user.getId(), users) &&
