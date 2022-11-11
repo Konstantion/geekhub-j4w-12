@@ -1,5 +1,7 @@
 package edu.geekhub.exceptions;
 
+import java.util.Objects;
+
 public class UserValidationException extends Exception {
 
     private transient Object data;
@@ -14,7 +16,7 @@ public class UserValidationException extends Exception {
     }
 
     public Object getData() {
-        return data;
+        return Objects.isNull(data) ? "Null" : data;
     }
 
 }
