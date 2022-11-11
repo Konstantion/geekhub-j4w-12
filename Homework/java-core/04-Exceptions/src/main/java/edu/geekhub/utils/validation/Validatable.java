@@ -60,7 +60,7 @@ public interface Validatable {
             throws UserValidationException {
         Pattern pattern = Pattern.compile(SPECIAL_CHARACTERS.getPattern());
         Matcher matcher = pattern.matcher(input);
-        if (matcher.matches()) {
+        if (matcher.find()) {
             throw new UserValidationException(cannotContainSpecialCharacters(
                     parameter, SPECIFIC_CHARACTERS),
                     input
@@ -92,9 +92,9 @@ public interface Validatable {
 
     default boolean isOnlyLetters(String input, ValidationParameter parameter)
             throws UserValidationException {
-        Pattern pattern = Pattern.compile(ONLY_LETTERS.getPattern());
+        Pattern pattern = Pattern.compile(ONLY_NOT_LETTERS.getPattern());
         Matcher matcher = pattern.matcher(input);
-        if (matcher.matches()) {
+        if (matcher.find()) {
             throw new UserValidationException(mustContainOnlyLetters(parameter), input);
         } else {
             return true;
