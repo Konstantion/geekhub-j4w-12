@@ -33,13 +33,25 @@ public interface Validatable {
         }
     }
 
-    boolean isIdUnique(UUID id, User[] users, ValidationParameter parameter);
+    boolean isIdUnique(UUID id, User[] users, ValidationParameter parameter)
+            throws UserValidationException;
 
-    boolean isEmailUnique(String email, User[] users, ValidationParameter parameter);
+    boolean isEmailUnique(String email, User[] users, ValidationParameter parameter)
+            throws UserValidationException;
 
-    boolean isUsernameUnique(String username, User[] users, ValidationParameter parameter);
+    boolean isUsernameUnique(String username, User[] users, ValidationParameter parameter)
+            throws UserValidationException;
 
-    boolean isEmailValid(String email, ValidationParameter parameter);
+    default boolean isEmailValid(String email, ValidationParameter parameter)
+            throws UserValidationException {
+        Pattern pattern = Pattern.compile(EMAIL.getPattern());
+        Matcher matcher = pattern.matcher(email);
+        if (matcher.matches()) {
+            throw new UserValidationException(mustBeValid(parameter));
+        } else {
+            return true;
+        }
+    }
 
     default boolean isWithoutCharacters(String input, ValidationParameter parameter)
             throws UserValidationException {
