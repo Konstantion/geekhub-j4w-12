@@ -2,6 +2,7 @@ package edu.geekhub.utils.validation.messages;
 
 public enum ValidationParameter {
     SPECIFIC_CHARACTERS("(){}`/\\]['”"),
+    USER("User"),
     USER_ID("User ID"),
     USER_EMAIL("User email"),
     USERNAME("Username"),
