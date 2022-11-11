@@ -4,14 +4,19 @@ import edu.geekhub.exceptions.UserValidationException;
 import edu.geekhub.models.User;
 import edu.geekhub.utils.validation.messages.ValidationParameter;
 
+import java.util.Objects;
 import java.util.UUID;
 
+import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.cannotBeNull;
 import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.mustBeUnique;
 import static edu.geekhub.utils.validation.messages.ValidationParameter.*;
 
 public class UserValidator implements Validatable {
     @Override
     public boolean isUserValid(User user, User[] users) throws UserValidationException {
+        if(Objects.isNull(user)) {
+            throw new UserValidationException(cannotBeNull(USER));
+        }
         return isUserIdValid(user.getId(), users) &&
                 isUserEmailValid(user.getEmail(), users) &&
                 isUserUsernameValid(user.getUserName(), users) &&
