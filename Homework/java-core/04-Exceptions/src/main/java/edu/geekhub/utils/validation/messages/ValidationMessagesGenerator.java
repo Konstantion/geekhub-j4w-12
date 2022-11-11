@@ -66,12 +66,11 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeTwoWordsSeparatedBy(ValidationParameter parameter, ValidationParameter separator) {
+    public static String mustBeTwoWordsSeparatedBySpace(ValidationParameter parameter) {
         return String.format(
-                "%s must be two words separated by %s!"
+                "%s must be two words separated by space!"
                         + "%n",
-                parameter,
-                separator
+                parameter
         );
     }
 
