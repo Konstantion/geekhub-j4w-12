@@ -1,7 +1,7 @@
-package edu.geekhub.utils.messages.validation;
+package edu.geekhub.utils.validation.messages;
 
 public class ValidationMessagesGenerator {
-    public static String cannotBeNull(String parameter) {
+    public static String cannotBeNull(ValidationParameter parameter) {
         return String.format(
                 "%s cannot be null!"
                         + "%n",
@@ -9,7 +9,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeUnique(String parameter) {
+    public static String mustBeUnique(ValidationParameter parameter) {
         return String.format(
                 "%s must be unique!"
                         + "%n",
@@ -17,7 +17,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeValid(String parameter) {
+    public static String mustBeValid(ValidationParameter parameter) {
         return String.format(
                 "%s must be valid!"
                         + "%n",
@@ -25,7 +25,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String cannotBeEmpty(String parameter) {
+    public static String cannotBeEmpty(ValidationParameter parameter) {
         return String.format(
                 "%s cannot be empty!"
                         + "%n",
@@ -33,7 +33,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String cannotContainSpaces(String parameter) {
+    public static String cannotContainSpaces(ValidationParameter parameter) {
         return String.format(
                 "%s cannot contain spaces!"
                         + "%n",
@@ -41,7 +41,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String cannotContainSpecialCharacters(String parameter, String characters) {
+    public static String cannotContainSpecialCharacters(ValidationParameter parameter, ValidationParameter characters) {
         return String.format(
                 "%s cannot contain special characters such as %s!"
                         + "%n",
@@ -50,7 +50,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustOneWord(String parameter) {
+    public static String mustOneWord(ValidationParameter parameter) {
         return String.format(
                 "%s must be one word!"
                         + "%n",
@@ -58,7 +58,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeInLowercase(String parameter) {
+    public static String mustBeInLowercase(ValidationParameter parameter) {
         return String.format(
                 "%s must be in lowercase!"
                         + "%n",
@@ -66,7 +66,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeTwoWordsSeparatedBy(String parameter, String separator) {
+    public static String mustBeTwoWordsSeparatedBy(ValidationParameter parameter, ValidationParameter separator) {
         return String.format(
                 "%s must be two words separated by %s!"
                         + "%n",
@@ -75,7 +75,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeWrittenInCamelCase(String parameter) {
+    public static String mustBeWrittenInCamelCase(ValidationParameter parameter) {
         return String.format(
                 "%s must be written in camel case!"
                         + "%n",
@@ -83,7 +83,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustContainOnlyLetters(String parameter) {
+    public static String mustContainOnlyLetters(ValidationParameter parameter) {
         return String.format(
                 "%s must contain only letters!"
                         + "%n",
@@ -91,7 +91,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeOver(String parameter, String number) {
+    public static String mustBeOver(ValidationParameter parameter, String number) {
         return String.format(
                 "%s must be over %s!"
                         + "%n",
@@ -100,7 +100,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String mustBeLess(String parameter, String number) {
+    public static String mustBeLess(ValidationParameter parameter, String number) {
         return String.format(
                 "%s must be less than %s!"
                         + "%n",
@@ -109,7 +109,7 @@ public class ValidationMessagesGenerator {
         );
     }
 
-    public static String cannotBeLonger(String parameter, String number) {
+    public static String cannotBeLonger(ValidationParameter parameter, String number) {
         return String.format(
                 "%s cannot be longer than %s symbols!"
                         + "%n",
@@ -117,7 +117,7 @@ public class ValidationMessagesGenerator {
                 number
         );
     }
-    public static String mustBeZeroOrBigger(String parameter) {
+    public static String mustBeZeroOrBigger(ValidationParameter parameter) {
         return String.format(
                 "%s must be zero or bigger!"
                         + "%n",
