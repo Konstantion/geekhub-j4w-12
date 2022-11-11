@@ -40,7 +40,7 @@ public class ValidationMessagesGenerator {
         return String.format(
                 "%s cannot contain special characters such as %s!",
                 parameter,
-                characters
+                characters.getParameter()
         );
     }
 
