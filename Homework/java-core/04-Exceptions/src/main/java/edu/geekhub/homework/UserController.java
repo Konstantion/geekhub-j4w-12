@@ -11,7 +11,7 @@ public class UserController implements Controller {
 
     @Override
     public Response process(Request request) {
-        //ToDo Write homework-related code here
-        return null;
+        Response response = service.saveUser(request);
+        return response;
     }
 }
