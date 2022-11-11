@@ -49,7 +49,7 @@ public interface Validatable {
             throws UserValidationException {
         Pattern pattern = Pattern.compile(EMAIL.getPattern());
         Matcher matcher = pattern.matcher(email);
-        if (matcher.matches()) {
+        if (!matcher.matches()) {
             throw new UserValidationException(mustBeValid(parameter), email);
         } else {
             return true;
@@ -94,7 +94,7 @@ public interface Validatable {
             throws UserValidationException {
         Pattern pattern = Pattern.compile(ONLY_LETTERS.getPattern());
         Matcher matcher = pattern.matcher(input);
-        if (!matcher.matches()) {
+        if (matcher.matches()) {
             throw new UserValidationException(mustContainOnlyLetters(parameter), input);
         } else {
             return true;
