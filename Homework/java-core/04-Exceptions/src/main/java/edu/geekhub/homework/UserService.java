@@ -9,8 +9,7 @@ import edu.geekhub.storage.Repository;
 import edu.geekhub.storage.MemoryStorage;
 import edu.geekhub.utils.validation.UserValidator;
 
-import static edu.geekhub.utils.response.ResponseMessageGenerator.failedResponseMessage;
-import static edu.geekhub.utils.response.ResponseMessageGenerator.successResponseMessage;
+import static edu.geekhub.utils.response.ResponseMessageGenerator.*;
 
 // Don't move this class
 public class UserService {
@@ -23,23 +22,23 @@ public class UserService {
             userValidator.isUserValid(user, repository.tryToGetAll());
             repository.tryToAdd(user);
             return Response.ok(
-                    successResponseMessage(user)
+                    successSaveUserResponseMessage(user)
             );
         } catch (ClassCastException classCastException) {
             return Response.fail(
-                    failedResponseMessage(
+                    failedToCastDataToUser(
                             classCastException.getMessage(),
                             request.getData()
                     )
             );
         } catch (ConnectionInterruptedException storageException) {
             return Response.fail(
-                    failedResponseMessage(
+                    failedConnectToMemoryStorageResponseMessage(
                             storageException.getMessage(),
                             repository)
             );
         } catch (UserValidationException validationException) {
-            return Response.fail(failedResponseMessage(validationException.getMessage(),
+            return Response.fail(failedValidationResponseMessage(validationException.getMessage(),
                     validationException.getData()));
         }
     }
