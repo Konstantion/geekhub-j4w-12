@@ -76,14 +76,14 @@ public class GeneratorUtils {
         }
         int leftLimit = 97;
         int rightLimit = 122;
-        return secureRandom.ints(leftLimit, rightLimit + 1)
-                .limit(size)
-                .collect(
-                        StringBuilder::new,
-                        StringBuilder::appendCodePoint,
-                        StringBuilder::append
-                )
-                .toString();
+        int targetStringLength = 10;
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (secureRandom.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        return buffer.toString();
     }
 
     public String getNote(int index) {
