@@ -39,7 +39,7 @@ public class ResponseMessageGenerator {
     public static String failedToCastDataToUser(String exceptionMessage, Object data) {
         return String.format(
                 ANSI_RED
-                        + "Failed to case given data to User object: "
+                        + "Failed to cast given data to User object: "
                         + ANSI_RESET
                         + "[%s : %s]",
                 data.toString(),

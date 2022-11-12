@@ -2,6 +2,7 @@ package edu.geekhub.utils.validation;
 
 import edu.geekhub.exceptions.UserValidationException;
 import edu.geekhub.models.User;
+import edu.geekhub.models.request.Request;
 import edu.geekhub.utils.validation.messages.ValidationParameter;
 
 import java.util.Objects;

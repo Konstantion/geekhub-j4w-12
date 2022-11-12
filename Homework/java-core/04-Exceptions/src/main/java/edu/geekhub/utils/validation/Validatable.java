@@ -1,17 +1,18 @@
 package edu.geekhub.utils.validation;
 
-import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.*;
-import static edu.geekhub.utils.validation.messages.ValidationParameter.SPECIFIC_CHARACTERS;
-import static edu.geekhub.utils.validation.patterns.PatternsEnum.*;
-
 import edu.geekhub.exceptions.UserValidationException;
 import edu.geekhub.models.User;
+import edu.geekhub.models.request.Request;
 import edu.geekhub.utils.validation.messages.ValidationParameter;
 
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.*;
+import static edu.geekhub.utils.validation.messages.ValidationParameter.SPECIFIC_CHARACTERS;
+import static edu.geekhub.utils.validation.patterns.PatternsEnum.*;
 
 
 public interface Validatable {
