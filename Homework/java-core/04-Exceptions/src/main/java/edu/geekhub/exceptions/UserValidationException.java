@@ -16,7 +16,7 @@ public class UserValidationException extends Exception {
     }
 
     public Object getData() {
-        return Objects.isNull(data) ? "Null" : data;
+        return Objects.isNull(data) ? "NULL" : data;
     }
 
 }
