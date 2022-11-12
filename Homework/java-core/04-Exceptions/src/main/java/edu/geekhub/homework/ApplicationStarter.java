@@ -21,6 +21,9 @@ public class ApplicationStarter {
         obedientGenerator.setValueCanBeNull(false);
         obedientGenerator.setValueCanBeEmpty(false);
 
+        obedientGenerator.setUserCanBeNull(false);
+        obedientGenerator.setRequestCanBeEmpty(false);
+
         obedientGenerator.setIdCanBeInvalid(false);
         obedientGenerator.setEmailCanBeInvalid(false);
         obedientGenerator.setUsernameCanBeInvalid(false);

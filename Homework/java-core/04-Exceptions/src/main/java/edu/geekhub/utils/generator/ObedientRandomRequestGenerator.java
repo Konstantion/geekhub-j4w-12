@@ -25,18 +25,26 @@ public class ObedientRandomRequestGenerator implements RequestDataGenerator {
     private boolean noteCanBeInvalid = true;
     private boolean idCanBeInvalid = true;
     private boolean followersCanBeInvalid = true;
+    private boolean userCanBeNull = true;
+    private boolean requestCanBeEmpty = true;
     private final SecureRandom secureRandom = new SecureRandom();
 
     private final GeneratorUtils utils = new GeneratorUtils(secureRandom);
 
     @Override
     public Request generate() {
-        Object data = generateUser();
-
-        return new Request(data);
+        boolean isEmpty = secureRandom.nextBoolean();
+        if (requestCanBeEmpty && isEmpty) {
+            return new Request("");
+        }
+        return new Request(generateUser());
     }
 
     private User generateUser() {
+        boolean isNull = secureRandom.nextBoolean();
+        if (userCanBeNull && isNull) {
+            return null;
+        }
         return User.toBuilder()
                 .withId(generateUUID())
                 .withEmail(generateEmail())
@@ -257,5 +265,13 @@ public class ObedientRandomRequestGenerator implements RequestDataGenerator {
 
     public void setFollowersCanBeInvalid(boolean followersCanBeInvalid) {
         this.followersCanBeInvalid = followersCanBeInvalid;
+    }
+
+    public void setUserCanBeNull(boolean userCanBeNull) {
+        this.userCanBeNull = userCanBeNull;
+    }
+
+    public void setRequestCanBeEmpty(boolean requestCanBeEmpty) {
+        this.requestCanBeEmpty = requestCanBeEmpty;
     }
 }
