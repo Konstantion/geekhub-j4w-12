@@ -12,7 +12,9 @@ public enum ValidationParameter {
     MIN_AGE("18"),
     USER_NOTES("User notes"),
     NOTES_LENGTH("255"),
-    AMOUNT_OF_USER_FOLLOWERS("Amount of user followers");
+    AMOUNT_OF_USER_FOLLOWERS("Amount of user followers"),
+
+    SUCCESS_VALIDATION("Super secret hidden string that no one could even thing about :)");
 
     private String parameter;
 

@@ -1,115 +1,133 @@
 package edu.geekhub.utils.validation;
 
-import edu.geekhub.exceptions.UserValidationException;
+import edu.geekhub.exceptions.ConnectionInterruptedException;
 import edu.geekhub.models.User;
-import edu.geekhub.models.request.Request;
+import edu.geekhub.storage.Repository;
+import edu.geekhub.utils.datastructures.SimpleListImpl;
 import edu.geekhub.utils.validation.messages.ValidationParameter;
 
-import java.util.Objects;
 import java.util.UUID;
 
-import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.cannotBeNull;
 import static edu.geekhub.utils.validation.messages.ValidationMessagesGenerator.mustBeUnique;
 import static edu.geekhub.utils.validation.messages.ValidationParameter.*;
 
-public class UserValidator implements Validatable {
+public class UserValidator implements ValidationUtils {
+    private final Repository repository;
+    private SimpleListImpl list;
+
+    public UserValidator(Repository repository) {
+        this.repository = repository;
+    }
+
     @Override
-    public boolean isUserValid(User user, User[] users) throws UserValidationException {
-        if (Objects.isNull(user)) {
-            throw new UserValidationException(cannotBeNull(USER));
+    public Object isUserValid(User user) throws ConnectionInterruptedException {
+        list = new SimpleListImpl();
+        User[] users = repository.tryToGetAll();
+        isUserIdValid(user.getId(), users);
+        isUserEmailValid(user.getEmail(), users);
+        isUserUsernameValid(user.getUserName(), users);
+        isUserFullNameValid(user.getFullName());
+        isUserAgeValid(user.getAge());
+        isUserNotesValid(user.getNotes());
+        isUserFollowersValid(user.getAmountOfFollowers());
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) != SUCCESS_VALIDATION.getParameter()) {
+                return list;
+            }
         }
-        return isUserIdValid(user.getId(), users) &&
-                isUserEmailValid(user.getEmail(), users) &&
-                isUserUsernameValid(user.getUserName(), users) &&
-                isUserFullNameValid(user.getFullName()) &&
-                isUserAgeValid(user.getAge()) &&
-                isUserNotesValid(user.getNotes()) &&
-                isUserFollowersValid(user.getAmountOfFollowers());
+        return true;
     }
 
-    private boolean isUserIdValid(UUID id, User[] users) throws UserValidationException {
+    private void isUserIdValid(UUID id, User[] users) {
         ValidationParameter parameter = USER_ID;
-        return isNotNull(id, parameter) &&
-                isIdUnique(id, users, parameter);
+        list.add(isNotNull(id, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isIdUnique(id, users, parameter));
     }
 
-    private boolean isUserEmailValid(String email, User[] users) throws UserValidationException {
+    private void isUserEmailValid(String email, User[] users) {
         ValidationParameter parameter = USER_EMAIL;
-        return isNotNull(email, parameter) &&
-                isNotEmpty(email, parameter) &&
-                isWithoutCharacters(email, parameter) &&
-                isWithoutSpaces(email, parameter) &&
-                isEmailValid(email, parameter) &&
-                isEmailUnique(email, users, parameter);
+        list.add(isNotNull(email, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isNotEmpty(email, parameter));
+        list.add(isWithoutCharacters(email, parameter));
+        list.add(isWithoutSpaces(email, parameter));
+        list.add(isEmailValid(email, parameter));
+        list.add(isEmailUnique(email, users, parameter));
     }
 
-    private boolean isUserUsernameValid(String username, User[] users) throws UserValidationException {
+    private void isUserUsernameValid(String username, User[] users) {
         ValidationParameter parameter = USERNAME;
-        return isNotNull(username, parameter) &&
-                isNotEmpty(username, parameter) &&
-                isWithoutCharacters(username, parameter) &&
-                isOneWord(username, parameter) &&
-                isInLowercase(username, parameter) &&
-                isUsernameUnique(username, users, parameter);
+        list.add(isNotNull(username, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isNotEmpty(username, parameter));
+        list.add(isWithoutCharacters(username, parameter));
+        list.add(isOneWord(username, parameter));
+        list.add(isInLowercase(username, parameter));
+        list.add(isUsernameUnique(username, users, parameter));
     }
 
-    private boolean isUserFullNameValid(String fullName) throws UserValidationException {
+    private void isUserFullNameValid(String fullName) {
         ValidationParameter parameter = USER_FULL_NAME;
-        return isNotNull(fullName, parameter) &&
-                isNotEmpty(fullName, parameter) &&
-                isTwoWordSeparatedBySpace(fullName, parameter) &&
-                isCamelCase(fullName, parameter) &&
-                isOnlyLetters(fullName, parameter);
+        list.add(isNotNull(fullName, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isNotEmpty(fullName, parameter));
+        list.add(isTwoWordSeparatedBySpace(fullName, parameter));
+        list.add(isCamelCase(fullName, parameter));
+        list.add(isOnlyLetters(fullName, parameter));
     }
 
-    private boolean isUserAgeValid(Integer age) throws UserValidationException {
+    private void isUserAgeValid(Integer age) {
         ValidationParameter parameter = USER_AGE;
-        return isNotNull(age, parameter) &&
-                isOverThan(age, Integer.parseInt(MIN_AGE.getParameter()), parameter) &&
-                isLessThan(age, Integer.parseInt(MAX_AGE.getParameter()), parameter);
+        list.add(isNotNull(age, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isOverThan(age, Integer.parseInt(MIN_AGE.getParameter()), parameter));
+        list.add(isLessThan(age, Integer.parseInt(MAX_AGE.getParameter()), parameter));
     }
 
-    private boolean isUserNotesValid(String notes) throws UserValidationException {
+    private void isUserNotesValid(String notes) {
         ValidationParameter parameter = USER_NOTES;
-        return isNotNull(notes, parameter) &&
-                isNotEmpty(notes, parameter) &&
-                isLonerThan(notes, Integer.parseInt(NOTES_LENGTH.getParameter()), parameter);
+        list.add(isNotNull(notes, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isNotEmpty(notes, parameter));
+        list.add(isLonerThan(notes, Integer.parseInt(NOTES_LENGTH.getParameter()), parameter));
     }
 
-    private boolean isUserFollowersValid(Long followers) throws UserValidationException {
+    private void isUserFollowersValid(Long followers) {
         ValidationParameter parameter = AMOUNT_OF_USER_FOLLOWERS;
-        return isNotNull(followers, parameter) &&
-                isZeroOrBigger(followers, parameter);
+        list.add(isNotNull(followers, parameter));
+        if (list.lastAdded() != SUCCESS_VALIDATION.getParameter()) return;
+        list.add(isZeroOrBigger(followers, parameter));
     }
 
 
     @Override
-    public boolean isIdUnique(UUID id, User[] users, ValidationParameter parameter) throws UserValidationException {
+    public String isIdUnique(UUID id, User[] users, ValidationParameter parameter) {
         for (User user : users) {
             if (user.getId().equals(id)) {
-                throw new UserValidationException(mustBeUnique(USER_ID), id);
+                return mustBeUnique(USER_ID, id);
             }
         }
-        return true;
+        return SUCCESS_VALIDATION.getParameter();
     }
 
     @Override
-    public boolean isEmailUnique(String email, User[] users, ValidationParameter parameter) throws UserValidationException {
+    public String isEmailUnique(String email, User[] users, ValidationParameter parameter) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
-                throw new UserValidationException(mustBeUnique(USER_EMAIL), email);
+                return mustBeUnique(USER_EMAIL, email);
             }
         }
-        return true;
+        return SUCCESS_VALIDATION.getParameter();
     }
 
     @Override
-    public boolean isUsernameUnique(String username, User[] users, ValidationParameter parameter) throws UserValidationException {
+    public String isUsernameUnique(String username, User[] users, ValidationParameter parameter) {
         for (User user : users) {
             if (user.getUserName().equals(username)) {
-                throw new UserValidationException(mustBeUnique(USERNAME), username);
+                return mustBeUnique(USERNAME, username);
             }
         }
-        return true;
+        return SUCCESS_VALIDATION.getParameter();
     }
 }

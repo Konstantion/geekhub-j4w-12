@@ -5,11 +5,11 @@ import edu.geekhub.models.request.Request;
 import edu.geekhub.models.request.Response;
 import edu.geekhub.utils.RandomRequestDataGenerator;
 import edu.geekhub.utils.RequestDataGenerator;
+import edu.geekhub.utils.datastructures.SimpleListImpl;
 import edu.geekhub.utils.generator.ObedientRandomRequestGenerator;
 
 // Don't move this class
 public class ApplicationStarter {
-
     private static final Controller controller = new UserController();
 
     private static final RequestDataGenerator generator = new RandomRequestDataGenerator();
@@ -24,17 +24,17 @@ public class ApplicationStarter {
         obedientGenerator.setUserCanBeNull(false);
         obedientGenerator.setRequestCanBeEmpty(false);
 
-        obedientGenerator.setIdCanBeInvalid(false);
+        obedientGenerator.setIdCanBeInvalid(true);
         obedientGenerator.setEmailCanBeInvalid(false);
         obedientGenerator.setUsernameCanBeInvalid(false);
-        obedientGenerator.setFullNameCanBeInvalid(false);
-        obedientGenerator.setAgeCanBeInvalid(false);
-        obedientGenerator.setNoteCanBeInvalid(false);
-        obedientGenerator.setFollowersCanBeInvalid(false);
+        obedientGenerator.setFullNameCanBeInvalid(true);
+        obedientGenerator.setAgeCanBeInvalid(true);
+        obedientGenerator.setNoteCanBeInvalid(true);
+        obedientGenerator.setFollowersCanBeInvalid(true);
 
         int i = 0;
 
-        while (i < 100) {
+        while (i < 10000) {
 
             Request request = obedientGenerator.generate();
             Response response = controller.process(request);
