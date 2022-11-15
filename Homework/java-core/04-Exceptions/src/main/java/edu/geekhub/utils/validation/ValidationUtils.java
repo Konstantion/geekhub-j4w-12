@@ -97,7 +97,7 @@ public interface ValidationUtils {
     default String isInLowercase(String input, ValidationParameter parameter) {
         char[] chars = input.toCharArray();
         for (char ch : chars) {
-            if (!Character.isLowerCase(ch)) {
+            if (!Character.isLowerCase(ch) && !Character.isWhitespace(ch)) {
                 return mustBeInLowercase(parameter, input);
             }
         }
@@ -105,11 +105,12 @@ public interface ValidationUtils {
     }
 
     default String isCamelCase(String input, ValidationParameter parameter) {
-        String[] words = input.trim().split("\\s*");
+        String[] words = input.split("\\s");
         for (int i = 0; i < words.length; i++) {
             char[] wordChars = words[i].toCharArray();
-            for (int j = 0; i < words.length; i++) {
-                if (j != 0 && Character.isUpperCase(wordChars[j])) {
+            for (int j = 0; j < wordChars.length; j++) {
+                if ((j != 0 && Character.isUpperCase(wordChars[j])) ||
+                        (j == 0 && !Character.isUpperCase(wordChars[j]))) {
                     return mustBeWrittenInCamelCase(parameter, input);
                 }
             }

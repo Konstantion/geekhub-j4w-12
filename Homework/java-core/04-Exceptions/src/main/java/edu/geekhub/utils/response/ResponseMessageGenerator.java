@@ -19,13 +19,14 @@ public class ResponseMessageGenerator {
     public static String failedValidationResponseMessage(String exceptionMessage, Object data) {
         return String.format(
                 ANSI_RED
-                        + "User haven't been successfully validated, error occurs: "
+                        + "User haven't been successfully validated, error occurs: %n"
                         + ANSI_RESET
-                        + "[%s : %s]",
+                        + "[%s : %n%s]",
                 data.toString(),
                 exceptionMessage
         );
     }
+
     public static String failedValidationResponseMessage(String exceptionMessage) {
         return String.format(
                 ANSI_RED
@@ -36,6 +37,7 @@ public class ResponseMessageGenerator {
 
         );
     }
+
     public static String failedConnectToMemoryStorageResponseMessage(String exceptionMessage, Object data) {
         return String.format(
                 ANSI_RED
@@ -46,16 +48,28 @@ public class ResponseMessageGenerator {
                 exceptionMessage
         );
     }
+
+    public static String failedConnectToMemoryStorageResponseMessage(String exceptionMessage) {
+        return String.format(
+                ANSI_RED
+                        + "Failed to connect to memory storage, error occurs: "
+                        + ANSI_RESET
+                        + "[%s]",
+                exceptionMessage
+        );
+    }
+
     public static String badDataRequestMessage(String exceptionMessage, Object data) {
         return String.format(
                 ANSI_RED
                         + "Bad data request,"
-                        + "[%s : %s]"
-                + ANSI_RESET,
+                        + ANSI_RESET
+                        + "[%s : %s]",
                 data.toString(),
                 exceptionMessage
         );
     }
+
     public static String failedToCastDataToUser(String exceptionMessage, Object data) {
         return String.format(
                 ANSI_RED
