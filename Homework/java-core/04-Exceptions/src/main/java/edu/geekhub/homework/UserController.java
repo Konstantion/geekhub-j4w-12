@@ -13,7 +13,15 @@ import static java.util.Objects.isNull;
 // Don't move this class
 public class UserController implements Controller {
 
-    private final UserService service = new UserService();
+    private final UserService service;
+
+    public UserController() {
+        this.service = new UserService();
+    }
+
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @Override
     public Response process(Request request) {

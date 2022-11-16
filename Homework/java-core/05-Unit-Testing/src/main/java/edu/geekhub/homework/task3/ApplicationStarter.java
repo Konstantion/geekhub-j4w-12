@@ -1,4 +1,4 @@
-package edu.geekhub.homework;
+package edu.geekhub.homework.task3;
 
 public class ApplicationStarter {
 
