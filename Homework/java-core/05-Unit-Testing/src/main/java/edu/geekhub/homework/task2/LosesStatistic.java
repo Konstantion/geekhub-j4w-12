@@ -168,7 +168,20 @@ public class LosesStatistic {
         }
 
         public LosesStatistic build() {
-            return TODO_TYPE();
+            return new LosesStatistic(
+                    tanks,
+                    armouredFightingVehicles,
+                    cannons,
+                    multipleRocketLaunchers,
+                    antiAirDefenseDevices,
+                    planes,
+                    helicopters,
+                    drones,
+                    cruiseMissiles,
+                    shipsOrBoats,
+                    carsAndTankers,
+                    specialEquipment,
+                    personnel);
         }
     }
 }
