@@ -15,7 +15,7 @@ public class LosesInWarParser {
     LosesStatistic parseLosesStatistic(String input) {
         validateInputPresent(input);
 
-        //input = removeHtmlTags(input);
+        input = removeHtmlTags(input);
 
         if (!containsStatistics(input)) {
             return LosesStatistic.empty();
@@ -74,4 +74,17 @@ public class LosesInWarParser {
     }
 
 
+    private String removeHtmlTags(String input) {
+        return removeHtmlTags(input, "");
+    }
+
+    private String removeHtmlTags(String input, String replacement) {
+        StringBuffer inputBuffer = new StringBuffer(input);
+        while (inputBuffer.indexOf("<") != -1) {
+            int openIndex = inputBuffer.indexOf("<");
+            int closeIndex = inputBuffer.indexOf(">") + 1;
+            inputBuffer.replace(openIndex, closeIndex, replacement);
+        }
+        return inputBuffer.toString();
+    }
 }
