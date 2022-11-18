@@ -46,6 +46,21 @@ public class LosesStatistic {
         this.personnel = personnel;
     }
 
+    private static final LosesStatistic EMPTY = LosesStatistic.newStatistic()
+            .withTanks(0)
+            .withArmouredFightingVehicles(0)
+            .withCannons(0)
+            .withMultipleRocketLaunchers(0)
+            .withAntiAirDefenseDevices(0)
+            .withPlanes(0)
+            .withHelicopters(0)
+            .withDrones(0)
+            .withCruiseMissiles(0)
+            .withShipsOrBoats(0)
+            .withCarsAndTankers(0)
+            .withSpecialEquipment(0)
+            .withPersonnel(0)
+            .build();
 
     /**
      * User-friendly print version of data
@@ -76,21 +91,7 @@ public class LosesStatistic {
      * @return an "empty object" instance
      */
     public static LosesStatistic empty() {
-        return LosesStatistic.newStatistic()
-                .withTanks(0)
-                .withArmouredFightingVehicles(0)
-                .withCannons(0)
-                .withMultipleRocketLaunchers(0)
-                .withAntiAirDefenseDevices(0)
-                .withPlanes(0)
-                .withHelicopters(0)
-                .withDrones(0)
-                .withCruiseMissiles(0)
-                .withShipsOrBoats(0)
-                .withCarsAndTankers(0)
-                .withSpecialEquipment(0)
-                .withPersonnel(0)
-                .build();
+        return LosesStatistic.EMPTY;
     }
 
     public static LosesStatisticBuilder newStatistic() {
