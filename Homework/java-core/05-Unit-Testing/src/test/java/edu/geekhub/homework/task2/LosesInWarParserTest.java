@@ -321,4 +321,55 @@ class LosesInWarParserTest {
         assertEquals(expectedStatistic, statistic);
     }
 
+    @Test
+    @DisplayName("My addictional test to check if program works right " +
+            "when input values given in bad format")
+    void parse_input_with__shuffled_statistic_values_that_contains_new_entries_data() {
+        var november14Input = """
+                Гармати — 
+                1839 (+2)
+                Танки — 2848 (+8)
+                
+                Гармати — 1839 (+2)
+                ББМ — 5748 (+6)
+                РСЗВ — 
+                393
+                Гелікоптери — 261
+                Засоби ППО — 206
+                Літаки — 278
+                
+                
+                РСЗВ — 393
+                БПЛА — 1509 (+2)
+                Крилаті ракети — 399
+                Кораблі (катери) — 
+                16
+                Особовий склад — близько 81370 осіб (+510)
+                Автомобілі та автоцистерни — 4316 (+21)
+                
+                Спеціальна техніка — 160
+                                
+                """;
+
+        var statistic = losesInWarParser.parseLosesStatistic(november14Input);
+
+        var expectedStatistic = LosesStatistic.newStatistic()
+                .withTanks(2848)
+                .withArmouredFightingVehicles(5748)
+                .withCannons(1839)
+                .withMultipleRocketLaunchers(393)
+                .withAntiAirDefenseDevices(206)
+                .withPlanes(278)
+                .withHelicopters(261)
+                .withDrones(1509)
+                .withCruiseMissiles(399)
+                .withShipsOrBoats(16)
+                .withCarsAndTankers(4316)
+                .withSpecialEquipment(160)
+                .withPersonnel(81370)
+                .build();
+
+        assertEquals(expectedStatistic, statistic);
+    }
+
 }
