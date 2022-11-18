@@ -198,4 +198,44 @@ public class LosesStatistic {
                     personnel);
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof LosesStatistic that) {
+            return tanks == that.tanks
+                    && armouredFightingVehicles == that.armouredFightingVehicles
+                    && cannons == that.cannons
+                    && multipleRocketLaunchers == that.multipleRocketLaunchers
+                    && antiAirDefenseDevices == that.antiAirDefenseDevices
+                    && planes == that.planes
+                    && helicopters == that.helicopters
+                    && drones == that.drones
+                    && cruiseMissiles == that.cruiseMissiles
+                    && shipsOrBoats == that.shipsOrBoats
+                    && carsAndTankers == that.carsAndTankers
+                    && specialEquipment == that.specialEquipment
+                    && personnel == that.personnel;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "LosesStatistic{" +
+                "tanks=" + tanks +
+                ", armouredFightingVehicles=" + armouredFightingVehicles +
+                ", cannons=" + cannons +
+                ", multipleRocketLaunchers=" + multipleRocketLaunchers +
+                ", antiAirDefenseDevices=" + antiAirDefenseDevices +
+                ", planes=" + planes +
+                ", helicopters=" + helicopters +
+                ", drones=" + drones +
+                ", cruiseMissiles=" + cruiseMissiles +
+                ", shipsOrBoats=" + shipsOrBoats +
+                ", carsAndTankers=" + carsAndTankers +
+                ", specialEquipment=" + specialEquipment +
+                ", personnel=" + personnel +
+                '}';
+    }
 }
