@@ -1,7 +1,5 @@
 package edu.geekhub.homework.task2;
 
-import static edu.geekhub.homework.util.NotImplementedException.TODO_TYPE;
-
 public class LosesStatistic {
 
     private final int tanks;
@@ -19,19 +17,19 @@ public class LosesStatistic {
     private final int personnel;
 
     private LosesStatistic(
-        int tanks,
-        int armouredFightingVehicles,
-        int cannons,
-        int multipleRocketLaunchers,
-        int antiAirDefenseDevices,
-        int planes,
-        int helicopters,
-        int drones,
-        int cruiseMissiles,
-        int shipsOrBoats,
-        int carsAndTankers,
-        int specialEquipment,
-        int personnel
+            int tanks,
+            int armouredFightingVehicles,
+            int cannons,
+            int multipleRocketLaunchers,
+            int antiAirDefenseDevices,
+            int planes,
+            int helicopters,
+            int drones,
+            int cruiseMissiles,
+            int shipsOrBoats,
+            int carsAndTankers,
+            int specialEquipment,
+            int personnel
     ) {
         this.tanks = tanks;
         this.armouredFightingVehicles = armouredFightingVehicles;
@@ -48,6 +46,7 @@ public class LosesStatistic {
         this.personnel = personnel;
     }
 
+
     /**
      * User-friendly print version of data
      *
@@ -55,20 +54,20 @@ public class LosesStatistic {
      */
     public String asPrintVersion() {
         return "Втрати російської армії в Україні: " +
-               "Танки - " + tanks +
-               ", Бойові броньовані машини (різних типів) - " + armouredFightingVehicles +
-               ", Гармати - " + cannons +
-               ", Реактивні системи залпового вогню - " + multipleRocketLaunchers +
-               ", Засоби ППО - " + antiAirDefenseDevices +
-               ", Літаки - " + planes +
-               ", Гелікоптери - " + helicopters +
-               ", Безпілотні літальні апарати (оперативно-тактичного рівня) - " + drones +
-               ", Крилаті ракети - " + cruiseMissiles +
-               ", Кораблі (катери) - " + shipsOrBoats +
-               ", Автомобілі та автоцистерни - " + carsAndTankers +
-               ", Спеціальна техніка - " + specialEquipment +
-               ", Особовий склад - близько " + personnel + " осіб"
-            ;
+                "Танки - " + tanks +
+                ", Бойові броньовані машини (різних типів) - " + armouredFightingVehicles +
+                ", Гармати - " + cannons +
+                ", Реактивні системи залпового вогню - " + multipleRocketLaunchers +
+                ", Засоби ППО - " + antiAirDefenseDevices +
+                ", Літаки - " + planes +
+                ", Гелікоптери - " + helicopters +
+                ", Безпілотні літальні апарати (оперативно-тактичного рівня) - " + drones +
+                ", Крилаті ракети - " + cruiseMissiles +
+                ", Кораблі (катери) - " + shipsOrBoats +
+                ", Автомобілі та автоцистерни - " + carsAndTankers +
+                ", Спеціальна техніка - " + specialEquipment +
+                ", Особовий склад - близько " + personnel + " осіб"
+                ;
     }
 
     /**
@@ -77,7 +76,21 @@ public class LosesStatistic {
      * @return an "empty object" instance
      */
     public static LosesStatistic empty() {
-        return TODO_TYPE("Return an Empty Object");
+        return LosesStatistic.newStatistic()
+                .withTanks(0)
+                .withArmouredFightingVehicles(0)
+                .withCannons(0)
+                .withMultipleRocketLaunchers(0)
+                .withAntiAirDefenseDevices(0)
+                .withPlanes(0)
+                .withHelicopters(0)
+                .withDrones(0)
+                .withCruiseMissiles(0)
+                .withShipsOrBoats(0)
+                .withCarsAndTankers(0)
+                .withSpecialEquipment(0)
+                .withPersonnel(0)
+                .build();
     }
 
     public static LosesStatisticBuilder newStatistic() {
