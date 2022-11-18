@@ -1,33 +1,50 @@
 package edu.geekhub.homework.task2;
 
 
-import static edu.geekhub.homework.util.NotImplementedException.TODO_TYPE;
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 public class LosesInWarParser {
     private static final String[] parameters = new String[]{
             "Танки", "ББМ", "Гармати", "РСЗВ", "Засоби ППО",
             "Літаки", "Гелікоптери", "БПЛА", "Крилаті ракети",
-            "Кораблі (катери)", "Cпeцiaльнa тeхнiкa", "Особовий склад"
+            "Кораблі (катери)", "Автомобілі та автоцистерни", "Спеціальна техніка", "Особовий склад"
     };
+    private static final String separators = ";—&";
 
     LosesStatistic parseLosesStatistic(String input) {
         validateInputPresent(input);
 
-        if(!containsStatistics(input)) {
+        //input = removeHtmlTags(input);
+
+        if (!containsStatistics(input)) {
             return LosesStatistic.empty();
         }
 
-        return TODO_TYPE();
+        return createStatistics(input);
+    }
+
+    private LosesStatistic createStatistics(String input) {
+        return null;
     }
 
     private boolean containsStatistics(String input) {
         for (int i = 0; i < parameters.length; i++) {
-            if(!input.contains(parameters[i])) {
+            if (!input.contains(parameters[i])) {
                 return false;
             }
         }
         return true;
+    }
+
+    private Integer tryToGetIntegerValueInString(String bareStatisticsLine) {
+        String[] bareStatisticWords = bareStatisticsLine.split(" ");
+        for (String word : bareStatisticWords) {
+            if (isInteger(word)) {
+                return Integer.valueOf(word);
+            }
+        }
+        return null;
     }
 
     private void validateInputPresent(String input) {
@@ -39,5 +56,22 @@ public class LosesInWarParser {
             );
         }
     }
+
+    private boolean isInteger(String s) {
+        return isInteger(s, 10);
+    }
+
+    private boolean isInteger(String s, int radix) {
+        if (s.isEmpty()) return false;
+        for (int i = 0; i < s.length(); i++) {
+            if (i == 0 && s.charAt(i) == '0') {
+                if (s.length() != 1) return false;
+                else continue;
+            }
+            if (Character.digit(s.charAt(i), radix) < 0) return false;
+        }
+        return true;
+    }
+
 
 }
