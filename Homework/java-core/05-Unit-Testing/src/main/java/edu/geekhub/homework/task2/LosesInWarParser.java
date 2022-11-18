@@ -73,7 +73,6 @@ public class LosesInWarParser {
         return true;
     }
 
-
     private String removeHtmlTags(String input) {
         return removeHtmlTags(input, "");
     }
@@ -86,6 +85,13 @@ public class LosesInWarParser {
             inputBuffer.replace(openIndex, closeIndex, replacement);
         }
         return inputBuffer.toString();
+    }
+
+    private boolean lineContainsParameter(String line) {
+        for (int parameterIndex = 0; parameterIndex < parameters.length; parameterIndex++) {
+            if (line.contains(parameters[parameterIndex])) return true;
+        }
+        return false;
     }
 
     private LosesStatistic losesStatisticFromParametersValues(int[] parametersValues) {
