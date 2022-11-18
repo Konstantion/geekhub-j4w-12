@@ -87,4 +87,22 @@ public class LosesInWarParser {
         }
         return inputBuffer.toString();
     }
+
+    private LosesStatistic losesStatisticFromParametersValues(int[] parametersValues) {
+        return LosesStatistic.newStatistic()
+                .withTanks(parametersValues[0])
+                .withArmouredFightingVehicles(parametersValues[1])
+                .withCannons(parametersValues[2])
+                .withMultipleRocketLaunchers(parametersValues[3])
+                .withAntiAirDefenseDevices(parametersValues[4])
+                .withPlanes(parametersValues[5])
+                .withHelicopters(parametersValues[6])
+                .withDrones(parametersValues[7])
+                .withCruiseMissiles(parametersValues[8])
+                .withShipsOrBoats(parametersValues[9])
+                .withCarsAndTankers(parametersValues[10])
+                .withSpecialEquipment(parametersValues[11])
+                .withPersonnel(parametersValues[12])
+                .build();
+    }
 }
