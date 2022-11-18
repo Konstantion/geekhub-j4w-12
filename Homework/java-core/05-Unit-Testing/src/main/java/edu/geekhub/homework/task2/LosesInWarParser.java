@@ -10,7 +10,7 @@ public class LosesInWarParser {
             "Літаки", "Гелікоптери", "БПЛА", "Крилаті ракети",
             "Кораблі (катери)", "Автомобілі та автоцистерни", "Спеціальна техніка", "Особовий склад"
     };
-    private static final String separators = ";—&";
+    private static final String SEPARATORS = ";—&";
 
     LosesStatistic parseLosesStatistic(String input) {
         validateInputPresent(input);
@@ -25,12 +25,60 @@ public class LosesInWarParser {
     }
 
     private LosesStatistic createStatistics(String input) {
-        return null;
+        String[] inputLines = input.split("\n");
+        int[] parametersValues = new int[parameters.length];
+        for (int lineIndex = 0; lineIndex < inputLines.length; lineIndex++) {
+
+            String bareStatisticsLine = removeSeparatorsFromLine(inputLines[lineIndex]);
+
+            if (bareStatisticsLine.isBlank()) continue;
+
+            boolean parameterWasTakenFromTheCurrentLine = false;
+
+            for (int parameterIndex = 0; parameterIndex < parameters.length; parameterIndex++) {
+
+                if (parameterWasTakenFromTheCurrentLine) break;
+
+                if (bareStatisticsLine.contains(parameters[parameterIndex])) {
+
+                    Integer parameterValue = tryToGetIntegerValueInString(bareStatisticsLine);
+
+                    while (isNull(parameterValue)) {
+
+                        int nextLineIndex = lineIndex + 1;
+
+                        if (nextLineIndex < inputLines.length) {
+
+                            String nextBareStatisticLine = removeSeparatorsFromLine(inputLines[nextLineIndex]);
+
+                            if (lineContainsParameter(nextBareStatisticLine)) {
+                                parameterValue = 0;
+                                break;
+                            }
+
+                            parameterValue = tryToGetIntegerValueInString(nextBareStatisticLine);
+
+                        } else {
+                            parameterValue = 0;
+                            break;
+                        }
+                    }
+
+                    parametersValues[parameterIndex] = parameterValue;
+                    parameterWasTakenFromTheCurrentLine = true;
+                }
+            }
+        }
+        return losesStatisticFromParametersValues(parametersValues);
+    }
+
+    private String removeSeparatorsFromLine(String line) {
+        return line.replace(SEPARATORS, " ");
     }
 
     private boolean containsStatistics(String input) {
-        for (int i = 0; i < parameters.length; i++) {
-            if (!input.contains(parameters[i])) {
+        for (String parameter : parameters) {
+            if (!input.contains(parameter)) {
                 return false;
             }
         }
@@ -88,8 +136,8 @@ public class LosesInWarParser {
     }
 
     private boolean lineContainsParameter(String line) {
-        for (int parameterIndex = 0; parameterIndex < parameters.length; parameterIndex++) {
-            if (line.contains(parameters[parameterIndex])) return true;
+        for (String parameter : parameters) {
+            if (line.contains(parameter)) return true;
         }
         return false;
     }
