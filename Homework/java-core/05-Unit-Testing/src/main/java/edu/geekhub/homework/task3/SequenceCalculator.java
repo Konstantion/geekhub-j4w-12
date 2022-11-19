@@ -30,6 +30,7 @@ public class SequenceCalculator {
     Double calculate(String input, ArithmeticOperation operation) {
 
         validate(input);
+        validate(operation);
 
         TriviaQueueImp queue =
                 extractSequenceToQueue(input);
@@ -141,6 +142,9 @@ public class SequenceCalculator {
         validatePresent(input);
         validateContainsSequence(input);
     }
+    private void validate(ArithmeticOperation operation) {
+        validatePresent(operation);
+    }
 
     private void validatePresent(String input) {
         requireNonNull(input);
@@ -148,6 +152,9 @@ public class SequenceCalculator {
         if (input.isBlank()) {
             throw new IllegalArgumentException("Input should not be empty");
         }
+    }
+    private void validatePresent(ArithmeticOperation operation) {
+        requireNonNull(operation);
     }
 
     private void validateContainsSequence(String input) {
