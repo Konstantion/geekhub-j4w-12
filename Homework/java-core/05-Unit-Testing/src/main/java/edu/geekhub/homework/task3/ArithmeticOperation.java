@@ -18,8 +18,8 @@ public enum ArithmeticOperation {
     }
 
     static boolean isArithmeticOperation(String input) {
-        for(ArithmeticOperation arithmeticOperation : ArithmeticOperation.values()) {
-            if(arithmeticOperation.operator.equals(input)) {
+        for (ArithmeticOperation arithmeticOperation : ArithmeticOperation.values()) {
+            if (arithmeticOperation.operator.equals(input)) {
                 return true;
             }
         }
