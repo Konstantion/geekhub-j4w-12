@@ -6,4 +6,23 @@ package edu.geekhub.homework.task3;
  * '+', '-', '*' and '/'
  */
 public enum ArithmeticOperation {
+    ADDITION("+"),
+    SUBTRACTION("-"),
+    MULTIPLICATION("*"),
+    DIVISION("/");
+
+    String operator;
+
+    ArithmeticOperation(String operator) {
+        this.operator = operator;
+    }
+
+    static boolean isArithmeticOperation(String input) {
+        for(ArithmeticOperation arithmeticOperation : ArithmeticOperation.values()) {
+            if(arithmeticOperation.operator.equals(input)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
