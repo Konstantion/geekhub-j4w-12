@@ -5,5 +5,7 @@ public interface TrivialStringStack {
     void push(String[] input);
     String pop();
     String peak();
+    boolean isEmpty();
+    boolean hasNext();
     int size();
 }

@@ -49,11 +49,17 @@ public class TrivialStackImp implements TrivialStringStack {
     }
 
     @Override
-    public int size() {
-        if(pointer == -1) {
-            throw STACK_IS_EMPTY;
-        }
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 
+    @Override
+    public boolean hasNext() {
+        return pointer - 1 >= 0;
+    }
+
+    @Override
+    public int size() {
         return pointer + 1;
     }
 }

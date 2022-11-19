@@ -64,7 +64,7 @@ class TrivialStackImpTest {
     @Test
     @DisplayName("This test checks if stack automatically expands")
     void Given_OneHundredTenElements_When_Push_Than_ReturnOneHundredTenElements() {
-        for(int i = 0; i < 110; i++) {
+        for (int i = 0; i < 110; i++) {
             stack.push(String.valueOf(i));
         }
 
@@ -89,6 +89,19 @@ class TrivialStackImpTest {
         assertEquals("SIXTH", firstPop);
         assertEquals("FIFTH", secondPop);
         assertEquals("FOURTH", stack.peak());
+    }
+
+    @Test
+    void Given_OneHundredElementsAsInput_When_PushAndPopWhileNotEmpty_Than_SizeReturnZero() {
+        for (int i = 0; i < 100; i++) {
+            stack.push(String.valueOf(i));
+        }
+
+        while (!stack.isEmpty()) {
+            stack.pop();
+        }
+
+        assertEquals(0, stack.size());
     }
 
 }
