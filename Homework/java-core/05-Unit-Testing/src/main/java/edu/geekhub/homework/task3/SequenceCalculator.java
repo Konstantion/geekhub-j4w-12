@@ -1,7 +1,6 @@
 package edu.geekhub.homework.task3;
 
-import edu.geekhub.homework.task3.utils.TrivialStackImp;
-import edu.geekhub.homework.task3.utils.TrivialStringStack;
+import edu.geekhub.homework.task3.utils.TriviaQueueImp;
 
 import static java.lang.Character.isDigit;
 import static java.util.Objects.requireNonNull;
@@ -28,57 +27,62 @@ public class SequenceCalculator {
      * @param operation {@link ArithmeticOperation} that should be applied to input numbers
      * @return result of calculation
      */
-    Long calculate(String input, ArithmeticOperation operation) {
+    Double calculate(String input, ArithmeticOperation operation) {
 
         validate(input);
 
-        TrivialStringStack stack =
-                extractSequenceToStack(input);
+        TriviaQueueImp queue =
+                extractSequenceToQueue(input);
 
-        return calculateSequenceFromStack(stack, operation);
+        return calculateSequenceFromQueue(queue, operation);
     }
 
-    private Long calculateSequenceFromStack(TrivialStringStack stack, ArithmeticOperation operation) {
-        Long result = 0L;
+    private Double calculateSequenceFromQueue(TriviaQueueImp queue, ArithmeticOperation operation) {
+        double result = 0;
         StringBuilder temporaryResult = new StringBuilder();
-        while (!stack.isEmpty()) {
-            String element = stack.pop();
-            if (Character.isDigit(element.charAt(0))) {
-                if (!stack.isEmpty() && stack.peak().equals("-")) {
-                    String sing = stack.pop();
-                    temporaryResult.append(sing);
+        boolean firstElementOfSequence = true;
+        while (!queue.isEmpty()) {
+
+            String element = queue.pop();
+
+            if (element.equals("-") && !queue.isEmpty()) {
+                //Remove two minus in a row occasions
+                if (queue.peak().equals("-")) {
+                    queue.pop();
+                } else if (Character.isDigit(queue.peak().charAt(0))) {
+
+                    temporaryResult.append(element);
+                    temporaryResult.append(queue.pop());
                 }
-                temporaryResult.append(element);
-            } else if (element.equals("-") && stack.hasNext() && stack.peak().equals("-")) {
-                stack.pop();
+            } else {
+                if (Character.isDigit(element.charAt(0))) {
+
+                    temporaryResult.append(element);
+                }
             }
             if (!temporaryResult.isEmpty()) {
+
                 validateOperation(Integer.parseInt(temporaryResult.toString()), operation);
-                result = doArithmeticOperation(result, Integer.parseInt(temporaryResult.toString()), operation);
+
+                //Assign result first numeric element of sequence
+                if (firstElementOfSequence) {
+
+                    result = Long.parseLong(temporaryResult.toString());
+                    firstElementOfSequence = false;
+
+                } else {
+
+                    result = doOperation(result, Integer.parseInt(temporaryResult.toString()), operation);
+
+                }
                 temporaryResult = new StringBuilder();
             }
         }
         return result;
     }
 
-    private void validateOperation(int operand, ArithmeticOperation operation) {
-        if (operand == 0 && operation.equals(ArithmeticOperation.DIVISION)) {
-            throw new IllegalArgumentException("You can't divide by zero");
-        }
-    }
-
-    private Long doArithmeticOperation(Long number, int operand, ArithmeticOperation operation) {
-        switch (operation) {
-            case ADDITION -> number += operand;
-            case SUBTRACTION -> number -= operand;
-            case DIVISION -> number /= operand;
-            case MULTIPLICATION -> number *= operand;
-        }
-        return number;
-    }
-
-    private TrivialStringStack extractSequenceToStack(String sequence) {
-        TrivialStringStack extractedSequenceStack = new TrivialStackImp();
+    private TriviaQueueImp extractSequenceToQueue(String sequence) {
+        TriviaQueueImp extractedSequenceQueue = new TriviaQueueImp();
 
         sequence = removeUnnecessaryCharacters(sequence);
 
@@ -93,13 +97,13 @@ public class SequenceCalculator {
                 if (isDigit(sequenceLineChar)) {
                     numberBuilder.append(sequenceLineChar);
                 } else if (sequenceLineChar == MINUS_CHAR) {
-                    extractedSequenceStack.push(String.valueOf(MINUS_CHAR));
+                    extractedSequenceQueue.push(String.valueOf(MINUS_CHAR));
                 }
             }
-            extractedSequenceStack.push(numberBuilder.toString());
+            extractedSequenceQueue.push(numberBuilder.toString());
         }
 
-        return extractedSequenceStack;
+        return extractedSequenceQueue;
     }
 
     private String removeUnnecessaryCharacters(String sequence) {
@@ -115,6 +119,22 @@ public class SequenceCalculator {
         }
 
         return sequence;
+    }
+
+    private void validateOperation(int operand, ArithmeticOperation operation) {
+        if (operand == 0 && operation.equals(ArithmeticOperation.DIVISION)) {
+            throw new IllegalArgumentException("You can't divide by zero");
+        }
+    }
+
+    private Double doOperation(double number, int operand, ArithmeticOperation operation) {
+        switch (operation) {
+            case ADDITION -> number = number + operand;
+            case SUBTRACTION -> number = number - operand;
+            case DIVISION -> number = number / operand;
+            case MULTIPLICATION -> number = number * operand;
+        }
+        return number;
     }
 
     private void validate(String input) {
