@@ -41,7 +41,17 @@ public class SequenceCalculator {
         return 0;
     }
 
+    private TrivialStringStack extractSequenceToStack(String sequence) {
+        TrivialStringStack extractedSequenceStack = new TrivialStackImp();
+        sequence = removeUnnecessaryCharacters(sequence);
 
+        String[] sequenceLines = sequence.split(String.valueOf(COMMA_CHAR));
+        for (String sequenceLine : sequenceLines) {
+            extractedSequenceStack.push(sequenceLine.split(""));
+        }
+
+        return extractedSequenceStack;
+    }
 
     private String removeUnnecessaryCharacters(String sequence) {
         char[] sequenceChars = sequence.toCharArray();
