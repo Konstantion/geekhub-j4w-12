@@ -25,4 +25,8 @@ public enum ArithmeticOperation {
         }
         return false;
     }
+
+    String getOperator() {
+        return operator;
+    }
 }
