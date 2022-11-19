@@ -2,19 +2,20 @@ package edu.geekhub.homework.task3.utils;
 
 import java.util.Arrays;
 
-public class TrivialStackImp implements TrivialStringStack {
+public class TriviaQueueImp implements TrivialStringQueue {
     private String[] data = new String[100];
-    private int pointer = -1;
+    private int pointerQueue = 0;
+    private int pointerDequeue = 0;
     private final float EXTENSION_PERCENTAGE = 1.5f;
     private final IllegalArgumentException STACK_IS_EMPTY = new IllegalArgumentException("Stack is empty");
 
     @Override
     public void push(String input) {
-        pointer += 1;
-        if(pointer == data.length) {
+        if(pointerQueue == data.length) {
             data = Arrays.copyOf(data, (int) (data.length * EXTENSION_PERCENTAGE + 1));
         }
-        data[pointer] = input;
+        data[pointerQueue] = input;
+        pointerQueue += 1;
     }
 
     @Override
@@ -26,26 +27,24 @@ public class TrivialStackImp implements TrivialStringStack {
 
     @Override
     public String pop() {
-        if(pointer == -1) {
+        if(pointerDequeue >= pointerQueue) {
             throw STACK_IS_EMPTY;
         }
 
-        String value = data[pointer];
-        data[pointer] = null;
-        pointer -= 1;
+        String value = data[pointerDequeue];
+        data[pointerDequeue] = null;
+        pointerDequeue += 1;
 
         return value;
     }
 
     @Override
     public String peak() {
-        if(pointer == -1) {
-            throw new IllegalArgumentException("Stack is empty");
+        if(pointerDequeue >= pointerQueue) {
+            throw STACK_IS_EMPTY;
         }
 
-        String value = data[pointer];
-
-        return value;
+        return data[pointerDequeue];
     }
 
     @Override
@@ -55,11 +54,19 @@ public class TrivialStackImp implements TrivialStringStack {
 
     @Override
     public boolean hasNext() {
-        return pointer - 1 >= 0;
+        return pointerDequeue + 1 <= pointerQueue;
     }
 
     @Override
     public int size() {
-        return pointer + 1;
+        if(pointerDequeue > pointerQueue) {
+            throw STACK_IS_EMPTY;
+        }
+
+        return pointerQueue - pointerDequeue;
+    }
+
+    public int indexDiff() {
+        return pointerQueue - (pointerQueue - pointerDequeue);
     }
 }

@@ -6,28 +6,25 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TrivialStackImpTest {
+class TrivialQueueImpTest {
 
-    private TrivialStringStack stack;
+    private TrivialStringQueue queue;
 
     @BeforeEach
     void setUp() {
-        stack = new TrivialStackImp();
+        queue = new TriviaQueueImp();
     }
 
     @Test
-    void Given_EmptyStack_When_GetSize_Than_ThrowsIllegalArgumentException() {
-        assertThrowsExactly(
-                IllegalArgumentException.class,
-                () -> stack.size()
-        );
+    void Given_EmptyQueue_When_GetSize_Than_ReturnZero() {
+        assertEquals(0, queue.size());
     }
 
     @Test
     void Given_EmptyStack_When_Pop_Than_ThrowsIllegalArgumentException() {
         assertThrowsExactly(
                 IllegalArgumentException.class,
-                () -> stack.pop()
+                () -> queue.pop()
         );
     }
 
@@ -35,40 +32,40 @@ class TrivialStackImpTest {
     void Given_EmptyStack_When_Peak_Than_ThrowsIllegalArgumentException() {
         assertThrowsExactly(
                 IllegalArgumentException.class,
-                () -> stack.peak()
+                () -> queue.peak()
         );
     }
 
     @Test
     void Given_StringAsInput_When_Push_Than_SizeReturnOne() {
-        stack.push("Some String");
+        queue.push("Some String");
 
-        assertEquals(1, stack.size());
+        assertEquals(1, queue.size());
     }
 
     @Test
-    void Given_StackWithTwoElements_When_Pop_Than_PeakReturnFirstElementAndSizeWillBeOne() {
+    void Given_StackWithTwoElements_When_Pop_Than_PeakReturnSecondElementAndSizeWillBeOne() {
         String first = "FIRST";
         String second = "SECOND";
 
-        stack.push(first);
-        stack.push(second);
-        String popString = stack.pop();
-        String peakString = stack.peak();
+        queue.push(first);
+        queue.push(second);
+        String popString = queue.pop();
+        String peakString = queue.peak();
 
-        assertEquals(popString, second);
-        assertEquals(peakString, first);
-        assertEquals(1, stack.size());
+        assertEquals(popString, first);
+        assertEquals(peakString, second);
+        assertEquals(1, queue.size());
     }
 
     @Test
     @DisplayName("This test checks if stack automatically expands")
     void Given_OneHundredTenElements_When_Push_Than_ReturnOneHundredTenElements() {
         for (int i = 0; i < 110; i++) {
-            stack.push(String.valueOf(i));
+            queue.push(String.valueOf(i));
         }
 
-        assertEquals(110, stack.size());
+        assertEquals(110, queue.size());
     }
 
     @Test
@@ -82,26 +79,26 @@ class TrivialStackImpTest {
                 "SIXTH"
         };
 
-        stack.push(input);
-        String firstPop = stack.pop();
-        String secondPop = stack.pop();
+        queue.push(input);
+        String firstPop = queue.pop();
+        String secondPop = queue.pop();
 
-        assertEquals("SIXTH", firstPop);
-        assertEquals("FIFTH", secondPop);
-        assertEquals("FOURTH", stack.peak());
+        assertEquals("FIRST", firstPop);
+        assertEquals("SECOND", secondPop);
+        assertEquals("THIRD", queue.peak());
     }
 
     @Test
     void Given_OneHundredElementsAsInput_When_PushAndPopWhileNotEmpty_Than_SizeReturnZero() {
         for (int i = 0; i < 100; i++) {
-            stack.push(String.valueOf(i));
+            queue.push(String.valueOf(i));
         }
 
-        while (!stack.isEmpty()) {
-            stack.pop();
+        while (!queue.isEmpty()) {
+            queue.pop();
         }
 
-        assertEquals(0, stack.size());
+        assertEquals(0, queue.size());
     }
 
 }
