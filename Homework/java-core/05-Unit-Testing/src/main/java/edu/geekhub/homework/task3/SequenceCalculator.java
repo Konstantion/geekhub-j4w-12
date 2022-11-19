@@ -3,7 +3,6 @@ package edu.geekhub.homework.task3;
 import edu.geekhub.homework.task3.utils.TrivialStackImp;
 import edu.geekhub.homework.task3.utils.TrivialStringStack;
 
-import static edu.geekhub.homework.util.NotImplementedException.TODO_TYPE;
 import static java.lang.Character.isDigit;
 import static java.util.Objects.requireNonNull;
 
@@ -29,16 +28,44 @@ public class SequenceCalculator {
      * @param operation {@link ArithmeticOperation} that should be applied to input numbers
      * @return result of calculation
      */
-    int calculate(String input, ArithmeticOperation operation) {
+    Long calculate(String input, ArithmeticOperation operation) {
 
         validate(input);
 
+        TrivialStringStack stack =
+                extractSequenceToStack(input);
 
-        return TODO_TYPE();
+        return calculateSequenceFromStack(stack, operation);
     }
 
-    private int calculateSequenceFromStack() {
-        return 0;
+    private Long calculateSequenceFromStack(TrivialStringStack stack, ArithmeticOperation operation) {
+        Long result = 0L;
+        StringBuilder temporaryResult = new StringBuilder();
+        while (!stack.isEmpty()) {
+            String element = stack.pop();
+            if (Character.isDigit(element.charAt(0))) {
+                if (!stack.isEmpty() && stack.peak().equals("-")) {
+                    String sing = stack.pop();
+                    temporaryResult.append(sing);
+                }
+                temporaryResult.append(element);
+            } else if (element.equals("-") && stack.hasNext() && stack.peak().equals("-")) {
+                stack.pop();
+            }
+            if (!temporaryResult.isEmpty()) {
+                validateOperation(Integer.parseInt(temporaryResult.toString()), operation);
+                result = doArithmeticOperation(result, Integer.parseInt(temporaryResult.toString()), operation);
+                temporaryResult = new StringBuilder();
+            }
+        }
+        return result;
+    }
+
+    private void validateOperation(int operand, ArithmeticOperation operation) {
+    }
+
+    private Long doArithmeticOperation(Long number, int operand, ArithmeticOperation operation) {
+        return null;
     }
 
     private TrivialStringStack extractSequenceToStack(String sequence) {
@@ -47,7 +74,19 @@ public class SequenceCalculator {
 
         String[] sequenceLines = sequence.split(String.valueOf(COMMA_CHAR));
         for (String sequenceLine : sequenceLines) {
-            extractedSequenceStack.push(sequenceLine.split(""));
+
+            StringBuilder numberBuilder = new StringBuilder();
+
+            char[] sequenceLineChars = sequenceLine.toCharArray();
+
+            for (char sequenceLineChar : sequenceLineChars) {
+                if (isDigit(sequenceLineChar)) {
+                    numberBuilder.append(sequenceLineChar);
+                } else if (sequenceLineChar == MINUS_CHAR) {
+                    extractedSequenceStack.push(String.valueOf(MINUS_CHAR));
+                }
+            }
+            extractedSequenceStack.push(numberBuilder.toString());
         }
 
         return extractedSequenceStack;
@@ -58,7 +97,8 @@ public class SequenceCalculator {
 
         for (char sequenceChar : sequenceChars) {
             if (sequence.contains(String.valueOf(sequenceChar))
-                && !(sequenceChar == COMMA_CHAR || sequenceChar == MINUS_CHAR)) {
+                && !(sequenceChar == COMMA_CHAR || sequenceChar == MINUS_CHAR)
+                && !Character.isDigit(sequenceChar)) {
                 sequence = sequence
                         .replace(String.valueOf(sequenceChar), "");
             }
