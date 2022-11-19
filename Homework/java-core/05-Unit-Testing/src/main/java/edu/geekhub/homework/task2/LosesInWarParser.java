@@ -15,7 +15,9 @@ public class LosesInWarParser {
     LosesStatistic parseLosesStatistic(String input) {
         validateInputPresent(input);
 
+        input = changeEnglishSimilarLettersToUkrainian(input);
         input = removeHtmlTags(input);
+        input = changeNumbersToUkrainianLetters(input);
 
         if (!containsStatistics(input)) {
             return LosesStatistic.empty();
@@ -43,6 +45,7 @@ public class LosesInWarParser {
 
                     Integer parameterValue = tryToGetIntegerValueInString(bareStatisticsLine);
 
+                    //This while tries to find value for parameter in the next lines
                     while (isNull(parameterValue)) {
 
                         int nextLineIndex = lineIndex + 1;
@@ -126,13 +129,13 @@ public class LosesInWarParser {
     }
 
     private String removeHtmlTags(String input, String replacement) {
-        StringBuffer inputBuffer = new StringBuffer(input);
-        while (inputBuffer.indexOf("<") != -1) {
-            int openIndex = inputBuffer.indexOf("<");
-            int closeIndex = inputBuffer.indexOf(">") + 1;
-            inputBuffer.replace(openIndex, closeIndex, replacement);
+        StringBuilder inputBuilder = new StringBuilder(input);
+        while (inputBuilder.indexOf("<") != -1) {
+            int openIndex = inputBuilder.indexOf("<");
+            int closeIndex = inputBuilder.indexOf(">") + 1;
+            inputBuilder.replace(openIndex, closeIndex, replacement);
         }
-        return inputBuffer.toString();
+        return inputBuilder.toString();
     }
 
     private boolean lineContainsParameter(String line) {
@@ -159,4 +162,63 @@ public class LosesInWarParser {
                 .withPersonnel(parametersValues[12])
                 .build();
     }
+
+    private String changeEnglishSimilarLettersToUkrainian(String input) {
+        input = input
+                .replace("a", "а")
+                .replace("A", "А")
+                .replace("B", "В")
+                .replace("c", "с")
+                .replace("C", "С")
+                .replace("e", "е")
+                .replace("E", "Е")
+                .replace("H", "Н")
+                .replace("i", "і")
+                .replace("I", "І")
+                .replace("K", "К")
+                .replace("M", "М")
+                .replace("o", "о")
+                .replace("O", "О")
+                .replace("p", "р")
+                .replace("P", "Р")
+                .replace("T", "Т")
+                .replace("x", "х")
+                .replace("X", "Х")
+                .replace("y", "у");
+
+
+        return input;
+
+
+    }
+
+    private String changeNumbersToUkrainianLetters(String input) {
+        StringBuilder inputBuilder = new StringBuilder(input);
+        for (int charIndex = 0; charIndex < inputBuilder.length(); charIndex++) {
+            if (inputBuilder.charAt(charIndex) == "3".charAt(0)) {
+                replaceNumberCharToLetter(inputBuilder, charIndex, "З");
+            }
+            if (inputBuilder.charAt(charIndex) == "0".charAt(0)) {
+                replaceNumberCharToLetter(inputBuilder, charIndex, "О");
+            }
+
+        }
+        return inputBuilder.toString();
+    }
+
+    private void replaceNumberCharToLetter(StringBuilder inputBuilder, int charIndex, String replacement) {
+        if ((charIndex == 0 && charIndex + 1 < inputBuilder.length())
+            && Character.isAlphabetic(inputBuilder.charAt(charIndex + 1))) {
+            inputBuilder.replace(charIndex, charIndex + 1, replacement);
+        }
+        if ((charIndex > 0 && charIndex + 1 < inputBuilder.length())
+            && (Character.isAlphabetic(inputBuilder.charAt(charIndex - 1)) || Character.isAlphabetic(inputBuilder.charAt(charIndex + 1)))) {
+            inputBuilder.replace(charIndex, charIndex + 1, replacement);
+        }
+        if ((charIndex == inputBuilder.length() - 1 && charIndex - 1 >= 0)
+            && Character.isAlphabetic(inputBuilder.charAt(charIndex - 1))) {
+            inputBuilder.replace(charIndex, charIndex + 1, replacement);
+        }
+    }
+
 }
