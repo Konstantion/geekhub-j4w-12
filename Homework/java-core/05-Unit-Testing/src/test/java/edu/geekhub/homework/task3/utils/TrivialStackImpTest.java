@@ -71,4 +71,24 @@ class TrivialStackImpTest {
         assertEquals(110, stack.size());
     }
 
+    @Test
+    void Given_ArrayOfSixStringAsInput_When_PushPopsTwoTimesPeak_Than_ReturnFourthString() {
+        String[] input = new String[]{
+                "FIRST",
+                "SECOND",
+                "THIRD",
+                "FOURTH",
+                "FIFTH",
+                "SIXTH"
+        };
+
+        stack.push(input);
+        String firstPop = stack.pop();
+        String secondPop = stack.pop();
+
+        assertEquals("SIXTH", firstPop);
+        assertEquals("FIFTH", secondPop);
+        assertEquals("FOURTH", stack.peak());
+    }
+
 }

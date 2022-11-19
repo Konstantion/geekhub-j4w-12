@@ -18,6 +18,13 @@ public class TrivialStackImp implements TrivialStringStack {
     }
 
     @Override
+    public void push(String[] input) {
+        for(String line : input) {
+            push(line);
+        }
+    }
+
+    @Override
     public String pop() {
         if(pointer == -1) {
             throw STACK_IS_EMPTY;
