@@ -62,14 +62,24 @@ public class SequenceCalculator {
     }
 
     private void validateOperation(int operand, ArithmeticOperation operation) {
+        if (operand == 0 && operation.equals(ArithmeticOperation.DIVISION)) {
+            throw new IllegalArgumentException("You can't divide by zero");
+        }
     }
 
     private Long doArithmeticOperation(Long number, int operand, ArithmeticOperation operation) {
-        return null;
+        switch (operation) {
+            case ADDITION -> number += operand;
+            case SUBTRACTION -> number -= operand;
+            case DIVISION -> number /= operand;
+            case MULTIPLICATION -> number *= operand;
+        }
+        return number;
     }
 
     private TrivialStringStack extractSequenceToStack(String sequence) {
         TrivialStringStack extractedSequenceStack = new TrivialStackImp();
+
         sequence = removeUnnecessaryCharacters(sequence);
 
         String[] sequenceLines = sequence.split(String.valueOf(COMMA_CHAR));
