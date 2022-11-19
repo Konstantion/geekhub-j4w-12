@@ -37,6 +37,25 @@ public class SequenceCalculator {
         return TODO_TYPE();
     }
 
+    private int calculateSequenceFromStack() {
+        return 0;
+    }
+
+
+
+    private String removeUnnecessaryCharacters(String sequence) {
+        char[] sequenceChars = sequence.toCharArray();
+
+        for (char sequenceChar : sequenceChars) {
+            if (sequence.contains(String.valueOf(sequenceChar))
+                && !(sequenceChar == COMMA_CHAR || sequenceChar == MINUS_CHAR)) {
+                sequence = sequence
+                        .replace(String.valueOf(sequenceChar), "");
+            }
+        }
+
+        return sequence;
+    }
 
     private void validate(String input) {
         validatePresent(input);
