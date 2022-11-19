@@ -324,7 +324,7 @@ class LosesInWarParserTest {
     @Test
     @DisplayName("My addictional test to check if program works right " +
             "when input values given in bad format")
-    void parse_input_with__shuffled_statistic_values_that_contains_new_entries_data() {
+    void parse_input_with_shuffled_statistic_values_that_contains_new_entries_data() {
         var november14Input = """
                 Гармати — 
                 1839 (+2)
@@ -349,6 +349,48 @@ class LosesInWarParserTest {
                 
                 Спеціальна техніка — 160
                                 
+                """;
+
+        var statistic = losesInWarParser.parseLosesStatistic(november14Input);
+
+        var expectedStatistic = LosesStatistic.newStatistic()
+                .withTanks(2848)
+                .withArmouredFightingVehicles(5748)
+                .withCannons(1839)
+                .withMultipleRocketLaunchers(393)
+                .withAntiAirDefenseDevices(206)
+                .withPlanes(278)
+                .withHelicopters(261)
+                .withDrones(1509)
+                .withCruiseMissiles(399)
+                .withShipsOrBoats(16)
+                .withCarsAndTankers(4316)
+                .withSpecialEquipment(160)
+                .withPersonnel(81370)
+                .build();
+
+        assertEquals(expectedStatistic, statistic);
+    }
+
+    @Test
+    @DisplayName("My addictional test to check if program remote 0 " +
+                 "at the beginning and end of the string")
+    void parse_input_with_zero_at_the_beggining_and_end() {
+        var november14Input = """
+                Taнки — 2848 (+8)
+                ББM — 5748 (+6)
+                Гapмaти — 1839 (+2)
+                PC3B — 393
+                3acoби ПП0
+                 — 206 
+                Лiтaки — 278
+                Гeлiкoптepи — 261
+                БПЛA — 1509 (+2)
+                Kpилaтi paкeти — 399
+                Koрaблi (кaтepи) — 16
+                Aвтoмoбiлi тa aвтoциcтepни — 4316 (+21)
+                Cпeцiaльнa тeхнiкa — 160
+                0coбoвий cклaд — близькo 81370 oсiб (+510)
                 """;
 
         var statistic = losesInWarParser.parseLosesStatistic(november14Input);

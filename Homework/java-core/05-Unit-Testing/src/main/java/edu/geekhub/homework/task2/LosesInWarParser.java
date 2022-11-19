@@ -207,14 +207,17 @@ public class LosesInWarParser {
     }
 
     private void replaceNumberCharToLetter(StringBuilder inputBuilder, int charIndex, String replacement) {
+        // 0 at the beginning
         if ((charIndex == 0 && charIndex + 1 < inputBuilder.length())
             && Character.isAlphabetic(inputBuilder.charAt(charIndex + 1))) {
             inputBuilder.replace(charIndex, charIndex + 1, replacement);
         }
+        // 0 at the middle
         if ((charIndex > 0 && charIndex + 1 < inputBuilder.length())
             && (Character.isAlphabetic(inputBuilder.charAt(charIndex - 1)) || Character.isAlphabetic(inputBuilder.charAt(charIndex + 1)))) {
             inputBuilder.replace(charIndex, charIndex + 1, replacement);
         }
+        // 0 at the end
         if ((charIndex == inputBuilder.length() - 1 && charIndex - 1 >= 0)
             && Character.isAlphabetic(inputBuilder.charAt(charIndex - 1))) {
             inputBuilder.replace(charIndex, charIndex + 1, replacement);
