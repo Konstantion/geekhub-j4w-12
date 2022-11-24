@@ -7,7 +7,7 @@ import java.util.Arrays;
 import static java.util.Objects.isNull;
 
 public class TrivialOrcCollection implements TrivialCollection {
-    private Object[] data;
+    private Orc[] data;
     private int POINTER = 0;
     private static final float EXTENSION_MULTIPLIER = 0.7f;
 
@@ -16,7 +16,7 @@ public class TrivialOrcCollection implements TrivialCollection {
     }
 
     public TrivialOrcCollection(int size) {
-        data = new Object[size];
+        data = new Orc[size];
     }
 
     @Override
@@ -47,6 +47,10 @@ public class TrivialOrcCollection implements TrivialCollection {
             throw new IllegalArgumentException("Object must be Orc");
         }
         return orc;
+    }
+
+    public Orc[] getData() {
+        return data;
     }
 
     @Override
