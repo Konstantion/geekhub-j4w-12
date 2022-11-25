@@ -1,6 +1,6 @@
 package edu.geekhub.orcostat.model.collections;
 
-import edu.geekhub.orcostat.model.Orc;
+import edu.geekhub.orcostat.model.entity.Orc;
 
 import java.util.Arrays;
 
@@ -8,8 +8,8 @@ import static java.util.Objects.isNull;
 
 public class TrivialOrcCollection implements TrivialCollection {
     private Orc[] data;
-    private int POINTER = 0;
-    private static final float EXTENSION_MULTIPLIER = 0.7f;
+    private int pointer = -1;
+    private static final float EXTENSION_MULTIPLIER = 1.5f;
 
     public TrivialOrcCollection() {
         this(100);
@@ -25,16 +25,13 @@ public class TrivialOrcCollection implements TrivialCollection {
     }
 
     private void add(Orc orc) {
-        if (isNull(orc)) {
-            throw new IllegalArgumentException("Object cannot be null");
-        }
+        pointer += 1;
 
-        if (POINTER == data.length - 1) {
+        if (pointer == data.length - 1) {
             data = Arrays.copyOf(data, (int) (data.length * EXTENSION_MULTIPLIER + 1));
         }
 
-        data[POINTER] = orc;
-        POINTER += 1;
+        data[pointer] = orc;
     }
 
     private Orc extractOrc(Object obj) {
@@ -42,19 +39,23 @@ public class TrivialOrcCollection implements TrivialCollection {
             throw new IllegalArgumentException("Object cannot be null");
         }
         if (obj instanceof Orc orc) {
-            add(orc);
+            return orc;
         } else {
             throw new IllegalArgumentException("Object must be Orc");
         }
-        return orc;
+
     }
 
     public Orc[] getData() {
-        return data;
+        return Arrays.copyOf(data, length());
+    }
+
+    private int length() {
+        return pointer + 1;
     }
 
     @Override
     public int count() {
-        return POINTER + 1;
+        return length();
     }
 }

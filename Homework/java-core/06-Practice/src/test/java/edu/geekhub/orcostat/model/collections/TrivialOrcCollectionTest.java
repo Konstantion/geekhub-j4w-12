@@ -1,6 +1,7 @@
 package edu.geekhub.orcostat.model.collections;
 
-import edu.geekhub.orcostat.model.Orc;
+import edu.geekhub.orcostat.model.entity.Orc;
+import edu.geekhub.orcostat.model.entity.Tank;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,5 +40,44 @@ class TrivialOrcCollectionTest {
                 () -> orcs.add(null)
         );
         assertEquals("Object cannot be null", thrown.getMessage());
+    }
+
+    @Test
+    void trivial_collection_extension_automatic() {
+        TrivialOrcCollection orcs = new TrivialOrcCollection();
+        int actualCountOfElements = 2_000;
+
+        for (int i = 0; i < actualCountOfElements; i++) {
+            orcs.add(new Orc());
+        }
+
+
+        assertEquals(actualCountOfElements, orcs.count());
+    }
+
+    @Test
+    void trivial_orc_collection_cant_save_another_objects() {
+        TrivialOrcCollection orcs = new TrivialOrcCollection();
+        Tank tank = new Tank();
+
+        IllegalArgumentException thrown = assertThrows(
+                IllegalArgumentException.class,
+                () -> orcs.add(tank)
+        );
+
+        assertEquals("Object must be Orc", thrown.getMessage());
+    }
+
+    @Test
+    void trivial_orc_collection_can_return_data() {
+        TrivialOrcCollection orcs = new TrivialOrcCollection();
+        Orc first_Orc = new Orc();
+        Orc second_Orc = new Orc();
+
+        orcs.add(first_Orc);
+        orcs.add(second_Orc);
+        Orc[] actualOrcs = new Orc[]{first_Orc, second_Orc};
+
+        assertArrayEquals(actualOrcs, orcs.getData());
     }
 }
