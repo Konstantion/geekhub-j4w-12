@@ -1,7 +1,6 @@
 package edu.geekhub.orcostat.model.collections;
 
-import edu.geekhub.orcostat.model.Orc;
-import edu.geekhub.orcostat.model.Tank;
+import edu.geekhub.orcostat.model.entity.Tank;
 
 import java.util.Arrays;
 
@@ -9,8 +8,8 @@ import static java.util.Objects.isNull;
 
 public class TrivialTankCollection implements TrivialCollection {
     private Tank[] data;
-    private int POINTER = 0;
-    private static final float EXTENSION_MULTIPLIER = 0.7f;
+    private int pointer = -1;
+    private static final float EXTENSION_MULTIPLIER = 1.5f;
 
     public TrivialTankCollection() {
         this(100);
@@ -26,12 +25,13 @@ public class TrivialTankCollection implements TrivialCollection {
     }
 
     private void add(Tank tank) {
-        if (POINTER == data.length - 1) {
+        pointer += 1;
+
+        if (pointer == data.length - 1) {
             data = Arrays.copyOf(data, (int) (data.length * EXTENSION_MULTIPLIER + 1));
         }
 
-        data[POINTER] = tank;
-        POINTER += 1;
+        data[pointer] = tank;
     }
 
     private Tank extractTank(Object obj) {
@@ -39,19 +39,22 @@ public class TrivialTankCollection implements TrivialCollection {
             throw new IllegalArgumentException("Object cannot be null");
         }
         if (obj instanceof Tank tank) {
-            add(tank);
+            return tank;
         } else {
             throw new IllegalArgumentException("Object must be Tank");
         }
-        return tank;
     }
 
     public Tank[] getData() {
-        return data;
+        return Arrays.copyOf(data, length());
+    }
+
+    private int length() {
+        return pointer + 1;
     }
 
     @Override
     public int count() {
-        return POINTER + 1;
+        return length();
     }
 }
