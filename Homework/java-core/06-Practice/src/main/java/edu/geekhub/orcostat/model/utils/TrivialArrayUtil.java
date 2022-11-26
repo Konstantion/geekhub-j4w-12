@@ -28,7 +28,7 @@ public class TrivialArrayUtil {
         for (MilitaryLoss[] array : rest) {
             totalLength += array.length;
         }
-        MilitaryLoss[] result = Arrays.copyOf(first, totalLength);
+        MilitaryLoss[] result = Arrays.copyOf(first, totalLength , MilitaryLoss[].class);
         int offset = first.length;
         for (MilitaryLoss[] array : rest) {
             System.arraycopy(array, 0, result, offset, array.length);
