@@ -2,8 +2,11 @@ package edu.geekhub.orcostat.controller;
 
 import edu.geekhub.orcostat.beans.DatabaseBean;
 import edu.geekhub.orcostat.beans.MilitaryLossServiceBean;
+import edu.geekhub.orcostat.model.collections.TrivialOrcCollection;
 import edu.geekhub.orcostat.model.entity.Orc;
+import edu.geekhub.orcostat.model.entity.Tank;
 import edu.geekhub.orcostat.model.request.Request;
+import edu.geekhub.orcostat.model.request.Response;
 import edu.geekhub.orcostat.repository.TrivialDatabase;
 import edu.geekhub.orcostat.service.MilitaryLossService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,11 +29,60 @@ class MilitaryLossControllerTest {
     void add_orc() {
         Orc orc = new Orc();
         Request request = new Request(orc);
-        controller.addMilitary(request);
+        Response response = controller.addMilitary(request);
 
         int actualOrcsCount = service.getNegativelyAliveOrcCount();
         int expectedOrcsCount = 1;
+        String actualResponse = response.toString();
+        String expectedResponse = Response.ok(String.format(
+                        "Successfully saved %s",
+                        orc
+                ))
+                .toString();
 
         assertEquals(expectedOrcsCount, actualOrcsCount);
+        assertEquals(expectedResponse, actualResponse);
     }
+
+    @Test
+    void add_orc_null() {
+        Orc orc = null;
+        Request request = new Request(orc);
+
+        Response response = controller.addMilitary(request);
+        int actualOrcsCount = service.getNegativelyAliveOrcCount();
+        int expectedOrcsCount = 0;
+        String actualResponse = response.toString();
+        String expectedResponse = Response.fail(String.format(
+                        "Cannot find Military unit %s",
+                        orc
+                ))
+                .toString();
+
+        assertEquals(expectedOrcsCount, actualOrcsCount);
+        assertEquals(expectedResponse, actualResponse);
+    }
+
+//    @Test
+//    void add_tank_with_seven_orcs() {
+//        TrivialOrcCollection orcs = new TrivialOrcCollection();
+//        for (int i = 0; i < 7; i++) {
+//            orcs.add(new Orc());
+//        }
+//        Tank tank = new Tank(orcs);
+//        Request request = new Request(tank);
+//
+//        Response response = controller.addMilitary(request);
+//        int actualTankCount = service.getDestroyedTanksCount();
+//        int expectedOrcsCount = 0;
+//        String actualResponse = response.toString();
+//        String expectedResponse = Response.fail(String.format(
+//                        "Cannot find Military unit %s",
+//                        tank
+//                ))
+//                .toString();
+//
+//        assertEquals(expectedOrcsCount, actualTankCount);
+//        assertEquals(expectedResponse, actualResponse);
+//    }
 }

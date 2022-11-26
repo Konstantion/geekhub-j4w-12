@@ -19,21 +19,21 @@ public class MilitaryLossController {
     public Response addMilitary(Request request) {
         Object data = request.getData();
         try {
-            if (addMilitaryToService(data)) {
+            if (tryToAddMilitaryToService(data)) {
                 return Response.ok(String.format(
-                        "Successfully saved %s",
+                        "Successfully saved [%s]",
                         data
                 ));
             } else {
                 return Response.fail(String.format(
-                                "Cannot find Military unit %s",
+                                "Cannot find Military unit [%s]",
                                 data
                         )
                 );
             }
         } catch (IllegalArgumentException e) {
             return Response.fail(String.format(
-                    "Illegal argument %s%n" +
+                    "Illegal argument [%s]%n" +
                     "Try again",
                     e.getMessage()
             ));
@@ -41,7 +41,8 @@ public class MilitaryLossController {
 
     }
 
-    private boolean addMilitaryToService(Object data) {
+
+    private boolean tryToAddMilitaryToService(Object data) {
         if (data instanceof Orc orc) {
             service.addNegativelyAliveOrc(orc);
         } else if (data instanceof Tank tank) {
