@@ -17,9 +17,13 @@ public abstract class MilitaryLoss {
         this(price, LocalDate.now());
     }
 
-    protected abstract LocalDate getDate();
+    public LocalDate getDate() {
+        return date;
+    }
 
-    protected abstract int getPrice();
+    public int getPrice() {
+        return price;
+    }
 
     private void validate(int price) {
         if (price < 0) {
