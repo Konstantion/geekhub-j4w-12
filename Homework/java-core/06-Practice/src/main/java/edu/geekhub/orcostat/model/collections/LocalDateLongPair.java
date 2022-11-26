@@ -3,13 +3,13 @@ package edu.geekhub.orcostat.model.collections;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class LocalDateMoneyPair {
+public class LocalDateLongPair {
     private LocalDate date;
-    private long money;
+    private long value;
 
-    public LocalDateMoneyPair(LocalDate date, long money) {
+    public LocalDateLongPair(LocalDate date, long value) {
         this.date = date;
-        this.money = money;
+        this.value = value;
     }
 
     public LocalDate getDate() {
@@ -20,28 +20,28 @@ public class LocalDateMoneyPair {
         this.date = date;
     }
 
-    public long getMoney() {
-        return money;
+    public long getValue() {
+        return value;
     }
 
-    public void setMoney(long money) {
-        this.money = money;
+    public void setValue(long value) {
+        this.value = value;
     }
 
-    public void addMoney(long money) {
-        this.money += money;
+    public void addValue(long value) {
+        this.value += value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LocalDateMoneyPair pair = (LocalDateMoneyPair) o;
-        return money == pair.money && Objects.equals(date, pair.date);
+        LocalDateLongPair pair = (LocalDateLongPair) o;
+        return value == pair.value && Objects.equals(date, pair.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, money);
+        return Objects.hash(date, value);
     }
 }
