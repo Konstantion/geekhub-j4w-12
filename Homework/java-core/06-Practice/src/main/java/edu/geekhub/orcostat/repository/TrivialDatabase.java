@@ -63,6 +63,13 @@ public class TrivialDatabase {
         return missileTable.getData();
     }
 
+    public MilitaryLoss[] getAllMilitaryLoss() {
+        return TrivialArrayUtil.concatAll(getAllOrcs(),
+                getAllTanks(),
+                getAllDrones(),
+                getAllMissiles());
+    }
+
     public Orc[] getAllOrcsWithLocalDate(LocalDate date) {
         MilitaryLoss[] filteredArray = TrivialArrayUtil.filterMilitaryLossByLocalDate(
                 getAllOrcs(),
@@ -91,5 +98,15 @@ public class TrivialDatabase {
                 date
         );
         return Arrays.copyOf(filteredArray, filteredArray.length, Missile[].class);
+    }
+
+    public MilitaryLoss[] getAllMilitaryLossWithDate(LocalDate date) {
+        return TrivialArrayUtil.filterMilitaryLossByLocalDate(
+                TrivialArrayUtil.concatAll(getAllOrcs(),
+                        getAllTanks(),
+                        getAllDrones(),
+                        getAllMissiles()),
+                date
+        );
     }
 }
