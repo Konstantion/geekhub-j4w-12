@@ -4,6 +4,8 @@ import edu.geekhub.orcostat.model.collections.LocalDateLongPair;
 import edu.geekhub.orcostat.model.collections.TrivialLocalDateHashMap;
 import edu.geekhub.orcostat.model.entity.MilitaryLoss;
 
+import java.time.LocalDate;
+
 public class StatisticTableService {
     private final MilitaryLossService militaryLossService;
 
@@ -66,6 +68,72 @@ public class StatisticTableService {
 
     public String getMissileTable() {
         MilitaryLoss[] militaryLosses = militaryLossService.getDatabase().getAllMissiles();
+
+        TrivialLocalDateHashMap hashMap = new TrivialLocalDateHashMap();
+        for (MilitaryLoss militaryLoss : militaryLosses) {
+            hashMap.checkAndAdd(new LocalDateLongPair(
+                    militaryLoss.getDate(),
+                    1
+            ));
+        }
+        return buildTable(hashMap, "MISSILES");
+    }
+
+    public String getMoneyDamageTable(LocalDate date) {
+        MilitaryLoss[] militaryLosses = militaryLossService.getDatabase().getAllMilitaryLossWithDate(date);
+
+        TrivialLocalDateHashMap hashMap = new TrivialLocalDateHashMap();
+        for (MilitaryLoss militaryLoss : militaryLosses) {
+            hashMap.checkAndAdd(new LocalDateLongPair(
+                    militaryLoss.getDate(),
+                    militaryLoss.getPrice()
+            ));
+        }
+
+        return buildTable(hashMap, "MONEY");
+    }
+
+    public String getTroopsTable(LocalDate date) {
+        MilitaryLoss[] militaryLosses = militaryLossService.getDatabase().getAllOrcsWithLocalDate(date);
+
+        TrivialLocalDateHashMap hashMap = new TrivialLocalDateHashMap();
+        for (MilitaryLoss militaryLoss : militaryLosses) {
+            hashMap.checkAndAdd(new LocalDateLongPair(
+                    militaryLoss.getDate(),
+                    1
+            ));
+        }
+        return buildTable(hashMap, "TROOPS");
+    }
+
+    public String getTanksTable(LocalDate date) {
+        MilitaryLoss[] militaryLosses = militaryLossService.getDatabase().getAllTanksWithLocalDate(date);
+
+        TrivialLocalDateHashMap hashMap = new TrivialLocalDateHashMap();
+        for (MilitaryLoss militaryLoss : militaryLosses) {
+            hashMap.checkAndAdd(new LocalDateLongPair(
+                    militaryLoss.getDate(),
+                    1
+            ));
+        }
+        return buildTable(hashMap, "TANKS");
+    }
+
+    public String getDronesTable(LocalDate date) {
+        MilitaryLoss[] militaryLosses = militaryLossService.getDatabase().getAllDronesWithLocalDate(date);
+
+        TrivialLocalDateHashMap hashMap = new TrivialLocalDateHashMap();
+        for (MilitaryLoss militaryLoss : militaryLosses) {
+            hashMap.checkAndAdd(new LocalDateLongPair(
+                    militaryLoss.getDate(),
+                    1
+            ));
+        }
+        return buildTable(hashMap, "DRONES");
+    }
+
+    public String getMissileTable(LocalDate date) {
+        MilitaryLoss[] militaryLosses = militaryLossService.getDatabase().getAllMissilesWithLocalDate(date);
 
         TrivialLocalDateHashMap hashMap = new TrivialLocalDateHashMap();
         for (MilitaryLoss militaryLoss : militaryLosses) {
