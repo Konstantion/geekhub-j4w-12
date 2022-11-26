@@ -80,4 +80,14 @@ class TrivialOrcCollectionTest {
 
         assertArrayEquals(actualOrcs, orcs.getData());
     }
+
+    @Test
+    void empty_array_when_zero_orcs() {
+        TrivialOrcCollection orcs = new TrivialOrcCollection();
+
+        Orc[] actualOrcs = orcs.getData();
+        Orc[] expectedOrcs = new Orc[0];
+
+        assertArrayEquals(expectedOrcs, actualOrcs);
+    }
 }
