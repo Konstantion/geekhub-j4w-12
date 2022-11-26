@@ -33,4 +33,11 @@ public class Missile extends MilitaryLoss {
         return date;
     }
 
+    @Override
+    public String toString() {
+        return "Missile{" +
+               "price=" + price +
+               ", date=" + date +
+               '}';
+    }
 }

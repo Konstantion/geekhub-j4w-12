@@ -31,5 +31,11 @@ public class Orc extends MilitaryLoss {
         return date;
     }
 
-
+    @Override
+    public String toString() {
+        return "Orc{" +
+               "price=" + price +
+               ", date=" + date +
+               '}';
+    }
 }

@@ -66,4 +66,12 @@ public class Tank extends MilitaryLoss {
         return date;
     }
 
+    @Override
+    public String toString() {
+        return "Tank{" +
+               "price=" + price +
+               ", date=" + date +
+               ", equipage=" + equipage.count() +
+               '}';
+    }
 }

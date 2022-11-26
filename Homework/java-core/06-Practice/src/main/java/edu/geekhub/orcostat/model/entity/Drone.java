@@ -3,8 +3,8 @@ package edu.geekhub.orcostat.model.entity;
 import java.time.LocalDate;
 
 public class Drone extends MilitaryLoss {
-    private static final int TWENTY_LADA_VESTA_SPORT_PRICE = 200_000;
 
+    private static final int TWENTY_LADA_VESTA_SPORT_PRICE = 200_000;
 
     public Drone() {
         this(TWENTY_LADA_VESTA_SPORT_PRICE);
@@ -31,5 +31,13 @@ public class Drone extends MilitaryLoss {
     @Override
     public LocalDate getDate() {
         return date;
+    }
+
+    @Override
+    public String toString() {
+        return "Drone{" +
+               "price=" + price +
+               ", date=" + date +
+               '}';
     }
 }
