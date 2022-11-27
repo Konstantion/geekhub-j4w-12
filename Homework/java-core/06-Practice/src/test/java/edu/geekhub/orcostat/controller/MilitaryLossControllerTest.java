@@ -35,7 +35,7 @@ class MilitaryLossControllerTest {
         int expectedOrcsCount = 1;
         String actualResponse = response.toString();
         String expectedResponse = Response.ok(String.format(
-                        "Successfully saved %s",
+                        "Successfully saved [%s]",
                         orc
                 ))
                 .toString();
@@ -54,7 +54,7 @@ class MilitaryLossControllerTest {
         int expectedOrcsCount = 0;
         String actualResponse = response.toString();
         String expectedResponse = Response.fail(String.format(
-                        "Cannot find Military unit %s",
+                        "Cannot find Military unit [%s]",
                         orc
                 ))
                 .toString();
@@ -62,27 +62,4 @@ class MilitaryLossControllerTest {
         assertEquals(expectedOrcsCount, actualOrcsCount);
         assertEquals(expectedResponse, actualResponse);
     }
-
-//    @Test
-//    void add_tank_with_seven_orcs() {
-//        TrivialOrcCollection orcs = new TrivialOrcCollection();
-//        for (int i = 0; i < 7; i++) {
-//            orcs.add(new Orc());
-//        }
-//        Tank tank = new Tank(orcs);
-//        Request request = new Request(tank);
-//
-//        Response response = controller.addMilitary(request);
-//        int actualTankCount = service.getDestroyedTanksCount();
-//        int expectedOrcsCount = 0;
-//        String actualResponse = response.toString();
-//        String expectedResponse = Response.fail(String.format(
-//                        "Cannot find Military unit %s",
-//                        tank
-//                ))
-//                .toString();
-//
-//        assertEquals(expectedOrcsCount, actualTankCount);
-//        assertEquals(expectedResponse, actualResponse);
-//    }
 }
