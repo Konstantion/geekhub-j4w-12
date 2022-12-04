@@ -4,11 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +27,8 @@ class OddIndexIteratorTest {
 
     @Test
     void iterator_hasNext_true_when_not_empty() {
-        data.add(10);
+        data.add(1);
+        data.add(2);
         OddIndexIterator<Integer> iterator = new OddIndexIterator<>(data);
 
         assertTrue(iterator.hasNext());
