@@ -3,6 +3,7 @@ package edu.geekhub.homework.hw2;
 import edu.geekhub.homework.hw2.entity.Task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -11,12 +12,12 @@ public class ToDoListImpl<E extends Task> implements ToDoList<E> {
 
     @Override
     public E getTopPriorityTask() {
-        return null;
+        return getSortedPriorityTasks().get(0);
     }
 
     @Override
     public E getTaskByIndex(int index) {
-        return null;
+        return tasksStorage.get(index);
     }
 
     @Override
@@ -26,31 +27,45 @@ public class ToDoListImpl<E extends Task> implements ToDoList<E> {
 
     @Override
     public List<E> getSortedPriorityTasks() {
-        List<E> priorityTasks = tasksStorage;
+        List<E> priorityTasks = new ArrayList<>(tasksStorage);
+
+        priorityTasks.sort(Collections.reverseOrder(new Comparator<E>() {
+            @Override
+            public int compare(E o1, E o2) {
+                return  Integer.compare(
+                        o1.getPriority(),
+                        o2.getPriority()
+                );
+            }
+        }));
+        return priorityTasks;
+    }
+
+    @Override
+    public List<E> getSortedByAlphabetTasks() {
+        List<E> priorityTasks = new ArrayList<>(tasksStorage);
 
         priorityTasks.sort(new Comparator<E>() {
             @Override
             public int compare(E o1, E o2) {
-                //write your comparator logic here
-                return 0;
+                return o1.getName()
+                        .compareToIgnoreCase(
+                                o2.getName()
+                        );
             }
         });
         return priorityTasks;
     }
 
     @Override
-    public List<E> getSortedByAlphabetTasks() {
-        return null;
-    }
-
-    @Override
     public boolean addTaskToTheEnd(E task) {
-        return false;
+        return tasksStorage.add(task);
     }
 
     @Override
     public boolean addTaskToTheStart(E task) {
-        return false;
+        tasksStorage.add(0, task);
+        return true;
     }
 
     @Override
