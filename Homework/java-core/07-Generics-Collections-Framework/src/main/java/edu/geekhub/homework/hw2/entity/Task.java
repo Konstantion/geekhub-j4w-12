@@ -38,4 +38,13 @@ public class Task {
     public int hashCode() {
         return Objects.hash(getName(), getDescription(), getPriority());
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+               "name='" + name + '\'' +
+               ", description='" + description + '\'' +
+               ", priority=" + priority +
+               '}';
+    }
 }
