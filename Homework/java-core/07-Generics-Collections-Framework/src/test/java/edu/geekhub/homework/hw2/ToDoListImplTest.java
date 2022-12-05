@@ -5,10 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,8 +58,8 @@ class ToDoListImplTest {
         toDoList.addTaskToTheEnd(task_3);
 
         assertEquals(
-                toDoList.getTopPriorityTask(),
-                task_2
+                task_2,
+                toDoList.getTopPriorityTask()
         );
     }
 
@@ -90,7 +87,8 @@ class ToDoListImplTest {
             taskList.add(task);
         }
 
-        taskList.sort(Comparator.comparingInt(Task::getPriority));
+        taskList.sort(Collections.reverseOrder(Comparator.comparingInt(Task::getPriority)));
+
 
         assertEquals(
                 taskList,
@@ -133,5 +131,15 @@ class ToDoListImplTest {
         );
     }
 
+    @Test
+    void toDoList_delete_element_false_when_no_such_element() {
+        Task task_1 = new Task("Task_1", "", 10);
+        Task task_2 = new Task("Task_2", "", 10);
+        Task task_3 = new Task("Task_3", "", 10);
 
+        toDoList.addTaskToTheEnd(task_1);
+        toDoList.addTaskToTheEnd(task_2);
+
+        assertFalse(toDoList.deleteTaskByIndex(task_3));
+    }
 }
