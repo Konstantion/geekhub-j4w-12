@@ -97,7 +97,7 @@ class ExercisesTest {
 
     @Test
     void min_populated_country_test() {
-        String actualCountry = exercises.mostPopulatedCountry();
+        String actualCountry = exercises.minPopulatedCountry();
 
         String expectedCountry;
         Map<String, Integer> countriesPopulation = new HashMap<>();
