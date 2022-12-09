@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExercisesTest {
     private Exercises exercises;
-    private Cities citiesRepo = new Cities();
+    private final Cities citiesRepo = new Cities();
 
     @BeforeEach
     void setUp() {
@@ -69,7 +69,7 @@ class ExercisesTest {
     void most_populated_country_test() {
         String actualCountry = exercises.mostPopulatedCountry();
 
-        String expectedCountry = "";
+        String expectedCountry;
         Map<String, Integer> countriesPopulation = new HashMap<>();
         for(City city : citiesRepo.getAllCities().values()) {
             if(!countriesPopulation.containsKey(city.getCountryCode())){
@@ -99,7 +99,7 @@ class ExercisesTest {
     void min_populated_country_test() {
         String actualCountry = exercises.mostPopulatedCountry();
 
-        String expectedCountry = "";
+        String expectedCountry;
         Map<String, Integer> countriesPopulation = new HashMap<>();
         for(City city : citiesRepo.getAllCities().values()) {
             if(!countriesPopulation.containsKey(city.getCountryCode())){
@@ -137,6 +137,29 @@ class ExercisesTest {
         assertEquals(
                 expectedTotalPopulation,
                 actualTotalPopulation
+        );
+    }
+
+    @Test
+    void population_of_each_country() {
+        Map<String, Integer> actualPopulationOfEachCountry = exercises.populationOfEachCountry();
+
+        Map<String, Integer> expectedPopulationOfEachCountry = new HashMap<>();
+        for(City city : citiesRepo.getAllCities().values()) {
+            if(!expectedPopulationOfEachCountry.containsKey(city.getCountryCode())){
+                expectedPopulationOfEachCountry.put(
+                        city.getCountryCode(),
+                        city.getPopulation()
+                );
+            } else {
+                Integer tempSum = expectedPopulationOfEachCountry.get(city.getCountryCode()) + city.getPopulation();
+                expectedPopulationOfEachCountry.put(city.getCountryCode(), tempSum);
+            }
+        }
+
+        assertEquals(
+                expectedPopulationOfEachCountry,
+                actualPopulationOfEachCountry
         );
     }
 
