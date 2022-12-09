@@ -28,8 +28,13 @@ public class Exercises {
     }
 
     public City minPopulatedCity() {
-        // Find the min populated city
-        return null;
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .min(Comparator.comparingInt(City::getPopulation))
+                .orElseThrow();
     }
 
     public String mostPopulatedCountry() {

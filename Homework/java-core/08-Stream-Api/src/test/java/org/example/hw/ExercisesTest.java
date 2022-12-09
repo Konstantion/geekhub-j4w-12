@@ -3,6 +3,7 @@ package org.example.hw;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +35,26 @@ class ExercisesTest {
                 .stream()
                 .map(City::getPopulation)
                 .max(Integer::compare)
+                .orElseThrow();
+
+
+        assertEquals(
+                expectedPopulation,
+                actualPopulation
+        );
+    }
+
+    @Test
+    void min_population_city_test() {
+        City city = exercises.minPopulatedCity();
+
+        Integer actualPopulation = city.getPopulation();
+        Integer expectedPopulation = citiesRepo
+                .getAllCities()
+                .values()
+                .stream()
+                .map(City::getPopulation)
+                .max(Comparator.reverseOrder())
                 .orElseThrow();
 
 
