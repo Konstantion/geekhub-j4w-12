@@ -20,9 +20,26 @@ class ExercisesTest {
 
     @Test
     void get_country_cities_count_test() {
-        Map<String, Long> map = exercises.getCountryCitiesCount();
+        Map<String, Long> actualCountryCitiesCount = exercises.getCountryCitiesCount();
 
-        System.out.println(map);
+
+        Map<String, Long> expectedCountryCitiesCount = new HashMap<>();
+        for (City city : citiesRepo.getAllCities().values()) {
+            if (!expectedCountryCitiesCount.containsKey(city.getCountryCode())) {
+                expectedCountryCitiesCount.put(
+                        city.getCountryCode(),
+                        1L
+                );
+            } else {
+                Long tempSum = expectedCountryCitiesCount.get(city.getCountryCode()) + 1L;
+                expectedCountryCitiesCount.put(city.getCountryCode(), tempSum);
+            }
+        }
+
+        assertEquals(
+                expectedCountryCitiesCount,
+                actualCountryCitiesCount
+        );
     }
 
     @Test
