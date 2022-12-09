@@ -38,21 +38,52 @@ public class Exercises {
     }
 
     public String mostPopulatedCountry() {
-        // Find the most populated city
-        return null;
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        City::getCountryCode,
+                        City::getPopulation,
+                        Integer::sum
+                ))
+                .entrySet()
+                .stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue))
+                .orElseThrow()
+                .getKey();
     }
 
     public String minPopulatedCountry() {
-        // Find the most populated city
-        return null;
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        City::getCountryCode,
+                        City::getPopulation,
+                        Integer::sum
+                ))
+                .entrySet()
+                .stream()
+                .min(Comparator.comparingInt(Map.Entry::getValue))
+                .orElseThrow()
+                .getKey();
     }
 
     public Long totalPopulation() {
-        // Find the most populated city
-        return null;
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .mapToLong(City::getPopulation)
+                .sum();
     }
 
-    public Map<String,Integer> populationOfEachCountry() {
+    public Map<String, Integer> populationOfEachCountry() {
         // Find the most populated city
         return null;
     }
