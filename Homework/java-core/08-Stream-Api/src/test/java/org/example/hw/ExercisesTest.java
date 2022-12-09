@@ -71,8 +71,8 @@ class ExercisesTest {
 
         String expectedCountry;
         Map<String, Integer> countriesPopulation = new HashMap<>();
-        for(City city : citiesRepo.getAllCities().values()) {
-            if(!countriesPopulation.containsKey(city.getCountryCode())){
+        for (City city : citiesRepo.getAllCities().values()) {
+            if (!countriesPopulation.containsKey(city.getCountryCode())) {
                 countriesPopulation.put(
                         city.getCountryCode(),
                         city.getPopulation()
@@ -101,8 +101,8 @@ class ExercisesTest {
 
         String expectedCountry;
         Map<String, Integer> countriesPopulation = new HashMap<>();
-        for(City city : citiesRepo.getAllCities().values()) {
-            if(!countriesPopulation.containsKey(city.getCountryCode())){
+        for (City city : citiesRepo.getAllCities().values()) {
+            if (!countriesPopulation.containsKey(city.getCountryCode())) {
                 countriesPopulation.put(
                         city.getCountryCode(),
                         city.getPopulation()
@@ -130,7 +130,7 @@ class ExercisesTest {
         Long actualTotalPopulation = exercises.totalPopulation();
 
         Long expectedTotalPopulation = 0L;
-        for(City city : citiesRepo.getAllCities().values()) {
+        for (City city : citiesRepo.getAllCities().values()) {
             expectedTotalPopulation += city.getPopulation();
         }
 
@@ -141,12 +141,12 @@ class ExercisesTest {
     }
 
     @Test
-    void population_of_each_country() {
+    void population_of_each_country_test() {
         Map<String, Integer> actualPopulationOfEachCountry = exercises.populationOfEachCountry();
 
         Map<String, Integer> expectedPopulationOfEachCountry = new HashMap<>();
-        for(City city : citiesRepo.getAllCities().values()) {
-            if(!expectedPopulationOfEachCountry.containsKey(city.getCountryCode())){
+        for (City city : citiesRepo.getAllCities().values()) {
+            if (!expectedPopulationOfEachCountry.containsKey(city.getCountryCode())) {
                 expectedPopulationOfEachCountry.put(
                         city.getCountryCode(),
                         city.getPopulation()
@@ -163,5 +163,22 @@ class ExercisesTest {
         );
     }
 
+    @Test
+    void population_of_specific_country_test() {
+        String specificCountry = "FRA";
+        Integer actualPopulationOfSpecificCountry = exercises
+                .populationOfSpecificCountry(specificCountry);
 
+        Integer expectedPopulationOfSpecificCountry = 0;
+        for (City city : citiesRepo.getAllCities().values()) {
+            if (city.getCountryCode().equals(specificCountry)) {
+                expectedPopulationOfSpecificCountry += city.getPopulation();
+            }
+        }
+
+        assertEquals(
+                expectedPopulationOfSpecificCountry,
+                actualPopulationOfSpecificCountry
+        );
+    }
 }
