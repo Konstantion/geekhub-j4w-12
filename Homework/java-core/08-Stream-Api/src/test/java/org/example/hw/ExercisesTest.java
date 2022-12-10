@@ -198,4 +198,23 @@ class ExercisesTest {
                 actualPopulationOfSpecificCountry
         );
     }
+
+    @Test
+    void find_specific_city_by_name() {
+        String cityName = "Metz";
+        City actualCity = exercises.specificCityByName(cityName);
+
+        City expectedCity = new City();
+        for (City city : citiesRepo.getAllCities().values()) {
+            if (city.getName().equals(cityName)) {
+                expectedCity = city;
+                break;
+            }
+        }
+
+        assertEquals(
+                expectedCity,
+                actualCity
+        );
+    }
 }

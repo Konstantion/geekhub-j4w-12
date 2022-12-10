@@ -104,14 +104,20 @@ public class Exercises {
         return cities
                 .values()
                 .stream()
-                .filter((city) -> city.getCountryCode().equals(countryCode))
+                .filter(city -> city.getCountryCode().equals(countryCode))
                 .map(City::getPopulation)
                 .reduce(0, Integer::sum);
     }
 
-    public City specificCy(String city) {
-        // Find the most populated city
-        return null;
+    public City specificCityByName(String name) {
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .filter(city -> city.getName().equals(name))
+                .findFirst()
+                .orElse(new City());
     }
 
 
