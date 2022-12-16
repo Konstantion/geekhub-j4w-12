@@ -6,6 +6,7 @@ import edu.geekhub.exceptions.UserValidationException;
 import edu.geekhub.models.User;
 import edu.geekhub.models.request.Request;
 import edu.geekhub.models.request.Response;
+import edu.geekhub.storage.MemoryStorage;
 
 import static edu.geekhub.utils.response.ResponseMessageGenerator.*;
 import static java.util.Objects.isNull;
@@ -16,7 +17,7 @@ public class UserController implements Controller {
     private final UserService service;
 
     public UserController() {
-        this.service = new UserService();
+        this.service = new UserService(new MemoryStorage());
     }
 
     public UserController(UserService service) {

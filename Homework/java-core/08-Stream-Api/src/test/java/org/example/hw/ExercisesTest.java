@@ -201,7 +201,7 @@ class ExercisesTest {
 
     @Test
     void find_specific_city_by_name() {
-        String cityName = "Metz";
+        String cityName = "abra";
         City actualCity = exercises.specificCityByName(cityName);
 
         City expectedCity = new City();
