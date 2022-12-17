@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.intThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +37,7 @@ class LosesStatisticServiceTest {
                                         "]";
     private final String entityJson = "{\"tanks\":\"2\"," +
                                       "\"armouredFightingVehicles\":\"2\"," +
-                                      "\"id\": \"8\"}";
+                                      "\"id\":\"8\"}";
 
     @BeforeEach
     void setUp() {
@@ -54,7 +55,7 @@ class LosesStatisticServiceTest {
     }
 
     @Test
-    void process_shouldReturnEmptyList_whenErrorOccurs() throws IOException, InterruptedException {
+    void process_shouldReturnEmptyList_whenErrorOccursIntGetAll() throws IOException, InterruptedException {
         when(httpClient.getAll()).thenThrow(InterruptedException.class);
 
         List<LosesStatistic> actualStatistics = service.getAll();
@@ -63,8 +64,35 @@ class LosesStatisticServiceTest {
     }
 
     @Test
-    void process_shouldReturnEntity_whenGetById() {
+    void process_shouldReturnEntity_whenGetById() throws IOException, InterruptedException {
+        int ID = 10;
+        when(httpClient.getById(ID)).thenReturn(entityJson);
 
+        LosesStatistic actualStatistic = service.getById(ID);
+        LosesStatistic expectedStatistic = converter.convertToEntity(entityJson);
+        assertThat(actualStatistic).isEqualTo(expectedStatistic);
+    }
+
+    @Test
+    void process_shouldReturnEmptyEntity_whenErrorOccursInGetById() throws IOException, InterruptedException {
+        int ID = -10;
+        when(httpClient.getById(intThat(i -> i < 0))).thenThrow(InterruptedException.class);
+
+        LosesStatistic statistic = service.getById(ID);
+
+        assertThat(statistic)
+                .isEqualTo(LosesStatistic.EMPTY_STATISTIC);
+    }
+
+    @Test
+    void process_shouldReturnEmptyEntity_whenServerReturnErrorMessage() throws IOException, InterruptedException {
+        int ID = 0;
+        when(httpClient.getById(ID)).thenReturn(LosesStatisticService.SERVER_ERROR_RESPONSE);
+
+        LosesStatistic statistic = service.getById(ID);
+
+        assertThat(statistic)
+                .isEqualTo(LosesStatistic.EMPTY_STATISTIC);
     }
 
 

@@ -18,6 +18,7 @@ public class LosesStatisticService {
 
     private final JsonConverter converter;
     private final LosesStatisticHttpClient httpClient;
+    public static final String SERVER_ERROR_RESPONSE = "Something went wrong while parsing response JSON";
 
     public LosesStatisticService(JsonConverter converter, LosesStatisticHttpClient httpClient) {
         this.converter = converter;
@@ -25,31 +26,41 @@ public class LosesStatisticService {
     }
 
     public List<LosesStatistic> getAll() {
+        List<LosesStatistic> statistics;
         try {
             String allEntitiesJson = httpClient.getAll();
 
-            return converter.convertToEntities(allEntitiesJson);
+            if (allEntitiesJson.equals(SERVER_ERROR_RESPONSE)) {
+                statistics = Collections.emptyList();
+            } else {
+                statistics = converter.convertToEntities(allEntitiesJson);
+            }
         } catch (InterruptedException | IOException e) {
-
             System.out.println(e.getMessage());
             Thread.currentThread().interrupt();
 
-            return Collections.emptyList();
+            statistics = Collections.emptyList();
         }
+        return statistics;
     }
 
     public LosesStatistic getById(Integer id) {
+        LosesStatistic statistic;
         try {
             String entityJson = httpClient.getById(id);
 
-            return converter.convertToEntity(entityJson);
+            if (entityJson.equals(SERVER_ERROR_RESPONSE)) {
+                statistic = LosesStatistic.EMPTY_STATISTIC;
+            } else {
+                statistic = converter.convertToEntity(entityJson);
+            }
         } catch (InterruptedException | IOException e) {
-
             System.out.println(e.getMessage());
             Thread.currentThread().interrupt();
 
-            return LosesStatistic.EMPTY_STATISTIC;
+            statistic = LosesStatistic.EMPTY_STATISTIC;
         }
+        return statistic;
     }
 
     public void deleteAll() {
