@@ -2,6 +2,7 @@ package edu.geekhub.homework.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,21 @@ class LosesStatisticTest {
 
         assertThat(losesStatistic.id())
                 .isEqualTo(value);
+    }
+
+    @Test
+    void process_entityShouldContainData_whenWePassData() {
+        Map<String, Integer> data = new HashMap<>();
+        String key = "id";
+        int value = 10;
+        data.put(key, value);
+        data.put("tank", 8);
+
+        LosesStatistic losesStatistic = new LosesStatistic(data);
+
+        assertThat(losesStatistic)
+                .extracting(LosesStatistic::data)
+                .isEqualTo(data);
     }
 
     @Test
@@ -91,5 +107,16 @@ class LosesStatisticTest {
 
         assertThat(losesStatistic)
                 .hasToString(data.toString());
+    }
+
+    @Test
+    void process_shouldBeEmptyData_whenEntityEMPTY() {
+        LosesStatistic statistic = LosesStatistic.EMPTY_STATISTIC;
+
+        assertThat(statistic)
+                .returns(Integer.MIN_VALUE, LosesStatistic::id)
+                .extracting(LosesStatistic::data)
+                .isEqualTo(Collections.emptyMap());
+
     }
 }
