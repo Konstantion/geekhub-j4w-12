@@ -5,8 +5,6 @@ import edu.geekhub.homework.client.JsonConverter;
 import edu.geekhub.homework.client.LosesStatisticHttpClient;
 import edu.geekhub.homework.domain.LosesStatisticService;
 
-import static edu.geekhub.homework.util.NotImplementedException.TODO_TYPE;
-
 public class ApplicationStarter {
 
     public static void main(String[] args) {

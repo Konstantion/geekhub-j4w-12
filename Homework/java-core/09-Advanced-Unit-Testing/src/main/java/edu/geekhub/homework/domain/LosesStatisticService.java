@@ -18,7 +18,7 @@ public class LosesStatisticService {
 
     private final JsonConverter converter;
     private final LosesStatisticHttpClient httpClient;
-    public static final String SERVER_ERROR_RESPONSE = "Something went wrong while parsing response JSON";
+    public static final String SERVER_ERROR_RESPONSE = "\"Something went wrong while parsing response JSON\"";
 
     public LosesStatisticService(JsonConverter converter, LosesStatisticHttpClient httpClient) {
         this.converter = converter;
