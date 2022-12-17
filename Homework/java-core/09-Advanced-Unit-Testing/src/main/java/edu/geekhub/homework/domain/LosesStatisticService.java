@@ -67,7 +67,6 @@ public class LosesStatisticService {
         try {
             httpClient.deleteAll();
         } catch (InterruptedException | IOException e) {
-
             System.out.println(e.getMessage());
             Thread.currentThread().interrupt();
         }
@@ -77,7 +76,6 @@ public class LosesStatisticService {
         try {
             httpClient.deleteById(id);
         } catch (InterruptedException | IOException e) {
-
             System.out.println(e.getMessage());
             Thread.currentThread().interrupt();
         }
@@ -85,8 +83,10 @@ public class LosesStatisticService {
 
     public void create(LosesStatistic losesStatistic) {
         try {
-            String json = converter.convertToJson(losesStatistic);
-            httpClient.create(json);
+            if (!losesStatistic.data().equals(Collections.emptyMap())) {
+                String json = converter.convertToJson(losesStatistic);
+                httpClient.create(json);
+            }
         } catch (InterruptedException | IOException e) {
 
             System.out.println(e.getMessage());

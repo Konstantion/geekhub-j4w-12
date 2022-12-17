@@ -96,7 +96,7 @@ class LosesStatisticServiceTest {
     }
 
     @Test
-    void process_shouldInvokeClientDeleteAll_whenWeServiceDeleteAll() throws IOException, InterruptedException {
+    void process_shouldInvokeClientDeleteAll_whenServiceDeleteAll() throws IOException, InterruptedException {
         doNothing().when(httpClient).deleteAll();
         service.deleteAll();
 
@@ -104,11 +104,47 @@ class LosesStatisticServiceTest {
     }
 
     @Test
-    void process_shouldNotInvokeClientDeleteAll_whenWeErrorOccursInDeleteAll() throws IOException, InterruptedException {
+    void process_shouldInvokeClientDeleteAll_whenErrorOccursInDeleteAll() throws IOException, InterruptedException {
         doThrow(InterruptedException.class).when(httpClient).deleteAll();
 
         service.deleteAll();
 
         verify(httpClient).deleteAll();
+    }
+
+    @Test
+    void process_shouldInvokeClientDeleteById_whenServiceDeleteById() throws IOException, InterruptedException {
+        doNothing().when(httpClient).deleteById(anyInt());
+
+        service.deleteById(22);
+
+        verify(httpClient).deleteById(anyInt());
+    }
+
+    @Test
+    void process_shouldInvokeClientDeleteById_whenErrorOccursInDeleteById() throws IOException, InterruptedException {
+        doThrow(InterruptedException.class).when(httpClient).deleteById(anyInt());
+
+        service.deleteById(14);
+
+        verify(httpClient).deleteById(anyInt());
+    }
+
+    @Test
+    void process_shouldInvokeClientCreate_whenWeServiceCreate() throws IOException, InterruptedException {
+        doNothing().when(httpClient).create(any(String.class));
+
+        service.create(converter.convertToEntity(entityJson));
+
+        verify(httpClient).create(any(String.class));
+    }
+
+    @Test
+    void process_shouldInvokeClientCreate_whenWeServiceCreateOccursError() throws IOException, InterruptedException {
+        doThrow(InterruptedException.class).when(httpClient).create(any(String.class));
+
+        service.create(converter.convertToEntity(entityJson));
+
+        verify(httpClient).create(any(String.class));
     }
 }
