@@ -2,34 +2,38 @@ package edu.geekhub.homework.analytics;
 
 import edu.geekhub.homework.domain.LosesStatistic;
 
+import java.util.Comparator;
 import java.util.List;
-
-import static edu.geekhub.homework.util.NotImplementedException.TODO;
-import static edu.geekhub.homework.util.NotImplementedException.TODO_TYPE;
 
 /**
  * Service shows interesting analytics information
  */
 public class AnalyticsService {
 
-    public AnalyticsService() {
-        TODO("Implement class");
-    }
-
     public LosesStatistic findStatisticWithMaxLosesAmounts(List<LosesStatistic> losesStatistics) {
-        return TODO_TYPE("Implement method");
+        return losesStatistics.stream()
+                .max(Comparator.comparingInt(
+                        LosesStatistic::losesAmount
+                ))
+                .orElse(LosesStatistic.EMPTY_STATISTIC);
     }
 
     public LosesStatistic findStatisticWithMinLosesAmounts(List<LosesStatistic> losesStatistics) {
-        return TODO_TYPE("Implement method");
+        return losesStatistics.stream()
+                .min(Comparator.comparingInt(
+                        LosesStatistic::losesAmount
+                ))
+                .orElse(LosesStatistic.EMPTY_STATISTIC);
     }
 
     public int totalCountOfLosesForStatistic(LosesStatistic losesStatistic) {
-        return TODO_TYPE("Implement method");
+        return losesStatistic.losesAmount();
     }
 
     public int totalCountOfLosesForAllStatistics(List<LosesStatistic> losesStatistics) {
-        return TODO_TYPE("Implement method");
+        return losesStatistics.stream()
+                .mapToInt(LosesStatistic::losesAmount)
+                .sum();
     }
 
 }
