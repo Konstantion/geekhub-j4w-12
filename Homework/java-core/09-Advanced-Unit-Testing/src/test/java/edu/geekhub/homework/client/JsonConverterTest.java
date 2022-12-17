@@ -40,7 +40,7 @@ class JsonConverterTest {
                       "\"id\":\"1\"" +
                       "},{" +
                       "\"age2\":\"25\"," +
-                      "\"id2\":\"2\"" +
+                      "\"id\":\"2\"" +
                       "}]";
         List<LosesStatistic> actualStatistics = converter.convertToEntities(json);
 
@@ -57,7 +57,7 @@ class JsonConverterTest {
                 entry("age", 20),
                 entry("id", 1),
                 entry("age2", 25),
-                entry("id2", 2));
+                entry("id", 2));
     }
 
     @Test

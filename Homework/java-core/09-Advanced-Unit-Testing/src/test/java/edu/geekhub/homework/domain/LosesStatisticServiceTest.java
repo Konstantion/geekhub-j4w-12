@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.intThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LosesStatisticServiceTest {
@@ -95,5 +95,20 @@ class LosesStatisticServiceTest {
                 .isEqualTo(LosesStatistic.EMPTY_STATISTIC);
     }
 
+    @Test
+    void process_shouldInvokeClientDeleteAll_whenWeServiceDeleteAll() throws IOException, InterruptedException {
+        doNothing().when(httpClient).deleteAll();
+        service.deleteAll();
 
+        verify(httpClient).deleteAll();
+    }
+
+    @Test
+    void process_shouldNotInvokeClientDeleteAll_whenWeErrorOccursInDeleteAll() throws IOException, InterruptedException {
+        doThrow(InterruptedException.class).when(httpClient).deleteAll();
+
+        service.deleteAll();
+
+        verify(httpClient).deleteAll();
+    }
 }
