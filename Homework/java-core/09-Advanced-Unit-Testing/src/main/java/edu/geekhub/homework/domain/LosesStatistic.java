@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.function.Predicate.not;
+
 
 /**
  * This class should contain data received through {@link LosesStatisticHttpClient}
@@ -36,6 +38,14 @@ public record LosesStatistic(Map<String, Integer> data) {
         }
 
         return data;
+    }
+
+    public int losesAmount() {
+        return data().entrySet()
+                .stream()
+                .filter(not(e -> e.getKey().equals(ID)))
+                .mapToInt(Map.Entry::getValue)
+                .sum();
     }
 
     @Override

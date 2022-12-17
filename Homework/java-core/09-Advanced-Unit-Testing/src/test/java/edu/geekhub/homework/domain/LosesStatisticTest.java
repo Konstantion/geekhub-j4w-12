@@ -119,4 +119,29 @@ class LosesStatisticTest {
                 .isEqualTo(Collections.emptyMap());
 
     }
+
+    @Test
+    void process_shouldReturnInteger_whenLosesAmount() {
+        Map<String, Integer> data = new HashMap<>();
+        int value = 10;
+        data.put("id", 1);
+        data.put("tank", value);
+        data.put("car", value);
+        data.put("orc", value);
+
+        LosesStatistic losesStatistic = new LosesStatistic(data);
+
+        assertThat(losesStatistic)
+                .extracting(LosesStatistic::losesAmount)
+                .isEqualTo(value * 3);
+    }
+
+    @Test
+    void process_shouldReturnZero_whenLosesEmpty() {
+        LosesStatistic losesStatistic = LosesStatistic.EMPTY_STATISTIC;
+
+        assertThat(losesStatistic)
+                .extracting(LosesStatistic::losesAmount)
+                .isEqualTo(0);
+    }
 }
