@@ -1,5 +1,7 @@
 package edu.geekhub.homework.core.song;
 
+import edu.geekhub.homework.core.util.UTFString;
+
 import java.util.Objects;
 
 public abstract class Song {
@@ -17,11 +19,11 @@ public abstract class Song {
                    String album,
                    String name,
                    String url) {
-        this.genre = genre;
-        this.group = group;
-        this.album = album;
-        this.name = name;
-        this.url = url;
+        this.genre = UTFString.of(genre);
+        this.group = UTFString.of(group);
+        this.album = UTFString.of(album);
+        this.name = UTFString.of(name);
+        this.url = UTFString.of(url);
     }
 
     public abstract String getFormat();

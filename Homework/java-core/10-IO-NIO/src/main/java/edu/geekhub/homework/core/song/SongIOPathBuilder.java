@@ -1,8 +1,6 @@
 package edu.geekhub.homework.core.song;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -17,36 +15,22 @@ public class SongIOPathBuilder {
         String album = song.getAlbum();
         String name = song.getName();
 
-        byte[] stringBytes = new byte[0];
-        try {
-            stringBytes = String.join(
-                    SEPARATOR,
-                    ROOT,
-                    MUSIC_DIRECTORY,
-                    genre,
-                    group,
-                    album,
-                    name).getBytes("windows-1251");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return new String(stringBytes, StandardCharsets.UTF_8);
+        return String.join(
+                SEPARATOR,
+                ROOT,
+                MUSIC_DIRECTORY,
+                genre,
+                group,
+                album,
+                name);
     }
 
     public String buildFileName(Song song) {
-        byte[] stringBytes = new byte[0];
-        try {
-            stringBytes = String.join(
-                    ".",
-                    song.getName(),
-                    song.getFormat()
-            ).getBytes("windows-1251");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return new String(stringBytes, StandardCharsets.UTF_8);
+        return String.join(
+                ".",
+                song.getName(),
+                song.getFormat()
+        );
     }
 
     public String buildFullFilePath(Song song) {
