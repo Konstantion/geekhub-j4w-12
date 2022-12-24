@@ -31,7 +31,7 @@ public class SongService {
 
         String url = song.getUrl();
 
-        Response<Object> response = client.downloadSongViaHttpRequest(url);
+        Response<Object> response = client.downloadSongViaNIO(url);
 
         if (response.getStatus().equals(SUCCESS)) {
             try {
