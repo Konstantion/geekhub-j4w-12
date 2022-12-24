@@ -9,6 +9,7 @@ import java.util.Optional;
 import static java.util.Objects.isNull;
 
 public class SongValidations {
+    private static final long MEGA_BYTE_IN_BYTE = 1_048_576;
 
     public Optional<String> isUrlValid(String url) {
         List<String> errorList = new ArrayList<>();
@@ -38,11 +39,18 @@ public class SongValidations {
             );
         }
 
-        if (!isUrlReachable(url, 3000)) {
+        if (!isUrlMP3File(url)) {
             errorList.add(
-                    "URL isn't valid, [shouldn't be reachable]"
+                    "URL isn't refer to mp3, [should refer to mp3 file]"
             );
         }
+
+        isContentLengthLessThen(url, 10 * MEGA_BYTE_IN_BYTE).ifPresent(len -> errorList.add(
+                String.format(
+                        "Song isn't valid, [shouldn't be more then 10MB, current %.2fMB]",
+                        ((double) len) / (MEGA_BYTE_IN_BYTE * 1.0)
+                )
+        ));
 
         return listToOptionalString(errorList);
     }
@@ -115,9 +123,9 @@ public class SongValidations {
             );
         }
 
-        if (!checkLength(genre, 2, 15)) {
+        if (!checkLength(genre, 2, 40)) {
             errorList.add(
-                    "Song genre isn't valid, [size should be between 2 and 15 characters]"
+                    "Song genre isn't valid, [size should be between 2 and 40 characters]"
             );
         }
 
@@ -166,12 +174,29 @@ public class SongValidations {
         return Optional.of(data);
     }
 
-    public boolean isUrlReachable(String urlString, int timeout) {
+    public boolean isUrlMP3File(String urlString) {
         try {
             URL url = new URL(urlString);
-            return InetAddress.getByName(url.getHost()).isReachable(timeout);
-        } catch (IOException e) {
-            return false;
+            return url.getFile().contains(".mp3");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
+
+        return false;
+    }
+
+    public Optional<Long> isContentLengthLessThen(String urlString, long maxLengthBytes) {
+        try {
+            long contentLength = new URL(urlString)
+                    .openConnection()
+                    .getContentLengthLong();
+            if (contentLength > maxLengthBytes) {
+                return Optional.of(contentLength);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 }
