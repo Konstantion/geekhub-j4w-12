@@ -1,5 +1,6 @@
 package edu.geekhub.homework;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,9 @@ public class Exercises {
     public Map<String, Long> getCountryCitiesCount() {
         // Find the number of cities of each country (use grouping)
         var cities = citiesRepo.getAllCities();
-        return cities.values().stream()
+        return cities
+                .values()
+                .stream()
                 .collect(Collectors.groupingBy(City::getCountryCode,
                                 Collectors.counting()
                         )
@@ -17,34 +20,103 @@ public class Exercises {
     }
 
     public City mostPopulatedCity() {
-        // Find the most populated city
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .max(Comparator.comparingInt(City::getPopulation))
+                .orElseThrow();
     }
 
     public City minPopulatedCity() {
-        // Find the min populated city
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .min(Comparator.comparingInt(City::getPopulation))
+                .orElseThrow();
     }
 
     public String mostPopulatedCountry() {
-        // Find the most populated city
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        City::getCountryCode,
+                        City::getPopulation,
+                        Integer::sum
+                ))
+                .entrySet()
+                .stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue))
+                .orElseThrow()
+                .getKey();
     }
 
     public String minPopulatedCountry() {
-        // Find the most populated city
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        City::getCountryCode,
+                        City::getPopulation,
+                        Integer::sum
+                ))
+                .entrySet()
+                .stream()
+                .min(Comparator.comparingInt(Map.Entry::getValue))
+                .orElseThrow()
+                .getKey();
     }
 
     public Long totalPopulation() {
-        // Find the most populated city
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .mapToLong(City::getPopulation)
+                .sum();
     }
 
-    public Map<String,Integer> populationOfEachCountry() {
-        // Find the most populated city
+    public Map<String, Integer> populationOfEachCountry() {
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        City::getCountryCode,
+                        City::getPopulation,
+                        Integer::sum
+                ));
     }
 
     public Integer populationOfSpecificCountry(String countryCode) {
-        // Find the most populated city
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .filter(city -> city.getCountryCode().equals(countryCode))
+                .map(City::getPopulation)
+                .reduce(0, Integer::sum);
     }
 
-    public City specificCy(String city) {
-        // Find the most populated city
+    public City specificCityByName(String name) {
+        var cities = citiesRepo.getAllCities();
+
+        return cities
+                .values()
+                .stream()
+                .filter(city -> city.getName().equals(name))
+                .findFirst()
+                .orElse(new City());
     }
 }
