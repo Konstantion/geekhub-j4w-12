@@ -13,7 +13,7 @@ public class SongValidator {
         validations = new SongValidations();
     }
 
-    public Optional<List<String>> validate(Song song) {
+    public Optional<String> validate(Song song) {
         List<String> validationErrors = new ArrayList<>();
 
         validations.isUrlValid(song.getUrl()).ifPresent(validationErrors::add);
@@ -26,11 +26,15 @@ public class SongValidator {
 
         validations.isAlbumValid(song.getAlbum()).ifPresent(validationErrors::add);
 
-        if(validationErrors.isEmpty()) {
+        if (validationErrors.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(validationErrors);
+        return Optional.of("Failed to validate song:\n" +
+                           String.join(
+                                   System.lineSeparator(),
+                                   validationErrors)
+        );
     }
 
 

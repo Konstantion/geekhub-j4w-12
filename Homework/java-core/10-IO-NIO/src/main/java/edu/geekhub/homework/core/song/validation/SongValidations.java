@@ -1,8 +1,7 @@
 package edu.geekhub.homework.core.song.validation;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.IOException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ public class SongValidations {
 
         if (isNull(url)) {
             errorList.add(
-                    "Song url isn't valid, [it shouldn't be null]"
+                    "Song url isn't valid, [shouldn't be null]"
             );
 
             return listToOptionalString(errorList);
@@ -24,7 +23,7 @@ public class SongValidations {
 
         if (url.isBlank()) {
             errorList.add(
-                    "Song url isn't valid, [it shouldn't be empty]"
+                    "Song url isn't valid, [shouldn't be empty]"
             );
         }
 
@@ -39,6 +38,12 @@ public class SongValidations {
             );
         }
 
+        if (!isUrlReachable(url, 3000)) {
+            errorList.add(
+                    "URL isn't valid, [shouldn't be reachable]"
+            );
+        }
+
         return listToOptionalString(errorList);
     }
 
@@ -47,7 +52,7 @@ public class SongValidations {
 
         if (isNull(name)) {
             errorList.add(
-                    "Song name isn't valid, [it shouldn't be null]"
+                    "Song name isn't valid, [shouldn't be null]"
             );
 
             return listToOptionalString(errorList);
@@ -55,13 +60,13 @@ public class SongValidations {
 
         if (name.isBlank()) {
             errorList.add(
-                    "Song name isn't valid, [it shouldn't be empty]"
+                    "Song name isn't valid, [shouldn't be empty]"
             );
         }
 
-        if(!checkLength(name, 2, 30)) {
+        if (!checkLength(name, 2, 30)) {
             errorList.add(
-                    "Song name isn't valid, [it's size should be between 2 and 30 characters]"
+                    "Song name isn't valid, [size should be between 2 and 30 characters]"
             );
         }
 
@@ -73,7 +78,7 @@ public class SongValidations {
 
         if (isNull(album)) {
             errorList.add(
-                    "Song album isn't valid, [it shouldn't be null]"
+                    "Song album isn't valid, [shouldn't be null]"
             );
 
             return listToOptionalString(errorList);
@@ -81,13 +86,13 @@ public class SongValidations {
 
         if (album.isBlank()) {
             errorList.add(
-                    "Song album isn't valid, [it shouldn't be empty]"
+                    "Song album isn't valid, [shouldn't be empty]"
             );
         }
 
-        if(!checkLength(album, 2, 30)) {
+        if (!checkLength(album, 2, 30)) {
             errorList.add(
-                    "Song album isn't valid, [it's size should be between 2 and 30 characters]"
+                    "Song album isn't valid, [size should be between 2 and 30 characters]"
             );
         }
 
@@ -98,7 +103,7 @@ public class SongValidations {
         List<String> errorList = new ArrayList<>();
         if (isNull(genre)) {
             errorList.add(
-                    "Song genre isn't valid, [it shouldn't be null]"
+                    "Song genre isn't valid, [shouldn't be null]"
             );
 
             return listToOptionalString(errorList);
@@ -106,13 +111,13 @@ public class SongValidations {
 
         if (genre.isBlank()) {
             errorList.add(
-                    "Song genre isn't valid, [it shouldn't be empty]"
+                    "Song genre isn't valid, [shouldn't be empty]"
             );
         }
 
-        if(!checkLength(genre, 2, 15)) {
+        if (!checkLength(genre, 2, 15)) {
             errorList.add(
-                    "Song genre isn't valid, [it's size should be between 2 and 15 characters]"
+                    "Song genre isn't valid, [size should be between 2 and 15 characters]"
             );
         }
 
@@ -123,7 +128,7 @@ public class SongValidations {
         List<String> errorList = new ArrayList<>();
         if (isNull(group)) {
             errorList.add(
-                    "Song group isn't valid, [it shouldn't be null]"
+                    "Song group isn't valid, [shouldn't be null]"
             );
 
             return listToOptionalString(errorList);
@@ -131,13 +136,13 @@ public class SongValidations {
 
         if (group.isBlank()) {
             errorList.add(
-                    "Song group isn't valid, [it shouldn't be empty]"
+                    "Song group isn't valid, [shouldn't be empty]"
             );
         }
 
-        if(!checkLength(group, 2, 30)) {
+        if (!checkLength(group, 2, 30)) {
             errorList.add(
-                    "Song group isn't valid, [it's size should be between 2 and 30 characters]"
+                    "Song group isn't valid, [size should be between 2 and 30 characters]"
             );
         }
 
@@ -154,10 +159,19 @@ public class SongValidations {
                 errorList
         );
 
-        if(data.isBlank()) {
+        if (data.isBlank()) {
             return Optional.empty();
         }
 
         return Optional.of(data);
+    }
+
+    public boolean isUrlReachable(String urlString, int timeout) {
+        try {
+            URL url = new URL(urlString);
+            return InetAddress.getByName(url.getHost()).isReachable(timeout);
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
