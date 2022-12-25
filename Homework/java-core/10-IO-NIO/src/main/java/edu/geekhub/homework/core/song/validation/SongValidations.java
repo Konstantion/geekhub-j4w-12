@@ -15,6 +15,11 @@ import static java.util.Objects.isNull;
 
 public class SongValidations {
     private static final long MEGA_BYTE_IN_BYTE = 1_048_576;
+    private final SongIOUtil IOUtil;
+
+    public SongValidations(SongIOUtil IOUtil) {
+        this.IOUtil = IOUtil;
+    }
 
     public Optional<String> isUrlValid(String url) {
         List<String> errorList = new ArrayList<>();
@@ -42,6 +47,8 @@ public class SongValidations {
                             e.getMessage()
                     )
             );
+
+            return listToOptionalString(errorList);
         }
 
         if (!isUrlMP3File(url)) {
@@ -163,7 +170,7 @@ public class SongValidations {
     }
 
     public Optional<String> isSongPresent(Song song) {
-        String path = new SongIOUtil().buildFullFilePath(song);
+        String path = IOUtil.buildFullFilePath(song);
         if (Files.exists(Path.of(path))) {
             return Optional.of(
                     "Song is already downloaded, [No need to download again]"

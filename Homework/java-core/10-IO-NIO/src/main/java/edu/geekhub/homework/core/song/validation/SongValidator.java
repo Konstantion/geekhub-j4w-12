@@ -1,6 +1,7 @@
 package edu.geekhub.homework.core.song.validation;
 
 import edu.geekhub.homework.core.song.Song;
+import edu.geekhub.homework.core.song.SongIOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ public class SongValidator {
     private final SongValidations validations;
 
     public SongValidator() {
-        validations = new SongValidations();
+        validations = new SongValidations(new SongIOUtil());
     }
 
     public Optional<String> validate(Song song) {
