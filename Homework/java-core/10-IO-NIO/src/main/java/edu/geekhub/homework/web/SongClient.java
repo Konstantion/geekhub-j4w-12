@@ -14,7 +14,8 @@ public class SongClient {
             return Response.ok(songBytes);
         } catch (IOException e) {
             return Response.fail(String.format(
-                            "Failed read file, [%s]",
+                            "Failed read %s, [%s]",
+                            url,
                             e.getMessage()
                     )
             );

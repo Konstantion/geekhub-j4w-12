@@ -30,10 +30,14 @@ public class SongValidator {
             return Optional.empty();
         }
 
-        return Optional.of("Failed to validate song:\n" +
-                           String.join(
-                                   System.lineSeparator(),
-                                   validationErrors)
+        return Optional.of(
+                String.format(
+                        "Failed to validate %s:%n%s.",
+                        song,
+                        String.join(
+                                System.lineSeparator(),
+                                validationErrors)
+                )
         );
     }
 

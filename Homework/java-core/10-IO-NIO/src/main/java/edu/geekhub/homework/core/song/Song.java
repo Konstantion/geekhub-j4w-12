@@ -79,4 +79,15 @@ public abstract class Song {
     public int hashCode() {
         return Objects.hash(genre, group, album, name, url);
     }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+               "genre='" + genre + '\'' +
+               ", group='" + group + '\'' +
+               ", album='" + album + '\'' +
+               ", name='" + name + '\'' +
+               ", url='" + url + '\'' +
+               '}';
+    }
 }

@@ -1,10 +1,9 @@
 package edu.geekhub.homework.core.song;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
-public class SongIOPathBuilder {
+public class SongIOUtil {
     private static final String ROOT = System.getProperty("user.home");
     private static final String SEPARATOR = System.getProperty("file.separator");
     private static final String MUSIC_DIRECTORY = "Music Library";
@@ -13,7 +12,6 @@ public class SongIOPathBuilder {
         String genre = song.getGenre();
         String group = song.getGroup();
         String album = song.getAlbum();
-        String name = song.getName();
 
         return String.join(
                 SEPARATOR,
@@ -21,8 +19,8 @@ public class SongIOPathBuilder {
                 MUSIC_DIRECTORY,
                 genre,
                 group,
-                album,
-                name);
+                album
+        );
     }
 
     public String buildFileName(Song song) {
@@ -55,6 +53,6 @@ public class SongIOPathBuilder {
     public void writeSong(Song song, byte[] songBytes) throws IOException {
         createDirectoriesForSong(song);
         String songFullPath = buildFullFilePath(song);
-        Files.write(Path.of(songFullPath), songBytes);
+        Files.write(Path.of(songFullPath), songBytes, StandardOpenOption.CREATE);
     }
 }
