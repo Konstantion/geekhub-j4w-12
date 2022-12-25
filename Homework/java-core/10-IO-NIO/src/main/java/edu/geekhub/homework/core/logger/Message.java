@@ -3,7 +3,8 @@ package edu.geekhub.homework.core.logger;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Message implements Serializable {
 
@@ -12,16 +13,15 @@ public class Message implements Serializable {
 
     private MessageType type;
     private String text;
-    private LocalDate date = LocalDate.now();
+    private final LocalDateTime date;
+    private final String dateString;
 
-    public Message(String text, LocalDate date, MessageType type) {
+    public Message(String text, MessageType type) {
         this.text = text;
-        this.date = date;
         this.type = type;
-    }
-
-    public Message(String text) {
-        this.text = text;
+        date = LocalDateTime.now();
+        dateString = date.format(DateTimeFormatter
+                .ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
 
     public String getText() {
@@ -32,12 +32,8 @@ public class Message implements Serializable {
         this.text = text;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public MessageType getType() {
@@ -48,12 +44,16 @@ public class Message implements Serializable {
         this.type = type;
     }
 
+    public String getDateString() {
+        return dateString;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
                "type=" + type +
                ", text='" + text + '\'' +
-               ", date=" + date +
+               ", date=" + dateString +
                '}';
     }
 }
