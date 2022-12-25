@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static edu.geekhub.homework.core.logger.MessageType.ERROR;
+
 public class Message implements Serializable {
 
     @Serial
@@ -55,5 +57,18 @@ public class Message implements Serializable {
                ", text='" + text + '\'' +
                ", date=" + dateString +
                '}';
+    }
+
+    public String getLogString() {
+        String color = type.equals(ERROR) ? "\u001B[31m" : "\u001B[32m";
+        String reset = "\u001B[0m";
+        return String.format(
+                "%s|%S|20-%s|%s|%s%n",
+                color,
+                type,
+                dateString,
+                text,
+                reset
+        );
     }
 }
