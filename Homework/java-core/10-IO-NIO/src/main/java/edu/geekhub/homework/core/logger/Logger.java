@@ -12,7 +12,7 @@ public class Logger {
         messages = new ArrayList<>();
 
         IOUtil = new LoggerIOUtil();
-        IOUtil.readMessages(messages);
+        IOUtil.fillMessagesListFromFile(messages);
     }
 
     public static Logger getInstance() {
@@ -22,17 +22,13 @@ public class Logger {
     public void error(String text) {
         Message logMessage = new Message(text, MessageType.ERROR);
         messages.add(logMessage);
-        save();
+        IOUtil.appendMessageToFile(logMessage);
     }
 
     public void info(String text) {
         Message logMessage = new Message(text, MessageType.INFO);
         messages.add(logMessage);
-        save();
-    }
-
-    private void save() {
-        IOUtil.saveMessages(messages);
+        IOUtil.appendMessageToFile(logMessage);
     }
 
     public List<Message> getMessages() {

@@ -41,9 +41,10 @@ public class LoggerIOUtil {
             try (FileInputStream fis = new FileInputStream(buildFullLogPath())) {
                 if (fis.available() != 0) {
                     ObjectInputStream ois = new ObjectInputStream(fis);
-                    while (fis.available() != 0) {
+                    while (fis.available() > 1) {
                         messages.add((Message) ois.readObject());
                     }
+                    ois.close();
                 }
             } catch (IOException | ClassCastException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -65,15 +66,17 @@ public class LoggerIOUtil {
             }
         } else {
             try (FileOutputStream fos = new FileOutputStream(buildFullLogPath(), true);
-                 AppendableObjectOutputStream oos = new AppendableObjectOutputStream(
-                         new ObjectOutputStream(fos))
+                 ObjectOutputStream oos = new ObjectOutputStream(fos) {
+                     @Override
+                     protected void writeStreamHeader() {
+                     }
+                 }
             ) {
                 oos.writeObject(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     public void saveMessages(List<Message> messages) {
