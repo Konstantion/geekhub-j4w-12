@@ -1,7 +1,12 @@
 package edu.geekhub.homework.core.song.validation;
 
+import edu.geekhub.homework.core.song.Song;
+import edu.geekhub.homework.core.song.SongIOUtil;
+
 import java.io.IOException;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -155,6 +160,16 @@ public class SongValidations {
         }
 
         return listToOptionalString(errorList);
+    }
+
+    public Optional<String> isSongPresent(Song song) {
+        String path = new SongIOUtil().buildFullFilePath(song);
+        if (Files.exists(Path.of(path))) {
+            return Optional.of(
+                    "Song is already downloaded, [No need to download again]"
+            );
+        }
+        return Optional.empty();
     }
 
     private boolean checkLength(String string, int lb, int ub) {

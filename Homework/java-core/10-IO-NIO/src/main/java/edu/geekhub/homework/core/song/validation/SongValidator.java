@@ -26,6 +26,8 @@ public class SongValidator {
 
         validations.isAlbumValid(song.getAlbum()).ifPresent(validationErrors::add);
 
+        validations.isSongPresent(song).ifPresent(validationErrors::add);
+
         if (validationErrors.isEmpty()) {
             return Optional.empty();
         }
