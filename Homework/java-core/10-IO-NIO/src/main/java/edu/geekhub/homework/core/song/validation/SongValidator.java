@@ -10,8 +10,12 @@ import java.util.Optional;
 public class SongValidator {
     private final SongValidations validations;
 
+    public SongValidator(SongValidations validations) {
+        this.validations = validations;
+    }
+
     public SongValidator() {
-        validations = new SongValidations(new SongIOUtil());
+        this.validations = new SongValidations(new SongIOUtil());
     }
 
     public Optional<String> validate(Song song) {
@@ -44,5 +48,7 @@ public class SongValidator {
         );
     }
 
-
+    public SongValidations getValidations() {
+        return validations;
+    }
 }

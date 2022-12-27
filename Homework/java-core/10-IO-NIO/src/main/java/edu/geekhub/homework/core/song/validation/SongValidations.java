@@ -21,6 +21,10 @@ public class SongValidations {
         this.IOUtil = IOUtil;
     }
 
+    public SongValidations() {
+        this.IOUtil = new SongIOUtil();
+    }
+
     public Optional<String> isUrlValid(String url) {
         List<String> errorList = new ArrayList<>();
 
@@ -97,11 +101,7 @@ public class SongValidations {
         List<String> errorList = new ArrayList<>();
 
         if (isNull(album)) {
-            errorList.add(
-                    "Song album isn't valid, [shouldn't be null]"
-            );
-
-            return listToOptionalString(errorList);
+            return Optional.of("Song album isn't valid, [shouldn't be null]");
         }
 
         if (album.isBlank()) {
@@ -221,4 +221,5 @@ public class SongValidations {
 
         return Optional.empty();
     }
+
 }
