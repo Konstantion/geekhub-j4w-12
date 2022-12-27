@@ -65,6 +65,9 @@ public class SongIOUtil {
         return String.join(
                 SEPARATOR,
                 DIR,
+                "Homework",
+                "java-core",
+                "10-IO-NIO",
                 "src",
                 "main",
                 "resources",

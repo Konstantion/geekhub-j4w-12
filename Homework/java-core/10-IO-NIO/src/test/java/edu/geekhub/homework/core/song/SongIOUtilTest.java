@@ -2,6 +2,10 @@ package edu.geekhub.homework.core.song;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
+@ExtendWith({MockitoExtension.class})
 class SongIOUtilTest {
+    private static final String ROOT = System.getProperty("user.home");
+    private static final String DIR = System.getProperty("user.dir");
+    private static final String SEPARATOR = System.getProperty("file.separator");
+    private static final String MUSIC_DIRECTORY = "Music Library";
 
     SongIOUtil IOUtil;
     Song song;
@@ -26,9 +34,7 @@ class SongIOUtilTest {
     String album;
     String url;
 
-    String ROOT;
-    String SEPARATOR;
-    String MUSIC_DIRECTORY;
+    String correctPath;
 
     @BeforeEach
     void setUp() {
@@ -47,9 +53,21 @@ class SongIOUtilTest {
                 url
         );
 
-        ROOT = System.getProperty("user.home");
-        SEPARATOR = System.getProperty("file.separator");
-        MUSIC_DIRECTORY = "Music Library";
+        String returnedPath = String.join(SEPARATOR,
+                DIR,
+                "Homework",
+                "java-core",
+                "10-IO-NIO",
+                "src",
+                "main",
+                "resources",
+                "playlist.txt");
+        String pathDiff = String.join(SEPARATOR.repeat(2),
+                "",
+                "Homework",
+                "java-core",
+                "10-IO-NIO");
+        correctPath = returnedPath.replaceFirst(pathDiff, "");
     }
 
     @Test
@@ -108,6 +126,9 @@ class SongIOUtilTest {
 
     @Test
     void process_shouldReturnPlayListPath_whenBuildPlayListPath() {
+        SongIOUtil IOUtil = spy(SongIOUtil.class);
+        when(IOUtil.buildPlayListPath())
+                .thenReturn(correctPath);
         String actualPath = IOUtil.buildPlayListPath();
 
         String expectedPath = String.join(
@@ -123,6 +144,9 @@ class SongIOUtilTest {
 
     @Test
     void process_shouldReturnListOfLines_whenRead() {
+        SongIOUtil IOUtil = spy(SongIOUtil.class);
+        when(IOUtil.buildPlayListPath())
+                .thenReturn(correctPath);
         List<String> actualLines = IOUtil.readAllSongFromPlayList();
         File file = new File(IOUtil.buildPlayListPath());
 
@@ -170,5 +194,15 @@ class SongIOUtilTest {
         mock.clearMusicLibrary(System.getProperty("user.dir") + SEPARATOR + "build");
 
         verify(mock, atLeast(1)).deleteDirectory(any(File.class));
+    }
+
+    @Test
+    void process_shouldCallClearMusicLibraryWithPath_whenClearMusicLibrary() {
+        SongIOUtil spy = spy(SongIOUtil.class);
+        doNothing().when(spy).clearMusicLibrary(any(String.class));
+
+        spy.clearMusicLibrary();
+
+        verify(spy, times(1)).clearMusicLibrary(any(String.class));
     }
 }
