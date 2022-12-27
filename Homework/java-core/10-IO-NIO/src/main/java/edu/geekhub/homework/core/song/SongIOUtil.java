@@ -1,10 +1,14 @@
 package edu.geekhub.homework.core.song;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.Collections;
+import java.util.List;
 
 public class SongIOUtil {
     private static final String ROOT = System.getProperty("user.home");
+    private static final String DIR = System.getProperty("user.dir");
     private static final String SEPARATOR = System.getProperty("file.separator");
     private static final String MUSIC_DIRECTORY = "Music Library";
 
@@ -54,5 +58,25 @@ public class SongIOUtil {
         createDirectoriesForSong(song);
         String songFullPath = buildFullFilePath(song);
         Files.write(Path.of(songFullPath), songBytes, StandardOpenOption.CREATE);
+    }
+
+    public String buildPlayListPath() {
+        return String.join(
+                SEPARATOR,
+                DIR,
+                "src",
+                "main",
+                "resources",
+                "playlist.txt");
+    }
+
+    public List<String> readAllSongFromPlayList() {
+        try {
+            String path = buildPlayListPath();
+            return Files.readAllLines(Path.of(path), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
     }
 }
