@@ -1,11 +1,11 @@
 package edu.geekhub.homework.core;
 
 import edu.geekhub.homework.core.logger.Logger;
+import edu.geekhub.homework.core.request.Response;
 import edu.geekhub.homework.core.song.Song;
 import edu.geekhub.homework.core.song.SongIOUtil;
 import edu.geekhub.homework.core.song.SongMP3;
 import edu.geekhub.homework.core.song.validation.SongValidator;
-import edu.geekhub.homework.core.request.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,11 +21,11 @@ public class SongService {
     private final SongValidator validator;
     private final Logger log;
 
-    public SongService(SongIOUtil pathBuilder, SongClient client) {
+    public SongService(SongIOUtil pathBuilder, SongClient client, Logger log) {
+        this.log = log;
         this.IOUtil = pathBuilder;
         this.client = client;
         validator = new SongValidator();
-        log = Logger.getInstance();
     }
 
     public boolean downloadSongHTTP(Song song) {
@@ -83,7 +83,7 @@ public class SongService {
             } else {
                 log.error(
                         String.format(
-                                "Play line error, not enough args in line %s",
+                                "PlayList line error, not enough args in line %s",
                                 i
                         )
                 );
