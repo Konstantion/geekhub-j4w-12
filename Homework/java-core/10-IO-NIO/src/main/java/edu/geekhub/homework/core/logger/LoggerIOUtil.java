@@ -69,6 +69,7 @@ public class LoggerIOUtil {
                  ObjectOutputStream oos = new ObjectOutputStream(fos) {
                      @Override
                      protected void writeStreamHeader() {
+                         //Do nothing because when we append object we shouldn't write new header
                      }
                  }
             ) {
@@ -76,26 +77,6 @@ public class LoggerIOUtil {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void saveMessages(List<Message> messages) {
-        try (FileOutputStream fos = new FileOutputStream(buildFullLogPath());
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(messages);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void readMessages(List<Message> messages) {
-        try (FileInputStream fis = new FileInputStream(buildFullLogPath())) {
-            if (fis.available() != 0) {
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                messages.addAll((List<Message>) ois.readObject());
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 }
