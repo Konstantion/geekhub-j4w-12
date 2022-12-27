@@ -1,5 +1,6 @@
 package edu.geekhub.homework.core.song;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -78,5 +79,33 @@ public class SongIOUtil {
             e.printStackTrace();
         }
         return Collections.emptyList();
+    }
+
+    public void clearMusicLibrary() {
+        String pathString = String.join(
+                SEPARATOR,
+                ROOT,
+                MUSIC_DIRECTORY);
+        clearMusicLibrary(pathString);
+    }
+
+    public void clearMusicLibrary(String pathString) {
+        File mainFolder = new File(pathString);
+        File[] innerFolders = mainFolder.listFiles();
+        if (innerFolders != null) {
+            for (File folder : innerFolders) {
+                deleteDirectory(folder);
+            }
+        }
+    }
+
+    public void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
     }
 }

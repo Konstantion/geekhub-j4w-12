@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 
 class SongIOUtilTest {
@@ -122,8 +124,14 @@ class SongIOUtilTest {
     @Test
     void process_shouldReturnListOfLines_whenRead() {
         List<String> actualLines = IOUtil.readAllSongFromPlayList();
+        File file = new File(IOUtil.buildPlayListPath());
 
-        assertThat(actualLines).anyMatch(s -> s.contains(".mp3"));
+        assertThat(file)
+                .exists()
+                .canRead()
+                .canWrite();
+
+        assertThat(actualLines).isNotNull();
     }
 
     @Test
@@ -152,5 +160,15 @@ class SongIOUtilTest {
                     .peek(System.out::println)
                     .forEach(File::delete);
         }
+    }
+
+    @Test
+    void process_shouldCallRecursiveDelete_whenClearMusicLibrary() {
+        SongIOUtil mock = spy(SongIOUtil.class);
+        doNothing().when(mock).deleteDirectory(any(File.class));
+
+        mock.clearMusicLibrary(System.getProperty("user.dir") + SEPARATOR + "build");
+
+        verify(mock, atLeast(1)).deleteDirectory(any(File.class));
     }
 }
