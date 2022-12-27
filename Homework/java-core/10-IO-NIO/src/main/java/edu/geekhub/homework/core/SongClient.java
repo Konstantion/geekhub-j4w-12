@@ -1,6 +1,6 @@
-package edu.geekhub.homework.web;
+package edu.geekhub.homework.core;
 
-import edu.geekhub.homework.web.request.Response;
+import edu.geekhub.homework.core.request.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class SongClient {
 
-    public Response<Object> downloadSongViaNIO(String url) {
+    public Response<Object> downloadSongViaIO(String url) {
         try (InputStream in = new URL(url).openStream()) {
             byte[] songBytes = in.readAllBytes();
             return Response.ok(songBytes);

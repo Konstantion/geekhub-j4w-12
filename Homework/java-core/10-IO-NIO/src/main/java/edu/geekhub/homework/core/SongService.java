@@ -1,16 +1,19 @@
-package edu.geekhub.homework.web;
+package edu.geekhub.homework.core;
 
 import edu.geekhub.homework.core.logger.Logger;
 import edu.geekhub.homework.core.song.Song;
 import edu.geekhub.homework.core.song.SongIOUtil;
+import edu.geekhub.homework.core.song.SongMP3;
 import edu.geekhub.homework.core.song.validation.SongValidator;
-import edu.geekhub.homework.web.request.Response;
+import edu.geekhub.homework.core.request.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static edu.geekhub.homework.web.request.ResponseStatus.FAIL;
-import static edu.geekhub.homework.web.request.ResponseStatus.SUCCESS;
+import static edu.geekhub.homework.core.request.ResponseStatus.FAIL;
+import static edu.geekhub.homework.core.request.ResponseStatus.SUCCESS;
 
 public class SongService {
     private final SongIOUtil IOUtil;
@@ -34,7 +37,7 @@ public class SongService {
 
         String url = song.getUrl();
 
-        Response<Object> response = client.downloadSongViaNIO(url);
+        Response<Object> response = client.downloadSongViaIO(url);
 
         if (response.getStatus().equals(SUCCESS)) {
             try {
@@ -60,5 +63,33 @@ public class SongService {
         }
 
         return false;
+    }
+
+    public List<Song> readAllSongsFromPlayList() {
+        List<String> songLines = IOUtil.readAllSongFromPlayList();
+        List<Song> songs = new ArrayList<>();
+
+        for (int i = 0; i < songLines.size(); i++) {
+            String[] args = songLines.get(i).split("\\|");
+            if (args.length >= 5) {
+                SongMP3 temp = new SongMP3(
+                        args[0].trim(),
+                        args[1].trim(),
+                        args[2].trim(),
+                        args[3].trim(),
+                        args[4].trim()
+                );
+                songs.add(temp);
+            } else {
+                log.error(
+                        String.format(
+                                "Play line error, not enough args in line %s",
+                                i
+                        )
+                );
+            }
+        }
+
+        return songs;
     }
 }

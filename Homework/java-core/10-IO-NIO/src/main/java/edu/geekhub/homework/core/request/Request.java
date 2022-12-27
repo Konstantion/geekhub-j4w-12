@@ -1,4 +1,4 @@
-package edu.geekhub.homework.web.request;
+package edu.geekhub.homework.core.request;
 
 import static java.util.Objects.isNull;
 
