@@ -3,9 +3,11 @@ package edu.geekhub.homework.core.logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 public class Logger {
-    private static final Logger instance = new Logger();
-    private final LoggerIOUtil IOUtil;
+    private static Logger instance = null;
+    private LoggerIOUtil IOUtil;
     private final List<Message> messages;
 
     private Logger() {
@@ -15,7 +17,14 @@ public class Logger {
         IOUtil.fillMessagesListFromFile(messages);
     }
 
+    public void setIOUtil(LoggerIOUtil IOUtil) {
+        this.IOUtil = IOUtil;
+    }
+
     public static Logger getInstance() {
+        if (isNull(instance)) {
+            instance = new Logger();
+        }
         return instance;
     }
 
