@@ -12,6 +12,9 @@ public class LoggerIOUtil {
     public String buildResourcesPath() {
         return String.join(SEPARATOR,
                 PROJECT_DIRECTORY,
+                "Homework",
+                "java-core",
+                "10-IO-NIO",
                 "src",
                 "main",
                 "resources"
