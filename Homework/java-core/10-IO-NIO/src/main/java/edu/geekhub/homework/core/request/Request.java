@@ -6,9 +6,6 @@ public class Request <T> {
 
     private T data;
 
-    public Request() {
-    }
-
     public Request(T data) {
         this.data = data;
     }

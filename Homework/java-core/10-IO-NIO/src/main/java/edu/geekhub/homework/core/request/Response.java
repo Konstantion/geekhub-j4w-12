@@ -1,5 +1,9 @@
 package edu.geekhub.homework.core.request;
 
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
+
 public class Response<T> {
 
     private T data;
@@ -40,9 +44,18 @@ public class Response<T> {
 
     @Override
     public String toString() {
+        String responseData = isNull(data) ? "no data" : data.toString();
         return "Response {" +
-               "data=" + data +
+               "data=" + responseData +
                ", status=" + status +
                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Response)) return false;
+        Response<?> response = (Response<?>) o;
+        return Objects.equals(data, response.data) && status == response.status;
     }
 }
