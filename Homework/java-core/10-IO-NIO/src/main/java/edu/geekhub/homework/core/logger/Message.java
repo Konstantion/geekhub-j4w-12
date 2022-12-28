@@ -63,10 +63,10 @@ public class Message implements Serializable {
         String color = type.equals(ERROR) ? "\u001B[31m" : "\u001B[32m";
         String reset = "\u001B[0m";
         return String.format(
-                "%s|%s|%S|%s|%s%n",
+                "%s|%S|%s|%s|%s%n",
                 color,
-                dateString,
                 type,
+                dateString,
                 text,
                 reset
         );
