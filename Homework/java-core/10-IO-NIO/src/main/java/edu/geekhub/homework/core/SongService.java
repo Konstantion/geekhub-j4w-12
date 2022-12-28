@@ -21,11 +21,11 @@ public class SongService {
     private final SongValidator validator;
     private final Logger log;
 
-    public SongService(SongIOUtil pathBuilder, SongClient client, Logger log) {
+    public SongService(SongIOUtil pathBuilder, SongClient client, Logger log, SongValidator validator) {
         this.log = log;
         this.IOUtil = pathBuilder;
         this.client = client;
-        validator = new SongValidator();
+        this.validator = validator;
     }
 
     public boolean downloadSongHTTP(Song song) {
