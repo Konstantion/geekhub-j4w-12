@@ -84,7 +84,7 @@ public class SongService {
                 log.error(
                         String.format(
                                 "PlayList line error, not enough args in line %s",
-                                i
+                                i + 1
                         )
                 );
             }
