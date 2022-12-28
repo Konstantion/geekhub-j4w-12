@@ -185,24 +185,4 @@ class SongIOUtilTest {
                     .forEach(File::delete);
         }
     }
-
-    @Test
-    void process_shouldCallRecursiveDelete_whenClearMusicLibrary() {
-        SongIOUtil mock = spy(SongIOUtil.class);
-        doNothing().when(mock).deleteDirectory(any(File.class));
-
-        mock.clearMusicLibrary(System.getProperty("user.dir") + SEPARATOR + "build");
-
-        verify(mock, atLeast(1)).deleteDirectory(any(File.class));
-    }
-
-    @Test
-    void process_shouldCallClearMusicLibraryWithPath_whenClearMusicLibrary() {
-        SongIOUtil spy = spy(SongIOUtil.class);
-        doNothing().when(spy).clearMusicLibrary(any(String.class));
-
-        spy.clearMusicLibrary();
-
-        verify(spy, times(1)).clearMusicLibrary(any(String.class));
-    }
 }
