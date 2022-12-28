@@ -5,8 +5,8 @@ import edu.geekhub.homework.core.SongService;
 import edu.geekhub.homework.core.logger.Logger;
 import edu.geekhub.homework.core.logger.LoggerIOUtil;
 import edu.geekhub.homework.core.song.SongIOUtil;
+import edu.geekhub.homework.core.song.validation.SongValidator;
 import edu.geekhub.homework.web.SongController;
-
 
 
 public class InstanceInitializer {
@@ -16,17 +16,19 @@ public class InstanceInitializer {
     private SongController songController;
     private LoggerIOUtil loggerIOUtil;
     private Logger logger;
+    private SongValidator validator;
 
     public InstanceInitializer() {
         initialize();
     }
 
     private void initialize() {
+        validator = new SongValidator();
         loggerIOUtil = new LoggerIOUtil();
         logger = new Logger(loggerIOUtil);
         songIOUtil = new SongIOUtil();
         songClient = new SongClient();
-        songService = new SongService(songIOUtil, songClient, logger);
+        songService = new SongService(songIOUtil, songClient, logger, validator);
         songController = new SongController(songService);
     }
 
