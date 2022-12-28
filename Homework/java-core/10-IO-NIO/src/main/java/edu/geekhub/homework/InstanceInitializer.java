@@ -8,6 +8,8 @@ import edu.geekhub.homework.core.song.SongIOUtil;
 import edu.geekhub.homework.core.song.validation.SongValidator;
 import edu.geekhub.homework.web.SongController;
 
+import java.util.Scanner;
+
 
 public class InstanceInitializer {
     private SongIOUtil songIOUtil;
@@ -17,6 +19,7 @@ public class InstanceInitializer {
     private LoggerIOUtil loggerIOUtil;
     private Logger logger;
     private SongValidator validator;
+    private Scanner scanner;
 
     public InstanceInitializer() {
         initialize();
@@ -30,6 +33,11 @@ public class InstanceInitializer {
         songClient = new SongClient();
         songService = new SongService(songIOUtil, songClient, logger, validator);
         songController = new SongController(songService);
+        scanner = new Scanner(System.in);
+    }
+
+    public Scanner getScanner() {
+        return scanner;
     }
 
     public SongIOUtil getSongIOUtil() {

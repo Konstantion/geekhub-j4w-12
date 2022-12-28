@@ -17,7 +17,10 @@ public class ApplicationStarter {
                 .map(Request::new)
                 .forEach(controller::downloadSongByUrl);
 
-        UserInterface userInterface = new UserInterface(instanceInitializer.getLogger());
+        UserInterface userInterface = new UserInterface(
+                instanceInitializer.getLogger(),
+                instanceInitializer.getScanner()
+        );
         userInterface.drawMainMenu();
     }
 }

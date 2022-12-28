@@ -19,8 +19,8 @@ public class UserInterface {
     private final Scanner scanner;
     private static final String NO_SUCH_OPTION = "No such option provided";
 
-    public UserInterface(Logger logger) {
-        scanner = new Scanner(System.in);
+    public UserInterface(Logger logger, Scanner scanner) {
+        this.scanner = scanner;
         this.logger = logger;
         logType = LogType.ALL;
         orderingType = OrderingType.DESCENDING;
