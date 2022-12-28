@@ -21,10 +21,6 @@ public class SongValidations {
         this.IOUtil = IOUtil;
     }
 
-    public SongValidations() {
-        this.IOUtil = new SongIOUtil();
-    }
-
     public Optional<String> isUrlValid(String url) {
         List<String> errorList = new ArrayList<>();
 
