@@ -32,7 +32,7 @@ public class UTFString {
         return StandardCharsets.UTF_8.name();
     }
 
-    private static String charset(String value) {
+    public static String charset(String value) {
         return charset(value, CHARSETS);
     }
 
@@ -45,7 +45,7 @@ public class UTFString {
         return "";
     }
 
-    private static String convertToUTF(String value, String fromEncoding) {
+    public static String convertToUTF(String value, String fromEncoding) {
         try {
             return new String(value.getBytes(fromEncoding), StandardCharsets.UTF_8);
         } catch (UnsupportedEncodingException e) {

@@ -1,4 +1,4 @@
-package edu.geekhub.homework.core.UI;
+package edu.geekhub.homework.UI;
 
 import edu.geekhub.homework.core.logger.Logger;
 import edu.geekhub.homework.core.logger.Message;

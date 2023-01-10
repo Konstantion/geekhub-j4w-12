@@ -1,4 +1,4 @@
-package edu.geekhub.homework.core.UI;
+package edu.geekhub.homework.UI;
 
 public enum OrderingType {
     ASCENDING,
