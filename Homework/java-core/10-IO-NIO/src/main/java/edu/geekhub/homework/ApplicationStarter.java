@@ -6,9 +6,12 @@ import edu.geekhub.homework.core.song.Song;
 import edu.geekhub.homework.web.SongController;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ApplicationStarter {
     public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(5);
 
         InstanceInitializer instanceInitializer = new InstanceInitializer();
         SongController controller = instanceInitializer.getSongController();
@@ -16,8 +19,12 @@ public class ApplicationStarter {
 
         songs.stream()
                 .map(Request::new)
-                .forEach(controller::downloadSongByUrl);
-
+                //parallelization
+                .forEach(request -> executor.submit(() -> {
+                    controller.downloadSongByUrl(request);
+                }));
+                //default
+                //.forEach(controller::downloadSongByUrl);
         UserInterface userInterface = new UserInterface(
                 instanceInitializer.getLogger(),
                 instanceInitializer.getScanner()
