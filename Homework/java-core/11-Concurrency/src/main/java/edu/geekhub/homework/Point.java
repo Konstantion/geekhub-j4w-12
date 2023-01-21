@@ -1,5 +1,8 @@
 package edu.geekhub.homework;
 
+import static edu.geekhub.homework.Util.checkIndex;
+import static java.lang.Math.max;
+
 public class Point {
     public final int x;
     public final int y;
@@ -14,11 +17,23 @@ public class Point {
             Direction direction = Direction.getRandomDirection();
             int neighborX = Direction.moveX(x, direction);
             int neighborY = Direction.moveY(y, direction);
-            if (!(
-                    (neighborX < 0 || neighborY < 0)
-                    ||
-                    (neighborX >= size || neighborY >= size)
-            )) {
+            if (checkIndex(neighborX, size) && checkIndex(neighborY, size)) {
+                return new Point(neighborX, neighborY);
+            }
+        }
+    }
+
+    public static Point getExistingNeighborCoordinates(int x, int y, int size, int step) {
+        while (true) {
+            step = max(step, 1);
+            Direction direction = Direction.getRandomDirection();
+            int neighborX = x;
+            int neighborY = y;
+            for (int i = 0; i < step; i++) {
+                neighborX = Direction.moveX(neighborX, direction);
+                neighborY = Direction.moveY(neighborY, direction);
+            }
+            if (checkIndex(neighborX, size) && checkIndex(neighborY, size)) {
                 return new Point(neighborX, neighborY);
             }
         }
