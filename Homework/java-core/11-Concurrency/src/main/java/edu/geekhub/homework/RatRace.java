@@ -1,6 +1,7 @@
 package edu.geekhub.homework;
 
-import edu.geekhub.homework.vehicle.*;
+import edu.geekhub.homework.vehicle.VehicleGenerator;
+import edu.geekhub.homework.vehicle.VehicleType;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -9,10 +10,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static edu.geekhub.homework.Point.getExistingNeighborCoordinates;
-import static java.lang.Math.floor;
-import static java.lang.Math.pow;
+import static edu.geekhub.homework.Point.getNeighborCoordinates;
+import static edu.geekhub.homework.vehicle.VehicleType.*;
+import static java.lang.Math.*;
 
 public class RatRace {
     private final RoadUnit[][] gameField;
@@ -27,10 +30,15 @@ public class RatRace {
     public static final int FINISH = 4;
     public static final int ABYSS = 8;
 
-    private int carCount = 0;
+    private int startX;
+    private int startY;
+
+    private AtomicBoolean gameFinished = new AtomicBoolean(false);
 
     private final ScheduledExecutorService statisticScheduledExecutor;
     private final ScheduledExecutorService carScheduledExecutor;
+    private final ScheduledExecutorService gameFinishedSchedulerExecutor;
+
     private final ExecutorService carExecutorService;
 
     private final VehicleGenerator vehicleGenerator;
@@ -40,64 +48,114 @@ public class RatRace {
         this(roadSquareCount, new SecureRandom(), Executors.newSingleThreadScheduledExecutor());
     }
 
-    public RatRace(int roadSquareCount, ScheduledExecutorService statisticScheduledExecutor) {
+    private RatRace(int roadSquareCount, ScheduledExecutorService statisticScheduledExecutor) {
         this(roadSquareCount, new SecureRandom(), statisticScheduledExecutor);
     }
 
-    public RatRace(int roadSquareCount, Random random, ScheduledExecutorService statisticScheduledExecutor) {
+    private RatRace(int roadSquareCount, Random random, ScheduledExecutorService statisticScheduledExecutor) {
         this.statisticScheduledExecutor = statisticScheduledExecutor;
         carScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        carExecutorService = Executors.newFixedThreadPool(10);
+        gameFinishedSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
+        carExecutorService = Executors.newFixedThreadPool(
+                min(roadSquareCount * REL_TO_ABS_FACTOR, 30)
+        );
 
         roadSquareCount = Math.max(roadSquareCount, 3);
+
         this.roadSquareCount = roadSquareCount;
         this.random = random;
+
         relativeSize = (int) (floor(pow(roadSquareCount, 0.5)) + 1);
         absoluteSize = relativeSize * REL_TO_ABS_FACTOR;
+
+
         gameField = new RoadUnit[absoluteSize][absoluteSize];
-        vehicleGenerator = new VehicleGenerator(gameField);
-        initializeGameField();
+        vehicleGenerator = new VehicleGenerator(gameField, gameFinished);
+
+        initializeGame();
     }
 
-    private void initializeGameField() {
+    /**
+     * {@deprecated}
+     * Constructor with all dependency injected for tests,
+     * it's  {@code deprecated} and not recommended to use,
+     * like constructor to create instance of the class,
+     * to create optimised instance of the class use {@link #RatRace(int)}
+     */
+    @Deprecated
+    public RatRace(Random random,
+                   int roadSquareCount,
+                   ScheduledExecutorService statisticScheduledExecutor,
+                   ScheduledExecutorService carScheduledExecutor,
+                   ScheduledExecutorService gameFinishedSchedulerExecutor,
+                   ExecutorService carExecutorService,
+                   VehicleGenerator vehicleGenerator
+    ) {
+        this.statisticScheduledExecutor = statisticScheduledExecutor;
+        this.carScheduledExecutor = carScheduledExecutor;
+        this.gameFinishedSchedulerExecutor = gameFinishedSchedulerExecutor;
+        this.carExecutorService = carExecutorService;
+        this.vehicleGenerator = vehicleGenerator;
+
+        roadSquareCount = Math.max(roadSquareCount, 3);
+
+        this.roadSquareCount = roadSquareCount;
+        this.random = random;
+
+        relativeSize = (int) (floor(pow(roadSquareCount, 0.5)) + 1);
+        absoluteSize = relativeSize * REL_TO_ABS_FACTOR;
+
+        gameField = new RoadUnit[absoluteSize][absoluteSize];
+        vehicleGenerator = new VehicleGenerator(gameField, gameFinished);
+
+        initializeGame();
+    }
+
+    private void initializeGame() {
         for (int y = 0; y < absoluteSize; y++) {
             for (int x = 0; x < absoluteSize; x++) {
                 gameField[y][x] = new RoadUnit(x, y, REL_TO_ABS_FACTOR);
                 gameField[y][x].status = ABYSS;
             }
         }
+
         buildRoad();
+
+        startProgram();
+    }
+
+    private void startProgram() {
         statisticScheduledExecutor.scheduleAtFixedRate(() -> System.out.println(
-                        getGameFieldWithCarsAsString()
+                        getGameFieldAsStringTest()
                 ),
                 1000,
                 1000,
                 TimeUnit.MILLISECONDS);
         carScheduledExecutor.scheduleAtFixedRate(
-                () -> {
-                    carExecutorService.submit(vehicleGenerator.generateVehicle(0, 0));
+                () -> carExecutorService.submit(vehicleGenerator.generateVehicle(
+                        getRandomFreePointInStartUnit())),
+                1000,
+                1000,
+                TimeUnit.MILLISECONDS);
+
+        gameFinishedSchedulerExecutor.scheduleAtFixedRate(() -> {
+                    if (gameFinished.get()) {
+                        statisticScheduledExecutor.shutdownNow();
+                        carScheduledExecutor.shutdownNow();
+                    }
                 },
                 1000,
-                4000,
-                TimeUnit.MILLISECONDS);
-//        carExecutorService.submit(new Truck("Truck - " + carCount++,
-//                0, 0,
-//                gameField,
-//                true));
-//        carExecutorService.submit(new Truck("Truck - " + carCount++,
-//                3, 3,
-//                gameField,
-//                true));
-//        carExecutorService.submit(new Car("Car - " + carCount++,
-//                2, 2,
-//                gameField,
-//                true));
+                300,
+                TimeUnit.MILLISECONDS
+        );
     }
 
     private void buildRoad() {
         int absCurrX = random.nextInt(relativeSize);
         int absCurrY = random.nextInt(relativeSize);
         replaceStatusToRoadSquare(absCurrX, absCurrY, START);
+        startX = absCurrX;
+        startY = absCurrY;
         int roadSquaresLeft = roadSquareCount - 1;
         while (roadSquaresLeft > 0) {
             Point neighborCoordinates =
@@ -120,6 +178,22 @@ public class RatRace {
         }
     }
 
+    private Point getRandomFreePointInStartUnit() {
+        int absStartX = startX * REL_TO_ABS_FACTOR;
+        int absStartY = startY * REL_TO_ABS_FACTOR;
+        int unitHalf = REL_TO_ABS_FACTOR / 2;
+        while (true) {
+            Point point = getNeighborCoordinates(
+                    absStartX + unitHalf,
+                    absStartY + unitHalf
+            );
+            if (gameField[point.y][point.x].status < CAR.getStatus()) {
+                System.out.println("Given cord, " + point.x + " " + point.y);
+                return point;
+            }
+        }
+    }
+
     private void replaceStatusToRoadSquare(int relevantX, int relevantY, int status) {
         int absolutX = relevantX * REL_TO_ABS_FACTOR;
         int absolutY = relevantY * REL_TO_ABS_FACTOR;
@@ -128,74 +202,6 @@ public class RatRace {
                 gameField[y][x].status = status;
             }
         }
-    }
-
-    public String getGameFieldAsString() {
-        StringBuilder fieldBuilder = new StringBuilder();
-        fieldBuilder
-                .append(LocalDateTime.now().getHour())
-                .append(":")
-                .append(LocalDateTime.now().getMinute())
-                .append(":")
-                .append(LocalDateTime.now().getSecond()).append("\n");
-        fieldBuilder.append("+")
-                .append("—".repeat(absoluteSize + relativeSize - 1))
-                .append("+")
-                .append("\n");
-        for (int y = 0; y < absoluteSize; y++) {
-            fieldBuilder.append("|");
-            for (int x = 0; x < absoluteSize; x++) {
-                fieldBuilder.append(gameField[y][x].status);
-                if (x % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-                    fieldBuilder.append("|");
-                }
-            }
-            fieldBuilder.append("\n");
-            if (y % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-                fieldBuilder.append("+");
-                fieldBuilder.append("—".repeat(absoluteSize + relativeSize - 1));
-                fieldBuilder.append("+");
-                fieldBuilder.append("\n");
-            }
-
-        }
-        return fieldBuilder.toString();
-    }
-
-    public String getGameFieldWithTrackingStatusAsString(int status) {
-        StringBuilder fieldBuilder = new StringBuilder();
-        fieldBuilder
-                .append(LocalDateTime.now().getHour())
-                .append(":")
-                .append(LocalDateTime.now().getMinute())
-                .append(":")
-                .append(LocalDateTime.now().getSecond()).append("\n");
-        fieldBuilder.append("+")
-                .append("—".repeat(absoluteSize + relativeSize - 1))
-                .append("+")
-                .append("\n");
-        for (int y = 0; y < absoluteSize; y++) {
-            fieldBuilder.append("|");
-            for (int x = 0; x < absoluteSize; x++) {
-                String currentSymbol = " ";
-                if ((gameField[y][x].status & status) != 0) {
-                    currentSymbol = "♣";
-                }
-                fieldBuilder.append(currentSymbol);
-                if (x % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-                    fieldBuilder.append("|");
-                }
-            }
-            fieldBuilder.append("\n");
-            if (y % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-                fieldBuilder.append("+");
-                fieldBuilder.append("—".repeat(absoluteSize + relativeSize - 1));
-                fieldBuilder.append("+");
-                fieldBuilder.append("\n");
-            }
-
-        }
-        return fieldBuilder.toString();
     }
 
     public String getGameFieldWithCarsAsString() {
@@ -214,10 +220,10 @@ public class RatRace {
             fieldBuilder.append("|");
             for (int x = 0; x < absoluteSize; x++) {
                 String currentSymbol = " ";
-                if ((gameField[y][x].status & VehicleType.CAR.getStatus()) != 0) {
+                if ((gameField[y][x].status & CAR.getStatus()) != 0) {
                     currentSymbol = "♣";
                 }
-                if ((gameField[y][x].status & VehicleType.MOPED.getStatus()) != 0) {
+                if ((gameField[y][x].status & MOPED.getStatus()) != 0) {
                     currentSymbol = "♦";
                 }
                 if ((gameField[y][x].status & VehicleType.TRUCK.getStatus()) != 0) {
@@ -238,5 +244,54 @@ public class RatRace {
 
         }
         return fieldBuilder.toString();
+    }
+
+    public String getGameFieldAsStringTest() {
+        StringBuilder fieldBuilder = new StringBuilder();
+        fieldBuilder
+                .append(LocalDateTime.now().getHour())
+                .append(":")
+                .append(LocalDateTime.now().getMinute())
+                .append(":")
+                .append(LocalDateTime.now().getSecond()).append("\n");
+        for (int y = 0; y < absoluteSize; y++) {
+            for (int x = 0; x < absoluteSize; x++) {
+                String unitString = getUnitString(y, x);
+                fieldBuilder.append(unitString);
+//                if (x % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
+//                    fieldBuilder.append(" ");
+//                }
+            }
+            fieldBuilder.append("\n");
+
+//            if (y % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
+//                fieldBuilder.append("\n");
+//            }
+
+        }
+        return fieldBuilder.toString();
+    }
+
+    private String getUnitString(int y, int x) {
+        String unitString;
+        if ((gameField[y][x].status & CAR.getStatus()) != 0) {
+            unitString = "C";
+        } else if ((gameField[y][x].status & MOPED.getStatus()) != 0) {
+            unitString = "M";
+        } else if ((gameField[y][x].status & TRUCK.getStatus()) != 0) {
+            unitString = "T";
+        } else if ((gameField[y][x].status & FINISH) != 0) {
+            unitString = "▒";
+        } else if ((gameField[y][x].status & START) != 0) {
+            unitString = "║";
+        } else if ((gameField[y][x].status & ABYSS) != 0) {
+            unitString = "♦";
+        } else if ((gameField[y][x].status & ROAD) != 0) {
+            unitString = "█";
+        } else {
+            unitString = "♀";
+        }
+
+        return unitString;
     }
 }
