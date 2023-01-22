@@ -4,14 +4,14 @@ import edu.geekhub.homework.Point;
 import edu.geekhub.homework.RoadUnit;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 
 import static edu.geekhub.homework.Point.getExistingNeighborCoordinates;
 import static edu.geekhub.homework.RatRace.ABYSS;
-import static edu.geekhub.homework.RatRace.FINISH;
 
 public class Truck extends Vehicle {
     private static final int step = 1;
+    private volatile Point waitsFor = new Point(-1, -1);
+    private static final int MAX_WAITING_COUNT = 20;
 
     public Truck(String name,
                  int x, int y,
@@ -22,50 +22,46 @@ public class Truck extends Vehicle {
 
     @Override
     public void run() {
-        while (exist) {
-            synchronized (this) {
-                try {
+        try {
+            while (exist) {
+                synchronized (this) {
                     wait(delay);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                Point next = getExistingNeighborCoordinates(x, y, gameField.length, step);
-                while (exist) {
-                    if ((gameField[next.y][next.x].status & ABYSS) != 0) {
+                    int waitingCount = 0;
+                    Point next = getExistingNeighborCoordinates(x, y, gameField.length, step);
+                    while (exist) {
+                        if ((gameField[next.y][next.x].status & ABYSS) != 0) {
+                            processFall(next);
+                        } else if (gameField[next.y][next.x].tryJoin(this)) {
+                            gameField[y][x].unlock(this);
+                            processMove(next);
+                            break;
+                        } else {
+                            if (waitingCount == 0) {
+                                logWaitFor(this, next);
+                            }
+                            waitingCount++;
 
-                        logFallInAbyss(this, x, y, next.x, next.y);
-
-                        this.exist = false;
-                    }
-                    if (gameField[next.y][next.x].tryJoin(this)) {
-
-                        gameField[y][x].unlock();
-
-                       logMove(this, x, y, next.x, next.y);
-
-                        if ((gameField[next.y][next.x].status & FINISH) != 0) {
-                            logFinish(this, x, y, next.x, next.y);
-                            gameFinished.set(true);
-                        }
-
-                        x = next.x;
-                        y = next.y;
-
-                        break;
-                    } else {
-                        logger.log(Level.WARNING, "{0} waits to go to x:{1} y:{2}",
-                                new Object[]{this.getName(), next.x, next.y});
-                        try {
-                            wait(100);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
+                            if (waitingCount == MAX_WAITING_COUNT) {
+                                gameField[y][x].unlock(this);
+                                logDeadLock(this, next);
+                                setExist(false);
+                                gameField[next.y][next.x].getVehicle().setExist(false);
+                            }
+                            wait(200);
                         }
                     }
                 }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            //Unlock unit if was crashed by another car
+            gameField[y][x].unlock(this);
         }
-        //Unlock unit if was crashed by another car
-        gameField[y][x].unlock();
+    }
+
+    public Point getWaitsFor() {
+        return waitsFor;
     }
 }
 

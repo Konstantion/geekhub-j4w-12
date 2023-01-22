@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class VehicleGenerator {
     private int vehicleId = 0;
     private final RoadUnit[][] gameField;
-    private AtomicBoolean gameFinished;
+    private final AtomicBoolean gameFinished;
 
     public VehicleGenerator(RoadUnit[][] gameField, AtomicBoolean gameFinished) {
         this.gameField = gameField;
