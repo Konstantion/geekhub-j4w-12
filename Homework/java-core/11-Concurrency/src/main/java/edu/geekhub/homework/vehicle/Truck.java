@@ -5,7 +5,7 @@ import edu.geekhub.homework.RoadUnit;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static edu.geekhub.homework.Point.getExistingNeighborCoordinates;
+import static edu.geekhub.homework.Point.getExistingNeighborPoint;
 import static edu.geekhub.homework.RatRace.ABYSS;
 
 public class Truck extends Vehicle {
@@ -27,7 +27,7 @@ public class Truck extends Vehicle {
                 synchronized (this) {
                     wait(delay);
                     int waitingCount = 0;
-                    Point next = getExistingNeighborCoordinates(x, y, gameField.length, step);
+                    Point next = Point.getExistingNeighborPoint(x, y, gameField.length, step);
                     while (exist) {
                         if ((gameField[next.y][next.x].status & ABYSS) != 0) {
                             processFall(next);

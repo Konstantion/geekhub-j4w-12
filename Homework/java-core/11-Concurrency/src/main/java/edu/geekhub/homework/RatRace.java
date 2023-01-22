@@ -1,7 +1,6 @@
 package edu.geekhub.homework;
 
 import edu.geekhub.homework.vehicle.VehicleGenerator;
-import edu.geekhub.homework.vehicle.VehicleType;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -12,8 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static edu.geekhub.homework.Point.getExistingNeighborCoordinates;
-import static edu.geekhub.homework.Point.getNeighborCoordinates;
+import static edu.geekhub.homework.Point.getExistingNeighborPoint;
+import static edu.geekhub.homework.Point.getNeighborPoint;
 import static edu.geekhub.homework.vehicle.VehicleType.*;
 import static java.lang.Math.*;
 
@@ -156,7 +155,7 @@ public class RatRace {
         int roadSquaresLeft = roadSquareCount - 1;
         while (roadSquaresLeft > 0) {
             Point neighborCoordinates =
-                    getExistingNeighborCoordinates(absCurrX, absCurrY, relativeSize);
+                    getExistingNeighborPoint(absCurrX, absCurrY, relativeSize);
             int absTempX = neighborCoordinates.x * REL_TO_ABS_FACTOR;
             int absTempY = neighborCoordinates.y * REL_TO_ABS_FACTOR;
             int relTempX = neighborCoordinates.x;
@@ -180,7 +179,7 @@ public class RatRace {
         int absStartY = startY * REL_TO_ABS_FACTOR;
         int unitHalf = REL_TO_ABS_FACTOR / 2;
         while (true) {
-            Point point = getNeighborCoordinates(
+            Point point = getNeighborPoint(
                     absStartX + unitHalf,
                     absStartY + unitHalf
             );

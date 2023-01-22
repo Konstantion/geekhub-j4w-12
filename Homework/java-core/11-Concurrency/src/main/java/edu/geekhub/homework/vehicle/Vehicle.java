@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static edu.geekhub.homework.Point.getExistingNeighborCoordinates;
+import static edu.geekhub.homework.Point.getExistingNeighborPoint;
 import static edu.geekhub.homework.RatRace.ABYSS;
 import static edu.geekhub.homework.RatRace.FINISH;
 
@@ -60,7 +60,7 @@ public class Vehicle implements Runnable {
                         break;
                     }
                     gameField[y][x].unlock(this);
-                    Point next = getExistingNeighborCoordinates(x, y, gameField.length, step);
+                    Point next = Point.getExistingNeighborPoint(x, y, gameField.length, step);
                     if ((gameField[next.y][next.x].status & ABYSS) != 0) {
                         processFall(next);
                     } else if (gameField[next.y][next.x].tryJoin(this)) {

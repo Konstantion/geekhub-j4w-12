@@ -14,25 +14,21 @@ public class Point {
         this.y = y;
     }
 
-    public static Point getExistingNeighborCoordinates(int x, int y, int size) {
-        while (true) {
-            Direction direction = Direction.getRandomDirection();
-            int neighborX = Direction.moveX(x, direction);
-            int neighborY = Direction.moveY(y, direction);
-            if (checkIndex(neighborX, size) && checkIndex(neighborY, size)) {
-                return new Point(neighborX, neighborY);
-            }
-        }
+    public static Point getExistingNeighborPoint(int x, int y, int size) {
+        return getExistingNeighborPoint(x, y, size, 1);
     }
 
-    public static Point getNeighborCoordinates(int x, int y) {
+    public static Point getNeighborPoint(int x, int y) {
         Direction direction = Direction.getRandomDirection();
         int neighborX = Direction.moveX(x, direction);
         int neighborY = Direction.moveY(y, direction);
         return new Point(neighborX, neighborY);
     }
 
-    public static Point getExistingNeighborCoordinates(int x, int y, int size, int step) {
+    public static Point getExistingNeighborPoint(int x, int y, int size, int step) {
+        if (size < x || size < y) {
+            throw new IllegalArgumentException("Indexes should be less then size");
+        }
         while (true) {
             step = max(step, 1);
             Direction direction = Direction.getRandomDirection();
