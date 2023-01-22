@@ -23,6 +23,13 @@ public class Point {
         }
     }
 
+    public static Point getNeighborCoordinates(int x, int y) {
+        Direction direction = Direction.getRandomDirection();
+        int neighborX = Direction.moveX(x, direction);
+        int neighborY = Direction.moveY(y, direction);
+        return new Point(neighborX, neighborY);
+    }
+
     public static Point getExistingNeighborCoordinates(int x, int y, int size, int step) {
         while (true) {
             step = max(step, 1);
