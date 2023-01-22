@@ -1,5 +1,7 @@
 package edu.geekhub.homework;
 
+import java.util.Objects;
+
 import static edu.geekhub.homework.Util.checkIndex;
 import static java.lang.Math.max;
 
@@ -44,5 +46,18 @@ public class Point {
                 return new Point(neighborX, neighborY);
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Point)) return false;
+        Point point = (Point) o;
+        return x == point.x && y == point.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
