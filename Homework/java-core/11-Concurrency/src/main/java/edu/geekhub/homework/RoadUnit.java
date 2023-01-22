@@ -2,7 +2,6 @@ package edu.geekhub.homework;
 
 import edu.geekhub.homework.vehicle.Vehicle;
 
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -15,15 +14,11 @@ public class RoadUnit {
     private final int relToAbsFactor;
     private Vehicle vehicle;
     public int status;
-    private Condition unitTaken;
-    private Condition unitFree;
 
     public RoadUnit(int x, int y, int relToAbsFactor) {
         this.x = x;
         this.y = y;
         this.relToAbsFactor = relToAbsFactor;
-        unitTaken = lock.newCondition();
-        unitFree = lock.newCondition();
     }
 
     public boolean tryJoin(Vehicle vehicle) {
@@ -35,8 +30,9 @@ public class RoadUnit {
         return true;
     }
 
-    public void unlock() {
-        if (!isNull(vehicle)) {
+    public void unlock(Vehicle caller) {
+        if (!isNull(vehicle) &&
+            vehicle.equals(caller)) {
             status -= vehicle.getType().getStatus();
             vehicle = null;
             lock.unlock();
@@ -62,18 +58,4 @@ public class RoadUnit {
     public Vehicle getVehicle() {
         return vehicle;
     }
-
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-
 }
