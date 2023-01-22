@@ -48,10 +48,6 @@ public class RatRace {
         this(roadSquareCount, new SecureRandom(), Executors.newSingleThreadScheduledExecutor());
     }
 
-    private RatRace(int roadSquareCount, ScheduledExecutorService statisticScheduledExecutor) {
-        this(roadSquareCount, new SecureRandom(), statisticScheduledExecutor);
-    }
-
     private RatRace(int roadSquareCount, Random random, ScheduledExecutorService statisticScheduledExecutor) {
         this.statisticScheduledExecutor = statisticScheduledExecutor;
         carScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -67,7 +63,6 @@ public class RatRace {
 
         relativeSize = (int) (floor(pow(roadSquareCount, 0.5)) + 1);
         absoluteSize = relativeSize * REL_TO_ABS_FACTOR;
-
 
         gameField = new RoadUnit[absoluteSize][absoluteSize];
         vehicleGenerator = new VehicleGenerator(gameField, gameFinished);
@@ -142,6 +137,8 @@ public class RatRace {
                     if (gameFinished.get()) {
                         statisticScheduledExecutor.shutdownNow();
                         carScheduledExecutor.shutdownNow();
+                        carExecutorService.shutdownNow();
+                        gameFinishedSchedulerExecutor.shutdownNow();
                     }
                 },
                 1000,
@@ -188,7 +185,6 @@ public class RatRace {
                     absStartY + unitHalf
             );
             if (gameField[point.y][point.x].status < CAR.getStatus()) {
-                System.out.println("Given cord, " + point.x + " " + point.y);
                 return point;
             }
         }
@@ -204,48 +200,6 @@ public class RatRace {
         }
     }
 
-    public String getGameFieldWithCarsAsString() {
-        StringBuilder fieldBuilder = new StringBuilder();
-        fieldBuilder
-                .append(LocalDateTime.now().getHour())
-                .append(":")
-                .append(LocalDateTime.now().getMinute())
-                .append(":")
-                .append(LocalDateTime.now().getSecond()).append("\n");
-        fieldBuilder.append("+")
-                .append("—".repeat(absoluteSize + relativeSize - 1))
-                .append("+")
-                .append("\n");
-        for (int y = 0; y < absoluteSize; y++) {
-            fieldBuilder.append("|");
-            for (int x = 0; x < absoluteSize; x++) {
-                String currentSymbol = " ";
-                if ((gameField[y][x].status & CAR.getStatus()) != 0) {
-                    currentSymbol = "♣";
-                }
-                if ((gameField[y][x].status & MOPED.getStatus()) != 0) {
-                    currentSymbol = "♦";
-                }
-                if ((gameField[y][x].status & VehicleType.TRUCK.getStatus()) != 0) {
-                    currentSymbol = "♠";
-                }
-                fieldBuilder.append(currentSymbol);
-                if (x % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-                    fieldBuilder.append("|");
-                }
-            }
-            fieldBuilder.append("\n");
-            if (y % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-                fieldBuilder.append("+");
-                fieldBuilder.append("—".repeat(absoluteSize + relativeSize - 1));
-                fieldBuilder.append("+");
-                fieldBuilder.append("\n");
-            }
-
-        }
-        return fieldBuilder.toString();
-    }
-
     public String getGameFieldAsStringTest() {
         StringBuilder fieldBuilder = new StringBuilder();
         fieldBuilder
@@ -258,16 +212,8 @@ public class RatRace {
             for (int x = 0; x < absoluteSize; x++) {
                 String unitString = getUnitString(y, x);
                 fieldBuilder.append(unitString);
-//                if (x % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-//                    fieldBuilder.append(" ");
-//                }
             }
             fieldBuilder.append("\n");
-
-//            if (y % REL_TO_ABS_FACTOR == REL_TO_ABS_FACTOR - 1) {
-//                fieldBuilder.append("\n");
-//            }
-
         }
         return fieldBuilder.toString();
     }
