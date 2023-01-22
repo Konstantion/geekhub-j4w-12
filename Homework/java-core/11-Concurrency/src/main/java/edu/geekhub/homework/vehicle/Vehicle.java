@@ -6,10 +6,13 @@ import edu.geekhub.homework.RoadUnit;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static edu.geekhub.homework.Point.getExistingNeighborCoordinates;
+import static edu.geekhub.homework.RatRace.ABYSS;
+import static edu.geekhub.homework.RatRace.FINISH;
 
 public class Vehicle implements Runnable {
     protected static final long MIN_DELAY = 200;
@@ -19,10 +22,11 @@ public class Vehicle implements Runnable {
     protected int y;
     protected final RoadUnit[][] gameField;
     protected VehicleType type;
-    protected boolean exist;
+    protected volatile boolean exist;
     protected long delay;
     protected final int step;
     protected final Logger logger = Logger.getLogger(Vehicle.class.getName());
+    protected AtomicBoolean gameFinished;
 
     protected Vehicle(String name,
                       int x,
@@ -30,7 +34,8 @@ public class Vehicle implements Runnable {
                       RoadUnit[][] gameField,
                       VehicleType type,
                       boolean exist,
-                      int step) {
+                      int step,
+                      AtomicBoolean gameFinished) {
         this.name = name;
         this.x = x;
         this.y = y;
@@ -38,6 +43,7 @@ public class Vehicle implements Runnable {
         this.type = type;
         this.exist = exist;
         this.step = step;
+        this.gameFinished = gameFinished;
         delay = new Random().nextLong(MIN_DELAY, MAX_DELAY + 1);
     }
 
@@ -50,24 +56,65 @@ public class Vehicle implements Runnable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                if (exist) {
-                    gameField[y][x].unlock();
-                    Point next = getExistingNeighborCoordinates(x, y, gameField.length, step);
-                    if (gameField[next.y][next.x].tryJoin(this)) {
-                        logger.log(Level.FINE, "{0} go from x:{1} y:{2} to x:{3} y:{4}",
-                                new Object[]{this.getName(), x, y, next.x, next.y});
-                        x = next.x;
-                        y = next.y;
-                    } else {
-                        logger.log(Level.WARNING, "Vehicle crash on x:{0} y:{1}," +
-                                                  " {2}(quilt) and {3} ,crashed", new Object[]{next.x, next.y, this.getName(), gameField[next.y][next.x].getVehicle().getName()});
-                        gameField[next.y][next.x].getVehicle().setExist(false);
-                        this.exist = false;
+                //car was crashed by another car while waiting
+                if (!exist) {
+                    break;
+                }
+                gameField[y][x].unlock();
+                Point next = getExistingNeighborCoordinates(x, y, gameField.length, step);
+                if ((gameField[next.y][next.x].status & ABYSS) != 0) {
+
+                    logFallInAbyss(this, x, y, next.x, next.y);
+
+                    this.exist = false;
+
+                } else if (gameField[next.y][next.x].tryJoin(this)) {
+
+                    logMove(this, x, y, next.x, next.y);
+
+                    if ((gameField[next.y][next.x].status & FINISH) != 0) {
+                        logFinish(this, x, y, next.x, next.y);
+                        gameFinished.set(true);
                     }
+
+                    x = next.x;
+                    y = next.y;
+                } else {
+                    logCrash(x, y, next.x, next.y, this, gameField[next.y][next.x].getVehicle());
+                    gameField[next.y][next.x].getVehicle().setExist(false);
+                    this.exist = false;
                 }
             }
         }
+        //Unlock unit if was crashed by another car
         gameField[y][x].unlock();
+    }
+
+    public void logMove(Vehicle vehicle, int x, int y, int nextX, int nextY) {
+        logger.log(Level.FINE, "{0} go from x:{1} y:{2} to x:{3} y:{4}",
+                new Object[]{vehicle.getName(), x, y, nextX, nextY});
+    }
+
+    public void logCrash(int x, int y, int nextX, int nextY, Vehicle quilt, Vehicle victim) {
+        logger.log(Level.WARNING,
+                "Vehicle crash when go from x:{0} y:{1} to x:{2} y:{3}! {4}(quilt) and {5}(victim) ,crashed",
+                new Object[]{x, y,
+                        nextX, nextY,
+                        quilt.getName(),
+                        victim.getName()
+                });
+    }
+
+    public void logFallInAbyss(Vehicle vehicle, int x, int y, int nextX, int nextY) {
+        logger.log(Level.WARNING,
+                "Vehicle {0} fall in the abyss when go from x:{1} y:{2}" +
+                " to x:{3} y:{4}!",
+                new Object[]{vehicle.getName(), x, y, nextX, nextY});
+    }
+
+    public void logFinish(Vehicle vehicle, int x, int y, int nextX, int nextY) {
+        logger.log(Level.FINE, "{0} reached finish when go from x:{1} y:{2} to x:{3} y:{4}",
+                new Object[]{vehicle.getName(), x, y, nextX, nextY});
     }
 
     public String getName() {
