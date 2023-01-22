@@ -235,7 +235,7 @@ public class RatRace {
         } else if ((gameField[y][x].status & ROAD) != 0) {
             unitString = "█";
         } else {
-            unitString = "♀";
+            unitString = "";
         }
 
         return unitString;
