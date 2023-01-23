@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static edu.geekhub.homework.Point.getExistingNeighborPoint;
 import static edu.geekhub.homework.RatRace.ABYSS;
 import static edu.geekhub.homework.RatRace.FINISH;
 
@@ -78,7 +77,7 @@ public class Vehicle implements Runnable {
         }
     }
 
-    public void logMove(Vehicle vehicle, int x, int y, int nextX, int nextY) {
+    protected void logMove(Vehicle vehicle, int x, int y, int nextX, int nextY) {
         logger.log(Level.FINE, "{0} today at {1} go from x:{2} y:{3} to x:{4} y:{5}",
                 new Object[]{
                         vehicle.getName(),
@@ -88,7 +87,7 @@ public class Vehicle implements Runnable {
                 });
     }
 
-    public void logCrash(int x, int y, int nextX, int nextY, Vehicle quilt, Vehicle victim) {
+    protected void logCrash(int x, int y, int nextX, int nextY, Vehicle quilt, Vehicle victim) {
         logger.log(Level.WARNING,
                 "{0} crashed into {1} today at {2} when go from x:{3} y:{4} to x:{5} y:{6}!",
                 new Object[]{
@@ -100,7 +99,7 @@ public class Vehicle implements Runnable {
                 });
     }
 
-    public void logFallInAbyss(Vehicle vehicle, int x, int y, int nextX, int nextY) {
+    protected void logFallInAbyss(Vehicle vehicle, int x, int y, int nextX, int nextY) {
         logger.log(Level.WARNING,
                 "{0} fall in the abyss when go from x:{1} y:{2}" +
                 " to x:{3} y:{4}! at {5}",
@@ -112,7 +111,7 @@ public class Vehicle implements Runnable {
                 });
     }
 
-    public void logFinish(Vehicle vehicle, int x, int y, int nextX, int nextY) {
+    protected void logFinish(Vehicle vehicle, int x, int y, int nextX, int nextY) {
         logger.log(Level.WARNING, "{0} REACHED FINISH WHEN GO FROM x:{1} y:{2} to x:{3} y:{4} at {5}",
                 new Object[]{
                         vehicle.getName(),
@@ -122,14 +121,14 @@ public class Vehicle implements Runnable {
                 });
     }
 
-    public void logWaitFor(Vehicle vehicle, Point next) {
+    protected void logWaitFor(Vehicle vehicle, Point next) {
         logger.log(Level.WARNING, "{0} waits to go to x:{1} y:{2} at {3}",
                 new Object[]{vehicle.getName(),
                         next.x, next.y,
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date())});
     }
 
-    public void logDeadLock(Vehicle vehicle, Point next) {
+    protected void logDeadLock(Vehicle vehicle, Point next) {
         logger.log(Level.WARNING, "{0} and {1}, were removed because of dead lock at {2}",
                 new Object[]{
                         vehicle.getName(),
@@ -182,6 +181,14 @@ public class Vehicle implements Runnable {
 
     public int getY() {
         return y;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(long delay) {
+        this.delay = delay;
     }
 
     public Point extractPoint() {
