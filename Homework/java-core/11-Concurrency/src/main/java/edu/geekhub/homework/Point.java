@@ -29,6 +29,9 @@ public class Point {
         if (size < x || size < y) {
             throw new IllegalArgumentException("Indexes should be less then size");
         }
+        if (x < 0 || y < 0) {
+            throw new IllegalArgumentException("Indexes should be bigger or equal to zero");
+        }
         while (true) {
             step = max(step, 1);
             Direction direction = Direction.getRandomDirection();
