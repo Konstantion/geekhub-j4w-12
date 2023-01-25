@@ -62,4 +62,16 @@ public class RoadUnit {
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
+
+    @Override
+    public String toString() {
+        return "RoadUnit{" +
+               "lock=" + lock +
+               ", x=" + x +
+               ", y=" + y +
+               ", relToAbsFactor=" + relToAbsFactor +
+               ", vehicle=" + vehicle +
+               ", status=" + status +
+               '}';
+    }
 }

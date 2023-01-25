@@ -5,13 +5,13 @@ import edu.geekhub.homework.RoadUnit;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static edu.geekhub.homework.Point.getExistingNeighborPoint;
 import static edu.geekhub.homework.RatRace.ABYSS;
 
 public class Truck extends Vehicle {
     private static final int step = 1;
     private volatile Point waitsFor = new Point(-1, -1);
     private static final int MAX_WAITING_COUNT = 20;
+    private  long waitingTime = 200L;
 
     public Truck(String name,
                  int x, int y,
@@ -47,7 +47,7 @@ public class Truck extends Vehicle {
                                 setExist(false);
                                 gameField[next.y][next.x].getVehicle().setExist(false);
                             }
-                            wait(200);
+                            wait(waitingTime);
                         }
                     }
                 }
@@ -60,8 +60,8 @@ public class Truck extends Vehicle {
         }
     }
 
-    public Point getWaitsFor() {
-        return waitsFor;
+    public void setWaitingTime(long waitingTime) {
+        this.waitingTime = waitingTime;
     }
 }
 

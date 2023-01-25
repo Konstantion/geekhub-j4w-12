@@ -1,10 +1,5 @@
 package edu.geekhub.homework;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
-
 import static java.lang.Thread.sleep;
 
 public class ApplicationStarter {
