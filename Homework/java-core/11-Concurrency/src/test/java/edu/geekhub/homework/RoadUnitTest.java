@@ -1,6 +1,7 @@
 package edu.geekhub.homework;
 
 import edu.geekhub.homework.vehicle.Car;
+import edu.geekhub.homework.vehicle.Moped;
 import edu.geekhub.homework.vehicle.Vehicle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,14 @@ class RoadUnitTest {
     }
 
     @Test
+    void process_returnString_whenToString() {
+        RoadUnit manualUnit = new RoadUnit(0, 0, 1);
+
+        assertThat(manualUnit.toString())
+                .contains("RoadUnit", "lock", "x", "y", "relToAbsFactor", "vehicle", "status");
+    }
+
+    @Test
     void process_returnFalse_whenTryJoinAndLockIsAlreadyJoined() {
         doReturn(false).when(lockMock).tryLock();
 
@@ -50,7 +59,7 @@ class RoadUnitTest {
     void process_returnTrueAndSetVehicle_whenTryJoinAndLockIsFree() {
         doReturn(true).when(lockMock).tryLock();
 
-        Vehicle vehicle = new Car("Car", 0, 0, null, true, new AtomicBoolean(false));
+        Vehicle vehicle = new Moped("Moped", 0, 0, null, true, new AtomicBoolean(false));
         boolean actualResult = unit.tryJoin(vehicle);
 
         assertThat(actualResult).isTrue();
