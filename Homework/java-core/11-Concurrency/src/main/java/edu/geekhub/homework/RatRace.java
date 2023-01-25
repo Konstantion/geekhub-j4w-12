@@ -126,7 +126,7 @@ public class RatRace {
                 1000,
                 TimeUnit.MILLISECONDS);
         carScheduledExecutor.scheduleAtFixedRate(
-                () -> carExecutorService.submit(vehicleGenerator.generateVehicle(
+                () -> carExecutorService.submit(vehicleGenerator.generateRandomVehicle(
                         getRandomFreePointInStartUnit())),
                 1000,
                 1000,

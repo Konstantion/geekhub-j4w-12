@@ -15,7 +15,7 @@ public class VehicleGenerator {
         this.gameFinished = gameFinished;
     }
 
-    public Vehicle generateVehicle(int x, int y) {
+    public Vehicle generateRandomVehicle(int x, int y) {
         VehicleType type = VehicleType.getRandomType();
         return switch (type) {
             case CAR -> new Car("Car - " + vehicleId++, x, y, gameField, true, gameFinished);
@@ -24,7 +24,7 @@ public class VehicleGenerator {
         };
     }
 
-    public Vehicle generateVehicle(Point point) {
-        return generateVehicle(point.x, point.y);
+    public Vehicle generateRandomVehicle(Point point) {
+        return generateRandomVehicle(point.x, point.y);
     }
 }
