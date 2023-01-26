@@ -32,7 +32,7 @@ public class RatRace {
     private int startX;
     private int startY;
 
-    private AtomicBoolean gameFinished = new AtomicBoolean(false);
+    private final AtomicBoolean gameFinished;
 
     private final ScheduledExecutorService statisticScheduledExecutor;
     private final ScheduledExecutorService carScheduledExecutor;
@@ -63,6 +63,8 @@ public class RatRace {
         relativeSize = (int) (floor(pow(roadSquareCount, 0.5)) + 1);
         absoluteSize = relativeSize * REL_TO_ABS_FACTOR;
 
+        gameFinished = new AtomicBoolean(false);
+
         gameField = new RoadUnit[absoluteSize][absoluteSize];
         vehicleGenerator = new VehicleGenerator(gameField, gameFinished);
 
@@ -70,20 +72,19 @@ public class RatRace {
     }
 
     /**
-     * {@deprecated}
      * Constructor with all dependency injected for tests,
      * it's  {@code deprecated} and not recommended to use,
      * like constructor to create instance of the class,
      * to create optimised instance of the class use {@link #RatRace(int)}
      */
-    @Deprecated
     public RatRace(Random random,
                    int roadSquareCount,
                    ScheduledExecutorService statisticScheduledExecutor,
                    ScheduledExecutorService carScheduledExecutor,
                    ScheduledExecutorService gameFinishedSchedulerExecutor,
                    ExecutorService carExecutorService,
-                   VehicleGenerator vehicleGenerator
+                   VehicleGenerator vehicleGenerator,
+                   AtomicBoolean gameFinished
     ) {
         this.statisticScheduledExecutor = statisticScheduledExecutor;
         this.carScheduledExecutor = carScheduledExecutor;
@@ -95,17 +96,17 @@ public class RatRace {
 
         this.roadSquareCount = roadSquareCount;
         this.random = random;
+        this.gameFinished = gameFinished;
 
         relativeSize = (int) (floor(pow(roadSquareCount, 0.5)) + 1);
         absoluteSize = relativeSize * REL_TO_ABS_FACTOR;
 
         gameField = new RoadUnit[absoluteSize][absoluteSize];
-        vehicleGenerator = new VehicleGenerator(gameField, gameFinished);
 
         initializeGame();
     }
 
-    private void initializeGame() {
+    protected void initializeGame() {
         for (int y = 0; y < absoluteSize; y++) {
             for (int x = 0; x < absoluteSize; x++) {
                 gameField[y][x] = new RoadUnit(x, y, REL_TO_ABS_FACTOR);
@@ -118,9 +119,9 @@ public class RatRace {
         startProgram();
     }
 
-    private void startProgram() {
+    protected void startProgram() {
         statisticScheduledExecutor.scheduleAtFixedRate(() -> System.out.println(
-                        getGameFieldAsStringTest()
+                        getGameFieldAsString()
                 ),
                 1000,
                 1000,
@@ -146,7 +147,7 @@ public class RatRace {
         );
     }
 
-    private void buildRoad() {
+    protected void buildRoad() {
         int absCurrX = random.nextInt(relativeSize);
         int absCurrY = random.nextInt(relativeSize);
         replaceStatusToRoadSquare(absCurrX, absCurrY, START);
@@ -174,7 +175,7 @@ public class RatRace {
         }
     }
 
-    private Point getRandomFreePointInStartUnit() {
+    protected Point getRandomFreePointInStartUnit() {
         int absStartX = startX * REL_TO_ABS_FACTOR;
         int absStartY = startY * REL_TO_ABS_FACTOR;
         int unitHalf = REL_TO_ABS_FACTOR / 2;
@@ -189,7 +190,7 @@ public class RatRace {
         }
     }
 
-    private void replaceStatusToRoadSquare(int relevantX, int relevantY, int status) {
+    protected void replaceStatusToRoadSquare(int relevantX, int relevantY, int status) {
         int absolutX = relevantX * REL_TO_ABS_FACTOR;
         int absolutY = relevantY * REL_TO_ABS_FACTOR;
         for (int y = absolutY; y < absolutY + REL_TO_ABS_FACTOR; y++) {
@@ -199,7 +200,7 @@ public class RatRace {
         }
     }
 
-    public String getGameFieldAsStringTest() {
+    public String getGameFieldAsString() {
         StringBuilder fieldBuilder = new StringBuilder();
         fieldBuilder
                 .append(LocalDateTime.now().getHour())
@@ -217,7 +218,7 @@ public class RatRace {
         return fieldBuilder.toString();
     }
 
-    private String getUnitString(int y, int x) {
+    protected String getUnitString(int y, int x) {
         String unitString;
         if ((gameField[y][x].status & CAR.getStatus()) != 0) {
             unitString = "C";
@@ -238,5 +239,9 @@ public class RatRace {
         }
 
         return unitString;
+    }
+
+    public RoadUnit[][] getGameField() {
+        return gameField;
     }
 }
