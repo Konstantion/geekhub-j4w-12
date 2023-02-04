@@ -13,6 +13,8 @@ public class GeekHubCourse {
     private String mentorName;
     @Injectable
     private int registrations;
+    @Injectable(propertyName = "enum")
+    private GeekHubEnum geekHubEnum;
 
     private String getName() {
         return name;
@@ -52,5 +54,17 @@ public class GeekHubCourse {
 
     private void setRegistrations(int registrations) {
         this.registrations = registrations;
+    }
+
+    @Override
+    public String toString() {
+        return "GeekHubCourse{" +
+               "name='" + name + '\'' +
+               ", duration=" + duration +
+               ", description='" + description + '\'' +
+               ", mentorName='" + mentorName + '\'' +
+               ", registrations=" + registrations +
+               ", geekHubEnum=" + geekHubEnum +
+               '}';
     }
 }
