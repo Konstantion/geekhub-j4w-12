@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,20 +21,36 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
 public class InjectProcessor {
-    private final Map<String, Object> properties;
     private static final String PREFIX = "gh.inject.";
+    private static final String DEFAULT_PROPERTIES_FILE = "application.properties";
     private static final Logger LOGGER = Logger.getLogger(InjectProcessor.class.getName());
 
+    private Map<String, Object> properties;
+    private final String propertiesFile;
+
     public InjectProcessor() {
-        List<String> propLines = getPropertiesLines();
-        properties = extractPropertiesLinesToMap(propLines);
+        this(DEFAULT_PROPERTIES_FILE);
+    }
+
+    public InjectProcessor(String propertiesFile) {
+        this.propertiesFile = propertiesFile;
+        try {
+            List<String> propLines = getPropertiesLines(propertiesFile);
+            properties = extractPropertiesLinesToMap(propLines);
+        } catch (PropertiesNotFoundException e) {
+            LOGGER.warning(format(
+                    "Error while reading application properties, %s",
+                    e.getMessage()
+            ));
+            properties = new HashMap<>();
+        }
     }
 
     public void process(Object target) {
         Field[] fields = target.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (!field.isAnnotationPresent(Injectable.class)) {
-                break;
+                continue;
             }
             final String propName;
 
@@ -61,7 +78,7 @@ public class InjectProcessor {
         }
     }
 
-    private boolean setValueToField(Object target, Field field, Object value) throws IllegalAccessException, PropertiesFormatException {
+    private static boolean setValueToField(Object target, Field field, Object value) throws IllegalAccessException, PropertiesFormatException {
         if (isFieldOfType(field, String.class)) {
             field.set(target, value);
             return true;
@@ -82,8 +99,8 @@ public class InjectProcessor {
         return false;
     }
 
-    private List<String> getPropertiesLines() {
-        URL url = ApplicationStarter.class.getClassLoader().getResource("application.properties");
+    private static List<String> getPropertiesLines(String fileName) {
+        URL url = ApplicationStarter.class.getClassLoader().getResource(fileName);
         if (isNull(url)) {
             throw new PropertiesNotFoundException("File application.properties wasn't found");
         }
@@ -94,7 +111,7 @@ public class InjectProcessor {
         }
     }
 
-    private Map<String, Object> extractPropertiesLinesToMap(List<String> propLines) {
+    private static Map<String, Object> extractPropertiesLinesToMap(List<String> propLines) {
         return propLines
                 .stream()
                 .map(prop -> {
@@ -106,9 +123,14 @@ public class InjectProcessor {
                     return result;
                 })
                 .map(prop -> prop.trim().split("=", 2))
+                .filter(pair -> pair.length >= 2)
                 .collect(Collectors.toMap(
                         pair -> pair[0],
                         pair -> pair[1]
                 ));
+    }
+
+    public String getPropertiesFile() {
+        return propertiesFile;
     }
 }
