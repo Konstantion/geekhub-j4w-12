@@ -15,10 +15,6 @@ public class ReflectionUtils {
         return field.getType().equals(type);
     }
 
-    public static boolean isFieldOfType(Field field, Object object) {
-        return isFieldOfType(field, object.getClass());
-    }
-
     public static boolean isFieldIntegerOrInt(Field field) {
         return isFieldOfType(field, Integer.class) || isFieldOfType(field, int.class);
     }
