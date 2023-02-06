@@ -124,7 +124,7 @@ public class RatRace {
                         getGameFieldAsString()
                 ),
                 1000,
-                1000,
+                500,
                 TimeUnit.MILLISECONDS);
         carScheduledExecutor.scheduleAtFixedRate(
                 () -> carExecutorService.submit(vehicleGenerator.generateRandomVehicle(
@@ -207,7 +207,9 @@ public class RatRace {
                 .append(":")
                 .append(LocalDateTime.now().getMinute())
                 .append(":")
-                .append(LocalDateTime.now().getSecond()).append("\n");
+                .append(LocalDateTime.now().getSecond())
+                .append(":")
+                .append(LocalDateTime.now().getNano()).append("\n");
         for (int y = 0; y < absoluteSize; y++) {
             for (int x = 0; x < absoluteSize; x++) {
                 String unitString = getUnitString(y, x);
