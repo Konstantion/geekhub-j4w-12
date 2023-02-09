@@ -102,11 +102,11 @@
                                      or preceding-sibling::*[last()][self::LCURLY]]"/>
         </module>
         <module name="WhitespaceAfter">
-            <property name="tokens"
-                      value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE, LITERAL_RETURN,
-                    LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, LITERAL_FINALLY, DO_WHILE, ELLIPSIS,
-                    LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_CATCH, LAMBDA,
-                    LITERAL_YIELD, LITERAL_CASE"/>
+<!--            <property name="tokens"-->
+<!--                      value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE, LITERAL_RETURN,-->
+<!--                    LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, LITERAL_FINALLY, DO_WHILE, ELLIPSIS,-->
+<!--                    LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_CATCH, LAMBDA,-->
+<!--                    LITERAL_YIELD, LITERAL_CASE"/>-->
         </module>
         <module name="WhitespaceAround">
             <property name="allowEmptyConstructors" value="true"/>
@@ -216,11 +216,11 @@
             <message key="name.invalidPattern"
                      value="Class type name ''{0}'' must match pattern ''{1}''."/>
         </module>
-        <module name="RecordComponentName">
-            <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
-            <message key="name.invalidPattern"
-                     value="Record component name ''{0}'' must match pattern ''{1}''."/>
-        </module>
+<!--        <module name="RecordComponentName">-->
+<!--            <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>-->
+<!--            <message key="name.invalidPattern"-->
+<!--                     value="Record component name ''{0}'' must match pattern ''{1}''."/>-->
+<!--        </module>-->
         <module name="RecordTypeParameterName">
             <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
             <message key="name.invalidPattern"
@@ -263,7 +263,7 @@
                     PARAMETER_DEF, VARIABLE_DEF, METHOD_DEF, PATTERN_VARIABLE_DEF, RECORD_DEF,
                     RECORD_COMPONENT_DEF"/>
         </module>
-        <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+<!--       <module name="NoWhitespaceBeforeCaseDefaultColon"/>-->
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance"/>
         <module name="CustomImportOrder">
