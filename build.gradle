@@ -1,8 +1,14 @@
 allprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'checkstyle'
 
     group = 'edu.geekhub'
+
+
+    repositories {
+        mavenCentral()
+    }
 
     dependencies {
         // Will be learned in "14-Grade, CI" Homework
