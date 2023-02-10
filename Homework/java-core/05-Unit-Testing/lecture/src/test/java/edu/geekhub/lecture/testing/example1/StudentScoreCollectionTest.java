@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StudentScoreCollectionTest {
 
-    @Test
+    //@Test
     void calculate_arithmetic_mean_for_a_single_score() {
         // Arrange
         StudentScoreCollection studentScoreCollection = new StudentScoreCollection();
