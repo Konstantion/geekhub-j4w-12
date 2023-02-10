@@ -17,7 +17,7 @@ public class JsonConverter {
 
     public List<LosesStatistic> convertToEntities(String losesStatisticsJson) {
         return Arrays.stream(losesStatisticsJson
-                        .replaceAll("[\\[|\\]\s]", "")
+                        .replaceAll("[\\[|\\]\\s]", "")
                         .split("},\\{"))
                 .filter(Predicate.not(String::isBlank))
                 .map(this::convertToEntity)
@@ -26,7 +26,7 @@ public class JsonConverter {
 
     public LosesStatistic convertToEntity(String losesStatisticJson) {
         Map<String, Integer> data = Arrays.stream(losesStatisticJson
-                        .replaceAll("[{}\"\s]", "")
+                        .replaceAll("[{}\"\\s]", "")
                         .replace(":", " ")
                         .split(","))
                 .collect(Collectors.toMap(

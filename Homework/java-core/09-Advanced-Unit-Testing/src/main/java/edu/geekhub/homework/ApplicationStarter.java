@@ -13,7 +13,7 @@ public class ApplicationStarter {
         var losesStatisticService = new LosesStatisticService(new JsonConverter(),
                 new LosesStatisticHttpClient());
 
-        var losesStatistic = losesStatisticService.getById(13);
+        var losesStatistic = losesStatisticService.getById(55);
         losesStatisticService.create(losesStatistic);
         losesStatisticService.deleteById(losesStatistic.id());
 
