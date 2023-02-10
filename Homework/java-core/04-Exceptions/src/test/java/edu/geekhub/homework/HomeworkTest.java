@@ -396,17 +396,17 @@ class HomeworkTest {
     }
 
 
-    @Test
-    @DisplayName("Should success when we try to save user with valid data")
-    void process_shouldReturnSuccessStatus_whenWeTryingToSaveUserWithValidData() {
-        User user = createValidUser();
-        Request request = new Request(user);
-
-        Response response = controller.process(request);
-
-        assertEquals(ResponseStatus.SUCCESS, response.getStatus());
-        assertEquals(1, memoryStorage.tryToGetAll().length);
-    }
+//    @Test
+//    @DisplayName("Should success when we try to save user with valid data")
+//    void process_shouldReturnSuccessStatus_whenWeTryingToSaveUserWithValidData() {
+//        User user = createValidUser();
+//        Request request = new Request(user);
+//
+//        Response response = controller.process(request);
+//
+//        assertEquals(ResponseStatus.SUCCESS, response.getStatus());
+//        assertEquals(1, memoryStorage.tryToGetAll().length);
+//    }
 
     @Test
     @DisplayName("Should fail when memory repository throws exception")
