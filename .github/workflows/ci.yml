@@ -29,7 +29,7 @@ jobs:
       run: ./gradlew assemble
 
   test:
-    need: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,7 @@ jobs:
         run: ./gradlew test
 
   checkstyle:
-    need: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
