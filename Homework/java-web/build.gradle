@@ -1,0 +1,34 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'checkstyle'
+
+    apply from: "$this.projectDir/dependencies.gradle"
+
+    jar.enabled = true
+
+    repositories.mavenCentral()
+
+    dependencies {
+        testImplementation libsTest.jupiterApi
+        testImplementation libsTest.junitJupiterEngine
+        testImplementation libsTest.mockitoCore
+        testImplementation libsTest.assertjCore
+    }
+
+    configurations {
+        compileOnly.extendsFrom annotaionProcessor
+        testCompileOnly.extendsFrom annotaionProcessor
+        testAnnotationProcessor.extendsFrom annotaionProcessor
+    }
+
+
+
+    task checkstyleReport {
+        group "myTasks"
+        dependsOn checkstyleMain
+        doFirst {
+            println "Checkstyle completed for module $project.name"
+        }
+    }
+}
