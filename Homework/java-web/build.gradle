@@ -22,7 +22,9 @@ subprojects {
         testAnnotationProcessor.extendsFrom annotaionProcessor
     }
 
-
+    test {
+        useJUnitPlatform()
+    }
 
     task checkstyleReport {
         group "myTasks"
