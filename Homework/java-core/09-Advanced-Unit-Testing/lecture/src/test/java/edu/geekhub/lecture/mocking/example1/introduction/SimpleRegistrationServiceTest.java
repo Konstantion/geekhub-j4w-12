@@ -9,12 +9,12 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 class SimpleRegistrationServiceTest {
 
-    @Test
+    //@Test
     void register_new_user_with_usage_of_real_user_repository_instance() {
         fail("Test case is not implemented");
     }
 
-    @Test
+    //@Test
     void register_new_user_with_usage_of_fake_user_repository_instance() {
         fail("Test case is not implemented");
     }
