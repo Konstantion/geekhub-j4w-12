@@ -7,14 +7,14 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 
 public class ProductRepository {
-    private Integer id = 0;
+    private Long id = 0L;
     private final List<Product> data;
 
     public ProductRepository() {
         data = new ArrayList<>();
     }
 
-    public Optional<Product> findById(Integer id) {
+    public Optional<Product> findById(Long id) {
         return data.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst();
@@ -24,14 +24,19 @@ public class ProductRepository {
         return data;
     }
 
-
+    /**
+     * Method to simplify future migration to JPA repository
+     */
+    public Product saveAndFlush(Product product) {
+        return save(product);
+    }
 
     public Product save(Product product) {
         if (nonNull(product.getId())) {
             return update(product);
         }
 
-        Integer id = nextId();
+        Long id = nextId();
 
         product.setId(id);
 
@@ -40,15 +45,19 @@ public class ProductRepository {
         return product;
     }
 
-    public void delete( Product product) {
-        data.removeIf(dataProduct -> dataProduct.equals(product));
+    public void delete(Product product) {
+        deleteById(product.getId());
+    }
+
+    public void deleteById(Long id) {
+        data.removeIf(dataProduct -> dataProduct.getId().equals(id));
     }
 
     private Product update(Product product) {
         return product;
     }
 
-    private Integer nextId() {
+    private Long nextId() {
         return id++;
     }
 }

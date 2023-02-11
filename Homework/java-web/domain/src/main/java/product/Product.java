@@ -1,19 +1,22 @@
 package product;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Product {
-    private Integer id;
+    private Long id;
     private String name;
     private Integer price;
+    private LocalDateTime createdAt;
 
     public Product() {
     }
 
-    public Product(Integer id, String name, Integer price) {
+    public Product(Long id, String name, Integer price, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.createdAt = createdAt;
     }
 
     public String getName() {
@@ -32,11 +35,11 @@ public class Product {
         this.price = price;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -54,7 +57,7 @@ public class Product {
 
 
     public static final class ProductBuilder {
-        private Integer id;
+        private Long id;
         private String name;
         private Integer price;
 
@@ -65,7 +68,7 @@ public class Product {
             return new ProductBuilder();
         }
 
-        public ProductBuilder id(Integer id) {
+        public ProductBuilder id(Long id) {
             this.id = id;
             return this;
         }
