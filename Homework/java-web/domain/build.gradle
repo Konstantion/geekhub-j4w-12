@@ -1,0 +1,4 @@
+dependencies {
+    implementation libsUtils.mapstruct
+    implementation libsUtils.mapstructProcessor
+}

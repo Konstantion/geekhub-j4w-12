@@ -10,6 +10,8 @@ subprojects {
     repositories.mavenCentral()
 
     dependencies {
+        implementation libsSpring.springBootStarterLogging
+
         testImplementation libsTest.jupiterApi
         testImplementation libsTest.junitJupiterEngine
         testImplementation libsTest.mockitoCore
@@ -31,6 +33,14 @@ subprojects {
         dependsOn checkstyleMain
         doFirst {
             println "Checkstyle completed for module $project.name"
+        }
+    }
+
+    task projectParentCheck {
+        group "myTasks"
+        def javaWebProject = this.parent
+        doFirst {
+            println "$javaWebProject.name"
         }
     }
 }
