@@ -10,6 +10,7 @@ def assertjCoreVersion = '3.23.1'
 def guavaVersion = '31.1-jre'
 def commonsLang3Version = '3.12.0'
 def mapStructVersion = '1.5.3.Final'
+def lombokVersion = '1.18.24'
 
 def hikariCPVersion = '5.0.1'
 def postgresVersion = '42.5.0'
@@ -23,7 +24,8 @@ ext.libsUtils = [
         'guava' : "com.google.guava:guava:$guavaVersion",
         'commonsLang3' : "org.apache.commons:commons-lang3:$commonsLang3Version",
         'mapstruct' : "org.mapstruct:mapstruct:$mapStructVersion",
-        'mapstructProcessor' : "org.mapstruct:mapstruct-processor$mapStructVersion"
+        'mapstructProcessor' : "org.mapstruct:mapstruct-processor:$mapStructVersion",
+        'lombok' : "org.projectlombok:lombok:$lombokVersion"
 ]
 
 ext.libsSpring = [
