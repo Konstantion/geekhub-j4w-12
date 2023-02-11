@@ -58,6 +58,6 @@ public class ProductRepository {
     }
 
     private Long nextId() {
-        return id++;
+        return ++id;
     }
 }

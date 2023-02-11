@@ -19,6 +19,14 @@ public class Product {
         this.createdAt = createdAt;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -35,24 +43,24 @@ public class Product {
         this.price = price;
     }
 
-    public Long getId() {
-        return id;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Product product)) return false;
-        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(price, product.price);
+        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(price, product.price) && Objects.equals(createdAt, product.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price);
+        return Objects.hash(id, name, price, createdAt);
     }
 
 
@@ -60,6 +68,7 @@ public class Product {
         private Long id;
         private String name;
         private Integer price;
+        private LocalDateTime createdAt;
 
         private ProductBuilder() {
         }
@@ -83,11 +92,17 @@ public class Product {
             return this;
         }
 
+        public ProductBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
         public Product build() {
             Product product = new Product();
             product.setId(id);
             product.setName(name);
             product.setPrice(price);
+            product.setCreatedAt(createdAt);
             return product;
         }
     }
