@@ -5,7 +5,7 @@ subprojects {
 
     apply from: "$this.projectDir/dependencies.gradle"
 
-    jar.enabled = true
+    jar { enabled = true }
 
     repositories.mavenCentral()
 
