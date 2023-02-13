@@ -1,9 +1,13 @@
 package product;
 
+import org.springframework.data.domain.Sort;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class ProductRepository {
@@ -22,6 +26,10 @@ public class ProductRepository {
 
     public List<Product> findAll() {
         return data;
+    }
+
+    public List<Product> findAll(Sort sort) {
+        return data.stream().sorted(getComparator(sort)).toList();
     }
 
     /**
@@ -50,6 +58,9 @@ public class ProductRepository {
     }
 
     public void deleteById(Long id) {
+        if (isNull(id)) {
+            throw new IllegalArgumentException("Id shouldn't be null");
+        }
         data.removeIf(dataProduct -> dataProduct.getId().equals(id));
     }
 
@@ -59,5 +70,22 @@ public class ProductRepository {
 
     private Long nextId() {
         return ++id;
+    }
+
+    private Comparator<Product> getComparator(Sort sort) {
+        Comparator<Product> comparator;
+        Sort.Order order = sort.iterator().next();
+
+        comparator = switch (order.getProperty()) {
+            case "name" -> Comparator.comparing(Product::getName);
+            case "price" -> Comparator.comparing(Product::getPrice);
+            default -> Comparator.comparing(Product::getId);
+        };
+
+        if (order.getDirection() == Sort.Direction.ASC) {
+            comparator.reversed();
+        }
+
+        return comparator;
     }
 }
