@@ -1,6 +1,7 @@
 package product.dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class ProductDto {
     private Long id;
@@ -48,5 +49,17 @@ public class ProductDto {
                ", price=" + price +
                ", createdAt=" + createdAt +
                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductDto that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(price, that.price) && Objects.equals(createdAt, that.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, price, createdAt);
     }
 }
