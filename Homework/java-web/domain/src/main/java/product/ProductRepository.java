@@ -29,7 +29,9 @@ public class ProductRepository {
     }
 
     public List<Product> findAll(Sort sort) {
-        return data.stream().sorted(getComparator(sort)).toList();
+        return data.stream()
+                .sorted(getComparator(sort))
+                .toList();
     }
 
     /**
@@ -82,8 +84,8 @@ public class ProductRepository {
             default -> Comparator.comparing(Product::getId);
         };
 
-        if (order.getDirection() == Sort.Direction.ASC) {
-            comparator.reversed();
+        if (order.getDirection().equals(Sort.Direction.DESC)) {
+            comparator = comparator.reversed();
         }
 
         return comparator;
