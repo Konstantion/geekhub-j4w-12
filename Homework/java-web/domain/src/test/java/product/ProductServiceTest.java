@@ -1,18 +1,22 @@
 package product;
 
 import com.github.javafaker.Faker;
+import exceptions.BadRequestException;
 import exceptions.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Sort;
 import product.dto.CreationProductDto;
 import product.dto.ProductDto;
 import product.validator.ProductValidations;
 import product.validator.ProductValidator;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 class ProductServiceTest {
@@ -43,27 +47,92 @@ class ProductServiceTest {
     }
 
     @Test
-    void process_shouldThrowError_whenProductIsInvalid() {
+    void process_shouldThrowValidationException_whenProductIsInvalid() {
         CreationProductDto creationProductDto = new CreationProductDto();
         creationProductDto.setName("");
         creationProductDto.setPrice(1);
 
         assertThatThrownBy(() -> service.create(creationProductDto))
                 .isInstanceOf(ValidationException.class);
-
     }
 
     @Test
-    void process_shouldReturnSortedProducts_whenGetAll() {
-        for(int i = 0; i < 10; i++) {
+    void process_shouldReturnSortedProducts_whenGetAllByDescName() {
+        List<ProductDto> expectedArray = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
             CreationProductDto creationProductDto = new CreationProductDto();
-            creationProductDto.setName(Faker.instance().name().firstName());
+            creationProductDto.setName(Faker.instance().name().firstName().repeat(2));
             creationProductDto.setPrice(Faker.instance().number().numberBetween(1, 100));
-            service.create(creationProductDto);
+            expectedArray.add(service.create(creationProductDto));
         }
 
-        List<ProductDto> productDtoList = service.getAll(DESC, "name");
-        System.out.println(productDtoList);
+        List<ProductDto> actualArray = service.getAll(DESC, "name");
+        expectedArray = expectedArray.stream()
+                .sorted(Comparator.comparing(ProductDto::getName).reversed())
+                .toList();
+        assertThat(actualArray).isEqualTo(expectedArray);
     }
 
+    @Test
+    void process_shouldReturnSortedProducts_whenGetAllByAscPrice() {
+        List<ProductDto> expectedArray = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            CreationProductDto creationProductDto = new CreationProductDto();
+            creationProductDto.setName(Faker.instance().name().firstName().repeat(2));
+            creationProductDto.setPrice(Faker.instance().number().numberBetween(1, 100));
+            expectedArray.add(service.create(creationProductDto));
+        }
+
+        List<ProductDto> actualArray = service.getAll(ASC, "price");
+        expectedArray = expectedArray.stream()
+                .sorted(Comparator.comparing(ProductDto::getPrice))
+                .toList();
+        assertThat(actualArray).isEqualTo(expectedArray);
+    }
+
+    @Test
+    void process_shouldReturnSortedProductsById_whenGetAll() {
+        List<ProductDto> expectedArray = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            CreationProductDto creationProductDto = new CreationProductDto();
+            creationProductDto.setName(Faker.instance().name().firstName().repeat(2));
+            creationProductDto.setPrice(Faker.instance().number().numberBetween(1, 100));
+            expectedArray.add(service.create(creationProductDto));
+        }
+
+        List<ProductDto> actualArray = service.getAll();
+        expectedArray = expectedArray.stream()
+                .sorted(Comparator.comparing(ProductDto::getId))
+                .toList();
+        assertThat(actualArray).isEqualTo(expectedArray);
+    }
+
+    @Test
+    void process_shouldDeleteProduct_whenDeleteProduct() {
+        List<ProductDto> expectedArray = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            CreationProductDto creationProductDto = new CreationProductDto();
+            creationProductDto.setName(Faker.instance().name().firstName().repeat(2));
+            creationProductDto.setPrice(Faker.instance().number().numberBetween(1, 100));
+            expectedArray.add(service.create(creationProductDto));
+        }
+        ProductDto productWithId1 = service.delete(1L);
+        ProductDto productWithId6 = service.delete(6L);
+        List<ProductDto> actualArray = service.getAll();
+
+        expectedArray.removeIf(p -> p.getId().equals(1L) || p.getId().equals(6L));
+        assertThat(actualArray).isEqualTo(expectedArray);
+        assertThat(productWithId1.getId()).isEqualTo(1L);
+        assertThat(productWithId6.getId()).isEqualTo(6L);
+    }
+
+    @Test
+    void process_shouldThrowBadRequestException_whenTryToGetProductByIdWitchDoesntExist() {
+        CreationProductDto creationProductDto = new CreationProductDto();
+        creationProductDto.setName("Name");
+        creationProductDto.setPrice(1);
+        service.create(creationProductDto);
+        assertThatThrownBy(() -> service.delete(10L))
+                .isInstanceOf(BadRequestException.class);
+    }
 }

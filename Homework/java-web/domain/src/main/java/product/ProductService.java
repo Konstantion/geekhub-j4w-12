@@ -64,7 +64,6 @@ public class ProductService {
     }
 
     public List<ProductDto> getAll() {
-
         return getAll(ASC, "id");
     }
 
