@@ -10,6 +10,5 @@ class ProductTest {
     void someTest() {
         Product pr = mock(Product.class);
         assertThat(pr).isNotNull();
-
     }
 }

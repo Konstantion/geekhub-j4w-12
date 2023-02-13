@@ -6,6 +6,14 @@ public class CreationProductDto {
     private String name;
     private Integer price;
 
+    public CreationProductDto() {
+    }
+
+    public CreationProductDto(String name, Integer price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public String getName() {
         return name;
     }
