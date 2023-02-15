@@ -50,6 +50,7 @@ ext.libsSpringDoc = [
 ext.libsTest = [
         'assertjCore' : "org.assertj:assertj-core:$assertjCoreVersion",
         'jupiterApi' : "org.junit.jupiter:junit-jupiter-api:$jupiterApiVersion",
+        'jupiterParams' : "org.junit.jupiter:junit-jupiter-params:$jupiterApiVersion",
         'junitJupiterEngine' : "org.junit.jupiter:junit-jupiter-engine:$jupiterApiVersion",
         'mockitoInline' : "org.mockito:mockito-inline:$mockitoInline",
         'mockitoCore' : "org.mockito:mockito-core:$mockitoCore",
