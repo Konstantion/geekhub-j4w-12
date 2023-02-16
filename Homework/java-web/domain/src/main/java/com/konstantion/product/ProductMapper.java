@@ -1,9 +1,9 @@
-package product;
+package com.konstantion.product;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import product.dto.CreationProductDto;
-import product.dto.ProductDto;
+import com.konstantion.product.dto.CreationProductDto;
+import com.konstantion.product.dto.ProductDto;
 
 import java.util.List;
 

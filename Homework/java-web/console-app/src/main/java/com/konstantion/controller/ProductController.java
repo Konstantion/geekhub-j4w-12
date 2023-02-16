@@ -1,12 +1,14 @@
-package controller;
+package com.konstantion.controller;
 
 import org.springframework.data.domain.Sort;
-import product.ProductService;
-import product.dto.CreationProductDto;
-import product.dto.ProductDto;
+import org.springframework.stereotype.Controller;
+import com.konstantion.product.ProductService;
+import com.konstantion.product.dto.CreationProductDto;
+import com.konstantion.product.dto.ProductDto;
 
 import java.util.List;
 
+@Controller
 public class ProductController {
     private final ProductService productService;
 

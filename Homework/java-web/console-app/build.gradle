@@ -1,5 +1,3 @@
 dependencies {
     implementation project(':Homework:java-web:domain');
-
-    implementation libsSpring.springBootStarterDataJpa
 }

@@ -1,4 +1,4 @@
-package exceptions;
+package com.konstantion.exceptions;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

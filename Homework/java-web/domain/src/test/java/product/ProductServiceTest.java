@@ -1,14 +1,16 @@
 package product;
 
 import com.github.javafaker.Faker;
-import exceptions.BadRequestException;
-import exceptions.ValidationException;
+import com.konstantion.exceptions.BadRequestException;
+import com.konstantion.exceptions.ValidationException;
+import com.konstantion.product.ProductRepository;
+import com.konstantion.product.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import product.dto.CreationProductDto;
-import product.dto.ProductDto;
-import product.validator.ProductValidations;
-import product.validator.ProductValidator;
+import com.konstantion.product.dto.CreationProductDto;
+import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.validator.ProductValidations;
+import com.konstantion.product.validator.ProductValidator;
 
 import java.util.ArrayList;
 import java.util.Comparator;

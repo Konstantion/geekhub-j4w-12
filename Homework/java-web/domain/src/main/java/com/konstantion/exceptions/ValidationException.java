@@ -1,4 +1,4 @@
-package exceptions;
+package com.konstantion.exceptions;
 
 import java.util.Map;
 

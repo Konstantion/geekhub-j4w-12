@@ -1,4 +1,4 @@
-package product.dto;
+package com.konstantion.product.dto;
 
 import java.util.Objects;
 

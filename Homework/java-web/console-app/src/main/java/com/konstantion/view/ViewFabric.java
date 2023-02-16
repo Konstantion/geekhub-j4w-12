@@ -1,8 +1,9 @@
-package view;
+package com.konstantion.view;
 
-import controller.ProductController;
-import exceptions.ValidationException;
-import product.dto.CreationProductDto;
+import com.konstantion.controller.ProductController;
+import com.konstantion.exceptions.ValidationException;
+import org.springframework.stereotype.Component;
+import com.konstantion.product.dto.CreationProductDto;
 
 import java.util.Locale;
 import java.util.Scanner;
@@ -10,6 +11,7 @@ import java.util.Scanner;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @SuppressWarnings("java:S106")
+@Component
 public class ViewFabric {
     private final ProductController productController;
     private static final Scanner scanner = new Scanner(System.in);

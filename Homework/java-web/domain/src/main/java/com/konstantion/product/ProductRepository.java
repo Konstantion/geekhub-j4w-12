@@ -1,6 +1,7 @@
-package product;
+package com.konstantion.product;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+@Repository
 public class ProductRepository {
     private Long id = 0L;
     private final List<Product> data;

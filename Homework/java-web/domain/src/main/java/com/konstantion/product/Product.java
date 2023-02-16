@@ -1,4 +1,4 @@
-package product;
+package com.konstantion.product;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

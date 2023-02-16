@@ -3,7 +3,6 @@ dependencies {
     implementation libsUtils.guava
     implementation libsUtils.commonsLang3
     implementation libsUtils.faker
-    implementation libsSpring.springBootStarterDataJpa
 
     annotationProcessor libsUtils.mapstructProcessor
 }

@@ -5,12 +5,15 @@ subprojects {
 
     apply from: "$this.projectDir/dependencies.gradle"
 
+    group = 'com.konstantion'
+
     jar { enabled = true }
 
     repositories.mavenCentral()
 
     dependencies {
         implementation libsSpring.springBootStarterLogging
+        implementation libsSpring.springBootStarterDataJpa
 
         testImplementation libsTest.jupiterApi
         testImplementation libsTest.jupiterParams

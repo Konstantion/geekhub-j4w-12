@@ -1,11 +1,13 @@
-package product.validator;
+package com.konstantion.product.validator;
 
-import product.dto.CreationProductDto;
+import org.springframework.stereotype.Component;
+import com.konstantion.product.dto.CreationProductDto;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Component
 public class ProductValidator {
     private final ProductValidations productValidations;
 

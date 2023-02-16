@@ -1,5 +1,6 @@
 package product;
 
+import com.konstantion.product.Product;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

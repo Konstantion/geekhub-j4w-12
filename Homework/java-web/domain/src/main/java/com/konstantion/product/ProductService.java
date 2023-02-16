@@ -1,13 +1,14 @@
-package product;
+package com.konstantion.product;
 
-import exceptions.BadRequestException;
-import exceptions.ValidationException;
+import com.konstantion.exceptions.BadRequestException;
+import com.konstantion.product.validator.ProductValidator;
+import com.konstantion.exceptions.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import product.dto.CreationProductDto;
-import product.dto.ProductDto;
-import product.validator.ProductValidator;
+import org.springframework.stereotype.Service;
+import com.konstantion.product.dto.CreationProductDto;
+import com.konstantion.product.dto.ProductDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
+@Service
 public class ProductService {
     private final ProductValidator productValidator;
     private final ProductRepository productRepository;
