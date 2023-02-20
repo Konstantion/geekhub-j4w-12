@@ -1,95 +1,24 @@
 package com.konstantion.product;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+public interface ProductRepository {
+    Optional<Product> findById(Long id);
 
-@Repository
-public class ProductRepository {
-    private Long id = 0L;
-    private final List<Product> data;
+    List<Product> findAll();
 
-    public ProductRepository() {
-        data = new ArrayList<>();
-    }
+    List<Product> findAll(Sort sort);
 
-    public Optional<Product> findById(Long id) {
-        return data.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst();
-    }
+    Product save(Product product);
 
-    public List<Product> findAll() {
-        return data;
-    }
+    void delete(Product product);
 
-    public List<Product> findAll(Sort sort) {
-        return data.stream()
-                .sorted(getComparator(sort))
-                .toList();
-    }
+    void deleteById(Long id);
 
-    /**
-     * Method to simplify future migration to JPA repository
-     */
-    public Product saveAndFlush(Product product) {
+    default Product saveAndFlush(Product product) {
         return save(product);
-    }
-
-    public Product save(Product product) {
-        if (nonNull(product.getId())) {
-            return update(product);
-        }
-
-        Long id = nextId();
-
-        product.setId(id);
-
-        data.add(product);
-
-        return product;
-    }
-
-    public void delete(Product product) {
-        deleteById(product.getId());
-    }
-
-    public void deleteById(Long id) {
-        if (isNull(id)) {
-            throw new IllegalArgumentException("Id shouldn't be null");
-        }
-        data.removeIf(dataProduct -> dataProduct.getId().equals(id));
-    }
-
-    private Product update(Product product) {
-        return product;
-    }
-
-    private Long nextId() {
-        return ++id;
-    }
-
-    private Comparator<Product> getComparator(Sort sort) {
-        Comparator<Product> comparator;
-        Sort.Order order = sort.iterator().next();
-
-        comparator = switch (order.getProperty()) {
-            case "name" -> Comparator.comparing(Product::getName);
-            case "price" -> Comparator.comparing(Product::getPrice);
-            default -> Comparator.comparing(Product::getId);
-        };
-
-        if (order.getDirection().equals(Sort.Direction.DESC)) {
-            comparator = comparator.reversed();
-        }
-
-        return comparator;
     }
 }
