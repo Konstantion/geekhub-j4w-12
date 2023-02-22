@@ -14,7 +14,7 @@ public record OrderValidator(OrderValidations orderValidations) {
         List<FieldError> validationErrors = new ArrayList<>();
 
 
-        orderValidations.isProductsValid(order.getProducts()).ifPresent(
+        orderValidations.isProductsValid(order.products()).ifPresent(
                 s -> validationErrors.add(new FieldError(
                         order.toString(), "Products", s)
                 )

@@ -1,7 +1,6 @@
 package com.konstantion.order;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +9,13 @@ import java.util.Optional;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-@Repository
-public class DomainOrderRepository implements OrderRepository{
+@Component
+public class BasicOrderRepository implements OrderRepository{
 
     private Long id = 0L;
     private final List<Order> data;
 
-    public DomainOrderRepository() {
+    public BasicOrderRepository() {
         data = new ArrayList<>();
     }
 

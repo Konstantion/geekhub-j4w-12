@@ -6,6 +6,4 @@ import com.konstantion.user.User;
 
 public interface OrderService {
     OrderDto createOrder(User user, Bucket bucket);
-
-
 }

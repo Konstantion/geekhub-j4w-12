@@ -8,11 +8,9 @@ import com.konstantion.user.User;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-@Service
 public record DomainOrderService(
         OrderRepository orderRepository,
         OrderValidator orderValidator,
@@ -28,7 +26,7 @@ public record DomainOrderService(
     public OrderDto createOrder(User user, Bucket bucket) {
         Order order = Order.builder()
                 .customer(user)
-                .products(bucket.getProducts())
+                .products(bucket.products())
                 .totalPrice(bucket.getTotalPrice())
                 .placedAt(LocalDateTime.now())
                 .build();
