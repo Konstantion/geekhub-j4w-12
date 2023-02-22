@@ -1,18 +1,13 @@
 package com.konstantion.bucket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import com.konstantion.product.Product;
 
+import java.util.List;
 
+public interface BucketService {
+    void addProductToBucket(Bucket bucket, Product product);
 
-@Service
-public record BucketService(Logger logger) {
-   
-    public BucketService() {
-        this(LoggerFactory.getLogger(BucketService.class));
-    }
-    public void addProductToBucket() {
+    void addProductsToBucket(Bucket bucket, List<Product> products);
 
-    }
+    void removeProductFromBucket(Bucket bucket, Product product);
 }

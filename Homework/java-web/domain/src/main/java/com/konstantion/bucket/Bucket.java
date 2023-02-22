@@ -22,6 +22,15 @@ public record Bucket(User user, Map<Product, Integer> products) {
         }
     }
 
+    public boolean removeProduct(Product product) {
+        boolean productCanBeRemoved = products.getOrDefault(product, 0) > 0;
+        if(productCanBeRemoved) {
+            products.computeIfPresent(product, (k, v) -> --v);
+            return true;
+        }
+        return false;
+    }
+
     public Integer getTotalPrice() {
         return products
                 .entrySet()
