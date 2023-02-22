@@ -10,10 +10,6 @@ public class ApplicationStarter {
 
         ViewFabric viewFabric = context.getBean(ViewFabric.class);
 
-        boolean isRunning = true;
-        while (isRunning) {
-            viewFabric.printMainDialog();
-            isRunning = false;
-        }
+       viewFabric.printMainDialog();
     }
 }
