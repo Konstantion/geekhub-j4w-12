@@ -1,7 +1,9 @@
 package com.konstantion.view;
 
-import com.konstantion.controller.ProductController;
+import com.konstantion.controller.CliProductController;
 import com.konstantion.exceptions.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.konstantion.product.dto.CreationProductDto;
 
@@ -10,23 +12,26 @@ import java.util.Scanner;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
-@SuppressWarnings("java:S106")
+
 @Component
 public class ViewFabric {
-    private final ProductController productController;
+    private final CliProductController productController;
     private static final Scanner scanner = new Scanner(System.in);
+
+    private final Logger logger = LoggerFactory.getLogger(ViewFabric.class);
     private static final String NO_SUCH_OPTION = "No such option provided";
 
-    public ViewFabric(ProductController productController) {
+    public ViewFabric(CliProductController productController) {
         this.productController = productController;
     }
 
     public void printMainDialog() {
         String dialog = """
+                                
                 If you want to add product press 1
                 If you want to delete product press 2
                 If you want to see products press 3""";
-        System.out.println(dialog);
+        logger.info(dialog);
         mainDialogHandler();
     }
 
@@ -37,11 +42,11 @@ public class ViewFabric {
                 case 1 -> addProductDialog();
                 case 2 -> deleteProductsDialog();
                 case 3 -> seeProductsDialog();
-                default -> System.out.println(NO_SUCH_OPTION);
+                default -> logger.info(NO_SUCH_OPTION);
             }
         } else {
             scanner.next();
-            System.out.println(NO_SUCH_OPTION);
+            logger.info(NO_SUCH_OPTION);
         }
         printMainDialog();
     }
@@ -51,22 +56,23 @@ public class ViewFabric {
         Integer price = null;
 
         try {
-            System.out.println("Enter product name:");
+            logger.info("Enter product name:");
             scanner.nextLine();
             if (scanner.hasNextLine()) {
                 name = scanner.nextLine();
             }
 
-            System.out.println("Enter product price (decimal value)");
+            logger.info("Enter product price (decimal value)");
             if (scanner.hasNextInt()) {
                 price = scanner.nextInt();
             }
 
             productController.addProduct(new CreationProductDto(name, price));
         } catch (ValidationException e) {
-
+            logger.error(e.getMessage());
+            scanner.next();
         } catch (Exception e) {
-            System.out.println(NO_SUCH_OPTION);
+            logger.error(NO_SUCH_OPTION);
             scanner.next();
         } finally {
             printMainDialog();
@@ -75,8 +81,8 @@ public class ViewFabric {
 
     public void seeProductsDialog() {
         String parameter = "";
-        System.out.println("Enter parameter by which you want to sort products, " +
-                           "existing parameters are price/name default is id");
+        logger.info("Enter parameter by which you want to sort products, " +
+                    "existing parameters are price/name default is id");
 
         try {
             scanner.nextLine();
@@ -88,6 +94,7 @@ public class ViewFabric {
                     System.out::println
             );
         } catch (Exception e) {
+            logger.error(NO_SUCH_OPTION);
             scanner.next();
         } finally {
             printMainDialog();
@@ -96,7 +103,7 @@ public class ViewFabric {
 
     public void deleteProductsDialog() {
         Long id = null;
-        System.out.println("Enter product id");
+        logger.info("Enter product id");
 
         try {
             scanner.nextLine();
@@ -106,7 +113,7 @@ public class ViewFabric {
 
             productController.deleteProduct(id);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         } finally {
             printMainDialog();
         }

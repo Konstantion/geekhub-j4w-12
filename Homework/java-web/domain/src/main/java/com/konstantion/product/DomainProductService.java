@@ -34,8 +34,6 @@ public record DomainProductService(ProductValidator productValidator,
                 .validate(createProductDto);
 
         if (validationResult.isErrorsPresent()) {
-            logger.warn("Failed to create product {}, given data is invalid {}",
-                    createProductDto, validationResult.getErrorsAsMap());
             throw new ValidationException("Failed to create product, given data is invalid",
                     validationResult.getErrorsAsMap());
         }
