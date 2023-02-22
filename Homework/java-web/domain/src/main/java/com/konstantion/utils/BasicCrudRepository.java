@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface BasicCrudRepository<T, ID> {
     Optional<T> findById(ID id);
-
     List<T> findAll();
 
     List<T> findAll(Sort sort);

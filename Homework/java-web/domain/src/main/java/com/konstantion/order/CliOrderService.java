@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
-public record DomainOrderService(
+public record CliOrderService(
         OrderRepository orderRepository,
         OrderValidator orderValidator,
         Logger logger
 ) implements OrderService {
     private static final OrderMapper MAPPER = OrderMapper.INSTANCE;
 
-    public DomainOrderService(OrderRepository orderRepository, OrderValidator orderValidator) {
-        this(orderRepository, orderValidator, LoggerFactory.getLogger(DomainOrderService.class));
+    public CliOrderService(OrderRepository orderRepository, OrderValidator orderValidator) {
+        this(orderRepository, orderValidator, LoggerFactory.getLogger(CliOrderService.class));
     }
 
     @Override

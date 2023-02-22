@@ -16,14 +16,14 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
-public record DomainProductService(ProductValidator productValidator,
-                                   ProductRepository productRepository,
-                                   Logger logger)
+public record CliProductService(ProductValidator productValidator,
+                                ProductRepository productRepository,
+                                Logger logger)
         implements ProductService {
 
-    public DomainProductService(ProductValidator productValidator,
-                                ProductRepository productRepository) {
-        this(productValidator, productRepository, LoggerFactory.getLogger(DomainProductService.class));
+    public CliProductService(ProductValidator productValidator,
+                             ProductRepository productRepository) {
+        this(productValidator, productRepository, LoggerFactory.getLogger(CliProductService.class));
     }
 
     static ProductMapper MAPPER = ProductMapper.INSTANCE;

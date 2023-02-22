@@ -1,4 +1,4 @@
-package product.validator;
+package com.konstantion.product.validator;
 
 import com.konstantion.product.validator.ProductValidations;
 import org.junit.jupiter.api.Test;

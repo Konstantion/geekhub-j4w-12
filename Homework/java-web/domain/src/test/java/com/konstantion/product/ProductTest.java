@@ -1,4 +1,4 @@
-package product;
+package com.konstantion.product;
 
 import com.konstantion.product.Product;
 import org.junit.jupiter.api.Disabled;

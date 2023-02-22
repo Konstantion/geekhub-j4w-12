@@ -1,6 +1,6 @@
 package com.konstantion.configuration;
 
-import com.konstantion.product.DomainProductService;
+import com.konstantion.product.CliProductService;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.product.ProductService;
 import com.konstantion.product.validator.ProductValidator;
@@ -18,6 +18,6 @@ public class ProductBeanConfiguration {
     ProductService productService(ProductValidator productValidator,
                                   ProductRepository productRepository
     ) {
-        return new DomainProductService(productValidator, productRepository);
+        return new CliProductService(productValidator, productRepository);
     }
 }

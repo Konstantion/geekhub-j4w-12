@@ -1,6 +1,6 @@
 package com.konstantion.configuration;
 
-import com.konstantion.order.DomainOrderService;
+import com.konstantion.order.CliOrderService;
 import com.konstantion.order.OrderRepository;
 import com.konstantion.order.OrderService;
 import com.konstantion.order.validator.OrderValidator;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class OrderBeanConfiguration {
     @Bean
     public OrderService orderService(OrderRepository orderRepository, OrderValidator orderValidator) {
-        return new DomainOrderService(orderRepository, orderValidator);
+        return new CliOrderService(orderRepository, orderValidator);
     }
 
 }

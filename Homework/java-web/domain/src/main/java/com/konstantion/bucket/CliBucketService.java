@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public record DomainBucketService(Logger logger) implements BucketService {
+public record CliBucketService(Logger logger) implements BucketService {
 
-    public DomainBucketService() {
-        this(LoggerFactory.getLogger(DomainBucketService.class));
+    public CliBucketService() {
+        this(LoggerFactory.getLogger(CliBucketService.class));
     }
 
     @Override

@@ -1,9 +1,9 @@
-package product;
+package com.konstantion.product;
 
 import com.github.javafaker.Faker;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.ValidationException;
-import com.konstantion.product.DomainProductService;
+import com.konstantion.product.CliProductService;
 import com.konstantion.product.Product;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.product.dto.CreationProductDto;
@@ -11,7 +11,6 @@ import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.validator.ProductValidations;
 import com.konstantion.product.validator.ProductValidator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
 
@@ -33,14 +32,14 @@ class ProductServiceTest {
     private ProductRepository repository;
     private ProductValidations productValidations;
     private ProductValidator validator;
-    private DomainProductService service;
+    private CliProductService service;
 
     @BeforeEach
     void setUp() {
         productValidations = new ProductValidations();
         validator = new ProductValidator(productValidations);
         repository = mock(ProductRepository.class);
-        service = new DomainProductService(validator, repository);
+        service = new CliProductService(validator, repository);
     }
 
     @Test
