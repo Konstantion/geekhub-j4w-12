@@ -1,11 +1,12 @@
 package com.konstantion.product;
 
+import com.konstantion.utils.BasicCrudRepository;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRepository {
+public interface ProductRepository extends BasicCrudRepository<Product, Long> {
     Optional<Product> findById(Long id);
 
     List<Product> findAll();
