@@ -20,6 +20,8 @@ subprojects {
         testImplementation libsTest.junitJupiterEngine
         testImplementation libsTest.mockitoCore
         testImplementation libsTest.assertjCore
+        testImplementation libsTest.mockitoJunitJupiter
+        testImplementation libsTest.mockitoInline
     }
 
     configurations {
