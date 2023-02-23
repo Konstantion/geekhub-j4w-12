@@ -1,5 +1,7 @@
-package com.konstantion.order;
+package com.konstantion.reporitories;
 
+import com.konstantion.order.Order;
+import com.konstantion.order.OrderRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Component
-public class BasicOrderRepository implements OrderRepository{
+public class BasicOrderRepository implements OrderRepository {
 
     private Long id = 0L;
     private final List<Order> data;

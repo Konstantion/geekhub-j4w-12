@@ -9,5 +9,7 @@ public interface BucketService {
 
     void addProductsToBucket(Bucket bucket, List<Product> products);
 
+    void addProductCountToBucket(Bucket bucket, Product product, Integer count);
+
     void removeProductFromBucket(Bucket bucket, Product product);
 }

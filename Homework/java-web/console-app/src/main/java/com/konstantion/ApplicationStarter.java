@@ -10,6 +10,6 @@ public class ApplicationStarter {
 
         ViewFabric viewFabric = context.getBean(ViewFabric.class);
 
-       viewFabric.printMainDialog();
+        viewFabric.printMainDialog();
     }
 }

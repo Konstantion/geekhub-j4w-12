@@ -1,5 +1,7 @@
-package com.konstantion.product;
+package com.konstantion.reporitories;
 
+import com.konstantion.product.Product;
+import com.konstantion.product.ProductRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 

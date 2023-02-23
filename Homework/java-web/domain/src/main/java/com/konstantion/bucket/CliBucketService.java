@@ -36,4 +36,13 @@ public record CliBucketService(Logger logger) implements BucketService {
         }
         logger.info("{} can't be removed {}", product, bucket);
     }
+
+    @Override
+    public void addProductCountToBucket(Bucket bucket, Product product, Integer count) {
+        for (int i = 0; i < count; i++) {
+            bucket.addProduct(product);
+        }
+
+        logger.info("{} products {} added to bucket", count, product);
+    }
 }

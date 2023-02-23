@@ -71,4 +71,17 @@ class CliBucketServiceTest {
         verify(bucket, times(1)).removeProduct(any(Product.class));
     }
 
+    @Test
+    void process_shouldAddProduct_whenAddProductCountToBucket() {
+        doNothing().when(bucket).addProduct(any(Product.class));
+
+        Product bear = Product.builder()
+                .name("Bear")
+                .price(40)
+                .build();
+        bucketService.addProductCountToBucket(bucket, bear, 10);
+
+        verify(bucket, times(10)).addProduct(any(Product.class));
+    }
+
 }
