@@ -56,75 +56,7 @@ public class User {
         return amountOfFollowers;
     }
 
-    public static UserBuilder toBuilder() {
-        return new UserBuilder();
-    }
 
-    public UserBuilder asBuilder() {
-        return new UserBuilder(this);
-    }
-
-    public static final class UserBuilder {
-        private UUID id; // no duplicates in db
-        private String email; // not null, unique, not empty, no spaces, no special symbols, email
-        private String userName; // not null, unique, not empty, no spaces, no special symbols
-        private String fullName; //Kunchenko-Harchenko Valentina, Misha Miron
-        private Integer age; // more than 18, not null
-        private String notes; // Nullable, empty
-        private Long amountOfFollowers; // Is zero or bigger number, non null
-
-        private UserBuilder() {
-        }
-
-        public UserBuilder(User user) {
-            this.id = user.getId();
-            this.email = user.getEmail();
-            this.userName = user.getUserName();
-            this.fullName = user.getFullName();
-            this.age = user.getAge();
-            this.notes = user.getNotes();
-            this.amountOfFollowers = user.getAmountOfFollowers();
-        }
-
-        public UserBuilder withId(UUID id) {
-            this.id = id;
-            return this;
-        }
-
-        public UserBuilder withEmail(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public UserBuilder withUserName(String userName) {
-            this.userName = userName;
-            return this;
-        }
-
-        public UserBuilder withFullName(String fullName) {
-            this.fullName = fullName;
-            return this;
-        }
-
-        public UserBuilder withAge(Integer age) {
-            this.age = age;
-            return this;
-        }
-
-        public UserBuilder withNotes(String notes) {
-            this.notes = notes;
-            return this;
-        }
-
-        public UserBuilder withAmountOfFollowers(Long amountOfFollowers) {
-            this.amountOfFollowers = amountOfFollowers;
-            return this;
-        }
-
-        public User build() {
-            return new User(id, email, userName, fullName, age, notes, amountOfFollowers);
-        }
-    }
 
     @Override
     public String toString() {

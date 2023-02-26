@@ -35,12 +35,16 @@ public record Bucket(User user, Map<Product, Integer> products) {
         return true;
     }
 
-    public Integer getTotalPrice() {
+    public Double getTotalPrice() {
         return products
                 .entrySet()
                 .stream()
-                .mapToInt(entry -> entry.getKey().price() * entry.getValue())
-                .reduce(0, Integer::sum);
+                .mapToDouble(entry -> entry.getKey().price() * entry.getValue())
+                .reduce(0, Double::sum);
+    }
+
+    public void clear() {
+        products.clear();
     }
 
     public Bucket setUser(User user) {

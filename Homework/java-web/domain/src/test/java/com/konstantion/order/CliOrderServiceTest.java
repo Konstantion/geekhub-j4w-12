@@ -15,6 +15,7 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +38,7 @@ class CliOrderServiceTest {
     @BeforeEach
     void setUp() {
         orderService = new CliOrderService(orderRepository, orderValidator);
-        user = new User(1L, "gmail", "password");
+        user = new User(1L, UUID.randomUUID(), "name", "gmail", "password");
         bucket = new Bucket();
     }
 
@@ -55,11 +56,11 @@ class CliOrderServiceTest {
     void process_shouldCallRepositorySave_whenCreateOrder_withValidOrder() {
         Product bread = Product.builder()
                 .name("Bread")
-                .price(25)
+                .price(25.0)
                 .build();
         Bucket bucket = new Bucket(user, Map.of(bread, 1));
         Order returnedOrder = Order.builder()
-                .customer(user)
+                .userUuid(user.uuid())
                 .products(bucket.products())
                 .build();
 

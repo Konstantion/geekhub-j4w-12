@@ -5,16 +5,18 @@ import com.konstantion.product.dto.ProductDto;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductService {
     ProductDto create(CreationProductDto createProductDto);
 
-    ProductDto delete(Long id);
+    ProductDto delete(UUID uuid);
 
     List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName);
 
     List<ProductDto> getAll();
+
     default ProductDto delete(Product product) {
-        return delete(product.id());
+        return delete(product.uuid());
     }
 }

@@ -12,7 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.konstantion")
 public class OrderBeanConfiguration {
     @Bean
-    public OrderService orderService(OrderRepository orderRepository, OrderValidator orderValidator) {
+    public OrderService orderService(
+            OrderRepository orderRepository,
+            OrderValidator orderValidator
+    ) {
         return new CliOrderService(orderRepository, orderValidator);
     }
 

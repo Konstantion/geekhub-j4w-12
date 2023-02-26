@@ -1,22 +1,40 @@
 package com.konstantion.bucket;
 
+import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.product.Product;
+import com.konstantion.product.ProductMapper;
+import com.konstantion.product.ProductRepository;
+import com.konstantion.product.dto.ProductDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-public record CliBucketService(Logger logger) implements BucketService {
+import static java.lang.String.format;
 
-    public CliBucketService() {
-        this(LoggerFactory.getLogger(CliBucketService.class));
+public record CliBucketService(Logger logger, ProductRepository productRepository) implements BucketService {
+
+    private static final String PRODUCT_WITH_UUID_DOESNT_EXIST = "Product with uuid %s doesn't exist";
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
+
+
+    public CliBucketService(ProductRepository productRepository) {
+        this(LoggerFactory.getLogger(CliBucketService.class), productRepository);
     }
 
     @Override
-    public void addProductToBucket(Bucket bucket, Product product) {
+    public void addProductToBucket(Bucket bucket, UUID productUuid) {
+        Product product = productRepository.findByUuid(productUuid).orElseThrow(
+                () -> new BadRequestException(format(
+                        PRODUCT_WITH_UUID_DOESNT_EXIST,
+                        productUuid)
+                ));
         bucket.addProduct(product);
 
-        logger.info("{} added to {}", product, bucket);
+        logger.info("{} added to {}", productMapper.toDto(product), bucket);
     }
 
     @Override
@@ -29,20 +47,39 @@ public record CliBucketService(Logger logger) implements BucketService {
     }
 
     @Override
-    public void removeProductFromBucket(Bucket bucket, Product product) {
+    public void removeProductFromBucket(Bucket bucket, UUID productUuid) {
+        Product product = productRepository.findByUuid(productUuid).orElseThrow(
+                () -> new BadRequestException(format(
+                        PRODUCT_WITH_UUID_DOESNT_EXIST,
+                        productUuid)
+                ));
         boolean removed = bucket.removeProduct(product);
-        if (removed) {
-            logger.info("{} removed {}", product, bucket);
+        if (!removed) {
+            logger.info("{} can't be removed {}", productMapper.toDto(product), bucket);
         }
-        logger.info("{} can't be removed {}", product, bucket);
+        logger.info("{} removed {}", productMapper.toDto(product), bucket);
     }
 
     @Override
-    public void addProductCountToBucket(Bucket bucket, Product product, Integer count) {
-        for (int i = 0; i < count; i++) {
+    public Map<ProductDto, Integer> getBucketProducts(Bucket bucket) {
+        return bucket.products()
+                .entrySet()
+                .stream()
+                .map(entry -> Map.entry(productMapper.toDto(entry.getKey()), entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
+    public void addProductQuantityToBucket(Bucket bucket, UUID productUuid, Integer quantity) {
+        Product product = productRepository.findByUuid(productUuid).orElseThrow(
+                () -> new BadRequestException(format(
+                        PRODUCT_WITH_UUID_DOESNT_EXIST,
+                        productUuid)
+                ));
+        for (int i = 0; i < quantity; i++) {
             bucket.addProduct(product);
         }
 
-        logger.info("{} products {} added to bucket", count, product);
+        logger.info("{} product {} added to bucket", quantity, product);
     }
 }

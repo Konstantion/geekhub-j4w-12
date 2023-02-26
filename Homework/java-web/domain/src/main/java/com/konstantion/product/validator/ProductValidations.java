@@ -35,7 +35,7 @@ public record ProductValidations() implements Validations {
         return listToOptionalString(errorList);
     }
 
-    public Optional<String> isPriceValid(Integer price) {
+    public Optional<String> isPriceValid(Double price) {
         List<String> errorList = new ArrayList<>();
 
         if (isNull(price)) {

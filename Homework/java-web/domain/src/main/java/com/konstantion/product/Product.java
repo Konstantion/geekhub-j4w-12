@@ -1,15 +1,20 @@
 package com.konstantion.product;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public record Product(Long id, String name, Integer price, LocalDateTime createdAt) {
+public record Product(Long id, UUID uuid, String name, Double price, LocalDateTime createdAt, UUID userUuid) {
 
     public Product setId(Long newId) {
-        return new Product(newId, name, price, createdAt);
+        return new Product(newId, uuid, name, price, createdAt, userUuid);
     }
 
     public Product setCreatedAt(LocalDateTime now) {
-        return new Product(id, name, price, now);
+        return new Product(id, uuid, name, price, now, userUuid);
+    }
+
+    public Product setUuid(UUID uuid) {
+        return new Product(id, uuid, name, price, createdAt, userUuid);
     }
 
     public static ProductBuilder builder() {
@@ -18,9 +23,11 @@ public record Product(Long id, String name, Integer price, LocalDateTime created
 
     public static final class ProductBuilder {
         private Long id;
+        private UUID uuid;
         private String name;
-        private Integer price;
+        private Double price;
         private LocalDateTime createdAt;
+        private UUID userUuid;
 
         private ProductBuilder() {
         }
@@ -30,12 +37,17 @@ public record Product(Long id, String name, Integer price, LocalDateTime created
             return this;
         }
 
+        public ProductBuilder uuid(UUID uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
         public ProductBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public ProductBuilder price(Integer price) {
+        public ProductBuilder price(Double price) {
             this.price = price;
             return this;
         }
@@ -45,8 +57,13 @@ public record Product(Long id, String name, Integer price, LocalDateTime created
             return this;
         }
 
+        public ProductBuilder userUuid(UUID userUuid) {
+            this.userUuid = userUuid;
+            return this;
+        }
+
         public Product build() {
-            return new Product(id, name, price, createdAt);
+            return new Product(id, uuid, name, price, createdAt, userUuid);
         }
     }
 }

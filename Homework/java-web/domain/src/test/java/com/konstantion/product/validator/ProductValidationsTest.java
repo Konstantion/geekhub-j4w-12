@@ -1,6 +1,5 @@
 package com.konstantion.product.validator;
 
-import com.konstantion.product.validator.ProductValidations;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -40,7 +39,7 @@ class ProductValidationsTest {
 
     @Test
     void process_returnEmptyOptional_whenIsPriceValid_withValidPrice() {
-        Integer price = 10;
+        Double price = 10.0;
 
         Optional<String> validationError = productValidations.isPriceValid(price);
 
@@ -50,10 +49,10 @@ class ProductValidationsTest {
     @ParameterizedTest
     @CsvSource(
             value = {"null,Product price shouldn't be null",
-                    "-1,Product price should be greater or equal to zero"},
+                    "-1.0,Product price should be greater or equal to zero"},
             nullValues = {"null"}
     )
-    void process_returnOptionalWithMessage_whenIsPriceValid_withInvalidPrice(Integer price,
+    void process_returnOptionalWithMessage_whenIsPriceValid_withInvalidPrice(Double price,
                                                                              String expected) {
         Optional<String> validationError = productValidations.isPriceValid(price);
 

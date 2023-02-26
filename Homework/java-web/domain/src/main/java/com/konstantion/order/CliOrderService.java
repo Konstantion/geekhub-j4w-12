@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record CliOrderService(
         OrderRepository orderRepository,
@@ -25,7 +26,8 @@ public record CliOrderService(
     @Override
     public OrderDto createOrder(User user, Bucket bucket) {
         Order order = Order.builder()
-                .customer(user)
+                .uuid(UUID.randomUUID())
+                .userUuid(user.uuid())
                 .products(bucket.products())
                 .totalPrice(bucket.getTotalPrice())
                 .placedAt(LocalDateTime.now())
@@ -33,7 +35,7 @@ public record CliOrderService(
 
         ValidationResult validationResult = orderValidator.isOrderValid(order);
 
-        if (validationResult.isErrorsPresent()) {
+        if (validationResult.errorsPresent()) {
             logger.warn("Failed to create order {}, given data is invalid {}",
                     order, validationResult.getErrorsAsMap());
             throw new ValidationException("Failed to create order, given data is invalid",
@@ -41,6 +43,7 @@ public record CliOrderService(
         }
 
         order = orderRepository.save(order);
+        bucket.clear();
 
         return MAPPER.toDto(order);
     }

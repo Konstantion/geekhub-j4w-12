@@ -1,6 +1,7 @@
 package com.konstantion.product.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public record ProductDto(Long id, String name, Integer price, LocalDateTime createdAt) {
+public record ProductDto(UUID uuid, String name, Double price, LocalDateTime createdAt, UUID userUuid) {
 }

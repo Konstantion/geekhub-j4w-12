@@ -15,22 +15,17 @@ def fakerVersion = '1.0.2'
 
 def hikariCPVersion = '5.0.1'
 def postgresVersion = '42.5.0'
+def flywayCoreVersion = '9.15.1'
 
 ext.libsDatabase = [
-        'hikariCP': "com.zaxxer:HikariCP:$hikariCPVersion",
-        'posgres' : "org.postgresql:postgresql$postgresVersion"
-]
-
-ext.libsUtils = [
-        'guava'             : "com.google.guava:guava:$guavaVersion",
-        'commonsLang3'      : "org.apache.commons:commons-lang3:$commonsLang3Version",
-        'mapstruct'         : "org.mapstruct:mapstruct:$mapStructVersion",
-        'mapstructProcessor': "org.mapstruct:mapstruct-processor:$mapStructVersion",
-        'lombok'            : "org.projectlombok:lombok:$lombokVersion",
-        'faker'             : "com.github.javafaker:javafaker:$fakerVersion"
+        'flywayCore'    : "org.flywaydb:flyway-core:$flywayCoreVersion",
+        'hikariCP'      : "com.zaxxer:HikariCP:$hikariCPVersion",
+        'postgres'      : "org.postgresql:postgresql:$postgresVersion",
+        'postgresDriver': "org.postgresql:postgresql:$postgresVersion"
 ]
 
 ext.libsSpring = [
+        'springBoot'                      : "org.springframework.boot:spring-boot:$springBootVersion",
         'springBootStarterDataJpa'        : "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion",
         'springBootStarterValidation'     : "org.springframework.boot:spring-boot-starter-validation:$springBootVersion",
         'springBootStarterWeb'            : "org.springframework.boot:spring-boot-starter-web:$springBootVersion",
@@ -40,6 +35,15 @@ ext.libsSpring = [
         'springBootDevtools'              : "org.springframework.boot:spring-boot-devtools:$springBootVersion",
         'springBootStarterLogging'        : "org.springframework.boot:spring-boot-starter-logging:$springBootVersion"
 ]
+ext.libsUtils = [
+        'guava'             : "com.google.guava:guava:$guavaVersion",
+        'commonsLang3'      : "org.apache.commons:commons-lang3:$commonsLang3Version",
+        'mapstruct'         : "org.mapstruct:mapstruct:$mapStructVersion",
+        'mapstructProcessor': "org.mapstruct:mapstruct-processor:$mapStructVersion",
+        'lombok'            : "org.projectlombok:lombok:$lombokVersion",
+        'faker'             : "com.github.javafaker:javafaker:$fakerVersion"
+]
+
 
 ext.libsSpringDoc = [
         'openapiStarterWebmvcUi' : "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion",
@@ -48,7 +52,6 @@ ext.libsSpringDoc = [
 ]
 
 ext.libsTest = [
-
         'assertjCore'          : "org.assertj:assertj-core:$assertjCoreVersion",
         'jupiterApi'           : "org.junit.jupiter:junit-jupiter-api:$jupiterApiVersion",
         'jupiterParams'        : "org.junit.jupiter:junit-jupiter-params:$jupiterApiVersion",

@@ -1,17 +1,18 @@
 package com.konstantion.product;
 
 import com.konstantion.exceptions.BadRequestException;
-import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.exceptions.ValidationException;
+import com.konstantion.product.dto.CreationProductDto;
+import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import com.konstantion.product.dto.CreationProductDto;
-import com.konstantion.product.dto.ProductDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -33,14 +34,16 @@ public record CliProductService(ProductValidator productValidator,
         ValidationResult validationResult = productValidator
                 .validate(createProductDto);
 
-        if (validationResult.isErrorsPresent()) {
+        if (validationResult.errorsPresent()) {
             throw new ValidationException("Failed to create product, given data is invalid",
                     validationResult.getErrorsAsMap());
         }
 
         Product product = MAPPER.toEntity(createProductDto);
 
-        product = product.setCreatedAt(LocalDateTime.now());
+        product = product
+                .setCreatedAt(LocalDateTime.now())
+                .setUuid(UUID.randomUUID());
 
         product = productRepository.saveAndFlush(product);
 
@@ -52,20 +55,20 @@ public record CliProductService(ProductValidator productValidator,
     }
 
     @Override
-    public ProductDto delete(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() ->
-                new BadRequestException(format("Product with id %s doesn't exist", id)
+    public ProductDto delete(UUID uuid) {
+        Product product = productRepository.findByUuid(uuid).orElseThrow(() ->
+                new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
                 ));
 
-        productRepository.deleteById(id);
+        productRepository.deleteByUuid(uuid);
 
-        logger.info("Product with id {} successfully delete", id);
+        logger.info("Product with id {} successfully delete", uuid);
         return MAPPER.toDto(product);
     }
 
     @Override
     public List<ProductDto> getAll() {
-        return getAll(ASC, "id");
+        return getAll(ASC, "name");
     }
 
     @Override

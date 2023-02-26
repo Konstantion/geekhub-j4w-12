@@ -1,13 +1,15 @@
 package com.konstantion.product;
 
-import com.konstantion.utils.BasicCrudRepository;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface ProductRepository extends BasicCrudRepository<Product, Long> {
+public interface ProductRepository {
     Optional<Product> findById(Long id);
+
+    Optional<Product> findByUuid(UUID uuid);
 
     List<Product> findAll();
 
@@ -18,6 +20,8 @@ public interface ProductRepository extends BasicCrudRepository<Product, Long> {
     void delete(Product product);
 
     void deleteById(Long id);
+
+    void deleteByUuid(UUID uuid);
 
     default Product saveAndFlush(Product product) {
         return save(product);

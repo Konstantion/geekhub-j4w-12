@@ -1,6 +1,7 @@
 package com.konstantion.configuration;
 
 import com.konstantion.product.CliProductService;
+import com.konstantion.product.ProductRawMapper;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.product.ProductService;
 import com.konstantion.product.validator.ProductValidator;
@@ -12,9 +13,14 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.konstantion")
 public class ProductBeanConfiguration {
     @Bean
-    ProductService productService(ProductValidator productValidator,
+    public ProductService productService(ProductValidator productValidator,
                                   ProductRepository productRepository
     ) {
         return new CliProductService(productValidator, productRepository);
+    }
+
+    @Bean
+    public ProductRawMapper productRawMapper() {
+        return new ProductRawMapper();
     }
 }

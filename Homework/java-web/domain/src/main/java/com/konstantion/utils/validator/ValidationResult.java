@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public record ValidationResult(List<FieldError> fieldErrors,boolean isErrorsPresent) {
+public record ValidationResult(List<FieldError> fieldErrors, boolean errorsPresent) {
 
     public static ValidationResult empty() {
         return new ValidationResult(Collections.emptyList(), false);

@@ -5,6 +5,8 @@ import com.konstantion.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -16,12 +18,12 @@ class BucketTest {
 
         Product bread = Product.builder()
                 .name("Bread")
-                .price(25)
+                .price(25.0)
                 .build();
 
         Product tea = Product.builder()
                 .name("tea")
-                .price(25)
+                .price(25.0)
                 .build();
 
         bucket.addProduct(bread);
@@ -39,12 +41,12 @@ class BucketTest {
 
         Product bread = Product.builder()
                 .name("Bread")
-                .price(25)
+                .price(25.0)
                 .build();
 
         Product tea = Product.builder()
                 .name("tea")
-                .price(25)
+                .price(25.0)
                 .build();
 
         bucket.addProduct(bread);
@@ -61,12 +63,12 @@ class BucketTest {
 
         Product bread = Product.builder()
                 .name("Bread")
-                .price(25)
+                .price(25.0)
                 .build();
 
         Product tea = Product.builder()
                 .name("tea")
-                .price(25)
+                .price(25.0)
                 .build();
 
         bucket.addProduct(bread);
@@ -85,7 +87,7 @@ class BucketTest {
 
         Product bread = Product.builder()
                 .name("Bread")
-                .price(25)
+                .price(25.0)
                 .build();
 
         bucket.removeProduct(bread);
@@ -101,7 +103,7 @@ class BucketTest {
 
         Product bread = Product.builder()
                 .name("Bread")
-                .price(25)
+                .price(25.0)
                 .build();
 
 
@@ -118,7 +120,7 @@ class BucketTest {
     @Test
     void process_returnBucketWithUser_whenSetUser() {
         Bucket bucket = new Bucket();
-        User user = new User(1L, "email", "123");
+        User user = new User(1L, UUID.randomUUID(), "name", "email", "123");
 
         bucket = bucket.setUser(user);
 

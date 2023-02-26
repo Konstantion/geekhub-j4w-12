@@ -1,3 +1,6 @@
 dependencies {
     implementation project(':Homework:java-web:domain')
+
+    implementation libsDatabase.postgresDriver
+    implementation libsDatabase.flywayCore
 }

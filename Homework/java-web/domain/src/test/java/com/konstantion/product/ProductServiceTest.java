@@ -15,10 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,20 +30,24 @@ class ProductServiceTest {
     private ProductValidations productValidations;
     private ProductValidator validator;
     private CliProductService service;
+    private ProductMapper productMapper;
 
     @BeforeEach
     void setUp() {
         productValidations = new ProductValidations();
-        validator = new ProductValidator(productValidations);
+        validator = spy(new ProductValidator(productValidations));
         repository = mock(ProductRepository.class);
         service = new CliProductService(validator, repository);
+        productMapper = ProductMapper.INSTANCE;
     }
 
     @Test
     void process_shouldReturnProductId_whenCreateProduct() {
-        CreationProductDto creationProductDto = new CreationProductDto("Bread", 1);
-        Product productWithIdOne = Product.builder().id(1L).build();
-        Product productWithIdTwo = Product.builder().id(2L).build();
+        CreationProductDto creationProductDto = new CreationProductDto("Bread", 1.0);
+        UUID firstUuid = UUID.randomUUID();
+        UUID secondUuid = UUID.randomUUID();
+        Product productWithIdOne = Product.builder().uuid(firstUuid).build();
+        Product productWithIdTwo = Product.builder().uuid(secondUuid).build();
 
         when(repository.saveAndFlush(any(Product.class)))
                 .thenReturn(productWithIdOne)
@@ -55,13 +56,13 @@ class ProductServiceTest {
         ProductDto firstProductDto = service.create(creationProductDto);
         ProductDto secondProductDto = service.create(creationProductDto);
 
-        assertThat(firstProductDto.id()).isEqualTo(1L);
-        assertThat(secondProductDto.id()).isEqualTo(2L);
+        assertThat(firstProductDto.uuid()).isEqualTo(firstUuid);
+        assertThat(secondProductDto.uuid()).isEqualTo(secondUuid);
     }
 
     @Test
     void process_shouldThrowValidationException_whenProductIsInvalname() {
-        CreationProductDto creationProductDto = new CreationProductDto("", 1);
+        CreationProductDto creationProductDto = new CreationProductDto("", 1.0);
 
         assertThatThrownBy(() -> service.create(creationProductDto))
                 .isInstanceOf(ValidationException.class);
@@ -73,11 +74,11 @@ class ProductServiceTest {
         List<ProductDto> expectedArray = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             String name = Faker.instance().name().firstName().repeat(2);
-            Integer price = Faker.instance().number().numberBetween(1, 100);
+            Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
-
-            ProductDto productDto = new ProductDto((long) i, name, price, now);
-            Product product = new Product((long) i, name, price, now);
+            UUID uuid = UUID.randomUUID();
+            ProductDto productDto = new ProductDto(uuid, name, price, now, null);
+            Product product = new Product((long) i, uuid, name, price, now, null);
 
             dbData.add(product);
             expectedArray.add(productDto);
@@ -101,11 +102,11 @@ class ProductServiceTest {
         List<ProductDto> expectedArray = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             String name = Faker.instance().name().firstName().repeat(2);
-            Integer price = Faker.instance().number().numberBetween(1, 100);
+            Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
-
-            ProductDto productDto = new ProductDto((long) i, name, price, now);
-            Product product = new Product((long) i, name, price, now);
+            UUID uuid = UUID.randomUUID();
+            ProductDto productDto = new ProductDto(uuid, name, price, now, null);
+            Product product = new Product((long) i, uuid, name, price, now, null);
 
             dbData.add(product);
             expectedArray.add(productDto);
@@ -124,71 +125,24 @@ class ProductServiceTest {
     }
 
     @Test
-    void process_shouldReturnSortedProductsById_whenGetAll() {
-        List<Product> dbData = new ArrayList<>();
-        List<ProductDto> expectedArray = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            String name = Faker.instance().name().firstName().repeat(2);
-            Integer price = Faker.instance().number().numberBetween(1, 100);
-            LocalDateTime now = LocalDateTime.now();
-
-            ProductDto productDto = new ProductDto((long) i, name, price, now);
-            Product product = new Product((long) i, name, price, now);
-
-            dbData.add(product);
-            expectedArray.add(productDto);
-        }
-        dbData = dbData.stream()
-                .sorted(Comparator.comparing(Product::id))
-                .toList();
-
-        when(repository.findAll(any(Sort.class))).thenReturn(dbData);
-
-        List<ProductDto> actualArray = service.getAll();
-        expectedArray = expectedArray.stream()
-                .sorted(Comparator.comparing(ProductDto::id))
-                .toList();
-        assertThat(actualArray).isEqualTo(expectedArray);
-    }
-
-    @Test
     void process_shouldDeleteProduct_whenDeleteProduct() {
-        List<Product> dbData = new ArrayList<>();
-        List<ProductDto> expectedArray = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            String name = Faker.instance().name().firstName().repeat(2);
-            Integer price = Faker.instance().number().numberBetween(1, 100);
-            LocalDateTime now = LocalDateTime.now();
+        UUID uuid = UUID.randomUUID();
+        Product product = Product.builder()
+                .uuid(uuid)
+                .build();
+        when(repository.findByUuid(any(UUID.class))).thenReturn(Optional.of(product));
+        doNothing().when(repository).deleteByUuid(any(UUID.class));
 
-            ProductDto productDto = new ProductDto((long) i, name, price, now);
-            Product product = new Product((long) i, name, price, now);
+        ProductDto actualDto = service.delete(uuid);
+        ProductDto expectedDto = productMapper.toDto(product);
 
-            dbData.add(product);
-            expectedArray.add(productDto);
-        }
-        dbData.removeIf(p -> p.id().equals(1L) || p.id().equals(6L));
-        dbData = dbData.stream()
-                .sorted(Comparator.comparing(Product::id))
-                .toList();
-
-        when(repository.findAll(any(Sort.class))).thenReturn(dbData);
-        when(repository.findById(any(Long.class))).thenReturn(Optional.of(Product.builder().id(1L).build()));
-
-        service.delete(1L);
-        service.delete(6L);
-        List<ProductDto> actualArray = service.getAll();
-
-        expectedArray.removeIf(p -> p.id().equals(1L) || p.id().equals(6L));
-
-        assertThat(actualArray).isEqualTo(expectedArray);
-        verify(repository, times(2)).deleteById(any(Long.class));
+        assertThat(actualDto).isEqualTo(expectedDto);
     }
 
     @Test
     void process_shouldThrowBadRequestException_whenTryToGetProductByIdWitchDoesntExist() {
-        CreationProductDto creationProductDto = new CreationProductDto("Name", 1);
-        service.create(creationProductDto);
-        assertThatThrownBy(() -> service.delete(10L))
+        when(repository.findByUuid(any(UUID.class))).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> service.delete(UUID.randomUUID()))
                 .isInstanceOf(BadRequestException.class);
     }
 }

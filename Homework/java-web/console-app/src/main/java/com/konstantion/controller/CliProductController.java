@@ -7,6 +7,8 @@ import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Controller
 public record CliProductController(ProductService productService) {
@@ -19,7 +21,7 @@ public record CliProductController(ProductService productService) {
         return productService.getAll(direction, parameter);
     }
 
-    public ProductDto deleteProduct(Long id) {
-        return productService.delete(id);
+    public ProductDto deleteProduct(UUID uuid) {
+        return productService.delete(uuid);
     }
 }
