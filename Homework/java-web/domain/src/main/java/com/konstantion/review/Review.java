@@ -3,9 +3,15 @@ package com.konstantion.review;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record Review(Long id, UUID uuid, String message, Integer rating, UUID userUuid, UUID productUuid, LocalDateTime createdAt) {
+public record Review(Long id, UUID uuid, String message, Integer rating, UUID userUuid, UUID productUuid,
+                     LocalDateTime createdAt) {
+
     public static ReviewBuilder builder() {
         return new ReviewBuilder();
+    }
+
+    public Review setId(Long newId) {
+        return new Review(newId, uuid, message, rating, userUuid, productUuid, createdAt);
     }
 
     public static final class ReviewBuilder {

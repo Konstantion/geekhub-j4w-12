@@ -3,8 +3,10 @@ package com.konstantion.view;
 import com.konstantion.controller.CliBucketController;
 import com.konstantion.controller.CliOrderController;
 import com.konstantion.controller.CliProductController;
+import com.konstantion.controller.CliReviewController;
 import com.konstantion.exceptions.ValidationException;
 import com.konstantion.product.dto.CreationProductDto;
+import com.konstantion.review.dto.CreationReviewDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -18,6 +20,8 @@ public class CliUI {
     private final CliProductController productController;
     private final CliBucketController bucketController;
     private final CliOrderController orderController;
+
+    private final CliReviewController reviewController;
     private static final Scanner scanner = new Scanner(System.in);
     private final Logger logger = LoggerFactory.getLogger(CliUI.class);
     private static final String NO_SUCH_OPTION = "No such option provided";
@@ -25,10 +29,11 @@ public class CliUI {
     private static final String WRONG_FORMAT = "Wrong format of input";
     private String[] userInput;
 
-    public CliUI(CliProductController productController, CliBucketController bucketController, CliOrderController orderController) {
+    public CliUI(CliProductController productController, CliBucketController bucketController, CliOrderController orderController, CliReviewController reviewController) {
         this.productController = productController;
         this.bucketController = bucketController;
         this.orderController = orderController;
+        this.reviewController = reviewController;
     }
 
     public void printMainDialog() {
@@ -41,6 +46,7 @@ public class CliUI {
                 remove-product-in-bucket [uuid]
                 show-products-from-bucket
                 create-order
+                create-review [product-uuid] [message] [rating 1-5]
                 """;
         logger.info(dialog);
         mainDialogHandler();
@@ -58,6 +64,7 @@ public class CliUI {
                 case "remove-product-from-bucket" -> removeProductBucket();
                 case "show-products-in-bucket" -> showProductsBucket();
                 case "create-order" -> createOrder();
+                case "create-review" -> createReview();
                 default -> logger.info(NO_SUCH_OPTION);
             }
         } else {
@@ -65,6 +72,24 @@ public class CliUI {
             logger.info(NO_SUCH_OPTION);
         }
         printMainDialog();
+    }
+
+    private void createReview() {
+        try {
+            UUID uuid = UUID.fromString(userInput[1]);
+            String message = userInput[2];
+            Integer rating = Integer.valueOf(userInput[3]);
+            CreationReviewDto creationReviewDto = new CreationReviewDto(message, rating, uuid);
+            reviewController.createReview(creationReviewDto);
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
+            handleFormatException(e);
+        } catch (ValidationException e) {
+            handleValidationException(e);
+        } catch (Exception e) {
+            handleException(e);
+        } finally {
+            printMainDialog();
+        }
     }
 
     private void createOrder() {

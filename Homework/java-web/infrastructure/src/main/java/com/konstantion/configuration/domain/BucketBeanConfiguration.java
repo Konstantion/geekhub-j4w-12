@@ -1,4 +1,4 @@
-package com.konstantion.configuration;
+package com.konstantion.configuration.domain;
 
 import com.konstantion.bucket.BucketService;
 import com.konstantion.bucket.CliBucketService;

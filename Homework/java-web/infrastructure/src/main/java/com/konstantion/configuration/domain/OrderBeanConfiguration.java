@@ -1,4 +1,4 @@
-package com.konstantion.configuration;
+package com.konstantion.configuration.domain;
 
 import com.konstantion.order.CliOrderService;
 import com.konstantion.order.OrderRepository;
@@ -18,5 +18,4 @@ public class OrderBeanConfiguration {
     ) {
         return new CliOrderService(orderRepository, orderValidator);
     }
-
 }

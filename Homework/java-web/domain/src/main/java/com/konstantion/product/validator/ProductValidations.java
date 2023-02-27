@@ -1,7 +1,7 @@
 package com.konstantion.product.validator;
 
 
-import com.konstantion.utils.validator.Validations;
+import com.konstantion.utils.validator.ValidationsUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import static org.apache.commons.lang3.StringUtils.isAlphanumericSpace;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
-public record ProductValidations() implements Validations {
+public record ProductValidations() implements ValidationsUtil {
     public Optional<String> isNameValid(String name) {
         List<String> errorList = new ArrayList<>();
         if (isNull(name)) {

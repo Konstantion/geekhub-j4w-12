@@ -1,4 +1,4 @@
-package com.konstantion.configuration;
+package com.konstantion.configuration.domain;
 
 import com.konstantion.product.CliProductService;
 import com.konstantion.product.ProductRawMapper;

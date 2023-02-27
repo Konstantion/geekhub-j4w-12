@@ -37,7 +37,6 @@ include 'Homework:java-core:12-Practice'
 include 'Homework:java-core:13-Reflection-Api'
 
 
-include 'Homework:java-web:lecture:14-Gradle-CI'
 include 'Homework:java-web:domain'
 include 'Homework:java-web:console-app'
 include 'Homework:java-web:infrastructure'

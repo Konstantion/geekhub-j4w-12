@@ -2,11 +2,12 @@ package com.konstantion.utils;
 
 import com.konstantion.order.Order;
 import com.konstantion.product.Product;
+import com.konstantion.review.Review;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ParameterSourceUtil {
+public record ParameterSourceUtil() {
     public MapSqlParameterSource toParameterSourceWithoutId(Product product) {
         return new MapSqlParameterSource()
                 .addValue("uuid", product.uuid())
@@ -39,5 +40,15 @@ public class ParameterSourceUtil {
                 .addValue("orderId", order.id())
                 .addValue("productId", product.id())
                 .addValue("quantity", quantity);
+    }
+
+    public MapSqlParameterSource toParameterSourceWithoutId(Review review) {
+        return new MapSqlParameterSource()
+                .addValue("uuid", review.uuid())
+                .addValue("message", review.message())
+                .addValue("rating", review.rating())
+                .addValue("productUuid", review.productUuid())
+                .addValue("userUuid", review.userUuid())
+                .addValue("createdAt", review.createdAt());
     }
 }

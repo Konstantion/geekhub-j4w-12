@@ -1,4 +1,4 @@
-package com.konstantion.configuration;
+package com.konstantion.configuration.domain;
 
 import com.konstantion.user.User;
 import com.konstantion.user.UserRawMapper;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.UUID;
 
 @Configuration
-public class BeanConfiguration {
+public class UserBeanConfiguration {
     @Bean
     public User user() {
         return User.builder()
