@@ -12,8 +12,8 @@ subprojects {
     repositories.mavenCentral()
 
     dependencies {
-        implementation libsSpring.springBootStarterLogging
         implementation libsSpring.springBootStarterDataJpa
+        implementation libsSpring.springBoot
 
         testImplementation libsTest.jupiterApi
         testImplementation libsTest.jupiterParams
@@ -47,6 +47,14 @@ subprojects {
         def javaWebProject = this.parent
         doFirst {
             println "$javaWebProject.name"
+        }
+    }
+
+    task projectChildCheck {
+        group "myTasks"
+        def javaWebProject = this.childProjects
+        doFirst {
+            println "$javaWebProject"
         }
     }
 }

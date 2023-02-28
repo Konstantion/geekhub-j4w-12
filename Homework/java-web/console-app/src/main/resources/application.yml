@@ -1,0 +1,6 @@
+logging:
+  level:
+    com:
+      zaxxer:
+        hikari:
+          error

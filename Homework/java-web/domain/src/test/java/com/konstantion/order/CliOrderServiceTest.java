@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.FieldError;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +30,7 @@ class CliOrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
 
-    private CliOrderService orderService;
+    private OrderService orderService;
 
     private User user;
 
@@ -58,7 +59,7 @@ class CliOrderServiceTest {
                 .name("Bread")
                 .price(25.0)
                 .build();
-        Bucket bucket = new Bucket(user, Map.of(bread, 1));
+        Bucket bucket = new Bucket(user, new HashMap<>(Map.of(bread, 1)));
         Order returnedOrder = Order.builder()
                 .userUuid(user.uuid())
                 .products(bucket.products())
