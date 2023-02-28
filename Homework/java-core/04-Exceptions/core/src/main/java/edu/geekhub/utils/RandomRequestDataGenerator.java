@@ -40,14 +40,14 @@ public class RandomRequestDataGenerator implements RequestDataGenerator {
     }
 
     private User generateUserData() {
-        return User.toBuilder()
-                .withId(getRandomId())
-                .withEmail(getRandomEmail())
-                .withUserName(getRandomUsername())
-                .withFullName(getRandomFullName())
-                .withAge(getRandomAge())
-                .withNotes(getRandomNotes())
-                .withAmountOfFollowers(getRandomAmountOfFollowers())
+        return User.builder()
+                .id(getRandomId())
+                .email(getRandomEmail())
+                .userName(getRandomUsername())
+                .fullName(getRandomFullName())
+                .age(getRandomAge())
+                .notes(getRandomNotes())
+                .amountOfFollowers(getRandomAmountOfFollowers())
                 .build();
     }
 

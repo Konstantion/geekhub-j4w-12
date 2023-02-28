@@ -45,15 +45,16 @@ public class ObedientRandomRequestGenerator implements RequestDataGenerator {
         if (userCanBeNull && isNull) {
             return null;
         }
-        return User.toBuilder()
-                .withId(generateUUID())
-                .withEmail(generateEmail())
-                .withUserName(generateUsername())
-                .withFullName(generateFullName())
-                .withAge(generateAge())
-                .withNotes(generateNotes())
-                .withAmountOfFollowers(generateFollowers())
-                .build();
+        return null;
+//        return User.toBuilder()
+//                .withId(generateUUID())
+//                .withEmail(generateEmail())
+//                .withUserName(generateUsername())
+//                .withFullName(generateFullName())
+//                .withAge(generateAge())
+//                .withNotes(generateNotes())
+//                .withAmountOfFollowers(generateFollowers())
+//                .build();
     }
 
     private UUID generateUUID() {
