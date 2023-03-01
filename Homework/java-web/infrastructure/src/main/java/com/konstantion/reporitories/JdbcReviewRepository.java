@@ -1,7 +1,7 @@
 package com.konstantion.reporitories;
 
 import com.konstantion.review.Review;
-import com.konstantion.review.ReviewRawMapper;
+import com.konstantion.reporitories.mappers.ReviewRawMapper;
 import com.konstantion.review.ReviewRepository;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 @Component

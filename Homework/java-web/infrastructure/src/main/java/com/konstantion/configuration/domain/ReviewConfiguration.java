@@ -1,7 +1,7 @@
 package com.konstantion.configuration.domain;
 
 import com.konstantion.review.CliReviewService;
-import com.konstantion.review.ReviewRawMapper;
+import com.konstantion.reporitories.mappers.ReviewRawMapper;
 import com.konstantion.review.ReviewRepository;
 import com.konstantion.review.ReviewService;
 import com.konstantion.review.validator.ReviewValidator;

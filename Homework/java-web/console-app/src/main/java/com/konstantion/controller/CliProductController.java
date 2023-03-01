@@ -1,5 +1,6 @@
 package com.konstantion.controller;
 
+import com.konstantion.product.Product;
 import com.konstantion.product.ProductService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,10 @@ public record CliProductController(ProductService productService) {
 
     public List<ProductDto> getProducts(Sort.Direction direction, String parameter) {
         return productService.getAll(direction, parameter);
+    }
+
+    public List<Map.Entry<ProductDto, Double>> getProductsWithRating() {
+        return productService.getAllWithRating();
     }
 
     public ProductDto deleteProduct(UUID uuid) {

@@ -1,8 +1,10 @@
 package com.konstantion.reporitories;
 
 import com.konstantion.product.Product;
-import com.konstantion.product.ProductRawMapper;
+import com.konstantion.reporitories.mappers.ProductRawMapper;
 import com.konstantion.product.ProductRepository;
+import com.konstantion.reporitories.mappers.ProductReviewRawMapper;
+import com.konstantion.review.Review;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,6 +14,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -20,6 +23,7 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 public record JdbcProductRepository(
         NamedParameterJdbcTemplate jdbcTemplate,
         ProductRawMapper productRawMapper,
+        ProductReviewRawMapper productReviewRawMapper,
         ParameterSourceUtil parameterUtil
 ) implements ProductRepository {
 
@@ -54,28 +58,48 @@ public record JdbcProductRepository(
                     SELECT * FROM product WHERE uuid = :uuid;
             """;
 
+    private static final String FIND_ALL_WITH_REVIEW = """
+                SELECT * FROM product p
+                LEFT JOIN review r on p.uuid = r.product_uuid;
+            """;
+
     @Override
     public Optional<Product> findById(Long id) {
         return Optional.ofNullable(
                 jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("id", id), productRawMapper).get(0)
         );
     }
+
     @Override
     public Optional<Product> findByUuid(UUID uuid) {
         return Optional.ofNullable(
                 jdbcTemplate.query(FIND_BY_UUID_QUERY, Map.of("uuid", uuid), productRawMapper).get(0)
         );
     }
+
     @Override
     public List<Product> findAll() {
         return findAll(Sort.by(ASC, "id"));
     }
+
     @Override
     public List<Product> findAll(Sort sort) {
         return jdbcTemplate.query(FIND_ALL_QUERY, productRawMapper)
                 .stream()
                 .sorted(getComparator(sort)).toList();
     }
+
+    @Override
+    public Map<Product, List<Review>> findAllProductsAndReview() {
+        List<Map.Entry<Product, Review>> entries =
+                jdbcTemplate.query(FIND_ALL_WITH_REVIEW, productReviewRawMapper);
+        return entries.stream()
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                ));
+    }
+
     @Override
     public Product save(Product product) {
         if (nonNull(product.id())) {
@@ -87,6 +111,7 @@ public record JdbcProductRepository(
 
         return product.setId((Long) Objects.requireNonNull(keyHolder.getKeys()).get("id"));
     }
+
     private Product update(Product product) {
         MapSqlParameterSource parameters = parameterUtil.toParameterSource(product);
         jdbcTemplate.update(UPDATE_PRODUCT_QUERY, parameters);
@@ -97,10 +122,12 @@ public record JdbcProductRepository(
     public void delete(Product product) {
         deleteById(product.id());
     }
+
     @Override
     public void deleteById(Long id) {
         jdbcTemplate.update(DELETE_BY_ID_PRODUCT_QUERY, Map.of("id", id));
     }
+
     @Override
     public void deleteByUuid(UUID uuid) {
         jdbcTemplate.update(DELETE_BY_UUID_PRODUCT_QUERY, Map.of("uuid", uuid));

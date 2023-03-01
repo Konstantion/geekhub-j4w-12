@@ -1,7 +1,7 @@
 package com.konstantion.configuration.domain;
 
 import com.konstantion.user.User;
-import com.konstantion.user.UserRawMapper;
+import com.konstantion.reporitories.mappers.UserRawMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

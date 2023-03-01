@@ -1,5 +1,6 @@
-package com.konstantion.review;
+package com.konstantion.reporitories.mappers;
 
+import com.konstantion.review.Review;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

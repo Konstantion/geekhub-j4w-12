@@ -41,6 +41,7 @@ public class CliUI {
                 Commands:
                 create-product [name] [price]
                 delete-product [uuid]
+                delete-product-rating
                 show-products [name/price]
                 add-product-to-bucket [uuid] [quantity]
                 remove-product-in-bucket [uuid]
@@ -60,6 +61,7 @@ public class CliUI {
                 case "create-product" -> addProduct();
                 case "delete-product" -> deleteProducts();
                 case "show-products" -> showProducts();
+                case "show-products-rating" -> showProductsRating();
                 case "add-product-to-bucket" -> addProductBucket();
                 case "remove-product-from-bucket" -> removeProductBucket();
                 case "show-products-in-bucket" -> showProductsBucket();
@@ -74,12 +76,27 @@ public class CliUI {
         printMainDialog();
     }
 
+    private void showProductsRating() {
+        try {
+            productController.getProductsWithRating()
+                    .forEach(System.out::println);
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
+            handleFormatException(e);
+        } catch (ValidationException e) {
+            handleValidationException(e);
+        } catch (Exception e) {
+            handleException(e);
+        } finally {
+            printMainDialog();
+        }
+    }
+
     private void createReview() {
         try {
-            UUID uuid = UUID.fromString(userInput[1]);
+            UUID productUuid = UUID.fromString(userInput[1]);
             String message = userInput[2];
             Integer rating = Integer.valueOf(userInput[3]);
-            CreationReviewDto creationReviewDto = new CreationReviewDto(message, rating, uuid);
+            CreationReviewDto creationReviewDto = new CreationReviewDto(message, rating, productUuid);
             reviewController.createReview(creationReviewDto);
         } catch (IndexOutOfBoundsException | NumberFormatException e) {
             handleFormatException(e);

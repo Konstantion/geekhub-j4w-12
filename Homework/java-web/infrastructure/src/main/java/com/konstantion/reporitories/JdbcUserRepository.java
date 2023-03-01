@@ -1,7 +1,7 @@
 package com.konstantion.reporitories;
 
 import com.konstantion.user.User;
-import com.konstantion.user.UserRawMapper;
+import com.konstantion.reporitories.mappers.UserRawMapper;
 import com.konstantion.user.UserRepository;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;

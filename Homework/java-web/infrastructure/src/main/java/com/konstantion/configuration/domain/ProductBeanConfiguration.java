@@ -1,7 +1,7 @@
 package com.konstantion.configuration.domain;
 
 import com.konstantion.product.CliProductService;
-import com.konstantion.product.ProductRawMapper;
+import com.konstantion.reporitories.mappers.ProductRawMapper;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.product.ProductService;
 import com.konstantion.product.validator.ProductValidator;

@@ -5,14 +5,14 @@ import com.konstantion.exceptions.ValidationException;
 import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.validator.ProductValidator;
+import com.konstantion.review.Review;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -71,10 +71,20 @@ public record CliProductService(ProductValidator productValidator,
         return getAll(ASC, "name");
     }
 
+    public List<Map.Entry<ProductDto, Double>> getAllWithRating() {
+        return productRepository.findAllProductsAndReview()
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    double reviewCount = entry.getValue().size();
+                    double reviewSum = entry.getValue().stream().map(Review::rating).reduce(0, Integer::sum);
+                    return Map.entry(MAPPER.toDto(entry.getKey()), reviewSum / reviewCount);
+                }).sorted(Comparator.comparingDouble(Map.Entry::getValue)).toList();
+    }
+
     @Override
     public List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName) {
         List<Product> products = productRepository.findAll(Sort.by(sortOrder, fieldName));
-
         return MAPPER.toDto(products);
     }
 }

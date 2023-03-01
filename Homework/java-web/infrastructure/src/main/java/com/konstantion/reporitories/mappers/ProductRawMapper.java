@@ -1,5 +1,6 @@
-package com.konstantion.product;
+package com.konstantion.reporitories.mappers;
 
+import com.konstantion.product.Product;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
