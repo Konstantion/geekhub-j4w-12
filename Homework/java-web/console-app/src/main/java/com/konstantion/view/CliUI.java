@@ -1,5 +1,6 @@
 package com.konstantion.view;
 
+import com.google.common.collect.Lists;
 import com.konstantion.controller.CliBucketController;
 import com.konstantion.controller.CliOrderController;
 import com.konstantion.controller.CliProductController;
@@ -41,11 +42,11 @@ public class CliUI {
                 Commands:
                 create-product [name] [price]
                 delete-product [uuid]
-                delete-product-rating
+                show-products-rating
                 show-products [name/price]
                 add-product-to-bucket [uuid] [quantity]
-                remove-product-in-bucket [uuid]
-                show-products-from-bucket
+                remove-product-from-bucket [uuid]
+                show-products-in-bucket
                 create-order
                 create-review [product-uuid] [message] [rating 1-5]
                 """;
@@ -78,7 +79,7 @@ public class CliUI {
 
     private void showProductsRating() {
         try {
-            productController.getProductsWithRating()
+            Lists.reverse(productController.getProductsWithRating())
                     .forEach(System.out::println);
         } catch (IndexOutOfBoundsException | NumberFormatException e) {
             handleFormatException(e);
@@ -230,7 +231,7 @@ public class CliUI {
     }
 
     private void handleException(Exception e) {
-        logger.error(NO_SUCH_OPTION);
+        logger.error("{} error:{}",NO_SUCH_OPTION,  e.getMessage());
         scanner.next();
     }
 

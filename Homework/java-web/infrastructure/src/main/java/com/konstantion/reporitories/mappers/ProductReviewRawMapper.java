@@ -16,21 +16,22 @@ public record ProductReviewRawMapper()
     @Override
     public Map.Entry<Product, Review> mapRow(ResultSet rs, int rowNum) throws SQLException {
         Product product = Product.builder()
-                .id(rs.getLong("p.id"))
-                .uuid(rs.getObject("p.uuid", UUID.class))
-                .price(rs.getDouble("p.price"))
-                .name(rs.getString("p.name"))
-                .createdAt(rs.getTimestamp("p.created_at").toLocalDateTime())
-                .userUuid(rs.getObject("p.user_uuid", UUID.class))
+                .id(rs.getLong(1))
+                .uuid(rs.getObject(2, UUID.class))
+                .name(rs.getString(3))
+                .price(rs.getDouble(4))
+                .createdAt(rs.getTimestamp(5) != null ? rs.getTimestamp(5).toLocalDateTime() : null)
+                .userUuid(rs.getObject(6, UUID.class))
                 .build();
+
         Review review = Review.builder()
-                .id(rs.getLong("r.id"))
-                .uuid(rs.getObject("r.uuid", UUID.class))
-                .message(rs.getString("r.message"))
-                .rating(rs.getInt("r.rating"))
-                .userUuid(rs.getObject("r.user_uuid", UUID.class))
-                .productUuid(rs.getObject("r.product_uuid", UUID.class))
-                .createdAt(rs.getTimestamp("r.created_at").toLocalDateTime())
+                .id(rs.getLong(7))
+                .uuid(rs.getObject(8, UUID.class))
+                .message(rs.getString(9))
+                .rating(rs.getInt(10))
+                .userUuid(rs.getObject(11, UUID.class))
+                .productUuid(rs.getObject(12, UUID.class))
+                .createdAt(rs.getTimestamp(13) != null ? rs.getTimestamp(13).toLocalDateTime() : null)
                 .build();
         return Map.entry(product, review);
     }

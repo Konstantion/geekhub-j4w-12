@@ -25,7 +25,7 @@ public interface ProductRepository {
 
     void deleteByUuid(UUID uuid);
 
-    Map<Product, List<Review>> findAllProductsAndReview();
+    Map<Product, List<Review>> findAllProductsWithReviews();
 
     default Product saveAndFlush(Product product) {
         return save(product);

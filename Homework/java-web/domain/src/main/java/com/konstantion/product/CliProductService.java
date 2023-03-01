@@ -72,7 +72,7 @@ public record CliProductService(ProductValidator productValidator,
     }
 
     public List<Map.Entry<ProductDto, Double>> getAllWithRating() {
-        return productRepository.findAllProductsAndReview()
+        return productRepository.findAllProductsWithReviews()
                 .entrySet()
                 .stream()
                 .map(entry -> {

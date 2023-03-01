@@ -20,12 +20,9 @@ import static java.util.Objects.nonNull;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Component
-public record JdbcProductRepository(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        ProductRawMapper productRawMapper,
-        ProductReviewRawMapper productReviewRawMapper,
-        ParameterSourceUtil parameterUtil
-) implements ProductRepository {
+public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, ProductRawMapper productRawMapper,
+                                    ProductReviewRawMapper productReviewRawMapper,
+                                    ParameterSourceUtil parameterUtil) implements ProductRepository {
 
     private static final String FIND_ALL_QUERY = """
                    SELECT * FROM product;
@@ -59,22 +56,19 @@ public record JdbcProductRepository(
             """;
 
     private static final String FIND_ALL_WITH_REVIEW = """
-                SELECT * FROM product p
-                LEFT JOIN review r on p.uuid = r.product_uuid;
+                SELECT product.*, review.*
+                FROM product
+                LEFT JOIN review ON product.uuid = review.product_uuid;
             """;
 
     @Override
     public Optional<Product> findById(Long id) {
-        return Optional.ofNullable(
-                jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("id", id), productRawMapper).get(0)
-        );
+        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("id", id), productRawMapper).get(0));
     }
 
     @Override
     public Optional<Product> findByUuid(UUID uuid) {
-        return Optional.ofNullable(
-                jdbcTemplate.query(FIND_BY_UUID_QUERY, Map.of("uuid", uuid), productRawMapper).get(0)
-        );
+        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_UUID_QUERY, Map.of("uuid", uuid), productRawMapper).get(0));
     }
 
     @Override
@@ -84,20 +78,14 @@ public record JdbcProductRepository(
 
     @Override
     public List<Product> findAll(Sort sort) {
-        return jdbcTemplate.query(FIND_ALL_QUERY, productRawMapper)
-                .stream()
-                .sorted(getComparator(sort)).toList();
+        return jdbcTemplate.query(FIND_ALL_QUERY, productRawMapper).stream().sorted(getComparator(sort)).toList();
     }
 
     @Override
-    public Map<Product, List<Review>> findAllProductsAndReview() {
+    public Map<Product, List<Review>> findAllProductsWithReviews() {
         List<Map.Entry<Product, Review>> entries =
                 jdbcTemplate.query(FIND_ALL_WITH_REVIEW, productReviewRawMapper);
-        return entries.stream()
-                .collect(Collectors.groupingBy(
-                        Map.Entry::getKey,
-                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-                ));
+        return entries.stream().collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     @Override
