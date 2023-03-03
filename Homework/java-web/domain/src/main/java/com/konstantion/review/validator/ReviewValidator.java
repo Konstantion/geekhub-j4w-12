@@ -16,13 +16,13 @@ public record ReviewValidator(ReviewValidations reviewValidations) {
         List<FieldError> validationErrors = new ArrayList<>();
         reviewValidations.isMessageValid(creationReviewDto.message()).ifPresent(
                 s -> validationErrors.add(new FieldError(
-                        creationReviewDto.toString(), "Message", s)
+                        creationReviewDto.toString(), "message", s)
                 )
         );
 
         reviewValidations.isRatingValid(creationReviewDto.rating()).ifPresent(
                 s -> validationErrors.add(new FieldError(
-                        creationReviewDto.toString(), "Rating", s)
+                        creationReviewDto.toString(), "rating", s)
                 )
         );
 

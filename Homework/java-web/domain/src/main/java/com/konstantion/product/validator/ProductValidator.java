@@ -14,13 +14,13 @@ public record ProductValidator(ProductValidations productValidations) {
         List<FieldError> validationErrors = new ArrayList<>();
         productValidations.isNameValid(creationProductDto.name()).ifPresent(
                 s -> validationErrors.add(new FieldError(
-                        creationProductDto.toString(), "Name", s)
+                        creationProductDto.toString(), "name", s)
                 )
         );
 
         productValidations.isPriceValid(creationProductDto.price()).ifPresent(
                 s -> validationErrors.add(new FieldError(
-                        creationProductDto.toString(), "Price", s)
+                        creationProductDto.toString(), "price", s)
                 )
         );
 

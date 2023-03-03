@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
@@ -13,6 +13,10 @@
             integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
             crossorigin="anonymous"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="/static/js/addProduct.js"></script>
+
+    <link rel="stylesheet" href="/static/products.css"/>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -71,22 +75,34 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <div id="wrongInputAlert" style="display: none" class="alert alert-danger" role="alert">
+                    Wrong input type!
+                </div>
+                <form id="addProductForm">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Product name</label>
-                        <input type="email" class="form-control" id="name">
+                        <label for="nameInput" class="form-label">Product name</label>
+                        <input type="text" class="form-control" name="name" id="nameInput">
+                        <div id="nameFeedback" class="invalid-feedback">
+                            Please choose a name.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="price" class="form-label">Product price</label>
-                        <input type="email" class="form-control" id="price">
+                        <label for="priceInput" class="form-label">Product price</label>
+                        <input type="number" class="form-control" name="price" id="priceInput" placeholder="0.00">
+                        <div id="priceFeedback" class="invalid-feedback">
+                            Please choose a price.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="file" class="form-label">Product image</label>
-                        <input class="form-control" type="file" id="file">
+                        <label for="fileInput" class="form-label">Product image</label>
+                        <input class="form-control" type="file" name="file" id="fileInput">
+                        <div id="fileFeedback" class="invalid-feedback">
+                            Please choose a file.
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="add-product" type="button" class="btn btn-primary">Save changes</button>
+                        <button id="closeModalButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="addProductButton" type="submit" class="btn btn-dark-outline">Save changes</button>
                     </div>
                 </form>
             </div>
