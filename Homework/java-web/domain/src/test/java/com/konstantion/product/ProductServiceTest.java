@@ -3,9 +3,6 @@ package com.konstantion.product;
 import com.github.javafaker.Faker;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.ValidationException;
-import com.konstantion.product.CliProductService;
-import com.konstantion.product.Product;
-import com.konstantion.product.ProductRepository;
 import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.validator.ProductValidations;
@@ -29,7 +26,7 @@ class ProductServiceTest {
     private ProductRepository repository;
     private ProductValidations productValidations;
     private ProductValidator validator;
-    private CliProductService service;
+    private ProductServiceImp service;
     private ProductMapper productMapper;
 
     @BeforeEach
@@ -37,7 +34,7 @@ class ProductServiceTest {
         productValidations = new ProductValidations();
         validator = spy(new ProductValidator(productValidations));
         repository = mock(ProductRepository.class);
-        service = new CliProductService(validator, repository);
+        service = new ProductServiceImp(validator, repository);
         productMapper = ProductMapper.INSTANCE;
     }
 
@@ -77,7 +74,7 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, now, null, null, null);
             Product product = new Product((long) i, uuid, name, price, now, null);
 
             dbData.add(product);
@@ -105,7 +102,7 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, now, null, null, null);
             Product product = new Product((long) i, uuid, name, price, now, null);
 
             dbData.add(product);

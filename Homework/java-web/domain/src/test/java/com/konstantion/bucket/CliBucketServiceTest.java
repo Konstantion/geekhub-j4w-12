@@ -20,14 +20,14 @@ class CliBucketServiceTest {
     @Mock
     private Bucket bucket;
 
-    private CliBucketService bucketService;
+    private BucketServiceImp bucketService;
 
     @Mock
     private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
-        bucketService = new CliBucketService(productRepository);
+        bucketService = new BucketServiceImp(productRepository);
     }
 
     @Test

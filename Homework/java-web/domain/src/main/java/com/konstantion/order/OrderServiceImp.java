@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record CliOrderService(
+public record OrderServiceImp(
         OrderRepository orderRepository,
         OrderValidator orderValidator,
         Logger logger
 ) implements OrderService {
     private static final OrderMapper MAPPER = OrderMapper.INSTANCE;
 
-    public CliOrderService(OrderRepository orderRepository, OrderValidator orderValidator) {
-        this(orderRepository, orderValidator, LoggerFactory.getLogger(CliOrderService.class));
+    public OrderServiceImp(OrderRepository orderRepository, OrderValidator orderValidator) {
+        this(orderRepository, orderValidator, LoggerFactory.getLogger(OrderServiceImp.class));
     }
 
     @Override

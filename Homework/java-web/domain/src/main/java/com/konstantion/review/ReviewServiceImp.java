@@ -15,11 +15,11 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 
-public record CliReviewService(ReviewValidator reviewValidator,
+public record ReviewServiceImp(ReviewValidator reviewValidator,
                                ReviewRepository reviewRepository)
         implements ReviewService {
     static ReviewMapper MAPPER = ReviewMapper.INSTANCE;
-    static Logger logger = LoggerFactory.getLogger(CliReviewService.class);
+    static Logger logger = LoggerFactory.getLogger(ReviewServiceImp.class);
 
     @Override
     public ReviewDto createReview(CreationReviewDto creationReviewDto, User user) {

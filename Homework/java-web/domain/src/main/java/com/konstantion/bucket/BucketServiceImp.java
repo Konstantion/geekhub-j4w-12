@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-public record CliBucketService(Logger logger, ProductRepository productRepository) implements BucketService {
+public record BucketServiceImp(Logger logger, ProductRepository productRepository) implements BucketService {
 
     private static final String PRODUCT_WITH_UUID_DOESNT_EXIST = "Product with uuid %s doesn't exist";
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
 
-    public CliBucketService(ProductRepository productRepository) {
-        this(LoggerFactory.getLogger(CliBucketService.class), productRepository);
+    public BucketServiceImp(ProductRepository productRepository) {
+        this(LoggerFactory.getLogger(BucketServiceImp.class), productRepository);
     }
 
     @Override

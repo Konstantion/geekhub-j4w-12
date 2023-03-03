@@ -6,6 +6,7 @@ import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.review.Review;
+import com.konstantion.review.ReviewMapper;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +18,18 @@ import java.util.*;
 import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
-public record CliProductService(ProductValidator productValidator,
+public record ProductServiceImp(ProductValidator productValidator,
                                 ProductRepository productRepository,
                                 Logger logger)
         implements ProductService {
 
-    public CliProductService(ProductValidator productValidator,
+    public ProductServiceImp(ProductValidator productValidator,
                              ProductRepository productRepository) {
-        this(productValidator, productRepository, LoggerFactory.getLogger(CliProductService.class));
+        this(productValidator, productRepository, LoggerFactory.getLogger(ProductServiceImp.class));
     }
 
-    static ProductMapper MAPPER = ProductMapper.INSTANCE;
+    static ProductMapper productMapper = ProductMapper.INSTANCE;
+    static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
 
     @Override
     public ProductDto create(CreationProductDto createProductDto) {
@@ -39,7 +41,7 @@ public record CliProductService(ProductValidator productValidator,
                     validationResult.getErrorsAsMap());
         }
 
-        Product product = MAPPER.toEntity(createProductDto);
+        Product product = productMapper.toEntity(createProductDto);
 
         product = product
                 .setCreatedAt(LocalDateTime.now())
@@ -47,7 +49,7 @@ public record CliProductService(ProductValidator productValidator,
 
         product = productRepository.saveAndFlush(product);
 
-        ProductDto productDto = MAPPER.toDto(product);
+        ProductDto productDto = productMapper.toDto(product);
 
         logger.info("Product {} successfully created", productDto);
 
@@ -63,7 +65,7 @@ public record CliProductService(ProductValidator productValidator,
         productRepository.deleteByUuid(uuid);
 
         logger.info("Product with id {} successfully delete", uuid);
-        return MAPPER.toDto(product);
+        return productMapper.toDto(product);
     }
 
     @Override
@@ -78,13 +80,23 @@ public record CliProductService(ProductValidator productValidator,
                 .map(entry -> {
                     double reviewCount = entry.getValue().size();
                     double reviewSum = entry.getValue().stream().map(Review::rating).reduce(0, Integer::sum);
-                    return Map.entry(MAPPER.toDto(entry.getKey()), reviewSum / reviewCount);
+                    return Map.entry(productMapper.toDto(entry.getKey()), reviewSum / reviewCount);
                 }).sorted(Comparator.comparingDouble(Map.Entry::getValue)).toList();
+    }
+
+    public List<ProductDto> getAllWithReview() {
+        return productRepository
+                .findAllProductsWithReviews().entrySet().stream()
+                .map(e -> {
+                    ProductDto productDto = productMapper.toDto(e.getKey());
+                    Double rating = e.getValue().stream().mapToDouble(Review::rating).average().orElse(0.0);
+                    return productDto.setReviews(reviewMapper.toDto(e.getValue())).setRating(rating);
+                }).toList();
     }
 
     @Override
     public List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName) {
         List<Product> products = productRepository.findAll(Sort.by(sortOrder, fieldName));
-        return MAPPER.toDto(products);
+        return productMapper.toDto(products);
     }
 }

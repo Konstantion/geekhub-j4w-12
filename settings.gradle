@@ -39,4 +39,5 @@ include 'Homework:java-core:13-Reflection-Api'
 
 include 'Homework:java-web:domain'
 include 'Homework:java-web:console-app'
+include 'Homework:java-web:web-app'
 include 'Homework:java-web:infrastructure'

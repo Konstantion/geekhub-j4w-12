@@ -1,0 +1,7 @@
+spring:
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+  main:
+    allow-bean-definition-overriding: true

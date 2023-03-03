@@ -19,6 +19,8 @@ public interface ProductService {
 
     List<Map.Entry<ProductDto, Double>> getAllWithRating();
 
+    List<ProductDto> getAllWithReview();
+
     default ProductDto delete(Product product) {
         return delete(product.uuid());
     }
