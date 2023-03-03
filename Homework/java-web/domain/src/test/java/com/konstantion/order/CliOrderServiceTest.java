@@ -59,7 +59,7 @@ class CliOrderServiceTest {
                 .name("Bread")
                 .price(25.0)
                 .build();
-        Bucket bucket = new Bucket(user, new HashMap<>(Map.of(bread, 1)));
+        Bucket bucket = new Bucket(new HashMap<>(Map.of(bread, 1)));
         Order returnedOrder = Order.builder()
                 .userUuid(user.uuid())
                 .products(bucket.products())

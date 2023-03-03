@@ -6,18 +6,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record Product(Long id, UUID uuid, String name, Double price, LocalDateTime createdAt, UUID userUuid) {
+public record Product(Long id, UUID uuid, String name, Double price, String imagePath, LocalDateTime createdAt,
+                      UUID userUuid) {
 
     public Product setId(Long newId) {
-        return new Product(newId, uuid, name, price, createdAt, userUuid);
+        return new Product(newId, uuid, name, price, imagePath, createdAt, userUuid);
     }
 
     public Product setCreatedAt(LocalDateTime now) {
-        return new Product(id, uuid, name, price, now, userUuid);
+        return new Product(id, uuid, name, price, imagePath, now, userUuid);
     }
 
     public Product setUuid(UUID uuid) {
-        return new Product(id, uuid, name, price, createdAt, userUuid);
+        return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
     }
 
     public static ProductBuilder builder() {
@@ -29,6 +30,8 @@ public record Product(Long id, UUID uuid, String name, Double price, LocalDateTi
         private UUID uuid;
         private String name;
         private Double price;
+
+        private String imagePath;
         private LocalDateTime createdAt;
         private UUID userUuid;
 
@@ -50,6 +53,11 @@ public record Product(Long id, UUID uuid, String name, Double price, LocalDateTi
             return this;
         }
 
+        public ProductBuilder imagePath(String imagePath) {
+            this.imagePath = imagePath;
+            return this;
+        }
+
         public ProductBuilder price(Double price) {
             this.price = price;
             return this;
@@ -66,7 +74,7 @@ public record Product(Long id, UUID uuid, String name, Double price, LocalDateTi
         }
 
         public Product build() {
-            return new Product(id, uuid, name, price, createdAt, userUuid);
+            return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
         }
     }
 }

@@ -3,13 +3,14 @@ package com.konstantion.product;
 import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductDto create(CreationProductDto createProductDto);
+    ProductDto create(CreationProductDto createProductDto, MultipartFile multipartFile);
 
     ProductDto delete(UUID uuid);
 

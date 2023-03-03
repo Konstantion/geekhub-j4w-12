@@ -1,5 +1,6 @@
 package com.konstantion.configuration.domain;
 
+import com.konstantion.bucket.Bucket;
 import com.konstantion.bucket.BucketService;
 import com.konstantion.bucket.BucketServiceImp;
 import com.konstantion.order.OrderRepository;
@@ -18,11 +19,13 @@ import com.konstantion.review.ReviewService;
 import com.konstantion.review.ReviewServiceImp;
 import com.konstantion.review.validator.ReviewValidator;
 import com.konstantion.user.User;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
+
+import static org.springframework.web.util.TagUtils.SCOPE_SESSION;
 
 @Configuration
 @ComponentScan("com.konstantion")

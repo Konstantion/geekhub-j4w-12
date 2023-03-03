@@ -50,8 +50,8 @@ class ProductServiceTest {
                 .thenReturn(productWithIdOne)
                 .thenReturn(productWithIdTwo);
 
-        ProductDto firstProductDto = service.create(creationProductDto);
-        ProductDto secondProductDto = service.create(creationProductDto);
+        ProductDto firstProductDto = service.create(creationProductDto, null);
+        ProductDto secondProductDto = service.create(creationProductDto, null);
 
         assertThat(firstProductDto.uuid()).isEqualTo(firstUuid);
         assertThat(secondProductDto.uuid()).isEqualTo(secondUuid);
@@ -61,7 +61,7 @@ class ProductServiceTest {
     void process_shouldThrowValidationException_whenProductIsInvalname() {
         CreationProductDto creationProductDto = new CreationProductDto("", 1.0);
 
-        assertThatThrownBy(() -> service.create(creationProductDto))
+        assertThatThrownBy(() -> service.create(creationProductDto, null))
                 .isInstanceOf(ValidationException.class);
     }
 
@@ -74,8 +74,8 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, now, null, null, null);
-            Product product = new Product((long) i, uuid, name, price, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, null, now, null, null, null);
+            Product product = new Product((long) i, uuid, name, price, null, now, null);
 
             dbData.add(product);
             expectedArray.add(productDto);
@@ -102,8 +102,8 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, now, null, null, null);
-            Product product = new Product((long) i, uuid, name, price, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, null, now, null, null, null);
+            Product product = new Product((long) i, uuid, name, price, null, now, null);
 
             dbData.add(product);
             expectedArray.add(productDto);

@@ -11,6 +11,7 @@ import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,7 +33,7 @@ public record ProductServiceImp(ProductValidator productValidator,
     static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
 
     @Override
-    public ProductDto create(CreationProductDto createProductDto) {
+    public ProductDto create(CreationProductDto createProductDto, MultipartFile multipartFile) {
         ValidationResult validationResult = productValidator
                 .validate(createProductDto);
 
@@ -79,7 +80,7 @@ public record ProductServiceImp(ProductValidator productValidator,
                 .stream()
                 .map(entry -> {
                     double reviewCount = entry.getValue().size();
-                    double reviewSum = entry.getValue().stream().map(Review::rating).reduce(0, Integer::sum);
+                    double reviewSum = entry.getValue().stream().map(Review::rating).reduce(0.0, Double::sum);
                     return Map.entry(productMapper.toDto(entry.getKey()), reviewSum / reviewCount);
                 }).sorted(Comparator.comparingDouble(Map.Entry::getValue)).toList();
     }

@@ -96,7 +96,7 @@ public class CliUI {
         try {
             UUID productUuid = UUID.fromString(userInput[1]);
             String message = userInput[2];
-            Integer rating = Integer.valueOf(userInput[3]);
+            Double rating = Double.valueOf(userInput[3]);
             CreationReviewDto creationReviewDto = new CreationReviewDto(message, rating, productUuid);
             reviewController.createReview(creationReviewDto);
         } catch (IndexOutOfBoundsException | NumberFormatException e) {

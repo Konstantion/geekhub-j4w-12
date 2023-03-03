@@ -3,12 +3,13 @@ package com.konstantion.controller;
 import com.konstantion.bucket.Bucket;
 import com.konstantion.bucket.BucketService;
 import com.konstantion.product.dto.ProductDto;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@Component
 public record CliBucketController(Bucket bucket, BucketService bucketService) {
 
     public void addProduct(UUID productUuid, Integer quantity) {

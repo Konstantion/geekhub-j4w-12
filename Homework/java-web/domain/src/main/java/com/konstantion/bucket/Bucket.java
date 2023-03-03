@@ -1,17 +1,28 @@
 package com.konstantion.bucket;
 
 import com.konstantion.product.Product;
-import com.konstantion.user.User;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@SessionScope
 @Component
-public record Bucket(User user, Map<Product, Integer> products) {
+public class Bucket {
+
+    private final Map<Product, Integer> products;
 
     public Bucket() {
-        this(null, new HashMap<>());
+        this(new HashMap<>());
+    }
+
+    public Bucket(Map<Product, Integer> products) {
+        this.products = products;
+    }
+
+    public Map<Product, Integer> products() {
+        return products;
     }
 
     public void addProduct(Product product) {
@@ -47,7 +58,7 @@ public record Bucket(User user, Map<Product, Integer> products) {
         products.clear();
     }
 
-    public Bucket setUser(User user) {
-        return new Bucket(user, products);
+    public int count() {
+        return products.size();
     }
 }

@@ -14,7 +14,7 @@ public record ReviewRawMapper() implements RowMapper<Review> {
                 .id(rs.getLong("id"))
                 .uuid(rs.getObject("uuid", UUID.class))
                 .message(rs.getString("message"))
-                .rating(rs.getInt("rating"))
+                .rating(rs.getDouble("rating"))
                 .userUuid(rs.getObject("user_uuid", UUID.class))
                 .productUuid(rs.getObject("product_uuid", UUID.class))
                 .createdAt(rs.getTimestamp("created_at").toLocalDateTime())

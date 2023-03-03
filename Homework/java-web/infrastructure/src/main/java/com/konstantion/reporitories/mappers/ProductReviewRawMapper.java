@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 public record ProductReviewRawMapper()
-        implements RowMapper<Map.Entry<Product, Review>>{
+        implements RowMapper<Map.Entry<Product, Review>> {
     @Override
     public Map.Entry<Product, Review> mapRow(ResultSet rs, int rowNum) throws SQLException {
         Product product = Product.builder()
@@ -22,16 +22,17 @@ public record ProductReviewRawMapper()
                 .price(rs.getDouble(4))
                 .createdAt(rs.getTimestamp(5) != null ? rs.getTimestamp(5).toLocalDateTime() : null)
                 .userUuid(rs.getObject(6, UUID.class))
+                .imagePath(rs.getString(7))
                 .build();
 
         Review review = Review.builder()
-                .id(rs.getLong(7))
-                .uuid(rs.getObject(8, UUID.class))
-                .message(rs.getString(9))
-                .rating(rs.getInt(10))
-                .userUuid(rs.getObject(11, UUID.class))
-                .productUuid(rs.getObject(12, UUID.class))
-                .createdAt(rs.getTimestamp(13) != null ? rs.getTimestamp(13).toLocalDateTime() : null)
+                .id(rs.getLong(8))
+                .uuid(rs.getObject(9, UUID.class))
+                .message(rs.getString(10))
+                .rating(rs.getDouble(11))
+                .userUuid(rs.getObject(12, UUID.class))
+                .productUuid(rs.getObject(13, UUID.class))
+                .createdAt(rs.getTimestamp(14) != null ? rs.getTimestamp(14).toLocalDateTime() : null)
                 .build();
         return Map.entry(product, review);
     }

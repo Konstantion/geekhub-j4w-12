@@ -29,7 +29,7 @@ public record ReviewValidations() implements ValidationsUtil {
         return listToOptionalString(errorList);
     }
 
-    public Optional<String> isRatingValid(Integer rating) {
+    public Optional<String> isRatingValid(Double rating) {
         if (isNull(rating)) {
             return Optional.of("Message shouldn't be null");
         }

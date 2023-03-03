@@ -5,3 +5,5 @@ spring:
       suffix: .html
   main:
     allow-bean-definition-overriding: true
+upload:
+  path: uploads
