@@ -3,18 +3,22 @@ package com.konstantion.utils.validator;
 import org.springframework.validation.FieldError;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public record ValidationResult(List<FieldError> fieldErrors, boolean errorsPresent) {
+public record ValidationResult(Set<FieldError> fieldErrors, boolean errorsPresent) {
 
     public static ValidationResult empty() {
-        return new ValidationResult(Collections.emptyList(), false);
+        return new ValidationResult(Collections.emptySet(), false);
     }
 
-    public static ValidationResult of(List<FieldError> fieldErrors) {
+    public static ValidationResult of(Set<FieldError> fieldErrors) {
         return new ValidationResult(fieldErrors, true);
+    }
+
+    public static ValidationResult ofAbsentee(Set<FieldError> fieldErrors) {
+        return new ValidationResult(fieldErrors, !fieldErrors.isEmpty());
     }
 
     public Map<String, String> getErrorsAsMap() {
@@ -24,5 +28,10 @@ public record ValidationResult(List<FieldError> fieldErrors, boolean errorsPrese
                         FieldError::getDefaultMessage
                 )
         );
+    }
+
+    public ValidationResult combine(ValidationResult that) {
+        fieldErrors.addAll(that.fieldErrors());
+        return new ValidationResult(fieldErrors, errorsPresent || that.errorsPresent());
     }
 }

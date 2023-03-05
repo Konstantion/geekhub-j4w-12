@@ -28,8 +28,8 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
                    SELECT * FROM product;
             """;
     private static final String INSERT_PRODUCT_QUERY = """
-                    INSERT INTO product (uuid, name, price, created_at, user_uuid)
-                    VALUES (:uuid, :name, :price, :createdAt, :userUuid);
+                    INSERT INTO product (uuid, name, price, created_at, user_uuid, image_path)
+                    VALUES (:uuid, :name, :price, :createdAt, :userUuid, :imagePath);
             """;
     private static final String DELETE_BY_ID_PRODUCT_QUERY = """
                     DELETE FROM product WHERE id = :id;
@@ -44,7 +44,8 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
                         name = :name,
                         price = :price,
                         created_at = :createdAt,
-                        user_uuid = :userUuid
+                        user_uuid = :userUuid,
+                        image_path = :imagePath
                     WHERE id = :id;
             """;
     private static final String FIND_BY_ID_QUERY = """

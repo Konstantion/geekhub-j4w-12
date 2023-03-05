@@ -17,6 +17,10 @@ public record Product(Long id, UUID uuid, String name, Double price, String imag
         return new Product(id, uuid, name, price, imagePath, now, userUuid);
     }
 
+    public Product setImagePath(String imagePath) {
+        return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
+    }
+
     public Product setUuid(UUID uuid) {
         return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
     }

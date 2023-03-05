@@ -11,7 +11,7 @@ import java.util.*;
 public record OrderValidator(OrderValidations orderValidations) {
 
     public ValidationResult isOrderValid(Order order) {
-        List<FieldError> validationErrors = new ArrayList<>();
+        Set<FieldError> validationErrors = new HashSet<>();
 
 
         orderValidations.isProductsValid(order.products()).ifPresent(

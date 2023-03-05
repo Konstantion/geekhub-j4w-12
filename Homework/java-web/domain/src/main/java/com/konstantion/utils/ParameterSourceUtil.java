@@ -14,7 +14,8 @@ public record ParameterSourceUtil() {
                 .addValue("name", product.name())
                 .addValue("price", product.price())
                 .addValue("createdAt", product.createdAt())
-                .addValue("userUuid", product.userUuid());
+                .addValue("userUuid", product.userUuid())
+                .addValue("imagePath", product.imagePath());
     }
 
     public MapSqlParameterSource toParameterSource(Product product) {

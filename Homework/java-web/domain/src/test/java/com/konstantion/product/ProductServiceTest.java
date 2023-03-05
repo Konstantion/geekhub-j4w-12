@@ -34,7 +34,7 @@ class ProductServiceTest {
         productValidations = new ProductValidations();
         validator = spy(new ProductValidator(productValidations));
         repository = mock(ProductRepository.class);
-        service = new ProductServiceImp(validator, repository);
+        service = new ProductServiceImp(validator, null, repository, null);
         productMapper = ProductMapper.INSTANCE;
     }
 

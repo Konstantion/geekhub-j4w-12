@@ -5,13 +5,16 @@ import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public record ProductValidator(ProductValidations productValidations) {
     public ValidationResult validate(CreationProductDto creationProductDto) {
-        List<FieldError> validationErrors = new ArrayList<>();
+        Set<FieldError> validationErrors = new HashSet<>();
         productValidations.isNameValid(creationProductDto.name()).ifPresent(
                 s -> validationErrors.add(new FieldError(
                         creationProductDto.toString(), "name", s)
@@ -24,10 +27,6 @@ public record ProductValidator(ProductValidations productValidations) {
                 )
         );
 
-        if (validationErrors.isEmpty()) {
-            return ValidationResult.empty();
-        }
-
-        return ValidationResult.of(validationErrors);
+        return ValidationResult.ofAbsentee(validationErrors);
     }
 }

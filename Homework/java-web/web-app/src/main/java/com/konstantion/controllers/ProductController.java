@@ -27,8 +27,7 @@ public record ProductController(ProductService productService,
             @ModelAttribute CreationProductDto productCreationDto,
             @RequestParam("file") MultipartFile file
     ) {
-        productService.create(productCreationDto, null);
-
+        productService.create(productCreationDto, file);
         return "redirect:/products";
     }
 }

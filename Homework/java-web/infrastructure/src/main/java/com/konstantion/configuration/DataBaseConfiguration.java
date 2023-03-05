@@ -1,5 +1,6 @@
 package com.konstantion.configuration;
 
+import com.konstantion.upload.UploadService;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;

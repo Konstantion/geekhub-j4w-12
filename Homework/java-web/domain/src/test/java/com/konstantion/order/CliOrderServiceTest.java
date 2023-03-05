@@ -13,10 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.FieldError;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +43,7 @@ class CliOrderServiceTest {
 
     @Test
     void process_shouldThrowValidationException_whenCreateOrder_withInvalidBucket() {
-        doReturn(ValidationResult.of(List.of(new FieldError("myError", "myError", "myError"))))
+        doReturn(ValidationResult.of(Set.of(new FieldError("myError", "myError", "myError"))))
                 .when(orderValidator).isOrderValid(any(Order.class));
 
         assertThrows(ValidationException.class,

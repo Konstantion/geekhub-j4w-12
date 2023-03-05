@@ -7,7 +7,9 @@ import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.review.Review;
 import com.konstantion.review.ReviewMapper;
+import com.konstantion.upload.UploadService;
 import com.konstantion.utils.validator.ValidationResult;
+import com.konstantion.file.MultipartFileValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -20,33 +22,43 @@ import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 public record ProductServiceImp(ProductValidator productValidator,
+                                MultipartFileValidator fileValidator,
                                 ProductRepository productRepository,
+
+                                UploadService uploadService,
                                 Logger logger)
         implements ProductService {
 
     public ProductServiceImp(ProductValidator productValidator,
-                             ProductRepository productRepository) {
-        this(productValidator, productRepository, LoggerFactory.getLogger(ProductServiceImp.class));
+                             MultipartFileValidator fileValidator,
+                             ProductRepository productRepository,
+                             UploadService uploadService) {
+        this(productValidator, fileValidator, productRepository, uploadService, LoggerFactory.getLogger(ProductServiceImp.class));
     }
 
     static ProductMapper productMapper = ProductMapper.INSTANCE;
     static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
 
     @Override
-    public ProductDto create(CreationProductDto createProductDto, MultipartFile multipartFile) {
+    public ProductDto create(CreationProductDto createProductDto, MultipartFile file) {
         ValidationResult validationResult = productValidator
-                .validate(createProductDto);
+                .validate(createProductDto)
+                .combine(fileValidator.validate(file));
+
 
         if (validationResult.errorsPresent()) {
             throw new ValidationException("Failed to create product, given data is invalid",
-                    validationResult.getErrorsAsMap());
+                    validationResult.getErrorsAsMap()
+            );
         }
 
         Product product = productMapper.toEntity(createProductDto);
+        String imagePath = uploadService.uploadProductImage(file);
 
         product = product
                 .setCreatedAt(LocalDateTime.now())
-                .setUuid(UUID.randomUUID());
+                .setUuid(UUID.randomUUID())
+                .setImagePath(imagePath);
 
         product = productRepository.saveAndFlush(product);
 

@@ -43,7 +43,7 @@
             <div class="coll">
                 <div class="card border-dark mb-3" style="max-width: 18rem;">
                     <th:block th:if="${product.imagePath()}">
-                        <img th:src="@{/img/{filename} (filename=${product.imagePath()})}"
+                        <img class="productImage" th:src="@{/img/{filename} (filename=${product.imagePath()})}"
                              alt="NO IMAGE">
                     </th:block>
                     <th:block th:unless="${product.imagePath()}">

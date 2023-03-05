@@ -6,4 +6,4 @@ spring:
   main:
     allow-bean-definition-overriding: true
 upload:
-  path: uploads
+  name: uploads

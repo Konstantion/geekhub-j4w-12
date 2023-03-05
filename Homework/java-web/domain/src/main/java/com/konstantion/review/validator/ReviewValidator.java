@@ -7,13 +7,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @C
 public record ReviewValidator(ReviewValidations reviewValidations) {
     public ValidationResult validate(CreationReviewDto creationReviewDto) {
-        List<FieldError> validationErrors = new ArrayList<>();
+        Set<FieldError> validationErrors = new HashSet<>();
         reviewValidations.isMessageValid(creationReviewDto.message()).ifPresent(
                 s -> validationErrors.add(new FieldError(
                         creationReviewDto.toString(), "message", s)

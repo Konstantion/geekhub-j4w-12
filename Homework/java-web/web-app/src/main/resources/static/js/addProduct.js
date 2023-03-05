@@ -20,10 +20,16 @@ $(document).ready(() => {
             error: (error) => {
                 console.error(error);
                 const response = error.responseJSON;
-                if (response.statusCode === 400) {
-                    $("#wrongInputAlert").css('display', 'block');
+                const wrongInputAlert = $("#wrongInputAlert");
+                if (response.statusCode === 400 || response.statusCode === 500) {
+                    wrongInputAlert.css('display', 'block');
+                    wrongInputAlert.html(response.message)
                     return;
+                } else {
+                    wrongInputAlert.css('display', 'none');
+                    wrongInputAlert.html('')
                 }
+
                 if (response.statusCode === 422) {
                     const validationErrors = response.data;
 
