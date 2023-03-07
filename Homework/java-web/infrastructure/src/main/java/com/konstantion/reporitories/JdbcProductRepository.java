@@ -122,13 +122,13 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
         jdbcTemplate.update(DELETE_BY_UUID_PRODUCT_QUERY, Map.of("uuid", uuid));
     }
 
-    private Comparator<Product> getComparator(Sort sort) {
+    public Comparator<Product> getComparator(Sort sort) {
         Comparator<Product> comparator;
         Sort.Order order = sort.iterator().next();
         comparator = switch (order.getProperty()) {
             case "name" -> Comparator.comparing(Product::name);
             case "price" -> Comparator.comparing(Product::price);
-            default -> Comparator.comparing(Product::id);
+            default -> Comparator.comparing(Product::name);
         };
 
         if (order.getDirection().equals(Sort.Direction.DESC)) {

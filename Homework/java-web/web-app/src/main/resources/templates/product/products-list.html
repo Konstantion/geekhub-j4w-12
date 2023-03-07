@@ -12,11 +12,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
             integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
             crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="/static/js/addProduct.js"></script>
+    <script src="/static/js/searchProduct.js"></script>
+    <script src="/static/js/productsMain.js"></script>
 
-    <link rel="stylesheet" href="/static/products.css"/>
+    <link rel="stylesheet" href="/static/css/products.css"/>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -24,87 +27,113 @@
     <title>Products</title>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">GeekHub Cool Shop</a>
-    </div>
-</nav>
-<div class="container mt-3">
-    <div class="d-grid gap-2">
-        <div class="coll">
-            <h1 class="mb-3 px-2">Products</h1>
+<div>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">GeekHub Cool Shop</a>
+            <button class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"
+                    aria-controls="offcanvasLabel" role="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-        <button type="button" class="btn btn-outline-dark mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Add product
-        </button>
-    </div>
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-        <th:block th:each="product : ${products}">
-            <div class="coll">
-                <div class="card border-dark mb-3" style="max-width: 18rem;">
-                    <th:block th:if="${product.imagePath()}">
-                        <img class="productImage" th:src="@{/img/{filename} (filename=${product.imagePath()})}"
-                             alt="NO IMAGE">
-                    </th:block>
-                    <th:block th:unless="${product.imagePath()}">
-                        <img src=/static/no_image.jpg alt="NO IMAGE" >
-                    </th:block>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:text="'Product name: ' + ${product.name()}">DEFAULT</li>
-                            <li class="list-group-item" th:text="'Product price: ' + ${product.price()}">DEFAULT</li>
-                            <li class="list-group-item" th:text="'Product rating: ' + ${product.rating()}">DEFAULT</li>
-                        </ul>
-
+    </nav>
+    <div>
+        <div class="container-fluid">
+            <div class="row">
+                <!--Main page-->
+                <div class="col min-vh-100 py-3">
+                    <div class="container mt-3">
                         <div class="d-grid gap-2">
-                            <a href="#" class="btn btn-outline-dark">Add to the bucket</a>
-                            <a href="#" class="btn btn-outline-dark">More information</a>
+                            <div class="coll">
+                                <h2 class="mb-3 px-2">Products</h2>
+                            </div>
+                            <div id="productsListError" style="display: none" class="alert alert-danger"
+                                 role="alert">
+                                Wrong input type!
+                            </div>
+                            <button type="button" class="btn btn-outline-dark mb-3" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                Add product
+                            </button>
+                            <div class="float-start">
+                                <form id="productFilter" class="row g-3 mx-auto">
+                                    <h2 class="title text-dark">Search</h2>
+                                    <div class="col-auto">
+                                        <select class="form-select custom-select border-dark" id="sortParameter" name="parameter" form="productFilter">
+                                            <option value="name" selected>Name</option>
+                                            <option value="price">Price</option>
+                                            <option value="rating">Rating</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input id="namePattern" type="text" class="form-control border-dark"
+                                               placeholder="Name pattern" name="pattern">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button id="searchButton" type="submit" class="btn btn-dark mb-3">Search
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="productComponent" class="row row-cols-1 row-cols-md-4 g-4">
+
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </th:block>
-    </div>
-</div>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add product form</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="wrongInputAlert" style="display: none" class="alert alert-danger" role="alert">
-                    Wrong input type!
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add product form</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="wrongInputAlert" style="display: none" class="alert alert-danger"
+                                     role="alert">
+                                    Wrong input type!
+                                </div>
+                                <form id="addProductForm">
+                                    <div class="mb-3">
+                                        <label for="nameInput" class="form-label">Product name</label>
+                                        <input type="text" class="form-control" name="name" id="nameInput">
+                                        <div id="nameFeedback" class="invalid-feedback">
+                                            Please choose a name.
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="priceInput" class="form-label">Product price</label>
+                                        <input type="number" class="form-control" name="price" id="priceInput"
+                                               placeholder="0.00">
+                                        <div id="priceFeedback" class="invalid-feedback">
+                                            Please choose a price.
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fileInput" class="form-label">Product image</label>
+                                        <input class="form-control" type="file" name="file" id="fileInput">
+                                        <div id="fileFeedback" class="invalid-feedback">
+                                            Please choose a file.
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="closeModalButton" type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button id="addProductButton" type="submit" class="btn btn-dark-outline">
+                                            Save
+                                            changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form id="addProductForm">
-                    <div class="mb-3">
-                        <label for="nameInput" class="form-label">Product name</label>
-                        <input type="text" class="form-control" name="name" id="nameInput">
-                        <div id="nameFeedback" class="invalid-feedback">
-                            Please choose a name.
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="priceInput" class="form-label">Product price</label>
-                        <input type="number" class="form-control" name="price" id="priceInput" placeholder="0.00">
-                        <div id="priceFeedback" class="invalid-feedback">
-                            Please choose a price.
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fileInput" class="form-label">Product image</label>
-                        <input class="form-control" type="file" name="file" id="fileInput">
-                        <div id="fileFeedback" class="invalid-feedback">
-                            Please choose a file.
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="closeModalButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="addProductButton" type="submit" class="btn btn-dark-outline">Save changes</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

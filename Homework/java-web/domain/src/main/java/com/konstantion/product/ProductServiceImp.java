@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 public record ProductServiceImp(ProductValidator productValidator,
@@ -86,30 +87,40 @@ public record ProductServiceImp(ProductValidator productValidator,
         return getAll(ASC, "name");
     }
 
-    public List<Map.Entry<ProductDto, Double>> getAllWithRating() {
-        return productRepository.findAllProductsWithReviews()
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    double reviewCount = entry.getValue().size();
-                    double reviewSum = entry.getValue().stream().map(Review::rating).reduce(0.0, Double::sum);
-                    return Map.entry(productMapper.toDto(entry.getKey()), reviewSum / reviewCount);
-                }).sorted(Comparator.comparingDouble(Map.Entry::getValue)).toList();
+    @Override
+    public List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName) {
+        return getAll(sortOrder, fieldName, "");
     }
 
-    public List<ProductDto> getAllWithReview() {
+    @Override
+    public List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName, String namePattern) {
         return productRepository
                 .findAllProductsWithReviews().entrySet().stream()
                 .map(e -> {
                     ProductDto productDto = productMapper.toDto(e.getKey());
-                    Double rating = e.getValue().stream().mapToDouble(Review::rating).average().orElse(0.0);
-                    return productDto.setReviews(reviewMapper.toDto(e.getValue())).setRating(rating);
-                }).toList();
+                    Double rating = e.getValue().stream()
+                            .mapToDouble(Review::rating)
+                            .average().orElse(0.0);
+                    return productDto.setReviews(reviewMapper.toDto(e.getValue()))
+                            .setRating(rating);
+                })
+                .sorted(getComparator(Sort.by(sortOrder, fieldName)))
+                .filter(dto -> containsIgnoreCase(dto.name(), namePattern)).toList();
     }
 
-    @Override
-    public List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName) {
-        List<Product> products = productRepository.findAll(Sort.by(sortOrder, fieldName));
-        return productMapper.toDto(products);
+    public Comparator<ProductDto> getComparator(Sort sort) {
+        Comparator<ProductDto> comparator;
+        Sort.Order order = sort.iterator().next();
+        comparator = switch (order.getProperty()) {
+            case "price" -> Comparator.comparing(ProductDto::price);
+            case "name" -> Comparator.comparing(ProductDto::name);
+            default -> Comparator.comparing(ProductDto::rating);
+        };
+
+        if (order.getDirection().equals(Sort.Direction.DESC)) {
+            comparator = comparator.reversed();
+        }
+
+        return comparator;
     }
 }

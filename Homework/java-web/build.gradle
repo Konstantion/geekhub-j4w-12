@@ -15,6 +15,7 @@ subprojects {
         implementation libsSpring.springBootStarterDataJpa
         implementation libsSpring.springBootStarterWeb
         implementation libsUtils.guava
+        implementation libsUtils.commonsLang3
 
         testImplementation libsTest.jupiterApi
         testImplementation libsTest.jupiterParams

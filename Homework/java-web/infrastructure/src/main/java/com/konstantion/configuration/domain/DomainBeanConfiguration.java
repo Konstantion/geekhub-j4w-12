@@ -58,7 +58,7 @@ public class DomainBeanConfiguration {
     }
 
     @Bean
-    public ReviewRawMapper rawMapper() {
+    public ReviewRawMapper reviewRawMapper() {
         return new ReviewRawMapper();
     }
 
