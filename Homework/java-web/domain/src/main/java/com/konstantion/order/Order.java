@@ -6,18 +6,16 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-public record Order(Long id, UUID uuid, UUID userUuid, Map<Product, Integer> products, Double totalPrice, LocalDateTime placedAt) {
-
-    public Order setId(Long id) {
-        return new Order(id, uuid, userUuid, products, totalPrice, placedAt);
-    }
+public record Order(UUID uuid, UUID userUuid, Map<Product, Integer> products, Double totalPrice, LocalDateTime placedAt) {
 
     public static OrderBuilder builder() {
         return new OrderBuilder();
     }
 
+    public Order setUuid(UUID uuid) {
+        return new Order(uuid, userUuid, products, totalPrice, placedAt);
+    }
     public static final class OrderBuilder {
-        private Long id;
         private UUID uuid;
         private Map<Product, Integer> products;
         private Double totalPrice;
@@ -25,11 +23,6 @@ public record Order(Long id, UUID uuid, UUID userUuid, Map<Product, Integer> pro
         private UUID userUuid;
 
         private OrderBuilder() {
-        }
-
-        public OrderBuilder id(Long id) {
-            this.id = id;
-            return this;
         }
 
         public OrderBuilder uuid(UUID uuid) {
@@ -58,7 +51,7 @@ public record Order(Long id, UUID uuid, UUID userUuid, Map<Product, Integer> pro
         }
 
         public Order build() {
-            return new Order(id, uuid, userUuid, products, totalPrice, placedAt);
+            return new Order(uuid, userUuid, products, totalPrice, placedAt);
         }
     }
 }

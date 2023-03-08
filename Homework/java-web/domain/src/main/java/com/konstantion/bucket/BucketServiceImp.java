@@ -5,6 +5,7 @@ import com.konstantion.product.Product;
 import com.konstantion.product.ProductMapper;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.dto.ProductQuantityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public record BucketServiceImp(Logger logger, ProductRepository productRepositor
     }
 
     @Override
-    public Map<ProductDto, Integer> getBucketProducts(Bucket bucket) {
+    public Map<ProductDto, Integer> getBucketProductsMap(Bucket bucket) {
         return bucket.products()
                 .entrySet()
                 .stream()
@@ -70,7 +71,17 @@ public record BucketServiceImp(Logger logger, ProductRepository productRepositor
     }
 
     @Override
-    public void addProductQuantityToBucket(Bucket bucket, UUID productUuid, Integer quantity) {
+    public List<ProductQuantityDto> getBucketProductsList(Bucket bucket) {
+        return bucket.products()
+                .entrySet()
+                .stream()
+                .map(entry -> Map.entry(productMapper.toDto(entry.getKey()), entry.getValue()))
+                .map(ProductQuantityDto::fromEntry)
+                .toList();
+    }
+
+    @Override
+    public ProductDto addProductQuantityToBucket(Bucket bucket, UUID productUuid, Integer quantity) {
         Product product = productRepository.findByUuid(productUuid).orElseThrow(
                 () -> new BadRequestException(format(
                         PRODUCT_WITH_UUID_DOESNT_EXIST,
@@ -81,5 +92,7 @@ public record BucketServiceImp(Logger logger, ProductRepository productRepositor
         }
 
         logger.info("{} product {} added to bucket", quantity, product);
+
+        return productMapper.toDto(product);
     }
 }

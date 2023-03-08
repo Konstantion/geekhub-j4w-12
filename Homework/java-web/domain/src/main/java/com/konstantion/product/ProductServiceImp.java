@@ -58,10 +58,9 @@ public record ProductServiceImp(ProductValidator productValidator,
 
         product = product
                 .setCreatedAt(LocalDateTime.now())
-                .setUuid(UUID.randomUUID())
                 .setImagePath(imagePath);
 
-        product = productRepository.saveAndFlush(product);
+        product = productRepository.save(product);
 
         ProductDto productDto = productMapper.toDto(product);
 

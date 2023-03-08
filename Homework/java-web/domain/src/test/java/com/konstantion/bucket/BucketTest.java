@@ -122,7 +122,7 @@ class BucketTest {
     @Disabled
     void process_returnBucketWithUser_whenSetUser() {
         Bucket bucket = new Bucket();
-        User user = new User(1L, UUID.randomUUID(), "name", "email", "123");
+        User user = new User(UUID.randomUUID(), "name", "email", "123");
 
 //        bucket = bucket.setUser(user);
 //

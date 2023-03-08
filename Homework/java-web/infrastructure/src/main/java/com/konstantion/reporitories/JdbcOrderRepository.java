@@ -24,14 +24,9 @@ public record JdbcOrderRepository(NamedParameterJdbcTemplate jdbcTemplate,
                 VALUES (:uuid, :totalPrice, :placedAt, :userUuid);
             """;
     private static final String INSERT_ORDER_PRODUCT_QUERY = """
-                INSERT INTO order_product (order_id, product_id, quantity)
-                VALUES (:orderId, :productId, :quantity);
+                INSERT INTO order_product (order_uuid, product_uuid, quantity)
+                VALUES (:orderUuid, :productUuid, :quantity);
             """;
-
-    @Override
-    public Optional<Order> findById(Long id) {
-        return Optional.empty();
-    }
 
     @Override
     public List<Order> findAll() {
@@ -40,26 +35,14 @@ public record JdbcOrderRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Order save(Order order) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameters = parameterUtil.toParameterSource(order);
-
-        jdbcTemplate.update(INSERT_ORDER_QUERY, parameters, keyHolder);
-
-        Long orderId = (Long) Objects.requireNonNull(keyHolder.getKeys()).get("id");
-        order = order.setId(orderId);
-
+        jdbcTemplate.update(INSERT_ORDER_QUERY, parameters);
         saveProducts(order);
-
         return order;
     }
 
     @Override
     public void delete(Order object) {
-
-    }
-
-    @Override
-    public void deleteById(Long aLong) {
 
     }
 

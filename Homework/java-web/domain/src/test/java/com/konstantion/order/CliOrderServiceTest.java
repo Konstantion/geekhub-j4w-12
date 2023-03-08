@@ -36,7 +36,7 @@ class CliOrderServiceTest {
     @BeforeEach
     void setUp() {
         orderService = new OrderServiceImp(orderRepository, orderValidator);
-        user = new User(1L, UUID.randomUUID(), "name", "gmail", "password");
+        user = new User(UUID.randomUUID(), "name", "gmail", "password");
         bucket = new Bucket();
     }
 

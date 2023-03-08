@@ -71,7 +71,6 @@ public class DomainBeanConfiguration {
     @Bean
     public User user() {
         return User.builder()
-                .id(1L)
                 .email("email")
                 .uuid(UUID.fromString("d750e56e-b5e8-11ed-8481-00d8611a4231"))
                 .password("password")

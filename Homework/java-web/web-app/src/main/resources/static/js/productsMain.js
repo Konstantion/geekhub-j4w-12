@@ -1,6 +1,5 @@
 $(document).ready(() => {
     initProducts();
-
     $("#addProductButton").click((event) => {
         event.preventDefault();
         appProduct();
@@ -36,6 +35,7 @@ function initProducts() {
                 for (const product of data.products) {
                     productComponent.append(createCard(product));
                 }
+                return data.products;
             }
         },
         error: (error) => {
@@ -43,6 +43,7 @@ function initProducts() {
             const response = error.responseJSON;
             alertBlock.css('display', 'block');
             alertBlock.html(response.message)
+            return {};
         }
     })
 }
@@ -118,6 +119,37 @@ function appProduct() {
     })
 }
 
+function addProductToBucket(sender) {
+    const alertBlock = $('#productsListError');
+    const infoBlock = $('#productsListInfo');
+    const data = {"productUuid" : $(sender).attr('productuuid')};
+    console.log(data);
+    console.log(jQuery.param(data));
+    $.ajax({
+        type: "PUT",
+        enctype: 'multipart/form-data',
+        url: `/bucket/add?${jQuery.param(data)}`,
+
+
+        timeout: 4000,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: (response) => {
+            infoBlock.css('display', 'block');
+            infoBlock.html(response.message);
+            hideElementTimeOut(infoBlock, 2000);
+        },
+        error: (error) => {
+            console.error(error);
+            const response = error.responseJSON;
+            alertBlock.css('display', 'block');
+            alertBlock.html(response.message)
+            return {};
+        }
+    })
+}
+
 function createCard(product) {
     return $('<div>')
         .attr('id', product.uuid)
@@ -148,12 +180,13 @@ function createCard(product) {
                 )
                 .append($('<div>')
                     .addClass('d-grid gap-2')
-                    .append($('<a>')
+                    .append($('<button>')
                         .addClass('btn btn-outline-dark')
-                        .attr('href', '#')
+                        .attr('onclick', 'addProductToBucket(this)')
+                        .attr('productuuid', product.uuid)
                         .html('Add to the bucket')
                     )
-                    .append($('<a>')
+                    .append($('<button>')
                         .addClass('btn btn-outline-dark')
                         .attr('href', '#')
                         .html('More information')
@@ -167,9 +200,12 @@ function hideElement(alertBlock) {
     alertBlock.css('display', 'none');
     alertBlock.html('')
 }
+function hideElementTimeOut(element, timeOut) {
+    setTimeout(() => hideElement(element), timeOut);
+}
 
 function getImagePath(product) {
-    if ('imagePath' in product) {
+    if (product.imagePath !== null) {
         return "/img/" + product.imagePath
     } else return "/static/no_image.jpg"
 }

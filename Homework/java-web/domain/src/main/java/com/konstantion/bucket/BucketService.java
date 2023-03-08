@@ -2,6 +2,7 @@ package com.konstantion.bucket;
 
 import com.konstantion.product.Product;
 import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.dto.ProductQuantityDto;
 
 import java.util.List;
 import java.util.Map;
@@ -12,9 +13,11 @@ public interface BucketService {
 
     void addProductsToBucket(Bucket bucket, List<Product> products);
 
-    void addProductQuantityToBucket(Bucket bucket, UUID productUuid, Integer quantity);
+    ProductDto addProductQuantityToBucket(Bucket bucket, UUID productUuid, Integer quantity);
 
     void removeProductFromBucket(Bucket bucket, UUID productUuid);
 
-    Map<ProductDto, Integer> getBucketProducts(Bucket bucket);
+    Map<ProductDto, Integer> getBucketProductsMap(Bucket bucket);
+
+    List<ProductQuantityDto> getBucketProductsList(Bucket bucket);
 }

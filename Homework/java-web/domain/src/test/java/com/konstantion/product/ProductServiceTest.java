@@ -74,8 +74,8 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, null, now, null, null, null);
-            Product product = new Product((long) i, uuid, name, price, null, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, null, null, null, now, null, null, null);
+            Product product = new Product(uuid, name, price, null, null, null, now, null);
 
             dbData.add(product);
             expectedArray.add(productDto);
@@ -102,8 +102,8 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, null, now, null, null, null);
-            Product product = new Product((long) i, uuid, name, price, null, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, null, null, null, now, null, null, null);
+            Product product = new Product(uuid, name, price, null, null, null, now, null);
 
             dbData.add(product);
             expectedArray.add(productDto);

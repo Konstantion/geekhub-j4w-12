@@ -6,8 +6,6 @@ import com.konstantion.review.ReviewRepository;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -41,13 +39,10 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Review save(Review review) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameterSource = parameterUtil.toParameterSourceWithoutId(review);
+        MapSqlParameterSource parameterSource = parameterUtil.toParameterSource(review);
+        jdbcTemplate.update(INSERT_REVIEW_QUERY, parameterSource);
 
-        jdbcTemplate.update(INSERT_REVIEW_QUERY, parameterSource, keyHolder);
-        Long newId = (Long) requireNonNull(keyHolder.getKeys()).get("id");
-
-        return review.setId(newId);
+        return review;
     }
 
     @Override

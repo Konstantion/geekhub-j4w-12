@@ -54,8 +54,8 @@ public record ProductController(ProductService productService,
     }
 
     @GetMapping()
-    public String products() {
-        return "product/products-list";
+    public String getView() {
+        return "products-list";
     }
 
     @PostMapping

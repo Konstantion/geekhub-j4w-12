@@ -4,7 +4,6 @@ import com.konstantion.bucket.Bucket;
 import com.konstantion.bucket.BucketService;
 import com.konstantion.product.dto.ProductDto;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.util.Map;
 import java.util.UUID;
@@ -21,6 +20,6 @@ public record CliBucketController(Bucket bucket, BucketService bucketService) {
     }
 
     public Map<ProductDto, Integer> getBucketProducts() {
-        return bucketService.getBucketProducts(bucket);
+        return bucketService.getBucketProductsMap(bucket);
     }
 }

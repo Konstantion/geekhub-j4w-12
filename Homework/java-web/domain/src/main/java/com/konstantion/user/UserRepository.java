@@ -1,7 +1,8 @@
 package com.konstantion.user;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserRepository {
-    Optional<User> findUserById(Long id);
+    Optional<User> findUserByUuid(UUID uuid);
 }

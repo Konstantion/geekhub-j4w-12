@@ -1,8 +1,8 @@
 package com.konstantion.reporitories;
 
 import com.konstantion.product.Product;
-import com.konstantion.reporitories.mappers.ProductRawMapper;
 import com.konstantion.product.ProductRepository;
+import com.konstantion.reporitories.mappers.ProductRawMapper;
 import com.konstantion.reporitories.mappers.ProductReviewRawMapper;
 import com.konstantion.review.Review;
 import com.konstantion.utils.ParameterSourceUtil;
@@ -28,11 +28,8 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
                    SELECT * FROM product;
             """;
     private static final String INSERT_PRODUCT_QUERY = """
-                    INSERT INTO product (uuid, name, price, created_at, user_uuid, image_path)
-                    VALUES (:uuid, :name, :price, :createdAt, :userUuid, :imagePath);
-            """;
-    private static final String DELETE_BY_ID_PRODUCT_QUERY = """
-                    DELETE FROM product WHERE id = :id;
+                    INSERT INTO product (name, price, created_at, user_uuid, image_path)
+                    VALUES (:name, :price, :createdAt, :userUuid, :imagePath);
             """;
 
     private static final String DELETE_BY_UUID_PRODUCT_QUERY = """
@@ -40,16 +37,12 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
             """;
     private static final String UPDATE_PRODUCT_QUERY = """
                     UPDATE product
-                    SET uuid = :uuid,
-                        name = :name,
+                    SET name = :name,
                         price = :price,
                         created_at = :createdAt,
                         user_uuid = :userUuid,
                         image_path = :imagePath
-                    WHERE id = :id;
-            """;
-    private static final String FIND_BY_ID_QUERY = """
-                    SELECT * FROM product WHERE id = :id;
+                    WHERE uuid = :uuid;
             """;
 
     private static final String FIND_BY_UUID_QUERY = """
@@ -62,10 +55,6 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
                 LEFT JOIN review ON product.uuid = review.product_uuid;
             """;
 
-    @Override
-    public Optional<Product> findById(Long id) {
-        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("id", id), productRawMapper).get(0));
-    }
 
     @Override
     public Optional<Product> findByUuid(UUID uuid) {
@@ -91,14 +80,14 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
 
     @Override
     public Product save(Product product) {
-        if (nonNull(product.id())) {
+        if (nonNull(product.uuid())) {
             return update(product);
         }
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameters = parameterUtil.toParameterSourceWithoutId(product);
+        MapSqlParameterSource parameters = parameterUtil.toParameterSource(product);
         jdbcTemplate.update(INSERT_PRODUCT_QUERY, parameters, keyHolder);
 
-        return product.setId((Long) Objects.requireNonNull(keyHolder.getKeys()).get("id"));
+        return product.setUuid((UUID) Objects.requireNonNull(keyHolder.getKeys()).get("uuid"));
     }
 
     private Product update(Product product) {
@@ -109,12 +98,7 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate, Pro
 
     @Override
     public void delete(Product product) {
-        deleteById(product.id());
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        jdbcTemplate.update(DELETE_BY_ID_PRODUCT_QUERY, Map.of("id", id));
+        deleteByUuid(product.uuid());
     }
 
     @Override

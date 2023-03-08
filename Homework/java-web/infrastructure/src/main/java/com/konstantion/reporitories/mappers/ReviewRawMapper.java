@@ -11,7 +11,6 @@ public record ReviewRawMapper() implements RowMapper<Review> {
     @Override
     public Review mapRow(ResultSet rs, int rowNum) throws SQLException {
         return Review.builder()
-                .id(rs.getLong("id"))
                 .uuid(rs.getObject("uuid", UUID.class))
                 .message(rs.getString("message"))
                 .rating(rs.getDouble("rating"))

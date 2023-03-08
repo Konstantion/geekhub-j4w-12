@@ -1,28 +1,24 @@
 package com.konstantion.product;
 
-import com.konstantion.review.dto.ReviewDto;
+import com.konstantion.category.Category;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-public record Product(Long id, UUID uuid, String name, Double price, String imagePath, LocalDateTime createdAt,
+public record Product(UUID uuid, String name, Double price, String description, String category, String imagePath,
+                      LocalDateTime createdAt,
                       UUID userUuid) {
 
-    public Product setId(Long newId) {
-        return new Product(newId, uuid, name, price, imagePath, createdAt, userUuid);
-    }
-
     public Product setCreatedAt(LocalDateTime now) {
-        return new Product(id, uuid, name, price, imagePath, now, userUuid);
+        return new Product(uuid, name, price, description, category, imagePath, now, userUuid);
     }
 
     public Product setImagePath(String imagePath) {
-        return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
+        return new Product(uuid, name, price, description, category, imagePath, createdAt, userUuid);
     }
 
     public Product setUuid(UUID uuid) {
-        return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
+        return new Product(uuid, name, price, description, category, imagePath, createdAt, userUuid);
     }
 
     public static ProductBuilder builder() {
@@ -30,21 +26,18 @@ public record Product(Long id, UUID uuid, String name, Double price, String imag
     }
 
     public static final class ProductBuilder {
-        private Long id;
         private UUID uuid;
         private String name;
         private Double price;
+
+        private String description;
+        private String category;
 
         private String imagePath;
         private LocalDateTime createdAt;
         private UUID userUuid;
 
         private ProductBuilder() {
-        }
-
-        public ProductBuilder id(Long id) {
-            this.id = id;
-            return this;
         }
 
         public ProductBuilder uuid(UUID uuid) {
@@ -54,6 +47,16 @@ public record Product(Long id, UUID uuid, String name, Double price, String imag
 
         public ProductBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public ProductBuilder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public ProductBuilder category(String category) {
+            this.category = category;
             return this;
         }
 
@@ -78,7 +81,7 @@ public record Product(Long id, UUID uuid, String name, Double price, String imag
         }
 
         public Product build() {
-            return new Product(id, uuid, name, price, imagePath, createdAt, userUuid);
+            return new Product(uuid, name, price, description, category, imagePath, createdAt, userUuid);
         }
     }
 }

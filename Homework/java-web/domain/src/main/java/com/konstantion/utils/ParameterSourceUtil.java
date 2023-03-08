@@ -8,22 +8,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public record ParameterSourceUtil() {
-    public MapSqlParameterSource toParameterSourceWithoutId(Product product) {
+    public MapSqlParameterSource toParameterSource(Product product) {
         return new MapSqlParameterSource()
                 .addValue("uuid", product.uuid())
                 .addValue("name", product.name())
                 .addValue("price", product.price())
+                .addValue("description", product.description())
                 .addValue("createdAt", product.createdAt())
                 .addValue("userUuid", product.userUuid())
                 .addValue("imagePath", product.imagePath());
     }
 
-    public MapSqlParameterSource toParameterSource(Product product) {
-        return toParameterSourceWithoutId(product)
-                .addValue("id", product.id());
-    }
-
-    public MapSqlParameterSource toParameterSourceWithoutId(Order order) {
+    public MapSqlParameterSource toParameterSource(Order order) {
         return new MapSqlParameterSource()
                 .addValue("uuid", order.uuid())
                 .addValue("totalPrice", order.totalPrice())
@@ -32,18 +28,14 @@ public record ParameterSourceUtil() {
                 .addValue("userUuid", order.userUuid());
     }
 
-    public MapSqlParameterSource toParameterSource(Order order) {
-        return toParameterSourceWithoutId(order).addValue("id", order.id());
-    }
-
     public MapSqlParameterSource toParameterSource(Order order, Product product, Integer quantity) {
         return new MapSqlParameterSource()
-                .addValue("orderId", order.id())
-                .addValue("productId", product.id())
+                .addValue("orderUuid", order.uuid())
+                .addValue("productUuid", product.uuid())
                 .addValue("quantity", quantity);
     }
 
-    public MapSqlParameterSource toParameterSourceWithoutId(Review review) {
+    public MapSqlParameterSource toParameterSource(Review review) {
         return new MapSqlParameterSource()
                 .addValue("uuid", review.uuid())
                 .addValue("message", review.message())
