@@ -21,6 +21,4 @@ public class RoleUtils {
                 .map(element -> String.join(separator, prefixWord, element))
                 .collect(Collectors.toSet());
     }
-
-    public static
 }

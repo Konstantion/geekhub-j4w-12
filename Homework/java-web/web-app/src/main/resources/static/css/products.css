@@ -10,9 +10,17 @@ input[type=number] {
 }
 
 .productImage {
-    max-height: 300px;
+    max-height: 10rem;
     height: 100%;
 
-    max-width: 300px;
+    max-width: 50rem;
+    width: 100%;
+}
+
+.product-card {
+    max-height: 10rem;
+    height: 100%;
+
+    max-width: 50rem;
     width: 100%;
 }
