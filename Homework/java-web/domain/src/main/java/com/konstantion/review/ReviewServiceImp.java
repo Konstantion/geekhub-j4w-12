@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -18,7 +19,7 @@ import static java.lang.String.format;
 public record ReviewServiceImp(ReviewValidator reviewValidator,
                                ReviewRepository reviewRepository)
         implements ReviewService {
-    static ReviewMapper MAPPER = ReviewMapper.INSTANCE;
+    static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
     static Logger logger = LoggerFactory.getLogger(ReviewServiceImp.class);
 
     @Override
@@ -39,7 +40,7 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
                 .build();
 
         review = reviewRepository.save(review);
-        ReviewDto reviewDto = MAPPER.toDto(review);
+        ReviewDto reviewDto = reviewMapper.toDto(review);
 
         logger.info("{} successfully created", reviewDto);
 
@@ -55,6 +56,29 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
         reviewRepository.deleteById(reviewUuid);
 
         logger.info("Product with uuid {} successfully delete", reviewUuid);
-        return MAPPER.toDto(review);
+        return reviewMapper.toDto(review);
+    }
+
+    @Override
+    public ReviewDto getReviewById(UUID uuid) {
+        Review review = reviewRepository.findById(uuid).orElseThrow(() ->
+                new BadRequestException(format("Review with uuid %s doesn't exist", uuid)
+                ));
+
+        return reviewMapper.toDto(review);
+    }
+
+    @Override
+    public List<ReviewDto> getProductReviews(UUID productUuid) {
+        List<Review> reviews = reviewRepository.findByProductId(productUuid);
+
+        return reviewMapper.toDto(reviews);
+    }
+
+    @Override
+    public List<ReviewDto> getUserReviews(UUID userUuid) {
+        List<Review> reviews = reviewRepository.findByUserId(userUuid);
+
+        return reviewMapper.toDto(reviews);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,9 +33,37 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
             VALUES (:uuid, :message, :rating, :userUuid, :productUuid, :createdAt);
             """;
 
+    private static final String FIND_BY_USER_ID_QUERY = """
+                SELECT * FROM review
+                WHERE user_uuid = :userUuid;
+            """;
+
+    private static final String FIND_BY_PRODUCT_ID_QUERY = """
+                 SELECT * FROM review
+                 WHERE product_uuid = :productUuid;
+            """;
+
     @Override
     public Optional<Review> findById(UUID uuid) {
         return Optional.ofNullable(jdbcTemplate.query(FIND_BY_UUID_QUERY, Map.of("uuid", uuid), reviewRawMapper).get(0));
+    }
+
+    @Override
+    public List<Review> findByUserId(UUID uuid) {
+        return jdbcTemplate.query(
+                FIND_BY_USER_ID_QUERY,
+                Map.of("userUuid", uuid),
+                reviewRawMapper
+        );
+    }
+
+    @Override
+    public List<Review> findByProductId(UUID uuid) {
+        return jdbcTemplate.query(
+                FIND_BY_PRODUCT_ID_QUERY,
+                Map.of("productUuid", uuid),
+                reviewRawMapper
+        );
     }
 
     @Override
