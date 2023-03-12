@@ -24,7 +24,7 @@ public record ProductValidations() implements ValidationsUtil {
             return Optional.of("Product name shouldn't be empty");
         }
 
-        if (name.length() < 3 || name.length() > 100) {
+        if (name.length() < 3 || name.length() > 32) {
             errorList.add("Product name should be between 3 and 100 characters");
         }
 
@@ -44,6 +44,24 @@ public record ProductValidations() implements ValidationsUtil {
 
         if (price < 0) {
             return Optional.of("Product price should be greater or equal to zero");
+        }
+
+        return listToOptionalString(errorList);
+    }
+
+    public Optional<String> isDescriptionValid(String description) {
+        List<String> errorList = new ArrayList<>();
+        if (isNull(description)) {
+            return Optional.of("Product description shouldn't be null");
+        }
+
+
+        if (description.length() > 255) {
+            errorList.add("Product name should be between 3 and 100 characters");
+        }
+
+        if (!isAlphanumericSpace(description)) {
+            errorList.add("Product name should contain only alphanumeric characters and space");
         }
 
         return listToOptionalString(errorList);

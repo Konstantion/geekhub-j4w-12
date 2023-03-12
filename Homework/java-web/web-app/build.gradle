@@ -3,6 +3,10 @@ dependencies {
     implementation project(':Homework:java-web:infrastructure');
 
     runtimeOnly libsDatabase.postgres
+
+    implementation libsSpringDoc.openapiStarterWebmvcUi
+    implementation libsSpring.springBootStarterValidation
+
     implementation libsDatabase.flywayCore
     implementation libsSpring.springBootStarterThymeleaf
 }

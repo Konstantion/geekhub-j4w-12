@@ -1,24 +1,25 @@
 package com.konstantion.product;
 
-import com.konstantion.category.Category;
+import com.google.common.base.Objects;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 
-public record Product(UUID uuid, String name, Double price, String description, String category, String imagePath,
-                      LocalDateTime createdAt,
-                      UUID userUuid) {
+public record Product(UUID uuid, String name, Double price,
+                      String description, byte[] imageBytes,
+                      LocalDateTime createdAt, UUID userUuid) {
 
     public Product setCreatedAt(LocalDateTime now) {
-        return new Product(uuid, name, price, description, category, imagePath, now, userUuid);
+        return new Product(uuid, name, price, description, imageBytes, now, userUuid);
     }
 
-    public Product setImagePath(String imagePath) {
-        return new Product(uuid, name, price, description, category, imagePath, createdAt, userUuid);
+    public Product setImageBytes(byte[] imageBytes) {
+        return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid);
     }
 
     public Product setUuid(UUID uuid) {
-        return new Product(uuid, name, price, description, category, imagePath, createdAt, userUuid);
+        return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid);
     }
 
     public static ProductBuilder builder() {
@@ -29,11 +30,8 @@ public record Product(UUID uuid, String name, Double price, String description, 
         private UUID uuid;
         private String name;
         private Double price;
-
         private String description;
-        private String category;
-
-        private String imagePath;
+        private byte[] imageBytes;
         private LocalDateTime createdAt;
         private UUID userUuid;
 
@@ -55,13 +53,8 @@ public record Product(UUID uuid, String name, Double price, String description, 
             return this;
         }
 
-        public ProductBuilder category(String category) {
-            this.category = category;
-            return this;
-        }
-
-        public ProductBuilder imagePath(String imagePath) {
-            this.imagePath = imagePath;
+        public ProductBuilder imageBytes(byte[] imageBytes) {
+            this.imageBytes = imageBytes;
             return this;
         }
 
@@ -81,7 +74,32 @@ public record Product(UUID uuid, String name, Double price, String description, 
         }
 
         public Product build() {
-            return new Product(uuid, name, price, description, category, imagePath, createdAt, userUuid);
+            return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product product)) return false;
+        return Objects.equal(uuid, product.uuid) && Objects.equal(name, product.name) && Objects.equal(price, product.price) && Objects.equal(description, product.description) && Objects.equal(imageBytes, product.imageBytes) && Objects.equal(createdAt, product.createdAt) && Objects.equal(userUuid, product.userUuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uuid, name, price, description, imageBytes, createdAt, userUuid);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+               "uuid=" + uuid +
+               ", name='" + name + '\'' +
+               ", price=" + price +
+               ", description='" + description + '\'' +
+               ", imageBytes=" + Arrays.toString(imageBytes) +
+               ", createdAt=" + createdAt +
+               ", userUuid=" + userUuid +
+               '}';
     }
 }

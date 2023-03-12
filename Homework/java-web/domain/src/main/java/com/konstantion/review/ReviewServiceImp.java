@@ -48,11 +48,11 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
 
     @Override
     public ReviewDto deleteReview(UUID reviewUuid, User user) {
-        Review review = reviewRepository.findByUuid(reviewUuid).orElseThrow(() ->
+        Review review = reviewRepository.findById(reviewUuid).orElseThrow(() ->
                 new BadRequestException(format("Review with uuid %s doesn't exist", reviewUuid)
                 ));
 
-        reviewRepository.deleteByUuid(reviewUuid);
+        reviewRepository.deleteById(reviewUuid);
 
         logger.info("Product with uuid {} successfully delete", reviewUuid);
         return MAPPER.toDto(review);

@@ -5,6 +5,7 @@ import com.konstantion.bucket.BucketService;
 import com.konstantion.product.dto.ProductDto;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 public record CliBucketController(Bucket bucket, BucketService bucketService) {
 
     public void addProduct(UUID productUuid, Integer quantity) {
-        bucketService.addProductQuantityToBucket(bucket, productUuid, quantity);
+        bucketService.addProductToBucket(bucket, productUuid, quantity);
     }
 
     public void removeProduct(UUID productUuid) {
@@ -20,6 +21,6 @@ public record CliBucketController(Bucket bucket, BucketService bucketService) {
     }
 
     public Map<ProductDto, Integer> getBucketProducts() {
-        return bucketService.getBucketProductsMap(bucket);
+        return Collections.emptyMap();
     }
 }

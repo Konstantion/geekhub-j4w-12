@@ -4,11 +4,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewRepository {
-    Optional<Review> findByUuid(UUID uuid);
+    Optional<Review> findById(UUID uuid);
 
-    Review save(Review Review);
+    Review save(Review review);
 
-    void delete(Review Review);
+    void delete(Review review);
 
-    void deleteByUuid(UUID uuid);
+    void deleteById(UUID uuid);
 }

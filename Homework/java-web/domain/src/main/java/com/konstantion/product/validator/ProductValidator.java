@@ -27,6 +27,12 @@ public record ProductValidator(ProductValidations productValidations) {
                 )
         );
 
+        productValidations.isDescriptionValid(creationProductDto.description()).ifPresent(
+                s -> validationErrors.add(new FieldError(
+                        creationProductDto.toString(), "description", s)
+                )
+        );
+
         return ValidationResult.ofAbsentee(validationErrors);
     }
 }

@@ -127,8 +127,8 @@ class ProductServiceTest {
         Product product = Product.builder()
                 .uuid(uuid)
                 .build();
-        when(repository.findByUuid(any(UUID.class))).thenReturn(Optional.of(product));
-        doNothing().when(repository).deleteByUuid(any(UUID.class));
+        when(repository.findById(any(UUID.class))).thenReturn(Optional.of(product));
+        doNothing().when(repository).deleteById(any(UUID.class));
 
         ProductDto actualDto = service.delete(uuid);
         ProductDto expectedDto = productMapper.toDto(product);
@@ -138,7 +138,7 @@ class ProductServiceTest {
 
     @Test
     void process_shouldThrowBadRequestException_whenTryToGetProductByIdWitchDoesntExist() {
-        when(repository.findByUuid(any(UUID.class))).thenReturn(Optional.empty());
+        when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.delete(UUID.randomUUID()))
                 .isInstanceOf(BadRequestException.class);
     }

@@ -18,7 +18,7 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate, UserRa
             """;
 
     @Override
-    public Optional<User> findUserByUuid(UUID uuid) {
+    public Optional<User> findUserById(UUID uuid) {
         return Optional.of(jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("uuid", uuid), rawMapper).get(0));
     }
 }

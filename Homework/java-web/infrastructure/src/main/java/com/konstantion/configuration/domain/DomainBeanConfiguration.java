@@ -20,6 +20,7 @@ import com.konstantion.review.validator.ReviewValidator;
 import com.konstantion.upload.UploadService;
 import com.konstantion.user.User;
 import com.konstantion.file.MultipartFileValidator;
+import com.konstantion.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -38,9 +39,10 @@ public class DomainBeanConfiguration {
     @Bean
     public OrderService orderService(
             OrderRepository orderRepository,
-            OrderValidator orderValidator
+            OrderValidator orderValidator,
+            UserRepository userRepository
     ) {
-        return new OrderServiceImp(orderRepository, orderValidator);
+        return new OrderServiceImp(orderRepository, orderValidator, userRepository);
     }
 
     @Bean
@@ -50,16 +52,6 @@ public class DomainBeanConfiguration {
                                          UploadService uploadService
     ) {
         return new ProductServiceImp(productValidator, fileValidator, productRepository, uploadService);
-    }
-
-    @Bean
-    public ProductRawMapper productRawMapper() {
-        return new ProductRawMapper();
-    }
-
-    @Bean
-    public ReviewRawMapper reviewRawMapper() {
-        return new ReviewRawMapper();
     }
 
     @Bean

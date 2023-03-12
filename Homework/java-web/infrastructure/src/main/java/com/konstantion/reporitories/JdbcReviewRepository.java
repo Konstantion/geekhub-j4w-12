@@ -19,7 +19,7 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
                                    ReviewRawMapper reviewRawMapper,
                                    ParameterSourceUtil parameterUtil
 ) implements ReviewRepository {
-    private static final String DELETE_BY_UUID_PRODUCT_QUERY = """
+    private static final String DELETE_BY_UUID_REVIEW_QUERY = """
                     DELETE FROM review WHERE uuid = :uuid;
             """;
 
@@ -33,7 +33,7 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
             """;
 
     @Override
-    public Optional<Review> findByUuid(UUID uuid) {
+    public Optional<Review> findById(UUID uuid) {
         return Optional.ofNullable(jdbcTemplate.query(FIND_BY_UUID_QUERY, Map.of("uuid", uuid), reviewRawMapper).get(0));
     }
 
@@ -47,11 +47,11 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public void delete(Review review) {
-        deleteByUuid(review.uuid());
+        deleteById(review.uuid());
     }
 
     @Override
-    public void deleteByUuid(UUID uuid) {
-        jdbcTemplate.update(DELETE_BY_UUID_PRODUCT_QUERY, Map.of("uuid", uuid));
+    public void deleteById(UUID uuid) {
+        jdbcTemplate.update(DELETE_BY_UUID_REVIEW_QUERY, Map.of("uuid", uuid));
     }
 }

@@ -2,22 +2,23 @@ package com.konstantion.bucket;
 
 import com.konstantion.product.Product;
 import com.konstantion.product.dto.ProductDto;
-import com.konstantion.product.dto.ProductQuantityDto;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface BucketService {
-    void addProductToBucket(Bucket bucket, UUID productUuid);
+    default ProductDto addProductToBucket(Bucket bucket, UUID productUuid) {
+        return addProductToBucket(bucket, productUuid, 1);
+    }
+    ProductDto addProductToBucket(Bucket bucket, UUID productUuid, Integer quantity);
 
-    void addProductsToBucket(Bucket bucket, List<Product> products);
+    default Integer removeProductFromBucket(Bucket bucket, UUID productUuid) {
+        return removeProductFromBucket(bucket, productUuid, 1);
+    }
 
-    ProductDto addProductQuantityToBucket(Bucket bucket, UUID productUuid, Integer quantity);
+    Integer removeProductFromBucket(Bucket bucket, UUID productUuid, Integer qiantity);
 
-    void removeProductFromBucket(Bucket bucket, UUID productUuid);
+    List<ProductDto> getBucketProducts(Bucket bucket);
 
-    Map<ProductDto, Integer> getBucketProductsMap(Bucket bucket);
-
-    List<ProductQuantityDto> getBucketProductsList(Bucket bucket);
+    Integer getProductQuantity(Bucket bucket, UUID productUuid);
 }

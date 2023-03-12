@@ -16,7 +16,7 @@ public record ParameterSourceUtil() {
                 .addValue("description", product.description())
                 .addValue("createdAt", product.createdAt())
                 .addValue("userUuid", product.userUuid())
-                .addValue("imagePath", product.imagePath());
+                .addValue("imageBytes", product.imageBytes());
     }
 
     public MapSqlParameterSource toParameterSource(Order order) {
@@ -25,6 +25,7 @@ public record ParameterSourceUtil() {
                 .addValue("totalPrice", order.totalPrice())
                 .addValue("products", order.products())
                 .addValue("placedAt", order.placedAt())
+                .addValue("status", order.status().name())
                 .addValue("userUuid", order.userUuid());
     }
 

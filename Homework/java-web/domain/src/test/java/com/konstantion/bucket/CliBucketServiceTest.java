@@ -34,7 +34,7 @@ class CliBucketServiceTest {
     void process_shouldAddProductToBucket_whenAddProductToBucket() {
         UUID uuid = UUID.randomUUID();
         doNothing().when(bucket).addProduct(any(Product.class));
-        doReturn(Optional.of(Product.builder().build())).when(productRepository).findByUuid(any(UUID.class));
+        doReturn(Optional.of(Product.builder().build())).when(productRepository).findById(any(UUID.class));
 
         bucketService.addProductToBucket(bucket, uuid);
 
@@ -70,7 +70,7 @@ class CliBucketServiceTest {
                 .build();
 
         doReturn(true).when(bucket).removeProduct(any(Product.class));
-        doReturn(Optional.of(product)).when(productRepository).findByUuid(any(UUID.class));
+        doReturn(Optional.of(product)).when(productRepository).findById(any(UUID.class));
 
         bucketService.removeProductFromBucket(bucket, uuid);
 
@@ -87,9 +87,9 @@ class CliBucketServiceTest {
                 .build();
 
         doNothing().when(bucket).addProduct(any(Product.class));
-        doReturn(Optional.of(bear)).when(productRepository).findByUuid(any(UUID.class));
+        doReturn(Optional.of(bear)).when(productRepository).findById(any(UUID.class));
 
-        bucketService.addProductQuantityToBucket(bucket, uuid, 10);
+        bucketService.addProductToBucket(bucket, uuid, 10);
 
         verify(bucket, times(10)).addProduct(any(Product.class));
     }

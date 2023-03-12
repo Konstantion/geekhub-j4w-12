@@ -4,5 +4,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
-    Optional<User> findUserByUuid(UUID uuid);
+    Optional<User> findUserById(UUID uuid);
 }

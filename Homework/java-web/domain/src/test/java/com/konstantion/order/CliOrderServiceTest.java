@@ -5,6 +5,7 @@ import com.konstantion.exceptions.ValidationException;
 import com.konstantion.order.validator.OrderValidator;
 import com.konstantion.product.Product;
 import com.konstantion.user.User;
+import com.konstantion.user.UserRepository;
 import com.konstantion.utils.validator.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class CliOrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     private OrderService orderService;
 
     private User user;
@@ -35,7 +39,7 @@ class CliOrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderServiceImp(orderRepository, orderValidator);
+        orderService = new OrderServiceImp(orderRepository, orderValidator, userRepository);
         user = new User(UUID.randomUUID(), "name", "gmail", "password");
         bucket = new Bucket();
     }

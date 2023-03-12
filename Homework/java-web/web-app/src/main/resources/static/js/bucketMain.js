@@ -55,7 +55,7 @@ function getProducts() {
 
 function getProductRow(product, quantity, index) {
     return $('<tr>')
-        .css('text-align', 'center')
+        .addClass('product-row')
         .append($('<td>')
             .css('width', '5%')
             .html(index ? index : '#')
@@ -66,7 +66,7 @@ function getProductRow(product, quantity, index) {
         )
         .append($('<td>')
             .css('width', '5%')
-            .html(product.price)
+            .html(product.price.toFixed(3))
         )
         .append($('<td>')
             .css('width', '15%')
@@ -105,7 +105,7 @@ function getProductRow(product, quantity, index) {
             ))
         .append($('<td>')
             .css('width', '10%')
-            .html(product.price * quantity)
+            .html((product.price * quantity).toFixed(3))
         )
 }
 

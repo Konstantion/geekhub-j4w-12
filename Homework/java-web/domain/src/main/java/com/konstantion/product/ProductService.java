@@ -11,7 +11,11 @@ import java.util.UUID;
 public interface ProductService {
     ProductDto create(CreationProductDto createProductDto, MultipartFile multipartFile);
 
+    ProductDto getById(UUID uuid);
+
     ProductDto delete(UUID uuid);
+
+    ProductDto update(UUID uuid, ProductDto productDto);
 
     List<ProductDto> getAll();
 
@@ -22,4 +26,5 @@ public interface ProductService {
     default ProductDto delete(Product product) {
         return delete(product.uuid());
     }
+    String getProductImage(UUID uuid);
 }

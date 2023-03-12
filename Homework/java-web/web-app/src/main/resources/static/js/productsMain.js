@@ -1,5 +1,6 @@
 $(document).ready(() => {
     initProducts();
+    let timeoutId = null;
     $("#addProductButton").click((event) => {
         event.preventDefault();
         appProduct();
@@ -11,8 +12,9 @@ $(document).ready(() => {
     });
 
     $("#namePattern").on('input', (event) => {
-        console.log('i changed')
-        setTimeout(filterProducts, 400);
+        console.log('i changed');
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(filterProducts, 400);
     })
 })
 
@@ -21,7 +23,7 @@ function initProducts() {
     $.ajax({
         type: "GET",
         enctype: 'multipart/form-data',
-        url: "/products/list",
+        url: "/web-api/products",
 
         timeout: 4000,
         processData: false,
@@ -59,7 +61,7 @@ function appProduct() {
     $.ajax({
         type: "POST",
         enctype: 'multipart/form-data',
-        url: "/products",
+        url: "/web-api/products",
         data: formData,
 
         timeout: 4000,
@@ -128,7 +130,7 @@ function addProductToBucket(sender) {
     $.ajax({
         type: "PUT",
         enctype: 'multipart/form-data',
-        url: `/bucket/add?${jQuery.param(data)}`,
+        url: `/web-api/bucket/add?${jQuery.param(data)}`,
 
 
         timeout: 4000,
@@ -216,7 +218,7 @@ function filterProducts() {
     $.ajax({
         type: "GET",
         enctype: 'multipart/form-data',
-        url: "/products/list",
+        url: "/web-api/products",
         data: $('#productFilter').serialize(),
 
         timeout: 4000,
@@ -224,6 +226,7 @@ function filterProducts() {
         contentType: false,
         cache: false,
         success: (response) => {
+            console.log('filtered');
             clearProducts();
             hideElement(alertBlock);
 

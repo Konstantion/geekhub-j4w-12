@@ -1,15 +1,14 @@
 package com.konstantion.product;
 
-import com.konstantion.review.Review;
+import com.konstantion.order.OrderStatus;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductRepository {
-    Optional<Product> findByUuid(UUID uuid);
+    Optional<Product> findById(UUID uuid);
 
     List<Product> findAll();
 
@@ -19,9 +18,7 @@ public interface ProductRepository {
 
     void delete(Product product);
 
-    void deleteByUuid(UUID uuid);
-
-    Map<Product, List<Review>> findAllProductsWithReviews();
+    void deleteById(UUID uuid);
 
     default Product saveAndFlush(Product product) {
         return save(product);

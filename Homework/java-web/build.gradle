@@ -17,6 +17,9 @@ subprojects {
         implementation libsUtils.guava
         implementation libsUtils.commonsLang3
 
+        implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+
+
         testImplementation libsTest.jupiterApi
         testImplementation libsTest.jupiterParams
         testImplementation libsTest.junitJupiterEngine

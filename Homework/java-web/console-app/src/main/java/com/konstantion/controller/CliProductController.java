@@ -24,7 +24,7 @@ public record CliProductController(ProductService productService) {
     }
 
     public List<Map.Entry<ProductDto, Double>> getProductsWithRating() {
-        return productService.getAllWithRating();
+        return null;
     }
 
     public ProductDto deleteProduct(UUID uuid) {

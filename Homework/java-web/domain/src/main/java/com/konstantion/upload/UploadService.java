@@ -48,4 +48,16 @@ public record UploadService(String uploadPath) {
 
         return resultFilename;
     }
+
+    public byte[] getFileBytes(MultipartFile file) {
+        if (isNull(file) || isBlank(file.getOriginalFilename())) {
+            throw new ValidationException("File is not valid", Map.of("file", "File shouldn't be empty"));
+        }
+
+        try {
+            return file.getBytes();
+        } catch (IOException e) {
+            throw new FileIOException(e.getMessage());
+        }
+    }
 }

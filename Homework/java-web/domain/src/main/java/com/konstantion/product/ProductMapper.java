@@ -1,6 +1,7 @@
 package com.konstantion.product;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
@@ -16,4 +17,6 @@ public interface ProductMapper {
     List<ProductDto> toDto(List<Product> entity);
 
     Product toEntity(CreationProductDto dto);
+
+    Product toEntity(ProductDto dto);
 }
