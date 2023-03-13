@@ -1,4 +1,4 @@
-def springBootVersion = '3.0.1'
+def springBootVersion = '3.0.4'
 def openApiVersion = '2.0.2'
 
 def jupiterApiVersion = '5.8.1'
@@ -38,12 +38,13 @@ ext.libsSpring = [
 ]
 
 ext.libsUtils = [
-        'guava'             : "com.google.guava:guava:$guavaVersion",
-        'commonsLang3'      : "org.apache.commons:commons-lang3:$commonsLang3Version",
-        'mapstruct'         : "org.mapstruct:mapstruct:$mapStructVersion",
-        'mapstructProcessor': "org.mapstruct:mapstruct-processor:$mapStructVersion",
-        'lombok'            : "org.projectlombok:lombok:$lombokVersion",
-        'faker'             : "com.github.javafaker:javafaker:$fakerVersion"
+        'guava'                 : "com.google.guava:guava:$guavaVersion",
+        'commonsLang3'          : "org.apache.commons:commons-lang3:$commonsLang3Version",
+        'mapstruct'             : "org.mapstruct:mapstruct:$mapStructVersion",
+        'mapstructProcessor'    : "org.mapstruct:mapstruct-processor:$mapStructVersion",
+        'lombokMapstructBinding': "org.projectlombok:lombok-mapstruct-binding:0.2.0",
+        'lombok'                : "org.projectlombok:lombok:$lombokVersion",
+        'faker'                 : "com.github.javafaker:javafaker:$fakerVersion"
 ]
 
 
