@@ -1,3 +1,8 @@
 dependencies {
     implementation libsUtils.mapstruct
+
+    annotationProcessor libsUtils.mapstructProcessor
+    annotationProcessor libsUtils.lombokMapstructBinding
+    compileOnly libsUtils.lombok
+   annotationProcessor  libsUtils.lombok
 }

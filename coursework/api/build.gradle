@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':coursework:domain')
+
+    runtimeOnly libsDatabase.postgres
+}
