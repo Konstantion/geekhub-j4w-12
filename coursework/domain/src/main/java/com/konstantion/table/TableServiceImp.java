@@ -35,11 +35,10 @@ public record TableServiceImp(
         HallService hallService,
         UserService userService
 ) implements TableService {
-    private static final Logger logger = LoggerFactory.getLogger(TableServiceImp.class);
+    private static final Logger logger = LoggerFactory.getLogger(TableService.class);
     private static final TableMapper tableMapper = TableMapper.INSTANCE;
 
     @Override
-    @Transactional
     public TableDto createTable(CreationTableDto cdto, User user) {
         if (user.hasNoPermission(ADMIN, CREATE_TABLE)) {
             throw new ForbiddenException("You don't have enough authorities to create table");
