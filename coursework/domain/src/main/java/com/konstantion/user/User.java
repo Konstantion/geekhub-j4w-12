@@ -1,29 +1,59 @@
 package com.konstantion.user;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.konstantion.utils.RoleUtils.generateSetOfCombinationWithPrefixWordAndCollectionEnum;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toSet;
 
+@Builder
+@AllArgsConstructor
+@Getter
+@Setter
+
+@Entity
+@Table(name = "user", schema = "public")
 public class User implements UserDetails {
+    @Id
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     private String firstName;
     private String lastName;
+    private String username;
     private String phoneNumber;
     private Integer age;
-    private String email;
     private String password;
     private Boolean active;
 
+    private LocalDateTime createdAt;
+
+    @ElementCollection
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), foreignKey = @ForeignKey(name = "user_role_fk"))
+    @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @ElementCollection
+    @CollectionTable(name = "user_permission", joinColumns = @JoinColumn(name = "user_id"), foreignKey = @ForeignKey(name = "user_permission_fk"))
+    @Enumerated(EnumType.STRING)
     private Set<Permission> permissions;
+
+    public User() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -56,6 +86,10 @@ public class User implements UserDetails {
         return roles.contains(role) && permissions.contains(permission);
     }
 
+    public boolean hasNoPermission(Role role, Permission permission) {
+        return !hasPermission(role, permission);
+    }
+
     public boolean hasPermission(Permission permission) {
         return hasPermission(null, permission);
     }
@@ -71,7 +105,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
