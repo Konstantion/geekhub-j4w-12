@@ -1,0 +1,19 @@
+spring:
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+    throw-exception-if-no-handler-found: true
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    open-in-view: false
+upload:
+  name: uploads
+
+database:
+    url : jdbc:postgresql://localhost:5432/geek_hub
+    username : postgres
+    password : postgres
+    driver-class-name : org.postgresql.Driver
+    max-pool-size : 5

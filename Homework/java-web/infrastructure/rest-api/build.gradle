@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':Homework:java-web:domain')
+    implementation libsSpringDoc.openapiStarterWebmvcUi
+
+    implementation libsSpring.springBootStarterWeb
+}
