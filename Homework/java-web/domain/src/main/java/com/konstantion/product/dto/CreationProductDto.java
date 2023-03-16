@@ -7,5 +7,6 @@ public record CreationProductDto(
         @Nullable String name,
         @Nullable Double price,
         @Nullable String description,
+        @Nullable String categoryUuid,
         @Nullable MultipartFile file) {
 }

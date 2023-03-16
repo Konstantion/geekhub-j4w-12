@@ -14,6 +14,7 @@ subprojects {
     dependencies {
         implementation libsSpring.springBootStarterDataJpa
         implementation libsSpring.springBootStarterWeb
+        implementation libsSpring.springBootStarterSecurity
         implementation libsUtils.guava
         implementation libsUtils.commonsLang3
 

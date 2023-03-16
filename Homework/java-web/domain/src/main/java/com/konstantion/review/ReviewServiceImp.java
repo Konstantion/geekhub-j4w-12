@@ -34,7 +34,7 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
                 .uuid(UUID.randomUUID())
                 .message(creationReviewDto.message())
                 .rating(creationReviewDto.rating())
-                .userUuid(user.uuid())
+                .userUuid(user.getId())
                 .productUuid(creationReviewDto.productUuid())
                 .createdAt(LocalDateTime.now())
                 .build();

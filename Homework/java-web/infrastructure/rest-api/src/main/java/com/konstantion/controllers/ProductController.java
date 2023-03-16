@@ -7,11 +7,13 @@ import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
 import com.konstantion.response.Response;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.data.domain.Sort.Direction.DESC;

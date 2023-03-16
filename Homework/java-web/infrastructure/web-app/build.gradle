@@ -3,11 +3,15 @@ dependencies {
     implementation project(':Homework:java-web:infrastructure:database');
     implementation project(':Homework:java-web:infrastructure:rest-api');
 
-    runtimeOnly libsDatabase.postgres
-
     implementation libsSpringDoc.openapiStarterWebmvcUi
     implementation libsSpring.springBootStarterValidation
 
     implementation libsDatabase.flywayCore
     implementation libsSpring.springBootStarterThymeleaf
+
+    runtimeOnly libsDatabase.postgres
+
+    implementation libsJwt.jjwtApi
+    runtimeOnly libsJwt.jjwtImpl
+    runtimeOnly libsJwt.jjwtJackson
 }

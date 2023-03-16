@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public record ProductDto(UUID uuid, String name, Double price,
                          String description,  byte[] imageBytes,
-                         LocalDateTime createdAt, UUID userUuid) {
+                         LocalDateTime createdAt, UUID userUuid, UUID categoryUuid) {
 }

@@ -21,6 +21,7 @@ public record ProductRawMapper() implements RowMapper<Product> {
                 .imageBytes(rs.getBytes("image_bytes"))
                 .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
                 .userUuid(rs.getObject("user_uuid", UUID.class))
+                .categoryUuid(rs.getObject("category_uuid", UUID.class))
                 .build();
     }
 }

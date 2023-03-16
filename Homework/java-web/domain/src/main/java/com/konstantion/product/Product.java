@@ -8,18 +8,18 @@ import java.util.UUID;
 
 public record Product(UUID uuid, String name, Double price,
                       String description, byte[] imageBytes,
-                      LocalDateTime createdAt, UUID userUuid) {
+                      LocalDateTime createdAt, UUID userUuid, UUID categoryUuid) {
 
     public Product setCreatedAt(LocalDateTime now) {
-        return new Product(uuid, name, price, description, imageBytes, now, userUuid);
+        return new Product(uuid, name, price, description, imageBytes, now, userUuid, categoryUuid);
     }
 
     public Product setImageBytes(byte[] imageBytes) {
-        return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid);
+        return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid, categoryUuid);
     }
 
     public Product setUuid(UUID uuid) {
-        return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid);
+        return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid, categoryUuid);
     }
 
     public static ProductBuilder builder() {
@@ -34,6 +34,7 @@ public record Product(UUID uuid, String name, Double price,
         private byte[] imageBytes;
         private LocalDateTime createdAt;
         private UUID userUuid;
+        private UUID categoryUuid;
 
         private ProductBuilder() {
         }
@@ -73,8 +74,13 @@ public record Product(UUID uuid, String name, Double price,
             return this;
         }
 
+        public ProductBuilder categoryUuid(UUID categoryUuid) {
+            this.categoryUuid = categoryUuid;
+            return this;
+        }
+
         public Product build() {
-            return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid);
+            return new Product(uuid, name, price, description, imageBytes, createdAt, userUuid, categoryUuid);
         }
     }
 

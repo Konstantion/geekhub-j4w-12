@@ -66,11 +66,11 @@ public record OrderController(OrderService orderService,
     public ResponseEntity<Response> getOrders(
 
     ) {
-        List<OrderDto> dto = orderService.findOrdersByUserId(user.uuid());
+        List<OrderDto> dto = orderService.findOrdersByUserId(user.getId());
         return ResponseEntity.ok(Response.builder()
                 .status(OK)
                 .statusCode(OK.value())
-                .message("All orders")
+                .message(format("All orders of user with id %s", user.getId()))
                 .data(Map.of("orders", dto))
                 .timeStamp(now())
                 .build());

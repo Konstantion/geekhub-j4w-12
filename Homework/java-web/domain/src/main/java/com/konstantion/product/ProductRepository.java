@@ -1,6 +1,5 @@
 package com.konstantion.product;
 
-import com.konstantion.order.OrderStatus;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;

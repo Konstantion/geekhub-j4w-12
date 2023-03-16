@@ -5,6 +5,7 @@ import com.konstantion.product.ProductRepository;
 import com.konstantion.reporitories.mappers.ProductRawMapper;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -25,8 +26,8 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
                    SELECT * FROM product;
             """;
     private static final String INSERT_PRODUCT_QUERY = """
-                    INSERT INTO product (name, price, created_at, user_uuid, image_bytes, description)
-                    VALUES (:name, :price, :createdAt, :userUuid, :imageBytes, :description);
+                    INSERT INTO product (name, price, created_at, user_uuid, image_bytes, description, category_uuid)
+                    VALUES (:name, :price, :createdAt, :userUuid, :imageBytes, :description, :categoryUuid);
             """;
 
     private static final String DELETE_BY_UUID_PRODUCT_QUERY = """
@@ -39,7 +40,8 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
                         created_at = :createdAt,
                         user_uuid = :userUuid,
                         image_bytes = :imageBytes,
-                        description = :description
+                        description = :description,
+                        category_uuid = :categoryUuid
                     WHERE uuid = :uuid;
             """;
 
@@ -49,7 +51,10 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Optional<Product> findById(UUID uuid) {
-        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("uuid", uuid), productRawMapper).get(0));
+        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_ID_QUERY,
+                Map.of("uuid", uuid),
+                new BeanPropertyRowMapper<Product>()).get(0)
+        );
     }
 
     @Override

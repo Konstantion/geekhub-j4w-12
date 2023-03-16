@@ -70,7 +70,7 @@ public record ReviewController(
 
     @GetMapping("/users")
     public ResponseEntity<Response> getCurrentUserReview() {
-        List<UUID> uuids = reviewService.getUserReviews(user.uuid()).stream()
+        List<UUID> uuids = reviewService.getUserReviews(user.getId()).stream()
                 .map(ReviewDto::uuid).toList();
 
         return ResponseEntity.ok(Response.builder()

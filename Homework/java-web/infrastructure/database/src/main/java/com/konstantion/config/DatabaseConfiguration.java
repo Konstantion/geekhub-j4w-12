@@ -16,11 +16,11 @@ public class DatabaseConfiguration {
     @Bean
     @Qualifier("postgresDB")
     public DataSource hikariDataSource(
-            @Value("${database.url}") String url,
-            @Value("${database.username}") String username,
-            @Value("${database.password}") String password,
-            @Value("${database.driver-class-name}") String driverClassName,
-            @Value("${database.max-pool-size}") Integer maxPoolSize
+            @Value("${application.database.url}") String url,
+            @Value("${application.database.username}") String username,
+            @Value("${application.database.password}") String password,
+            @Value("${application.database.driver-class-name}") String driverClassName,
+            @Value("${application.database.max-pool-size}") Integer maxPoolSize
     ) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(driverClassName);

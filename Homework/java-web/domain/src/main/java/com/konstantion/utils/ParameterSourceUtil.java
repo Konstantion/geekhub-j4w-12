@@ -1,8 +1,10 @@
 package com.konstantion.utils;
 
+import com.konstantion.category.Category;
 import com.konstantion.order.Order;
 import com.konstantion.product.Product;
 import com.konstantion.review.Review;
+import com.konstantion.user.User;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +18,8 @@ public record ParameterSourceUtil() {
                 .addValue("description", product.description())
                 .addValue("createdAt", product.createdAt())
                 .addValue("userUuid", product.userUuid())
-                .addValue("imageBytes", product.imageBytes());
+                .addValue("imageBytes", product.imageBytes())
+                .addValue("categoryUuid", product.categoryUuid());
     }
 
     public MapSqlParameterSource toParameterSource(Order order) {
@@ -44,5 +47,25 @@ public record ParameterSourceUtil() {
                 .addValue("productUuid", review.productUuid())
                 .addValue("userUuid", review.userUuid())
                 .addValue("createdAt", review.createdAt());
+    }
+
+    public MapSqlParameterSource toParameterSource(User user) {
+        return new MapSqlParameterSource()
+                .addValue("uuid", user.getId())
+                .addValue("firstName", user.getFirstName())
+                .addValue("lastName", user.getLastName())
+                .addValue("email", user.getEmail())
+                .addValue("phoneNumber", user.getPhoneNumber())
+                .addValue("password", user.getPassword())
+                .addValue("enabled", user.isEnabled())
+                .addValue("nonLocked", user.isAccountNonLocked());
+    }
+
+    public MapSqlParameterSource toParameterSource(Category category) {
+        return new MapSqlParameterSource()
+                .addValue("uuid", category.uuid())
+                .addValue("name", category.name())
+                .addValue("createdAt", category.createdAt())
+                .addValue("userUuid", category.userUuid());
     }
 }

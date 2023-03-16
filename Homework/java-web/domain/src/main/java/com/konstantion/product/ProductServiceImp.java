@@ -28,17 +28,10 @@ public record ProductServiceImp(ProductValidator productValidator,
                                 MultipartFileValidator fileValidator,
                                 ProductRepository productRepository,
 
-                                UploadService uploadService,
-                                Logger logger)
+                                UploadService uploadService)
         implements ProductService {
 
-    public ProductServiceImp(ProductValidator productValidator,
-                             MultipartFileValidator fileValidator,
-                             ProductRepository productRepository,
-                             UploadService uploadService) {
-        this(productValidator, fileValidator, productRepository, uploadService, LoggerFactory.getLogger(ProductServiceImp.class));
-    }
-
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImp.class);
     static ProductMapper productMapper = ProductMapper.INSTANCE;
     static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
 
@@ -73,9 +66,7 @@ public record ProductServiceImp(ProductValidator productValidator,
 
     @Override
     public ProductDto getById(UUID uuid) {
-        Product product = productRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
-        ));
+        Product product = getProductByIdOrThrow(uuid);
 
 
         logger.info("Product with id {} successfully returned", uuid);
@@ -84,9 +75,7 @@ public record ProductServiceImp(ProductValidator productValidator,
 
     @Override
     public ProductDto delete(UUID uuid) {
-        Product product = productRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
-                ));
+        Product product = getProductByIdOrThrow(uuid);
 
         productRepository.deleteById(uuid);
 
@@ -96,9 +85,8 @@ public record ProductServiceImp(ProductValidator productValidator,
 
     @Override
     public ProductDto update(UUID uuid, ProductDto productDto) {
-        productRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
-                ));
+        getProductByIdOrThrow(uuid);
+
         Product product = productMapper.toEntity(productDto)
                 .setUuid(uuid);
 
@@ -129,9 +117,8 @@ public record ProductServiceImp(ProductValidator productValidator,
 
     @Override
     public String getProductImage(UUID uuid) {
-        Product product = productRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
-                ));
+        Product product = getProductByIdOrThrow(uuid);
+
         String base64Encoded = Base64.encodeBase64String(product.imageBytes());
         return  "data:image/png;base64," + base64Encoded;
     }
@@ -150,5 +137,11 @@ public record ProductServiceImp(ProductValidator productValidator,
         }
 
         return comparator;
+    }
+
+    private Product getProductByIdOrThrow(UUID uuid) {
+        return productRepository.findById(uuid).orElseThrow(() ->
+                new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
+        ));
     }
 }

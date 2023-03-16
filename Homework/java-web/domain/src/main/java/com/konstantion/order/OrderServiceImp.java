@@ -36,7 +36,7 @@ public record OrderServiceImp(
     public OrderDto createOrder(User user, Bucket bucket) {
         Order order = Order.builder()
                 .uuid(UUID.randomUUID())
-                .userUuid(user.uuid())
+                .userUuid(user.getId())
                 .products(bucket.products())
                 .totalPrice(bucket.getTotalPrice())
                 .placedAt(LocalDateTime.now())
@@ -47,7 +47,7 @@ public record OrderServiceImp(
 
         if (validationResult.errorsPresent()) {
             logger.warn("Failed to create order, given data is invalid {}",
-                    order, validationResult.getErrorsAsMap());
+                    order);
             throw new ValidationException("Failed to create order, given data is invalid",
                     validationResult.getErrorsAsMap());
         }
@@ -62,9 +62,7 @@ public record OrderServiceImp(
 
     @Override
     public OrderDto findOrderById(UUID uuid) {
-        Order order = orderRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Order with uuid %s doesn't exist", uuid)
-        ));
+        Order order = orderByIdOrThrow(uuid);
         return orderMapper.toDto(order);
     }
 
@@ -85,11 +83,15 @@ public record OrderServiceImp(
 
     @Override
     public void completeOrder(UUID uuid) {
-        orderRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Order with uuid %s doesn't exist", uuid)
-        ));
+        orderByIdOrThrow(uuid);
 
         orderRepository.updateOrderStatusById(uuid, OrderStatus.COMPLETED);
         logger.info("Order with id {} successfully completed", uuid);
+    }
+
+    private Order orderByIdOrThrow(UUID uuid) {
+        return orderRepository.findById(uuid).orElseThrow(() ->
+                new BadRequestException(format("Order with uuid %s doesn't exist", uuid)
+        ));
     }
 }
