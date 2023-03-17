@@ -5,6 +5,7 @@ import com.konstantion.exceptions.FileIOException;
 import com.konstantion.product.ProductService;
 import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.dto.UpdateProductDto;
 import com.konstantion.response.Response;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public record ProductController(ProductService productService) {
             @Parameter(description = "Creation product dto")
             @ModelAttribute CreationProductDto productCreationDto
     ) {
-        ProductDto dto = productService.create(productCreationDto, productCreationDto.file());
+        ProductDto dto = productService.create(productCreationDto);
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(OK.value())
@@ -93,10 +94,13 @@ public record ProductController(ProductService productService) {
         );
     }
 
-    @PutMapping("/{uuid}")
+    @PutMapping(
+            path ="/{uuid}",
+            consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Response> updateProduct(
             @PathVariable("uuid") UUID uuid,
-            @ModelAttribute ProductDto updateDto
+            @Parameter(description = "Update product dto")
+            @ModelAttribute UpdateProductDto updateDto
     ) {
         ProductDto dto = productService.update(uuid, updateDto);
 

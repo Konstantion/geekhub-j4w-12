@@ -88,7 +88,7 @@ public record CategoryServiceImp(
                 ));
     }
 
-    private Category updateCategory(Category target, UpdateCategoryDto values) {
-        return target.setName(values.name());
+    private Category updateCategory(Category target, UpdateCategoryDto updateDto) {
+        return target.setName(updateDto.name());
     }
 }

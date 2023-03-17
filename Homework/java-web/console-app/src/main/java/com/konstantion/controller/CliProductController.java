@@ -16,7 +16,7 @@ import java.util.UUID;
 public record CliProductController(ProductService productService) {
 
     public ProductDto addProduct(CreationProductDto creationProductDto) {
-        return productService.create(creationProductDto, null);
+        return productService.create(creationProductDto);
     }
 
     public List<ProductDto> getProducts(Sort.Direction direction, String parameter) {

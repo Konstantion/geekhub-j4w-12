@@ -51,10 +51,10 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Optional<Product> findById(UUID uuid) {
-        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_ID_QUERY,
+        return jdbcTemplate.query(FIND_BY_ID_QUERY,
                 Map.of("uuid", uuid),
-                new BeanPropertyRowMapper<Product>()).get(0)
-        );
+                new BeanPropertyRowMapper<Product>()).stream().findFirst();
+
     }
 
     @Override

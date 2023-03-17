@@ -34,13 +34,13 @@ class ProductServiceTest {
         productValidations = new ProductValidations();
         validator = spy(new ProductValidator(productValidations));
         repository = mock(ProductRepository.class);
-        service = new ProductServiceImp(validator, null, repository, null);
+        service = new ProductServiceImp(validator, null, repository, null, null);
         productMapper = ProductMapper.INSTANCE;
     }
 
     @Test
     void process_shouldReturnProductId_whenCreateProduct() {
-        CreationProductDto creationProductDto = new CreationProductDto("Bread", 1.0);
+        CreationProductDto creationProductDto = new CreationProductDto("Bread", 1.0, null, null, null);
         UUID firstUuid = UUID.randomUUID();
         UUID secondUuid = UUID.randomUUID();
         Product productWithIdOne = Product.builder().uuid(firstUuid).build();
@@ -50,8 +50,8 @@ class ProductServiceTest {
                 .thenReturn(productWithIdOne)
                 .thenReturn(productWithIdTwo);
 
-        ProductDto firstProductDto = service.create(creationProductDto, null);
-        ProductDto secondProductDto = service.create(creationProductDto, null);
+        ProductDto firstProductDto = service.create(creationProductDto);
+        ProductDto secondProductDto = service.create(creationProductDto);
 
         assertThat(firstProductDto.uuid()).isEqualTo(firstUuid);
         assertThat(secondProductDto.uuid()).isEqualTo(secondUuid);
@@ -59,9 +59,9 @@ class ProductServiceTest {
 
     @Test
     void process_shouldThrowValidationException_whenProductIsInvalname() {
-        CreationProductDto creationProductDto = new CreationProductDto("", 1.0);
+        CreationProductDto creationProductDto = new CreationProductDto("", 1.0, null, null, null);
 
-        assertThatThrownBy(() -> service.create(creationProductDto, null))
+        assertThatThrownBy(() -> service.create(creationProductDto))
                 .isInstanceOf(ValidationException.class);
     }
 
@@ -74,8 +74,8 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, null, null, null, now, null, null, null);
-            Product product = new Product(uuid, name, price, null, null, null, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, null, null, now, null, null);
+            Product product = new Product(uuid, name, price, null, null, now, null, null);
 
             dbData.add(product);
             expectedArray.add(productDto);
@@ -102,8 +102,8 @@ class ProductServiceTest {
             Double price = Faker.instance().number().randomDouble(2, 1, 100);
             LocalDateTime now = LocalDateTime.now();
             UUID uuid = UUID.randomUUID();
-            ProductDto productDto = new ProductDto(uuid, name, price, null, null, null, now, null, null, null);
-            Product product = new Product(uuid, name, price, null, null, null, now, null);
+            ProductDto productDto = new ProductDto(uuid, name, price, null, null, now, null, null);
+            Product product = new Product(uuid, name, price, null, null, now, null, null);
 
             dbData.add(product);
             expectedArray.add(productDto);

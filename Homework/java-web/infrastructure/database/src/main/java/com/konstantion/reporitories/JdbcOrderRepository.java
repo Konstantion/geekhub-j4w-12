@@ -83,7 +83,8 @@ public record JdbcOrderRepository(NamedParameterJdbcTemplate jdbcTemplate,
     @Override
     public Optional<Order> findById(UUID uuid) {
         Order order = jdbcTemplate
-                .query(FIND_ORDER_BY_ID_QUERY, Map.of("uuid", uuid), orderRawMapper).get(0);
+                .query(FIND_ORDER_BY_ID_QUERY, Map.of("uuid", uuid), orderRawMapper).stream()
+                .findAny().orElse(null);
         if (nonNull(order)) {
             Map<Product, Integer> products = getProducts(order);
             order = order.setProducts(products);

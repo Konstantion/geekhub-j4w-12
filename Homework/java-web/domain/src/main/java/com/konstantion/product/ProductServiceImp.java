@@ -1,10 +1,11 @@
 package com.konstantion.product;
 
+import com.konstantion.category.CategoryService;
 import com.konstantion.exceptions.BadRequestException;
-import com.konstantion.exceptions.ValidationException;
 import com.konstantion.file.MultipartFileValidator;
 import com.konstantion.product.dto.CreationProductDto;
 import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.dto.UpdateProductDto;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.review.ReviewMapper;
 import com.konstantion.upload.UploadService;
@@ -28,25 +29,27 @@ public record ProductServiceImp(ProductValidator productValidator,
                                 MultipartFileValidator fileValidator,
                                 ProductRepository productRepository,
 
-                                UploadService uploadService)
+                                UploadService uploadService,
+                                CategoryService categoryService)
         implements ProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImp.class);
-    static ProductMapper productMapper = ProductMapper.INSTANCE;
-    static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
+    private static final ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
+    private static final String FAILED_TO_CREATE_MESSAGE = "Failed to create product, given data is invalid";
+    private static final String FAILED_TO_UPDATE_MESSAGE = "Failed to update product, given data is invalid";
+
 
     @Override
-    public ProductDto create(CreationProductDto createProductDto, MultipartFile file) {
+    public ProductDto create(CreationProductDto createProductDto) {
+        MultipartFile file = createProductDto.file();
+
         ValidationResult validationResult = productValidator
                 .validate(createProductDto)
                 .combine(fileValidator.validate(file));
-
-
-        if (validationResult.errorsPresent()) {
-            throw new ValidationException("Failed to create product, given data is invalid",
-                    validationResult.getErrorsAsMap()
-            );
-        }
+        ValidationResult.validOrThrow(validationResult, FAILED_TO_CREATE_MESSAGE);
+        //Check if category exist
+        categoryService.getCategoryById(createProductDto.categoryUuid());
 
         Product product = productMapper.toEntity(createProductDto);
         byte[] imageBytes = uploadService.getFileBytes(file);
@@ -84,11 +87,18 @@ public record ProductServiceImp(ProductValidator productValidator,
     }
 
     @Override
-    public ProductDto update(UUID uuid, ProductDto productDto) {
-        getProductByIdOrThrow(uuid);
+    public ProductDto update(UUID uuid, UpdateProductDto updateDto) {
+        Product product = getProductByIdOrThrow(uuid);
 
-        Product product = productMapper.toEntity(productDto)
-                .setUuid(uuid);
+        ValidationResult validationResult = productValidator
+                .validate(updateDto)
+                .combine(fileValidator.validate(updateDto.file()));
+        ValidationResult.validOrThrow(validationResult, FAILED_TO_UPDATE_MESSAGE);
+
+        //Check if category exist
+        categoryService.getCategoryById(updateDto.categoryUuid());
+
+        product = updateProduct(product, updateDto);
 
         product = productRepository.save(product);
 
@@ -120,7 +130,7 @@ public record ProductServiceImp(ProductValidator productValidator,
         Product product = getProductByIdOrThrow(uuid);
 
         String base64Encoded = Base64.encodeBase64String(product.imageBytes());
-        return  "data:image/png;base64," + base64Encoded;
+        return "data:image/png;base64," + base64Encoded;
     }
 
     public Comparator<ProductDto> getComparator(Sort sort) {
@@ -142,6 +152,21 @@ public record ProductServiceImp(ProductValidator productValidator,
     private Product getProductByIdOrThrow(UUID uuid) {
         return productRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("Product with uuid %s doesn't exist", uuid)
-        ));
+                ));
+    }
+
+    private Product updateProduct(Product target, UpdateProductDto updateDto) {
+        byte[] imageBytes = uploadService.getFileBytes(updateDto.file());
+
+        return Product.builder()
+                .uuid(target.uuid())
+                .name(updateDto.name())
+                .price(updateDto.price())
+                .description(updateDto.description())
+                .imageBytes(imageBytes)
+                .userUuid(target.userUuid())
+                .createdAt(target.createdAt())
+                .categoryUuid(updateDto.categoryUuid())
+                .build();
     }
 }

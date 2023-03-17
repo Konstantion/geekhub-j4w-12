@@ -55,9 +55,10 @@ public class DomainBeanConfiguration {
     public ProductService productService(ProductValidator productValidator,
                                          MultipartFileValidator fileValidator,
                                          ProductRepository productRepository,
-                                         UploadService uploadService
+                                         UploadService uploadService,
+                                         CategoryService categoryService
     ) {
-        return new ProductServiceImp(productValidator, fileValidator, productRepository, uploadService);
+        return new ProductServiceImp(productValidator, fileValidator, productRepository, uploadService, categoryService);
     }
 
     @Bean

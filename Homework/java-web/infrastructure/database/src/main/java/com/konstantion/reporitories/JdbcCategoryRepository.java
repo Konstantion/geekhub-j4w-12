@@ -52,12 +52,10 @@ public record JdbcCategoryRepository(
 
     @Override
     public Optional<Category> findById(UUID uuid) {
-        return Optional.ofNullable(
-                jdbcTemplate.query(FIND_BY_ID_QUERY,
+        return jdbcTemplate.query(FIND_BY_ID_QUERY,
                         Map.of("uuid", uuid),
                         new BeanPropertyRowMapper<Category>()
-                ).get(0)
-        );
+                ).stream().findFirst();
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.konstantion.category.dto.CategoryDto;
 import com.konstantion.category.dto.CreationCategoryDto;
 import com.konstantion.category.dto.UpdateCategoryDto;
 import com.konstantion.response.Response;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +15,8 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/web-api/category")
@@ -51,9 +52,9 @@ public record CategoryController(
                 .build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<Response> createCategory(
-            @ModelAttribute CreationCategoryDto creationDto
+            @RequestBody CreationCategoryDto creationDto
             ) {
         CategoryDto dto = categoryService.createCategory(creationDto);
 

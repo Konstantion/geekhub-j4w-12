@@ -45,7 +45,10 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Optional<Review> findById(UUID uuid) {
-        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_UUID_QUERY, Map.of("uuid", uuid), reviewRawMapper).get(0));
+        return jdbcTemplate.query(
+                FIND_BY_UUID_QUERY,
+                Map.of("uuid", uuid),
+                reviewRawMapper).stream().findFirst();
     }
 
     @Override
@@ -68,8 +71,13 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Review save(Review review) {
-        MapSqlParameterSource parameterSource = parameterUtil.toParameterSource(review);
-        jdbcTemplate.update(INSERT_REVIEW_QUERY, parameterSource);
+        MapSqlParameterSource parameterSource = parameterUtil
+                .toParameterSource(review);
+
+        jdbcTemplate.update(
+                INSERT_REVIEW_QUERY,
+                parameterSource
+        );
 
         return review;
     }
@@ -81,6 +89,9 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public void deleteById(UUID uuid) {
-        jdbcTemplate.update(DELETE_BY_UUID_REVIEW_QUERY, Map.of("uuid", uuid));
+        jdbcTemplate.update(
+                DELETE_BY_UUID_REVIEW_QUERY,
+                Map.of("uuid", uuid)
+        );
     }
 }

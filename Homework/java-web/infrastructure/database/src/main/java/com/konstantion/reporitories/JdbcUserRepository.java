@@ -57,7 +57,10 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Optional<User> findUserById(UUID uuid) {
-        return Optional.of(jdbcTemplate.query(FIND_BY_ID_QUERY, Map.of("uuid", uuid), userMapper).get(0));
+        return jdbcTemplate.query(
+                FIND_BY_ID_QUERY,
+                Map.of("uuid", uuid),
+                userMapper).stream().findFirst();
     }
 
     @Override
@@ -67,29 +70,50 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
         }
 
         MapSqlParameterSource parameters = parameterUtil.toParameterSource(user);
-        return jdbcTemplate.query(INSERT_USER_QUERY, parameters, userMapper).get(0);
+        return jdbcTemplate.query(
+                INSERT_USER_QUERY,
+                parameters,
+                userMapper).stream().findFirst().orElse(null);
     }
 
     @Override
     public UUID setEnableById(UUID id, boolean enabled) {
-        jdbcTemplate.update(SET_USER_ENABLED_QUERY, Map.of("enabled", enabled));
+        jdbcTemplate.update(
+                SET_USER_ENABLED_QUERY,
+                Map.of(
+                        "enabled", enabled,
+                        "uuid", id
+                )
+        );
         return id;
     }
 
     @Override
     public UUID setNonLockedById(UUID id, boolean nonLocked) {
-        jdbcTemplate.update(SET_USER_NON_LOCKED_QUERY, Map.of("nonLocked", nonLocked));
+        jdbcTemplate.update
+                (SET_USER_NON_LOCKED_QUERY,
+                        Map.of(
+                                "nonLocked", nonLocked,
+                                "uuid", id
+                        ));
         return id;
     }
 
     @Override
     public Optional<User> findUserByEmail(String email) {
-        return Optional.of(jdbcTemplate.query(FIND_BY_EMAIL_QUERY, Map.of("email", email), userMapper).get(0));
+        return jdbcTemplate.query(
+                FIND_BY_EMAIL_QUERY,
+                Map.of("email", email),
+                userMapper).stream().findFirst();
     }
 
     private User update(User user) {
-        SqlParameterSource parameters = parameterUtil().toParameterSource(user);
-        jdbcTemplate.update(UPDATE_USER_QUERY, parameters);
+        SqlParameterSource parameters = parameterUtil()
+                .toParameterSource(user);
+        jdbcTemplate.update(
+                UPDATE_USER_QUERY,
+                parameters
+        );
         return user;
     }
 }
