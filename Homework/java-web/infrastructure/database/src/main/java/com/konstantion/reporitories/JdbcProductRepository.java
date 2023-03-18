@@ -4,8 +4,10 @@ import com.konstantion.product.Product;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.reporitories.mappers.ProductRawMapper;
 import com.konstantion.utils.ParameterSourceUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,6 +15,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static java.util.Objects.nonNull;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -20,7 +23,8 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Component
 public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
                                     ProductRawMapper productRawMapper,
-                                    ParameterSourceUtil parameterUtil) implements ProductRepository {
+                                    ParameterSourceUtil parameterUtil)
+        implements ProductRepository {
 
     private static final String FIND_ALL_QUERY = """
                    SELECT * FROM product;
@@ -49,12 +53,28 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
                     SELECT * FROM product WHERE uuid = :uuid;
             """;
 
+    private static final String TOTAL_COUNT_QUERY = """
+                   SELECT COUNT(*) FROM product;
+            """;
+
+    private static final BiFunction<String, UUID, String> FIND_ALL_PAGE_QUERY =
+            (orderParameter, categoryUuid) -> {
+                String findByCategory = categoryUuid == null ? "" : "AND category_uuid = :categoryUuid ";
+                return "SELECT product.*, COALESCE(avg(r.rating), 0) AS rating FROM product " +
+                        "LEFT JOIN review r ON product.uuid = r.product_uuid " +
+                        "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
+                        findByCategory +
+                        "GROUP BY product.uuid, name, price, product.created_at, product.user_uuid, image_bytes, description, category_uuid " +
+                        "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
+            };
+
     @Override
     public Optional<Product> findById(UUID uuid) {
-        return jdbcTemplate.query(FIND_BY_ID_QUERY,
-                Map.of("uuid", uuid),
-                new BeanPropertyRowMapper<Product>()).stream().findFirst();
-
+        return Optional.ofNullable(
+                jdbcTemplate.queryForObject(FIND_BY_ID_QUERY,
+                        Map.of("uuid", uuid),
+                        productRawMapper)
+        );
     }
 
     @Override
@@ -94,6 +114,31 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
     @Override
     public void deleteById(UUID uuid) {
         jdbcTemplate.update(DELETE_BY_UUID_PRODUCT_QUERY, Map.of("uuid", uuid));
+    }
+
+    @Override
+    public Page<Product> findAll(
+            Integer pageNumber, Integer pageSize,
+            String field, String pattern,
+            UUID categoryUuid) {
+        int offset = (pageNumber - 1) * pageSize;
+        pattern = "%" + pattern + "%";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("limit", pageSize)
+                .addValue("offset", offset)
+                .addValue("searchParameter", pattern)
+                .addValue("categoryUuid", categoryUuid);
+
+
+
+        List<Product> products = jdbcTemplate.query(
+                FIND_ALL_PAGE_QUERY.apply(field, categoryUuid),
+                params,
+                productRawMapper);
+
+        int totalCount = jdbcTemplate.queryForObject(TOTAL_COUNT_QUERY, params, Integer.class);
+
+        return new PageImpl<>(products, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
     public Comparator<Product> getComparator(Sort sort) {

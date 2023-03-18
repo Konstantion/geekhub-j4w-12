@@ -1,5 +1,6 @@
 package com.konstantion.product;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -18,6 +19,14 @@ public interface ProductRepository {
     void delete(Product product);
 
     void deleteById(UUID uuid);
+
+    Page<Product> findAll(
+            Integer pageNumber,
+            Integer pageSize,
+            String field,
+            String pattern,
+            UUID categoryUuid
+    );
 
     default Product saveAndFlush(Product product) {
         return save(product);

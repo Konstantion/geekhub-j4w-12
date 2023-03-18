@@ -16,4 +16,6 @@ public interface ReviewRepository {
     void delete(Review review);
 
     void deleteById(UUID uuid);
+
+    Double findProductRating(UUID productUuid);
 }

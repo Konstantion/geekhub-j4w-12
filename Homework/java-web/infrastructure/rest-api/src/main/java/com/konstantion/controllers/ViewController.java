@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/web-api")
-public class ViewController {
-    @GetMapping("/buckets/view")
+@RequestMapping("/")
+public record ViewController() {
+    @GetMapping("/bucket")
     public String getBucketView() {
-        return "bucket";
+        return "forward:/bucket.html";
     }
 
-    @GetMapping("/products/view")
+    @GetMapping()
     public String getProductView() {
-        return "products-list";
+        return "forward:/index.html";
     }
 }

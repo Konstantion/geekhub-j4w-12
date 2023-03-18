@@ -2,8 +2,8 @@ package com.konstantion.reporitories;
 
 import com.konstantion.category.Category;
 import com.konstantion.category.CategoryRepository;
+import com.konstantion.reporitories.mappers.CategoryRawMapper;
 import com.konstantion.utils.ParameterSourceUtil;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -15,7 +15,8 @@ import java.util.*;
 @Component
 public record JdbcCategoryRepository(
         NamedParameterJdbcTemplate jdbcTemplate,
-        ParameterSourceUtil parameterUtil
+        ParameterSourceUtil parameterUtil,
+        CategoryRawMapper categoryMapper
 ) implements CategoryRepository {
     private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM category
@@ -46,16 +47,16 @@ public record JdbcCategoryRepository(
     public List<Category> findAll() {
         return jdbcTemplate.query(
                 FIND_ALL_QUERY,
-                new BeanPropertyRowMapper<>()
+                categoryMapper
         );
     }
 
     @Override
     public Optional<Category> findById(UUID uuid) {
         return jdbcTemplate.query(FIND_BY_ID_QUERY,
-                        Map.of("uuid", uuid),
-                        new BeanPropertyRowMapper<Category>()
-                ).stream().findFirst();
+                Map.of("uuid", uuid),
+                categoryMapper
+        ).stream().findFirst();
     }
 
     @Override

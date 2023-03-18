@@ -43,6 +43,11 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
                  WHERE product_uuid = :productUuid;
             """;
 
+    private static final String FIND_PRODUCT_AVG_RATING = """
+            SELECT COALESCE(avg(r.rating), 0) AS rating FROM review r
+            WHERE r.product_uuid = :productUuid;
+            """;
+
     @Override
     public Optional<Review> findById(UUID uuid) {
         return jdbcTemplate.query(
@@ -93,5 +98,10 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
                 DELETE_BY_UUID_REVIEW_QUERY,
                 Map.of("uuid", uuid)
         );
+    }
+
+    @Override
+    public Double findProductRating(UUID productUuid) {
+        return jdbcTemplate.queryForObject(FIND_PRODUCT_AVG_RATING, Map.of("productUuid", productUuid), Double.class);
     }
 }

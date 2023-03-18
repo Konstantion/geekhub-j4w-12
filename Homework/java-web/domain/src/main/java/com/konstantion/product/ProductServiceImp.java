@@ -1,5 +1,6 @@
 package com.konstantion.product;
 
+import com.google.common.collect.Lists;
 import com.konstantion.category.CategoryService;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.file.MultipartFileValidator;
@@ -13,15 +14,15 @@ import com.konstantion.utils.validator.ValidationResult;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
@@ -126,11 +127,39 @@ public record ProductServiceImp(ProductValidator productValidator,
     }
 
     @Override
-    public String getProductImage(UUID uuid) {
+    public Page<ProductDto> getAll(
+            Integer pageNumber, Integer pageSize,
+            String sortBy, String searchPattern,
+            UUID categoryUuid) {
+        sortBy = sortBy.toLowerCase();
+        if(nonNull(categoryUuid)) {
+            categoryService.getCategoryById(categoryUuid);
+        }
+        if(!isFieldValidForSearch(sortBy)) {
+            throw new BadRequestException(format("Sort products by %s doesn't provided", sortBy));
+        }
+
+        pageNumber = Math.max(pageNumber, 1);
+        pageSize = Math.max(pageSize, 1);
+
+        Page<Product> products = productRepository
+                .findAll(pageNumber, pageSize, sortBy, searchPattern, categoryUuid);
+
+        return productMapper.toDto(products);
+    }
+
+    @Override
+    public String getProductImageEncoded(UUID uuid) {
         Product product = getProductByIdOrThrow(uuid);
 
         String base64Encoded = Base64.encodeBase64String(product.imageBytes());
         return "data:image/png;base64," + base64Encoded;
+    }
+
+    @Override
+    public byte[] getProductImageBytes(UUID uuid) {
+        Product product = getProductByIdOrThrow(uuid);
+        return product.imageBytes();
     }
 
     public Comparator<ProductDto> getComparator(Sort sort) {
@@ -149,6 +178,10 @@ public record ProductServiceImp(ProductValidator productValidator,
         return comparator;
     }
 
+    public boolean isFieldValidForSearch(String field) {
+        List<String> validFields = Lists.newArrayList("name", "price", "rating");
+        return validFields.contains(field);
+    }
     private Product getProductByIdOrThrow(UUID uuid) {
         return productRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("Product with uuid %s doesn't exist", uuid)

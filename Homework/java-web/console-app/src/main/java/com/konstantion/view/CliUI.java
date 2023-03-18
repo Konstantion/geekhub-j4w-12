@@ -207,7 +207,7 @@ public class CliUI {
         try {
             String name = userInput[1];
             Double price = Double.valueOf(userInput[2]);
-            CreationProductDto creationProductDto = new CreationProductDto(name, price, null, null);
+            CreationProductDto creationProductDto = new CreationProductDto(name, price, null, null, null);
             productController.addProduct(creationProductDto);
         } catch (IndexOutOfBoundsException | NumberFormatException e) {
             handleFormatException(e);

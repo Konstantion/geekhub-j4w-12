@@ -2,6 +2,8 @@ package com.konstantion.review;
 
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.ValidationException;
+import com.konstantion.product.ProductService;
+import com.konstantion.product.ProductServiceImp;
 import com.konstantion.review.dto.CreationReviewDto;
 import com.konstantion.review.dto.ReviewDto;
 import com.konstantion.review.validator.ReviewValidator;
@@ -17,7 +19,8 @@ import java.util.UUID;
 import static java.lang.String.format;
 
 public record ReviewServiceImp(ReviewValidator reviewValidator,
-                               ReviewRepository reviewRepository)
+                               ReviewRepository reviewRepository,
+                               ProductService productService)
         implements ReviewService {
     static ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
     static Logger logger = LoggerFactory.getLogger(ReviewServiceImp.class);
@@ -70,6 +73,7 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
 
     @Override
     public List<ReviewDto> getProductReviews(UUID productUuid) {
+        productService.getById(productUuid);
         List<Review> reviews = reviewRepository.findByProductId(productUuid);
 
         return reviewMapper.toDto(reviews);
@@ -80,5 +84,11 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
         List<Review> reviews = reviewRepository.findByUserId(userUuid);
 
         return reviewMapper.toDto(reviews);
+    }
+
+    @Override
+    public Double getProductRating(UUID productUuid) {
+        productService.getById(productUuid);
+        return reviewRepository.findProductRating(productUuid);
     }
 }

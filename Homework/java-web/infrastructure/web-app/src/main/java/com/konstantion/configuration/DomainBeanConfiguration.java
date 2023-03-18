@@ -63,8 +63,9 @@ public class DomainBeanConfiguration {
 
     @Bean
     public ReviewService reviewService(ReviewValidator reviewValidator,
-                                       ReviewRepository reviewRepository) {
-        return new ReviewServiceImp(reviewValidator, reviewRepository);
+                                       ReviewRepository reviewRepository,
+                                       ProductService productService) {
+        return new ReviewServiceImp(reviewValidator, reviewRepository, productService);
     }
 
     @Bean

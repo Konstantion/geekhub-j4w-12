@@ -52,9 +52,9 @@ public record CategoryController(
                 .build());
     }
 
-    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Response> createCategory(
-            @RequestBody CreationCategoryDto creationDto
+            @ModelAttribute CreationCategoryDto creationDto
             ) {
         CategoryDto dto = categoryService.createCategory(creationDto);
 
@@ -67,7 +67,7 @@ public record CategoryController(
                 .build());
     }
 
-    @PutMapping("/{uuid}")
+    @PutMapping(path = "/{uuid}", consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Response> updateCategory(
             @PathVariable("uuid") UUID uuid,
             @ModelAttribute UpdateCategoryDto updateDto

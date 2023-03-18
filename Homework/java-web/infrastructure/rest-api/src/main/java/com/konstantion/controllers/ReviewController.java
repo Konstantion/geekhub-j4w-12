@@ -37,6 +37,21 @@ public record ReviewController(
                 .build());
     }
 
+    @GetMapping("/products/{uuid}/rating")
+    public ResponseEntity<Response> getProductRating(
+            @PathVariable("uuid") UUID uuid
+    ) {
+        Double productRating = reviewService.getProductRating(uuid);
+
+        return ResponseEntity.ok(Response.builder()
+                .timeStamp(now())
+                .statusCode(OK.value())
+                .status(OK)
+                .message("Product reviews")
+                .data(Map.of("rating", productRating))
+                .build());
+    }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<Response> getReview(
             @PathVariable("uuid") UUID uuid
