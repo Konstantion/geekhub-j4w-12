@@ -19,7 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
@@ -43,14 +45,19 @@ public record ProductServiceImp(ProductValidator productValidator,
 
     @Override
     public ProductDto create(CreationProductDto createProductDto) {
-        MultipartFile file = createProductDto.file();
+        return create(createProductDto, createProductDto.file());
+    }
 
+    @Override
+    public ProductDto create(CreationProductDto createProductDto, MultipartFile file) {
         ValidationResult validationResult = productValidator
                 .validate(createProductDto)
                 .combine(fileValidator.validate(file));
         ValidationResult.validOrThrow(validationResult, FAILED_TO_CREATE_MESSAGE);
         //Check if category exist
-        categoryService.getCategoryById(createProductDto.categoryUuid());
+        if (nonNull(createProductDto.categoryUuid())) {
+            categoryService.getCategoryById(createProductDto.categoryUuid());
+        }
 
         Product product = productMapper.toEntity(createProductDto);
         byte[] imageBytes = uploadService.getFileBytes(file);
@@ -130,14 +137,15 @@ public record ProductServiceImp(ProductValidator productValidator,
     public Page<ProductDto> getAll(
             Integer pageNumber, Integer pageSize,
             String sortBy, String searchPattern,
-            UUID categoryUuid) {
+            UUID categoryUuid, boolean ascending) {
         sortBy = sortBy.toLowerCase();
-        if(nonNull(categoryUuid)) {
+        if (nonNull(categoryUuid)) {
             categoryService.getCategoryById(categoryUuid);
         }
-        if(!isFieldValidForSearch(sortBy)) {
+        if (!isFieldValidForSearch(sortBy)) {
             throw new BadRequestException(format("Sort products by %s doesn't provided", sortBy));
         }
+        sortBy = ascending ? sortBy + " ASC " : sortBy + " DESC ";
 
         pageNumber = Math.max(pageNumber, 1);
         pageSize = Math.max(pageSize, 1);
@@ -152,8 +160,7 @@ public record ProductServiceImp(ProductValidator productValidator,
     public String getProductImageEncoded(UUID uuid) {
         Product product = getProductByIdOrThrow(uuid);
 
-        String base64Encoded = Base64.encodeBase64String(product.imageBytes());
-        return "data:image/png;base64," + base64Encoded;
+        return Base64.encodeBase64String(product.imageBytes());
     }
 
     @Override
@@ -182,6 +189,7 @@ public record ProductServiceImp(ProductValidator productValidator,
         List<String> validFields = Lists.newArrayList("name", "price", "rating");
         return validFields.contains(field);
     }
+
     private Product getProductByIdOrThrow(UUID uuid) {
         return productRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("Product with uuid %s doesn't exist", uuid)

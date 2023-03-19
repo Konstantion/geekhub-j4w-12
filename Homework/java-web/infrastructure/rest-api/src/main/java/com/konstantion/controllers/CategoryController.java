@@ -15,11 +15,10 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
-@RequestMapping("/web-api/category")
+@RequestMapping("/web-api/categories")
 public record CategoryController(
         CategoryService categoryService
 ) {

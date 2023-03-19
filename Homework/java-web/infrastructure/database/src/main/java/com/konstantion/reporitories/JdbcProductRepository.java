@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNullElse;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Component
@@ -53,19 +54,24 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
                     SELECT * FROM product WHERE uuid = :uuid;
             """;
 
-    private static final String TOTAL_COUNT_QUERY = """
-                   SELECT COUNT(*) FROM product;
-            """;
+    private static final BiFunction<String, UUID, String> TOTAL_COUNT_QUERY =
+            (orderParameter, categoryUuid) -> {
+                String findByCategory = categoryUuid == null ? "" : "AND category_uuid = :categoryUuid ";
+                return "SELECT COUNT(*) FROM product " +
+                       "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
+                       findByCategory + ";";
+            };
+
 
     private static final BiFunction<String, UUID, String> FIND_ALL_PAGE_QUERY =
             (orderParameter, categoryUuid) -> {
                 String findByCategory = categoryUuid == null ? "" : "AND category_uuid = :categoryUuid ";
                 return "SELECT product.*, COALESCE(avg(r.rating), 0) AS rating FROM product " +
-                        "LEFT JOIN review r ON product.uuid = r.product_uuid " +
-                        "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
-                        findByCategory +
-                        "GROUP BY product.uuid, name, price, product.created_at, product.user_uuid, image_bytes, description, category_uuid " +
-                        "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
+                       "LEFT JOIN review r ON product.uuid = r.product_uuid " +
+                       "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
+                       findByCategory +
+                       "GROUP BY product.uuid, name, price, product.created_at, product.user_uuid, image_bytes, description, category_uuid " +
+                       "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
             };
 
     @Override
@@ -130,13 +136,16 @@ public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
                 .addValue("categoryUuid", categoryUuid);
 
 
-
         List<Product> products = jdbcTemplate.query(
                 FIND_ALL_PAGE_QUERY.apply(field, categoryUuid),
                 params,
                 productRawMapper);
 
-        int totalCount = jdbcTemplate.queryForObject(TOTAL_COUNT_QUERY, params, Integer.class);
+        Integer totalCount = requireNonNullElse(jdbcTemplate.queryForObject(
+                TOTAL_COUNT_QUERY.apply(field, categoryUuid),
+                params,
+                Integer.class
+        ), products.size());
 
         return new PageImpl<>(products, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }

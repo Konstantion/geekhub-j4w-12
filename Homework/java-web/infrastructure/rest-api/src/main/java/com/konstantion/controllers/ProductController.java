@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.*;
@@ -52,9 +52,10 @@ public record ProductController(ProductService productService) {
             @RequestParam("size") Optional<Integer> pageSize,
             @RequestParam("orderBy") Optional<String> fieldName,
             @RequestParam("pattern") Optional<String> searchPattern,
-            @RequestParam("categoryUuid") Optional<UUID> categoryUuid
+            @RequestParam("categoryUuid") Optional<UUID> categoryUuid,
+            @RequestParam("ascending") Optional<Boolean> ascending
     ) {
-        if(fieldName.isPresent() && fieldName.get().isEmpty()) {
+        if (fieldName.isPresent() && fieldName.get().isEmpty()) {
             fieldName = Optional.of("name");
         }
         Page<ProductDto> page = productService.getAll(
@@ -62,7 +63,8 @@ public record ProductController(ProductService productService) {
                 pageSize.orElse(4),
                 fieldName.orElse("name"),
                 searchPattern.orElse(""),
-                categoryUuid.orElse(null)
+                categoryUuid.orElse(null),
+                ascending.orElse(true)
         );
 
 

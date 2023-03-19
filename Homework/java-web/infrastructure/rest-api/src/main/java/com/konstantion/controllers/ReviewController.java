@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/web-api/reviews")
@@ -97,7 +98,7 @@ public record ReviewController(
                 .build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Response> createReview(
             @RequestBody CreationReviewDto creationReviewDto
     ) {

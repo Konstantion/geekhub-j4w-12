@@ -5,12 +5,15 @@ import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.dto.UpdateProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
     ProductDto create(CreationProductDto createProductDto);
+
+    ProductDto create(CreationProductDto createProductDto, MultipartFile file);
 
     ProductDto getById(UUID uuid);
 
@@ -29,7 +32,8 @@ public interface ProductService {
             Integer pageSize,
             String fieldName,
             String namePattern,
-            UUID categoryUuid
+            UUID categoryUuid,
+            boolean ascending
     );
 
     default ProductDto delete(Product product) {

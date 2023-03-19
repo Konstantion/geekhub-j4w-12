@@ -1,6 +1,5 @@
 package com.konstantion.category;
 
-import com.github.javafaker.Cat;
 import com.konstantion.category.dto.CategoryDto;
 import com.konstantion.category.dto.CreationCategoryDto;
 import com.konstantion.category.dto.UpdateCategoryDto;
@@ -83,9 +82,12 @@ public record CategoryServiceImp(
     }
 
     private Category getCategoryByIdOrThrow(UUID uuid) {
+        if (uuid == null) {
+            throw new BadRequestException("Category id shouldn't be null");
+        }
         return categoryRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("Category with uuid %s doesn't exist", uuid)
-                ));
+        ));
     }
 
     private Category updateCategory(Category target, UpdateCategoryDto updateDto) {
