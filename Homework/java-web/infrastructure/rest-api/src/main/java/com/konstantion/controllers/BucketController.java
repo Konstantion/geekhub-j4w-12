@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/web-api/bucket")
 public record BucketController(BucketService bucketService, Bucket bucket) {
 
-    @PutMapping("/products")
+    @PutMapping("/products/add")
     public ResponseEntity<Response> addProduct(
             @RequestParam("uuid") UUID uuid,
             @RequestParam("quantity") Optional<Integer> quantity
@@ -37,9 +37,9 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
         );
     }
 
-    @DeleteMapping("/products/{uuid}")
+    @DeleteMapping("/products/delete")
     public ResponseEntity<Response> deleteProduct(
-            @PathVariable("uuid") UUID uuid,
+            @RequestParam("uuid") UUID uuid,
             @RequestParam("quantity") Optional<Integer> quantity
     ) {
         Integer deletedQuantity = bucketService
@@ -72,6 +72,23 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
         );
     }
 
+    @GetMapping("/products/map")
+    public ResponseEntity<Response> getProductsMap() {
+        var productsMap = bucketService
+                .getBucketProductsMap(bucket);
+
+
+        return ResponseEntity.ok(
+                Response.builder()
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .message("Products in the bucket")
+                        .timeStamp(now())
+                        .data(Map.of("products", productsMap))
+                        .build()
+        );
+    }
+
     @GetMapping("/products/{uuid}/quantity")
     public ResponseEntity<Response> getQuantity(
             @PathVariable("uuid") UUID uuid
@@ -84,6 +101,24 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
                         .status(OK)
                         .statusCode(OK.value())
                         .message("Bucket count")
+                        .timeStamp(now())
+                        .data(Map.of("quantity", quantity))
+                        .build()
+        );
+    }
+
+    @PutMapping("/products/{uuid}/quantity")
+    public ResponseEntity<Response> setQuantity(
+            @PathVariable("uuid") UUID uuid,
+            @RequestParam("quantity") Integer quantity
+    ) {
+        bucketService.setProductQuantity(bucket, uuid, quantity);
+
+        return ResponseEntity.ok(
+                Response.builder()
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .message(format("Product quantity with id %s set to %s", uuid, quantity))
                         .timeStamp(now())
                         .data(Map.of("quantity", quantity))
                         .build()

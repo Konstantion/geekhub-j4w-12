@@ -187,11 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(() => loadProducts())
             .then(() => contentRow.append(productsCol))
             .then(() => drawProducts(
-                (product) => console.log(`add to bucket ${product}`),
+                (product) => addToBucket(product),
                 (product) => console.log(`more info ${product}`)
             ))
-            .then(() =>{
-                if(productsState.products.length !== 0) {
+            .then(() => {
+                if (productsState.products.length !== 0) {
                     drawPagination()
                 }
             })
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearTimeout(searchInputTimeout);
                 }
                 searchInputTimeout = setTimeout(
-                    () => loadAndRedrawProducts(), 200);
+                    () => loadAndRedrawProducts(), 400);
             };
             patterInput.value = productsState.namePattern;
             const buttonSearch = document.createElement('button');
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let categoryName = 'No category specified';
             let fetchedRating = 0;
             let imageUrl = 'https://via.placeholder.com/150';
-            if(product.imageBytes) {
+            if (product.imageBytes) {
                 imageUrl = `data:image/png;base64,${product.imageBytes}`
             }
             const category = categoriesState.categories.find(category => {
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     productCategory.innerText = categoryName;
                     const productAddToBucket = document.createElement('a');
                     addClassesToElement(productAddToBucket, 'btn btn-primary me-1');
-                    productAddToBucket.onclick = addToBucket.bind(null, product.toString());
+                    productAddToBucket.onclick = addToBucket.bind(null, product);
                     productAddToBucket.innerText = 'Add to Bucket';
                     const productMoreInfo = document.createElement('button');
                     addClassesToElement(productMoreInfo, 'btn btn-secondary');
@@ -472,8 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     addToBucket,
                     moreInfo
                 ))
-                .then(() =>{
-                    if(productsState.products.length !== 0) {
+                .then(() => {
+                    if (productsState.products.length !== 0) {
                         drawPagination()
                     }
                 });
@@ -486,7 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     uuid: product.uuid,
                     quantity: '1'
                 });
-                const response = await fetch(`${bucketsUrl}/products?${params}`,
+                console.log(`${bucketsUrl}/products/add?${params}`);
+                const response = await fetch(`${bucketsUrl}/products/add?${params}`,
                     {
                         method: 'PUT'
                     });
@@ -503,13 +504,141 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     const loadBucketPage = () => {
+        let bucketState = {
+            bucketProducts: {},
+            totalPrice: 0
+        }
 
+        let productsState = {
+            products: []
+        }
+        const loadBucketProducts = async () => {
+            try {
+                console.log(`${bucketsUrl}/products`);
+                const response = await fetch(`${bucketsUrl}/products`)
+                const data = (await response.json()).data;
+                for (const uuid of data.uuids) {
+                    bucketState.bucketProducts[uuid] = await getProductQuantityById(uuid);
+                    productsState.products.push(await loadProductById(uuid));
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        const getProductQuantityById = async (uuid) => {
+            try {
+                console.log(`${bucketsUrl}/products/${uuid}/quantity`);
+                const response = await fetch(`${bucketsUrl}/products/${uuid}/quantity`);
+                const data = (await response.json()).data;
+                return data.quantity;
+            } catch (e) {
+                console.error(e);
+            }
+
+        }
+
+        loadBucketProducts().then(() => getProductsTable(
+            onChangeQuantity,
+            onRemove
+        )).then(table => mainContent.append(table));
+
+        const getProductsTable = (onQuantityChange, onRemove) => {
+            const productsTable = document.createElement('table');
+            addClassesToElement(productsTable, 'table table-striped');
+            const tableHead = document.createElement('thead');
+            const thName = document.createElement('th');
+            thName.innerText = 'Product Name';
+            const thPrice = document.createElement('th');
+            thPrice.innerText = 'Price';
+            const thQuantity = document.createElement('th');
+            thQuantity.innerText = 'Quantity';
+            const thImage = document.createElement('th');
+            thImage.innerText = 'Image';
+            const thSubtotal = document.createElement('th');
+            thSubtotal.innerText = 'Subtotal';
+            const thAction = document.createElement('th');
+            thAction.innerText = 'Remove';
+            tableHead.append(thName, thPrice, thQuantity, thImage, thSubtotal, thAction);
+            const tableBody = document.createElement('tbody');
+            for (const [uuid, quantity] of Object.entries(bucketState.bucketProducts)) {
+                tableBody.append(getProductTableRow(uuid, quantity, onQuantityChange, onRemove));
+            }
+            const tableFooter = document.createElement('tfoot');
+            const footerRaw = document.createElement('tr');
+            const emptyCol = document.createElement('td');
+            emptyCol.setAttribute('colspan', '3');
+            const footerTotal = document.createElement('td');
+            addClassesToElement(footerTotal, 'fw-bold');
+            footerTotal.innerText = "Total :"
+            const footerPrice = document.createElement('td');
+            footerPrice.innerText = `₴${bucketState.totalPrice.toFixed(2)}`
+            footerRaw.append(emptyCol, footerTotal, footerPrice);
+            tableFooter.append(footerRaw);
+            productsTable.append(tableHead, tableBody, tableFooter);
+            return productsTable;
+        };
+
+        const getProductTableRow = (uuid, quantity, onQuantityChange, onRemove) => {
+            const product = productsState.products.find(p => p.uuid === uuid);
+            let imageUrl = 'https://via.placeholder.com/50';
+            const subtotalPrice = (product.price * quantity);
+            bucketState.totalPrice += subtotalPrice;
+            if (product.imageBytes) {
+                imageUrl = `data:image/png;base64,${product.imageBytes}`
+            }
+            const productRow = document.createElement('tr');
+            const productName = document.createElement('td');
+            productName.innerText = product.name;
+            const productPrice = document.createElement('td');
+            productPrice.innerText = `₴${product.price.toFixed(2)}`;
+            const productQuantity = document.createElement('td');
+            const quantityInput = document.createElement('input');
+            addClassesToElement(quantityInput, 'form-control');
+            quantityInput.setAttribute('type', 'number');
+            quantityInput.setAttribute('value', quantity);
+            quantityInput.setAttribute('min', '1');
+            quantityInput.setAttribute('max', '10');
+            quantityInput.onchange = onQuantityChange.bind(null, product);
+            productQuantity.append(quantityInput);
+            const productImg = document.createElement('td');
+            const img = document.createElement('img');
+            addClassesToElement(img, 'img-bucket img-thumbnail');
+            img.setAttribute('alt', 'NO IMAGE');
+            img.setAttribute('src', imageUrl);
+            productImg.append(img);
+            const productSubtotal = document.createElement('td');
+            productSubtotal.innerText = `₴${subtotalPrice.toFixed(2)}`;
+            const productRemove = document.createElement('td');
+            const removeButton = document.createElement('button');
+            addClassesToElement(removeButton, 'btn btn-danger btn-sm');
+            removeButton.onclick = onRemove.bind(null, product);
+            const buttonImg = document.createElement('i');
+            addClassesToElement(buttonImg, 'fa fa-trash');
+            removeButton.append(buttonImg);
+            productRemove.append(removeButton);
+            productRow.append(productName, productPrice, productQuantity, productImg, productSubtotal, productRemove);
+            return productRow;
+        };
+
+        const onChangeQuantity = (product) => {
+            console.log(`Change ${product}`);
+        }
+
+        const onRemove = (product) => {
+            console.log(`Remove ${product}`);
+        }
     }
 
     loadProductsPage();
 
     rootNode.append(navbar);
     rootNode.append(mainContent);
+
+    const loadProductById = async (uuid) => {
+        const response = await fetch(`${productsUrl}/${uuid}`);
+        return (await response.json()).data.product;
+    }
 });
 
 function addClassesToElement(element, classesString) {

@@ -1,31 +1,31 @@
 package com.konstantion.bucket;
 
-import com.konstantion.product.Product;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @SessionScope
 @Component
 public class Bucket {
 
-    private final Map<Product, Integer> products;
+    private final Map<UUID, Integer> products;
 
     public Bucket() {
         this(new HashMap<>());
     }
 
-    public Bucket(Map<Product, Integer> products) {
+    public Bucket(Map<UUID, Integer> products) {
         this.products = products;
     }
 
-    public Map<Product, Integer> products() {
+    public Map<UUID, Integer> products() {
         return products;
     }
 
-    public void addProduct(Product product) {
+    public void addProduct(UUID product) {
         if (products.containsKey(product)) {
             products.computeIfPresent(product, (k, v) -> ++v);
         } else {
@@ -33,7 +33,7 @@ public class Bucket {
         }
     }
 
-    public boolean removeProduct(Product product) {
+    public boolean removeProduct(UUID product) {
         int productCount = products.getOrDefault(product, 0);
         if (productCount > 1) {
             products.computeIfPresent(product, (k, v) -> --v);
@@ -46,12 +46,8 @@ public class Bucket {
         return true;
     }
 
-    public Double getTotalPrice() {
-        return products
-                .entrySet()
-                .stream()
-                .mapToDouble(entry -> entry.getKey().price() * entry.getValue())
-                .reduce(0, Double::sum);
+    public void setProductQuantity(UUID product, Integer quantity) {
+        products.put(product, quantity);
     }
 
     public void clear() {

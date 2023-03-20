@@ -38,17 +38,18 @@ import java.util.UUID;
 @ComponentScan("com.konstantion")
 public class DomainBeanConfiguration {
     @Bean
-    public BucketService bucketService(ProductRepository productRepository) {
-        return new BucketServiceImp(productRepository);
+    public BucketService bucketService(ProductRepository productRepository, ProductService productService) {
+        return new BucketServiceImp(productRepository, productService);
     }
 
     @Bean
     public OrderService orderService(
             OrderRepository orderRepository,
             OrderValidator orderValidator,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ProductRepository productRepository
     ) {
-        return new OrderServiceImp(orderRepository, orderValidator, userRepository);
+        return new OrderServiceImp(orderRepository, orderValidator, userRepository, productRepository);
     }
 
     @Bean
