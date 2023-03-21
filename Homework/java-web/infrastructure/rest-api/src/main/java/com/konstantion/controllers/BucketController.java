@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/web-api/bucket")
+@RequestMapping("/web-api/buckets")
 public record BucketController(BucketService bucketService, Bucket bucket) {
 
     @PutMapping("/products/add")
@@ -37,8 +37,8 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
         );
     }
 
-    @DeleteMapping("/products/delete")
-    public ResponseEntity<Response> deleteProduct(
+    @DeleteMapping("/products/remove")
+    public ResponseEntity<Response> removeProduct(
             @RequestParam("uuid") UUID uuid,
             @RequestParam("quantity") Optional<Integer> quantity
     ) {

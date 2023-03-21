@@ -3,6 +3,10 @@ const PAGES = {
     BUCKET: 'BUCKET'
 }
 
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
+
 const getButton = (caption, onClick) => {
     const button = document.createElement('button');
     button.textContent = caption;
@@ -15,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoriesUrl = 'http://localhost:8080/web-api/categories';
     const productsUrl = 'http://localhost:8080/web-api/products';
     const reviewsUrl = 'http://localhost:8080/web-api/reviews';
-    const bucketsUrl = 'http://localhost:8080/web-api/bucket';
+    const bucketsUrl = 'http://localhost:8080/web-api/buckets';
+    const ordersUrl = 'http://localhost:8080/web-api/orders';
     const getNavbar = (onProductClick, onBucketClick) => {
         const navbar = document.createElement('nav');
         addClassesToElement(navbar, 'navbar navbar-expand-lg navbar-light bg-light');
@@ -397,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pageNav = document.createElement('nav');
             pageNav.setAttribute('aria-label', 'Page navigation');
             const pagination = document.createElement('ul');
-            addClassesToElement(pagination, 'pagination justify-content-center');
+            addClassesToElement(pagination, 'pagination fixed justify-content-center');
             const previousPage = document.createElement('li');
             const previousPageLink = document.createElement('a');
             previousPageLink.innerText = 'Previous';
@@ -512,6 +517,17 @@ document.addEventListener('DOMContentLoaded', () => {
         let productsState = {
             products: []
         }
+
+        const getTotalPrice = () => {
+            let sum = 0;
+            for (const [uuid, quantity] of Object.entries(bucketState.bucketProducts)) {
+                const product = productsState.products.find(p => {
+                    return p.uuid === uuid;
+                })
+                sum += product.price * quantity;
+            }
+            return sum;
+        }
         const loadBucketProducts = async () => {
             try {
                 console.log(`${bucketsUrl}/products`);
@@ -572,8 +588,23 @@ document.addEventListener('DOMContentLoaded', () => {
             addClassesToElement(footerTotal, 'fw-bold');
             footerTotal.innerText = "Total :"
             const footerPrice = document.createElement('td');
+            footerPrice.setAttribute('id', 'totalPrice');
             footerPrice.innerText = `₴${bucketState.totalPrice.toFixed(2)}`
-            footerRaw.append(emptyCol, footerTotal, footerPrice);
+            const createOrder = document.createElement('td');
+            const createButton = document.createElement('button');
+            createButton.innerText = 'Create Order';
+            addClassesToElement(createButton, 'btn btn-success');
+            if (!isEmpty(bucketState.bucketProducts)) {
+                createButton.onclick = () => {
+                    fetch(`${ordersUrl}`, {
+                        method: 'POST'
+                    }).then(() => buildMainContent())
+                        .catch(console.error);
+                }
+                createOrder.append(createButton);
+            }
+            footerRaw.append(emptyCol, footerTotal, footerPrice, createOrder);
+
             tableFooter.append(footerRaw);
             productsTable.append(tableHead, tableBody, tableFooter);
             return productsTable;
@@ -599,7 +630,6 @@ document.addEventListener('DOMContentLoaded', () => {
             quantityInput.setAttribute('value', quantity);
             quantityInput.setAttribute('min', '1');
             quantityInput.setAttribute('max', '10');
-            quantityInput.onchange = onQuantityChange.bind(null, product);
             productQuantity.append(quantityInput);
             const productImg = document.createElement('td');
             const img = document.createElement('img');
@@ -612,21 +642,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const productRemove = document.createElement('td');
             const removeButton = document.createElement('button');
             addClassesToElement(removeButton, 'btn btn-danger btn-sm');
-            removeButton.onclick = onRemove.bind(null, product);
             const buttonImg = document.createElement('i');
             addClassesToElement(buttonImg, 'fa fa-trash');
             removeButton.append(buttonImg);
             productRemove.append(removeButton);
             productRow.append(productName, productPrice, productQuantity, productImg, productSubtotal, productRemove);
+
+            removeButton.onclick = onRemove.bind(null, product, quantityInput);
+            quantityInput.onchange = onQuantityChange.bind(null, product, quantityInput, productSubtotal);
+
             return productRow;
         };
 
-        const onChangeQuantity = (product) => {
-            console.log(`Change ${product}`);
+        const onChangeQuantity = (product, quantityField, subTotalField) => {
+            const quantity = quantityField.value;
+            fetch(`${bucketsUrl}/products/${product.uuid}/quantity?quantity=${quantity}`, {
+                method: 'PUT'
+            }).then(() => {
+                bucketState.bucketProducts[product.uuid] = quantity;
+                bucketState.totalPrice = getTotalPrice();
+                document.querySelector('#totalPrice').innerText = `₴${bucketState.totalPrice.toFixed(2)}`;
+                subTotalField.innerText = `₴${(product.price * quantity).toFixed(2)}`;
+            }).catch(console.error);
         }
 
-        const onRemove = (product) => {
-            console.log(`Remove ${product}`);
+        const onRemove = (product, quantityField) => {
+            const quantity = quantityField.value;
+            const params = new URLSearchParams({
+                'uuid': product.uuid,
+                'quantity': quantity
+            })
+            console.log(`${bucketsUrl}/products/remove?${params}`);
+            fetch(`${bucketsUrl}/products/remove?${params}`, {
+                method: 'DELETE'
+            }).then(() => {
+                buildMainContent();
+            }).catch(console.error);
         }
     }
 

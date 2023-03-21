@@ -66,8 +66,8 @@ public record BucketServiceImp(ProductRepository productRepository, ProductServi
     @Override
     public boolean setProductQuantity(Bucket bucket, UUID productUuid, Integer quantity) {
         productService.getById(productUuid);
-        if (isNull(quantity) || quantity < 0) {
-            throw new BadRequestException("Product quantity should be positive value");
+        if (isNull(quantity) || quantity <= 0) {
+            throw new BadRequestException("Product quantity should be one or more");
         }
 
         bucket.setProductQuantity(productUuid, quantity);
