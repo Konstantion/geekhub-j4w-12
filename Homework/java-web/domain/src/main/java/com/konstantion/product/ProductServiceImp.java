@@ -44,11 +44,6 @@ public record ProductServiceImp(ProductValidator productValidator,
 
 
     @Override
-    public ProductDto create(CreationProductDto createProductDto) {
-        return create(createProductDto, createProductDto.file());
-    }
-
-    @Override
     public ProductDto create(CreationProductDto createProductDto, MultipartFile file) {
         ValidationResult validationResult = productValidator
                 .validate(createProductDto)

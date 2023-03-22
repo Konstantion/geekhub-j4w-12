@@ -98,7 +98,7 @@ public record ReviewController(
                 .build());
     }
 
-    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
+    @PostMapping
     public ResponseEntity<Response> createReview(
             @RequestBody CreationReviewDto creationReviewDto
     ) {

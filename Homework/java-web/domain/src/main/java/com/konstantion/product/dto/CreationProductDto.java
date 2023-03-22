@@ -10,5 +10,5 @@ public record CreationProductDto(
         @Nullable Double price,
         @Nullable String description,
         @Nullable UUID categoryUuid,
-        @Nullable MultipartFile file) {
+        MultipartFile file) {
 }

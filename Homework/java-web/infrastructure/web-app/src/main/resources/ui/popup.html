@@ -3,38 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 <body>
-<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-  <div class="toast-header">
-    <strong class="mr-auto">Popup Message</strong>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="toast-body">
-    <span id="popup-message-text"></span>
-  </div>
+<div id="overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark" style="opacity: 0.5; z-index: 999;"></div>
+<div id="error-message" class="position-fixed top-50 start-50 translate-middle w-50 p-3 rounded-3 bg-light shadow-lg" style="z-index: 1000;">
+    <h2 class="text-danger">Error</h2>
+    <p>Something went wrong.</p>
+    <button type="button" class="btn btn-danger" data-bs-dismiss="alert">Close</button>
 </div>
+
 <script>
-  var popupMessage = document.querySelector('.toast');
-
-  function showPopupMessage(text) {
-
-    document.querySelector('#popup-message-text').textContent = text;
-
-
-    var popup = new bootstrap.Toast(popupMessage);
-    popup.show();
-  }
-
-  showPopupMessage('Hello, world!');
-
+    document.addEventListener("mouseup", function(e) {
+        var container = document.getElementById("error-message");
+        if (!container.contains(e.target)) {
+            container.style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+    });
 </script>
 </body>
 </html>

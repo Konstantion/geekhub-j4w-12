@@ -7,6 +7,7 @@ import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.dto.UpdateProductDto;
 import com.konstantion.response.Response;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,12 +78,12 @@ public record ProductController(ProductService productService) {
         );
     }
 
-    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Response> addProduct(
             @Parameter(description = "Creation product dto")
-            @ModelAttribute CreationProductDto productCreationDto
+            @ModelAttribute CreationProductDto product
     ) {
-        ProductDto dto = productService.create(productCreationDto);
+        ProductDto dto = productService.create(product, product.file());
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(OK.value())

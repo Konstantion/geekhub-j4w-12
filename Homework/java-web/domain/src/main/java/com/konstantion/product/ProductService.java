@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductDto create(CreationProductDto createProductDto);
-
     ProductDto create(CreationProductDto createProductDto, MultipartFile file);
 
     ProductDto getById(UUID uuid);
