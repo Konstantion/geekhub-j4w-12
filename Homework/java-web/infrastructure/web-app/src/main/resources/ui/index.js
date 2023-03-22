@@ -4,6 +4,7 @@ const PAGES = {
     BUCKET: 'BUCKET'
 }
 
+
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let productPageState = {
         'productUuid': ''
     };
-
+    const MAX_BUCKET_QUANTITY = '128';
     const categoriesUrl = 'http://localhost:8080/web-api/categories';
     const productsUrl = 'http://localhost:8080/web-api/products';
     const reviewsUrl = 'http://localhost:8080/web-api/reviews';
@@ -449,8 +450,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const productAddToBucket = document.createElement('a');
                     addClassesToElement(productAddToBucket, 'btn btn-primary me-1');
                     productAddToBucket.onclick = () => {
-                        addToBucket.bind(null, product, 1).call()
-                        portalHolder.append(getSuccessMessage(`Product ${product.name} successfully added`))
+                        try {
+                            addToBucket.bind(null, product, 1).call()
+                            portalHolder.append(getSuccessMessage(`Product ${product.name} successfully added to the bucket`))
+                        } catch (e) {
+                            portalHolder.append(getErrorMessage(`${e}`))
+                        }
                     };
                     productAddToBucket.innerText = 'Add to Bucket';
                     const productMoreInfo = document.createElement('button');
@@ -700,6 +705,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const productRow = document.createElement('tr');
             const productName = document.createElement('td');
             productName.innerText = product.name;
+            productName.onclick = () => {
+                productPageState.productUuid = uuid;
+                currentPage = PAGES.PRODUCT;
+                buildMainContent();
+            };
             const productPrice = document.createElement('td');
             productPrice.innerText = `₴${product.price.toFixed(2)}`;
             const productQuantity = document.createElement('td');
@@ -708,7 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
             quantityInput.setAttribute('type', 'number');
             quantityInput.setAttribute('value', quantity);
             quantityInput.setAttribute('min', '1');
-            quantityInput.setAttribute('max', '10');
+            quantityInput.setAttribute('max', MAX_BUCKET_QUANTITY);
             productQuantity.append(quantityInput);
             const productImg = document.createElement('td');
             const img = document.createElement('img');
@@ -835,15 +845,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 bucketInput.setAttribute('id', 'quantity');
                 bucketInput.setAttribute('name', 'quantity');
                 bucketInput.setAttribute('min', '1');
-                bucketInput.setAttribute('max', '10');
+                bucketInput.setAttribute('max', MAX_BUCKET_QUANTITY);
                 bucketInput.setAttribute('value', '1');
                 const formButton = document.createElement('button');
                 addClassesToElement(formButton, 'btn btn-primary mb-3');
                 formButton.innerText = 'Add to bucket';
                 formButton.onclick = () => {
                     const quantity = document.querySelector('#quantity').value;
-                    addToBucket(product, quantity).then(data => {
-                        portalHolder.append(getSuccessMessage(`Product ${product.name} was successfully added to the bucket`))
+                    addToBucket(product, quantity).then(response => {
+                        if(response.statusCode === 200) {
+                            portalHolder.append(getSuccessMessage(`Product ${product.name} was successfully added to the bucket`))
+                        } else {
+                            portalHolder.append(getErrorMessage(`${response.message}`))
+                        }
                     }).catch(e => {
                         portalHolder.append(getErrorMessage(`${e}`))
                     })
@@ -877,11 +891,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 addClassesToElement(sendButton, 'btn btn-primary mb-3 me-2');
                 sendButton.innerHTML = `Send button`;
                 sendButton.onclick = () => {
-                    const message = document.querySelector(`#comment`).value;
-                    const rating = document.querySelector(`#rating`).value
+                    const commentInput = document.querySelector(`#comment`);
+                    const ratingInput = document.querySelector(`#rating`);
+                    const message = commentInput.value;
+                    const rating = ratingInput.value;
                     sendReview(message, rating, uuid).then(response => {
                             if (response.statusCode === 200) {
-                                buildMainContent();
+                                let createdReview = {};
+                                createdReview.uuid = response.data.uuid;
+                                createdReview.message = message;
+                                createdReview.rating = rating;
+                                reviewList.append(getReviewElement(createdReview));
+                                commentInput.value = '';
+                                ratingInput.value = '1';
+                                removeClass(commentInput, 'is-invalid');
+                                removeClass(ratingInput, 'is-invalid');
                                 portalHolder.append(getSuccessMessage('Review was successfully created'))
                             } else if (response.statusCode === 422) {
                                 if (response.data.message) {
@@ -904,7 +928,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 addClassesToElement(editButton, 'btn btn-primary mb-3');
                 editButton.innerHTML = `Edit product`;
                 const reviewTitle = document.createElement('h1');
-                reviewTitle.innerText = `Reviews`;
+                if (reviews.length >= 1) {
+                    reviewTitle.innerText = `Reviews`;
+                }
                 const reviewList = document.createElement('ul');
                 addClassesToElement(reviewList, 'list-group');
                 for (const review of reviews) {
@@ -1001,8 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 {
                     method: 'PUT'
                 });
-            const data = (await response.json()).data;
-            console.log(data);
+            return await response.json();
         } catch (e) {
             console.error(e);
         }
@@ -1015,4 +1040,8 @@ function addClassesToElement(element, classesString) {
     classes.forEach(
         navClass => element.classList.add(navClass)
     );
+}
+
+function removeClass(element, className) {
+    element.classList.remove(className);
 }
