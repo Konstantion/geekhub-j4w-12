@@ -92,6 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let productPageState = {
         'productUuid': ''
     };
+
+    let categoriesState = {
+        categories: []
+    }
+
     const MAX_BUCKET_QUANTITY = '128';
     const categoriesUrl = 'http://localhost:8080/web-api/categories';
     const productsUrl = 'http://localhost:8080/web-api/products';
@@ -208,9 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
             totalPageNumber: 0,
             firstPage: true,
             lastPage: false
-        }
-        let categoriesState = {
-            categories: []
         }
 
         const contentRow = document.createElement('div');
@@ -853,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formButton.onclick = () => {
                     const quantity = document.querySelector('#quantity').value;
                     addToBucket(product, quantity).then(response => {
-                        if(response.statusCode === 200) {
+                        if (response.statusCode === 200) {
                             portalHolder.append(getSuccessMessage(`Product ${product.name} was successfully added to the bucket`))
                         } else {
                             portalHolder.append(getErrorMessage(`${response.message}`))
@@ -927,6 +929,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 const editButton = document.createElement('button');
                 addClassesToElement(editButton, 'btn btn-primary mb-3');
                 editButton.innerHTML = `Edit product`;
+                editButton.onclick = () => {
+                    const productDiv = getProductInputTable(product);
+                    const buttonClose = productDiv.querySelector('#close');
+                    const buttonSave = productDiv.querySelector('#save');
+                    const productForm = productDiv.querySelector('#productForm');
+
+                    const name = productDiv.querySelector('#name');
+                    const price = productDiv.querySelector('#price');
+                    const description = productDiv.querySelector('#description');
+                    const category = productDiv.querySelector('#category');
+                    const file = productDiv.querySelector('#file');
+
+                    const categorySelect = productDiv.querySelector('#category');
+                    for (const category of categoriesState.categories) {
+                        const option = document.createElement('option');
+                        option.setAttribute('value', category.uuid)
+                        option.innerText = category.name;
+                        categorySelect.append(option);
+                    }
+                    categorySelect.value = product.categoryUuid ? product.categoryUuid : '';
+                    buttonClose.onclick = (e) => {
+                        e.preventDefault();
+                        hidePortals();
+                    }
+                    buttonSave.onclick = (e) => {
+                        e.preventDefault();
+                        updateProduct(uuid, {
+                            name: name.value,
+                            price: price.value,
+                            description: description.value,
+                            category: category.value
+                        }, file).then(response => {
+                            if (response.statusCode === 200) {
+                                hidePortals();
+                                buildMainContent();
+                            } else if (response.statusCode === 422) {
+                                name.classList.remove('is-invalid');
+                                price.classList.remove('is-invalid');
+                                description.classList.remove('is-invalid');
+                                category.classList.remove('is-invalid');
+                                file.classList.remove('is-invalid');
+                                if (response.data.name) {
+                                    productDiv.querySelector('#invalidName').innerText = response.data.name;
+                                    name.classList.add('is-invalid');
+                                }
+                                if (response.data.price) {
+                                    productDiv.querySelector('#invalidPrice').innerText = response.data.price;
+                                    price.classList.add('is-invalid');
+                                }
+                                if (response.data.description) {
+                                    productDiv.querySelector('#invalidDescription').innerText = response.data.description;
+                                    description.classList.add('is-invalid');
+                                }
+                                if (response.data.category) {
+                                    productDiv.querySelector('#invalidCategory').innerText = response.data.category;
+                                    category.classList.add('is-invalid');
+                                }
+                                if (response.data.file) {
+                                    productDiv.querySelector('#invalidFile').innerText = response.data.file;
+                                    file.classList.add('is-invalid');
+                                }
+                            } else if (response.statusCode >= 400) {
+                                hidePortals();
+                                buildMainContent();
+                                portalHolder.append(getErrorMessage(response.message));
+                            }
+                        }).catch(e => {
+                            hidePortals();
+                            portalHolder.append(getErrorMessage(e))
+                        });
+                    }
+
+                    portalHolder.append(getOverlay(productDiv, false))
+                }
                 const reviewTitle = document.createElement('h1');
                 if (reviews.length >= 1) {
                     reviewTitle.innerText = `Reviews`;
@@ -962,34 +1038,6 @@ document.addEventListener('DOMContentLoaded', () => {
         drawProductView().then(view => {
             mainContent.append(view);
         })
-
-        const loadProductReviews = async (reviewsId) => {
-            const reviews = [];
-            for (const reviewId of reviewsId) {
-                reviews.push(await loadReviewById(reviewId));
-            }
-            return reviews;
-        }
-
-        const sendReview = async (message, rating, productUuid) => {
-            try {
-                const requestBody = {
-                    'message': message,
-                    'rating': rating,
-                    'productUuid': productUuid
-                }
-                const response = await fetch(`${reviewsUrl}`, {
-                    method: 'POST',
-                    body: JSON.stringify(requestBody),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                return await response.json();
-            } catch (e) {
-                console.error(e);
-            }
-        }
     }
 
     loadProductsPage();
@@ -997,6 +1045,32 @@ document.addEventListener('DOMContentLoaded', () => {
     rootNode.append(navbar);
     rootNode.append(mainContent);
 
+    const loadProductReviews = async (reviewsId) => {
+        const reviews = [];
+        for (const reviewId of reviewsId) {
+            reviews.push(await loadReviewById(reviewId));
+        }
+        return reviews;
+    }
+    const sendReview = async (message, rating, productUuid) => {
+        try {
+            const requestBody = {
+                'message': message,
+                'rating': rating,
+                'productUuid': productUuid
+            }
+            const response = await fetch(`${reviewsUrl}`, {
+                method: 'POST',
+                body: JSON.stringify(requestBody),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            return await response.json();
+        } catch (e) {
+            console.error(e);
+        }
+    }
     const loadProductById = async (uuid) => {
         const response = await fetch(`${productsUrl}/${uuid}`);
         return (await response.json()).data.product;
@@ -1015,7 +1089,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch(`${categoriesUrl}/${uuid}`);
         return (await response.json()).data.category;
     }
-
     const addToBucket = async (product, quantity) => {
         try {
             const params = new URLSearchParams({
@@ -1033,6 +1106,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     };
+    const getProductInputTable = (product) => {
+        const container = document.createElement('div');
+        container.innerHTML = `<h1>Add Product</h1>
+      <form id="productForm">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name="name" value="${product.name ? product.name : ''}">
+          <div id="invalidName" class="invalid-feedback"></div>
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Price</label>
+          <input type="number" class="form-control" id="price" name="price" min="0" step="0.1" value="${product.price ? product.price : ''}">
+          <div id="invalidPrice" class="invalid-feedback"></div>
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" name="description" rows="3">${product.description ? product.description : ''}</textarea>
+          <div id="invalidDescription" class="invalid-feedback"></div>
+        </div>
+        <div class="mb-3">
+          <label for="category" class="form-label">Category</label>
+          <select class="form-select" id="category" name="category">
+            <option value="">No category specified</option>            
+          </select>
+          <div id="invalidCategory" class="invalid-feedback"></div>
+        </div>
+        <div class="mb-3">
+          <label for="file" class="form-label">Image</label>
+          <input type="file" class="form-control" id="file" name="image">
+            <div id="invalidFile" class="invalid-feedback"></div>
+        </div>      
+        <button id="save" class="btn btn-primary">Save Product</button>
+        <button id="close" class="btn btn-primary">Close</button>`;
+        return container;
+    }
+    const updateProduct = async (uuid, productDto, fileInput) => {
+        try {
+            const formdata = new FormData();
+            formdata.append("name", valueOrEmpty(productDto.name));
+            formdata.append("price", valueOrEmpty(productDto.price));
+            formdata.append("description", valueOrEmpty(productDto.description));
+            formdata.append("categoryUuid", valueOrEmpty(productDto.category));
+            if(fileInput.files[0]) {
+                formdata.append("file", fileInput.files[0]);
+            }
+
+            var requestOptions = {
+                method: 'PUT',
+                body: formdata
+            };
+
+            const response = await fetch(`${productsUrl}/${uuid}`, requestOptions);
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
 });
 
 function addClassesToElement(element, classesString) {
@@ -1044,4 +1174,8 @@ function addClassesToElement(element, classesString) {
 
 function removeClass(element, className) {
     element.classList.remove(className);
+}
+
+function valueOrEmpty(value) {
+    return value ? value : '';
 }

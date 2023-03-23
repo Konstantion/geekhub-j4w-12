@@ -94,12 +94,18 @@ public record ProductServiceImp(ProductValidator productValidator,
         Product product = getProductByIdOrThrow(uuid);
 
         ValidationResult validationResult = productValidator
-                .validate(updateDto)
-                .combine(fileValidator.validate(updateDto.file()));
+                .validate(updateDto);
+        //Check if file is present for update
+        if (nonNull(updateDto.file()) && !updateDto.file().isEmpty()) {
+            validationResult = validationResult.combine(fileValidator.validate(updateDto.file()));
+        }
+
         ValidationResult.validOrThrow(validationResult, FAILED_TO_UPDATE_MESSAGE);
 
         //Check if category exist
-        categoryService.getCategoryById(updateDto.categoryUuid());
+        if(nonNull(updateDto.categoryUuid())) {
+            categoryService.getCategoryById(updateDto.categoryUuid());
+        }
 
         product = updateProduct(product, updateDto);
 
@@ -192,7 +198,10 @@ public record ProductServiceImp(ProductValidator productValidator,
     }
 
     private Product updateProduct(Product target, UpdateProductDto updateDto) {
-        byte[] imageBytes = uploadService.getFileBytes(updateDto.file());
+        byte[] imageBytes = target.imageBytes();
+        if (nonNull(updateDto.file()) && !updateDto.file().isEmpty()) {
+            imageBytes = uploadService.getFileBytes(updateDto.file());
+        }
 
         return Product.builder()
                 .uuid(target.uuid())

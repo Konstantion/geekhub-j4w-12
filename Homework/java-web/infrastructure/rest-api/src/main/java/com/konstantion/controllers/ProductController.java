@@ -7,11 +7,9 @@ import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.dto.UpdateProductDto;
 import com.konstantion.response.Response;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
