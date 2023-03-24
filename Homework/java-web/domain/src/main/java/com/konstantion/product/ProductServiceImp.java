@@ -139,6 +139,7 @@ public record ProductServiceImp(ProductValidator productValidator,
             Integer pageNumber, Integer pageSize,
             String sortBy, String searchPattern,
             UUID categoryUuid, boolean ascending) {
+
         sortBy = sortBy.toLowerCase();
         if (nonNull(categoryUuid)) {
             categoryService.getCategoryById(categoryUuid);
@@ -146,7 +147,9 @@ public record ProductServiceImp(ProductValidator productValidator,
         if (!isFieldValidForSearch(sortBy)) {
             throw new BadRequestException(format("Sort products by %s doesn't provided", sortBy));
         }
+
         sortBy = ascending ? sortBy + " ASC " : sortBy + " DESC ";
+        searchPattern = searchPattern.trim();
 
         pageNumber = Math.max(pageNumber, 1);
         pageSize = Math.max(pageSize, 1);

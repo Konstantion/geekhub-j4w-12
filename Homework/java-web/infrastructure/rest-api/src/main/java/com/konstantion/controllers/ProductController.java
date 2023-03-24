@@ -7,6 +7,7 @@ import com.konstantion.product.dto.ProductDto;
 import com.konstantion.product.dto.UpdateProductDto;
 import com.konstantion.response.Response;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequestMapping("/web-api/products")
+@SecurityRequirement(name = "bearerAuth")
 public record ProductController(ProductService productService) {
     @GetMapping("/all")
     public ResponseEntity<Response> getProducts(
@@ -46,6 +48,7 @@ public record ProductController(ProductService productService) {
     }
 
     @GetMapping()
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Response> getProductsPage(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,

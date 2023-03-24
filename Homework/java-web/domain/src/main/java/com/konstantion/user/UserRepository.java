@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
-    Optional<User> findUserById(UUID uuid);
+    Optional<User> findById(UUID uuid);
 
     User save(User user);
 
@@ -12,5 +12,5 @@ public interface UserRepository {
 
     UUID setNonLockedById(UUID id, boolean active);
 
-    Optional<User> findUserByEmail(String email);
+    Optional<User> findByEmail(String email);
 }

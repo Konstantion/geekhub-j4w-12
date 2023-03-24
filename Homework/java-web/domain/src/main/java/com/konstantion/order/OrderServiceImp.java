@@ -82,7 +82,7 @@ public record OrderServiceImp(
 
     @Override
     public List<OrderDto> findOrdersByUserId(UUID uuid) {
-        userRepository.findUserById(uuid).orElseThrow(() ->
+        userRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("User with uuid %s doesn't exist", uuid)
                 ));
         List<Order> orders = orderRepository.findByUserId(uuid);

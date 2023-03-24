@@ -2,7 +2,7 @@ package com.konstantion.reporitories;
 
 import com.konstantion.product.Product;
 import com.konstantion.product.ProductRepository;
-import com.konstantion.reporitories.mappers.ProductRawMapper;
+import com.konstantion.reporitories.mappers.ProductRowMapper;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,7 +23,7 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Component
 public record JdbcProductRepository(NamedParameterJdbcTemplate jdbcTemplate,
-                                    ProductRawMapper productRawMapper,
+                                    ProductRowMapper productRawMapper,
                                     ParameterSourceUtil parameterUtil)
         implements ProductRepository {
 

@@ -1,11 +1,13 @@
 package com.konstantion.jwt;
 
+import com.konstantion.jwt.JwtService;
 import com.konstantion.jwt.config.JwtConfig;
 import com.konstantion.jwt.config.JwtSecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Date;
@@ -13,7 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public record JwtService(JwtSecretKey secretKey, JwtConfig jwtConfig) {
+@Component
+public record JwtServiceImp(
+        JwtSecretKey secretKey,
+        JwtConfig jwtConfig
+) implements JwtService {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }

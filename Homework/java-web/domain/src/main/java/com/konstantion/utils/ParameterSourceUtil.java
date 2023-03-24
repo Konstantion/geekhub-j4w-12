@@ -3,6 +3,7 @@ package com.konstantion.utils;
 import com.konstantion.category.Category;
 import com.konstantion.order.Order;
 import com.konstantion.product.Product;
+import com.konstantion.ragistration.token.ConfirmationToken;
 import com.konstantion.review.Review;
 import com.konstantion.user.User;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -67,5 +68,15 @@ public record ParameterSourceUtil() {
                 .addValue("name", category.name())
                 .addValue("createdAt", category.createdAt())
                 .addValue("userUuid", category.userUuid());
+    }
+
+    public MapSqlParameterSource toParameterSource(ConfirmationToken token) {
+        return new MapSqlParameterSource()
+                .addValue("uuid", token.id())
+                .addValue("token", token.token())
+                .addValue("createdAt", token.createdAt())
+                .addValue("expiresAt", token.expiresAt())
+                .addValue("confirmedAt", token.confirmedAt())
+                .addValue("userUuid", token.userId());
     }
 }

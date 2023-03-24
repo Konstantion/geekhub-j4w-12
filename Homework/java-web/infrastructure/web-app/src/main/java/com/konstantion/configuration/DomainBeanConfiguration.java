@@ -15,20 +15,19 @@ import com.konstantion.product.ProductRepository;
 import com.konstantion.product.ProductService;
 import com.konstantion.product.ProductServiceImp;
 import com.konstantion.product.validator.ProductValidator;
-import com.konstantion.reporitories.JdbcCategoryRepository;
-import com.konstantion.reporitories.mappers.UserRawMapper;
+import com.konstantion.ragistration.token.ConfirmationTokenService;
+import com.konstantion.reporitories.mappers.UserRowMapper;
 import com.konstantion.review.ReviewRepository;
 import com.konstantion.review.ReviewService;
 import com.konstantion.review.ReviewServiceImp;
 import com.konstantion.review.validator.ReviewValidator;
 import com.konstantion.upload.UploadService;
-import com.konstantion.user.Role;
-import com.konstantion.user.User;
-import com.konstantion.user.UserRepository;
+import com.konstantion.user.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.File;
 import java.util.Set;
@@ -85,11 +84,6 @@ public class DomainBeanConfiguration {
     }
 
     @Bean
-    public UserRawMapper userRawMapper() {
-        return new UserRawMapper();
-    }
-
-    @Bean
     public UploadService uploadService(@Value("${upload.name}") String uploadName) {
         return new UploadService(new File(uploadName).getAbsolutePath());
     }
@@ -99,5 +93,14 @@ public class DomainBeanConfiguration {
             CategoryRepository categoryRepository,
             CategoryValidator categoryValidator) {
         return new CategoryServiceImp(categoryRepository, categoryValidator);
+    }
+
+    @Bean
+    public UserService userService(
+            UserRepository userRepository,
+            BCryptPasswordEncoder passwordEncoder,
+            ConfirmationTokenService tokenService
+    ) {
+        return new UserServiceImp(userRepository, passwordEncoder, tokenService);
     }
 }

@@ -9,8 +9,8 @@ import java.sql.SQLException;
 import java.util.Map;
 
 @Component
-public record OrderProductsRawMapper(
-        ProductRawMapper productRawMapper) implements RowMapper<Map.Entry<Product, Integer>> {
+public record OrderProductsRowMapper(
+        ProductRowMapper productRawMapper) implements RowMapper<Map.Entry<Product, Integer>> {
 
     @Override
     public Map.Entry<Product, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {

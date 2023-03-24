@@ -1,22 +1,27 @@
 package com.konstantion.reporitories;
 
-import com.konstantion.reporitories.mappers.UserRawMapper;
+import com.konstantion.reporitories.mappers.RoleRowMapper;
+import com.konstantion.reporitories.mappers.UserRowMapper;
+import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import com.konstantion.user.UserRepository;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static java.util.Objects.nonNull;
 
 @Component
 public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
-                                 UserRawMapper userMapper,
-                                 ParameterSourceUtil parameterUtil) implements UserRepository {
+                                 UserRowMapper userMapper,
+                                 ParameterSourceUtil parameterUtil,
+                                 RoleRowMapper roleRowMapper) implements UserRepository {
 
     private static final String FIND_BY_ID_QUERY = """
                     SELECT * FROM public.user WHERE uuid = :uuid;
@@ -28,7 +33,7 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     private static final String INSERT_USER_QUERY = """
                     INSERT INTO public.user (email, first_name, password, last_name, phone_number, enabled, non_locked)
-                    VALUES (:email, :first_name, :password, :last_name, :phone_number, :enabled, :nonLocked);
+                    VALUES (:email, :firstName, :password, :lastName, :phoneNumber, :enabled, :nonLocked);
             """;
 
     private static final String UPDATE_USER_QUERY = """
@@ -55,12 +60,36 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
             WHERE uuid = :uuid;
             """;
 
+    private static final String FIND_ROLES_BY_USER_ID = """
+            SELECT name FROM user_role
+            WHERE user_uuid = :userUuid;
+            """;
+
+    private static final String SAVE_USER_ROLE = """
+            INSERT INTO user_role
+            VALUES (:userUuid, :roleName)
+            """;
+
+    private static final String DELETE_USER_ROLES = """
+            DELETE FROM user_role
+            WHERE user_uuid = :userUuid;
+            """;
+
     @Override
-    public Optional<User> findUserById(UUID uuid) {
-        return jdbcTemplate.query(
+    public Optional<User> findById(UUID uuid) {
+        User user = jdbcTemplate.query(
                 FIND_BY_ID_QUERY,
                 Map.of("uuid", uuid),
-                userMapper).stream().findFirst();
+                userMapper).stream().findAny().orElse(null);
+        if (nonNull(user)) {
+            Set<Role> userRoles = new HashSet<>(jdbcTemplate.query(
+                    FIND_ROLES_BY_USER_ID,
+                    Map.of("userUuid", uuid),
+                    roleRowMapper)
+            );
+            user.setRoles(userRoles);
+        }
+        return Optional.ofNullable(user);
     }
 
     @Override
@@ -70,10 +99,17 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
         }
 
         MapSqlParameterSource parameters = parameterUtil.toParameterSource(user);
-        return jdbcTemplate.query(
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(
                 INSERT_USER_QUERY,
                 parameters,
-                userMapper).stream().findFirst().orElse(null);
+                keyHolder
+        );
+        user.setId((UUID) Objects.requireNonNull(keyHolder.getKeys()).get("uuid"));
+
+        updateUserRoles(user);
+
+        return user;
     }
 
     @Override
@@ -100,11 +136,20 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
     }
 
     @Override
-    public Optional<User> findUserByEmail(String email) {
-        return jdbcTemplate.query(
+    public Optional<User> findByEmail(String email) {
+        User user = jdbcTemplate.query(
                 FIND_BY_EMAIL_QUERY,
                 Map.of("email", email),
-                userMapper).stream().findFirst();
+                userMapper).stream().findAny().orElse(null);
+        if (nonNull(user)) {
+            Set<Role> userRoles = new HashSet<>(jdbcTemplate.query(
+                    FIND_ROLES_BY_USER_ID,
+                    Map.of("userUuid", user.getId()),
+                    roleRowMapper)
+            );
+            user.setRoles(userRoles);
+        }
+        return Optional.ofNullable(user);
     }
 
     private User update(User user) {
@@ -114,6 +159,41 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
                 UPDATE_USER_QUERY,
                 parameters
         );
+        updateUserRoles(user);
+
         return user;
+    }
+
+    private void updateUserRoles(User user) {
+        if(nonNull(user.getId())) {
+            deleteUserRoles(user.getId());
+        }
+        saveUserRoles(user);
+    }
+
+    private void deleteUserRoles(UUID userId) {
+        jdbcTemplate.update(
+                DELETE_USER_ROLES,
+                Map.of("userUuid", userId)
+        );
+    }
+
+    private void saveUserRoles(User user) {
+        Set<Role> roles = user.getRoles();
+        if (nonNull(roles)) {
+            user.getRoles().forEach(
+                    role -> saveUserRole(user.getId(), role)
+            );
+        }
+    }
+
+    private void saveUserRole(UUID userUuid, Role role) {
+        jdbcTemplate.update(
+                SAVE_USER_ROLE,
+                Map.of(
+                        "userUuid", userUuid,
+                        "roleName", role.name()
+                )
+        );
     }
 }

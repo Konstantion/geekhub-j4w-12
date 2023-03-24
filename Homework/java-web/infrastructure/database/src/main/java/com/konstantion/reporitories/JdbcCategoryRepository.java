@@ -2,7 +2,7 @@ package com.konstantion.reporitories;
 
 import com.konstantion.category.Category;
 import com.konstantion.category.CategoryRepository;
-import com.konstantion.reporitories.mappers.CategoryRawMapper;
+import com.konstantion.reporitories.mappers.CategoryRowMapper;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,7 +16,7 @@ import java.util.*;
 public record JdbcCategoryRepository(
         NamedParameterJdbcTemplate jdbcTemplate,
         ParameterSourceUtil parameterUtil,
-        CategoryRawMapper categoryMapper
+        CategoryRowMapper categoryMapper
 ) implements CategoryRepository {
     private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM category

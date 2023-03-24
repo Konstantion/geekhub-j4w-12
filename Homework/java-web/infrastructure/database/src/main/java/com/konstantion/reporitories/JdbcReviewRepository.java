@@ -1,21 +1,20 @@
 package com.konstantion.reporitories;
 
-import com.konstantion.reporitories.mappers.ReviewRawMapper;
+import com.konstantion.reporitories.mappers.ReviewRowMapper;
 import com.konstantion.review.Review;
 import com.konstantion.review.ReviewRepository;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
-                                   ReviewRawMapper reviewRawMapper,
+                                   ReviewRowMapper reviewRawMapper,
                                    ParameterSourceUtil parameterUtil
 ) implements ReviewRepository {
     private static final String DELETE_BY_UUID_REVIEW_QUERY = """
@@ -74,15 +73,17 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     @Override
     public Review save(Review review) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = parameterUtil
                 .toParameterSource(review);
 
         jdbcTemplate.update(
                 INSERT_REVIEW_QUERY,
-                parameterSource
+                parameterSource,
+                keyHolder
         );
 
-        return review;
+        return review.setUuid((UUID) Objects.requireNonNull(keyHolder.getKeys()).get("uuid"));
     }
 
     @Override

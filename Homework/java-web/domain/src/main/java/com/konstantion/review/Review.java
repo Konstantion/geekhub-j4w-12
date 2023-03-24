@@ -10,6 +10,10 @@ public record Review(UUID uuid, String message, Double rating, UUID userUuid, UU
         return new ReviewBuilder();
     }
 
+    public Review setUuid(UUID uuid) {
+        return new Review(uuid, message, rating, userUuid, productUuid, createdAt);
+    }
+
     public static final class ReviewBuilder {
         private UUID uuid;
         private String message;

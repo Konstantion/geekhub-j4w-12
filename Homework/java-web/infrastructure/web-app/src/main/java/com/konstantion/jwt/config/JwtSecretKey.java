@@ -12,5 +12,4 @@ public record JwtSecretKey(JwtConfig jwtConfig) {
     public SecretKey secretKey() {
         return Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes());
     }
-
 }

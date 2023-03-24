@@ -14,8 +14,8 @@ import java.util.UUID;
 import static java.util.Objects.nonNull;
 
 @Component
-public record OrderRawMapper() implements RowMapper<Order> {
-    private static final Logger logger = LoggerFactory.getLogger(OrderRawMapper.class);
+public record OrderRowMapper() implements RowMapper<Order> {
+    private static final Logger logger = LoggerFactory.getLogger(OrderRowMapper.class);
 
     @Override
     public Order mapRow(ResultSet rs, int rowNum) throws SQLException {

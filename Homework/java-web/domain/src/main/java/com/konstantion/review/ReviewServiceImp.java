@@ -34,7 +34,6 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
         }
 
         Review review = Review.builder()
-                .uuid(UUID.randomUUID())
                 .message(creationReviewDto.message())
                 .rating(creationReviewDto.rating())
                 .userUuid(user.getId())

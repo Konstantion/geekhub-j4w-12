@@ -4,8 +4,8 @@ import com.konstantion.order.Order;
 import com.konstantion.order.OrderRepository;
 import com.konstantion.order.OrderStatus;
 import com.konstantion.product.Product;
-import com.konstantion.reporitories.mappers.OrderProductsRawMapper;
-import com.konstantion.reporitories.mappers.OrderRawMapper;
+import com.konstantion.reporitories.mappers.OrderProductsRowMapper;
+import com.konstantion.reporitories.mappers.OrderRowMapper;
 import com.konstantion.utils.ParameterSourceUtil;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -22,8 +22,8 @@ import static java.util.Objects.nonNull;
 @Component
 public record JdbcOrderRepository(NamedParameterJdbcTemplate jdbcTemplate,
                                   ParameterSourceUtil parameterUtil,
-                                  OrderRawMapper orderRawMapper,
-                                  OrderProductsRawMapper orderProductsRawMapper
+                                  OrderRowMapper orderRawMapper,
+                                  OrderProductsRowMapper orderProductsRawMapper
 ) implements OrderRepository {
     private static final String INSERT_ORDER_QUERY = """
                 INSERT INTO public.order (uuid, total_price, placed_at, user_uuid, status)

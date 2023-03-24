@@ -4,5 +4,7 @@ dependencies {
     implementation libsUtils.commonsLang3
     implementation libsUtils.faker
 
+    implementation libsJwt.jjwtApi
+
     annotationProcessor libsUtils.mapstructProcessor
 }

@@ -19,7 +19,6 @@ public class User implements UserDetails {
     private String password;
     private Set<Role> roles;
     private boolean accountNonLocked = true;
-
     private boolean enabled = false;
 
     @Override
@@ -62,9 +61,6 @@ public class User implements UserDetails {
 
     public static UserBuilder builder() {
         return new UserBuilder();
-    }
-
-    public User() {
     }
 
     public static final class UserBuilder {

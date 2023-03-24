@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 @Component
-public record UserRawMapper() implements RowMapper<User>{
+public record UserRowMapper() implements RowMapper<User>{
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
