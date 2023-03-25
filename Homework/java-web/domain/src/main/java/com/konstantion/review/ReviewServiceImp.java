@@ -79,7 +79,7 @@ public record ReviewServiceImp(ReviewValidator reviewValidator,
     }
 
     @Override
-    public List<ReviewDto> getUserReviews(UUID userUuid) {
+    public List<ReviewDto> getUserReviews(UUID userUuid, User user) {
         List<Review> reviews = reviewRepository.findByUserId(userUuid);
 
         return reviewMapper.toDto(reviews);

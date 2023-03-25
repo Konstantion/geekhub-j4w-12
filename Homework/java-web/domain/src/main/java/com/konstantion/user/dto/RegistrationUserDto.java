@@ -6,6 +6,6 @@ public record RegistrationUserDto(
         String phoneNumber,
         String email,
         String password,
-        String passwordConfirmation
+        String passwordConfirm
 ) {
 }

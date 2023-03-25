@@ -85,21 +85,41 @@ const getSuccessMessage = (message) => {
     return getOverlay(success, true);
 }
 
-const getButton = (caption, onClick) => {
-    const button = document.createElement('button');
-    button.textContent = caption;
-    button.onclick = onClick;
-
-    return button;
-};
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('popstate', function (event) {
         if (event.state) {
             currentPage = event.state.page;
             buildMainContent();
         }
     });
+
+    const MAX_BUCKET_QUANTITY = '128';
+    const categoriesUrl = 'http://localhost:8080/web-api/categories';
+    const productsUrl = 'http://localhost:8080/web-api/products';
+    const reviewsUrl = 'http://localhost:8080/web-api/reviews';
+    const bucketsUrl = 'http://localhost:8080/web-api/buckets';
+    const ordersUrl = 'http://localhost:8080/web-api/orders';
+    const registrationUrl = 'http://localhost:8080/web-api/registration';
+    const usersUrl = 'http://localhost:8080/web-api/users';
+
+    const getAuthorizesUser = async () => {
+        try {
+            const options = {
+                headers: getHeaders()
+            }
+
+            const response = await fetch(`${usersUrl}/authorized`, options)
+            return await response.json();
+        } catch (e) {
+            return {};
+        }
+    }
+    let authorizedUser;
+    try{
+        authorizedUser = (await getAuthorizesUser()).data.user;
+    } catch (e) {
+        authorizedUser = {};
+    }
 
 
     let productPageState = {
@@ -109,17 +129,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let categoriesState = {
         categories: []
     }
-
-    const MAX_BUCKET_QUANTITY = '128';
-    const categoriesUrl = 'http://localhost:8080/web-api/categories';
-    const productsUrl = 'http://localhost:8080/web-api/products';
-    const reviewsUrl = 'http://localhost:8080/web-api/reviews';
-    const bucketsUrl = 'http://localhost:8080/web-api/buckets';
-    const ordersUrl = 'http://localhost:8080/web-api/orders';
-    const registrationUrl = 'http://localhost:8080/web-api/registration';
-    const getNavbar = (onProductClick, onBucketClick) => {
+    const getNavbar = (onProductClick, onBucketClick, onAdminClick, onLogoutClick) => {
         const navbar = document.createElement('nav');
         addClassesToElement(navbar, 'navbar navbar-expand-lg navbar-light bg-light');
+        navbar.setAttribute('id', 'navbar');
         const navbarHeader = document.createElement('div');
         navbarHeader.classList.add('container-fluid');
         const navbarTitle = document.createElement('a');
@@ -163,30 +176,71 @@ document.addEventListener('DOMContentLoaded', () => {
         navbarAdminLink.setAttribute('href', '#');
         navbarAdminLink.textContent = "Admin";
         navbarBodyLiAdmin.append(navbarAdminLink);
-        navbarBodyUl.append(navbarBodyLiProduct, navbarBodyLiBucket, navbarBodyLiOrder, navbarBodyLiAdmin);
+        const logOutButton = document.createElement('button');
+        addClassesToElement(logOutButton, 'btn btn-primary')
+        logOutButton.onclick = onLogoutClick;
+        logOutButton.innerText = "Log out";
+        const username = document.createElement('div');
+        addClassesToElement(username, "text-dark me-2")
+        username.innerText = authorizedUser.email ? authorizedUser.email : '';
+        navbarBodyUl.append(navbarBodyLiProduct, navbarBodyLiBucket, navbarBodyLiOrder);
+        if(authorizedUser.roles && authorizedUser.roles.includes("ADMIN")) {
+            navbarBodyUl.append(navbarBodyLiAdmin);
+        }
         navbarBody.append(navbarBodyUl);
+        if(authorizedUser) {
+            navbarBody.append(username);
+        }
+        if(localStorage.getItem(JWT)) {
+            navbarBody.append(logOutButton);
+        }
+        if(authorizedUser)
         navbarHeader.append(navbarTitle, navbarButton, navbarBody);
         navbar.append(navbarHeader);
         return navbar;
     }
+    const getDefaultNavbar = () => {
+        return getNavbar(
+            () => {
+                console.log(PAGES.PRODUCTS);
+                currentPage = PAGES.PRODUCTS;
+                buildMainContent();
+            },
+            () => {
+                console.log(PAGES.BUCKET);
+                currentPage = PAGES.BUCKET;
+                buildMainContent();
+            },
+            () => {
+                console.log("Admin")
+            },
+            () => {
+                console.log("Logged out")
+                currentPage = PAGES.LOGIN
+                localStorage.removeItem(JWT);
+                authorizedUser = {};
+                clearAndRedrawNavBar();
+                buildMainContent();
+            }
+        );
+    }
+    const clearAndRedrawNavBar = () => {
+        const navbar = document.querySelector('#navbar');
+        while (navbar.firstChild) {
+            navbar.removeChild(navbar.firstChild);
+        }
+        navbar.parentNode.removeChild(navbar);
 
+        const newNavbar = getDefaultNavbar()
+
+        rootNode.insertBefore(newNavbar, rootNode.firstChild);
+    }
     let currentPage = PAGES.PRODUCTS;
 
     const rootNode = document.querySelector("#root");
     const portalHolder = document.querySelector('#portal-holder');
 
-    const navbar = getNavbar(
-        () => {
-            console.log(PAGES.PRODUCTS);
-            currentPage = PAGES.PRODUCTS;
-            buildMainContent();
-        },
-        () => {
-            console.log(PAGES.BUCKET);
-            currentPage = PAGES.BUCKET;
-            buildMainContent();
-        }
-    );
+    const navbar = getDefaultNavbar();
 
     const mainContent = document.createElement('div');
     addClassesToElement(mainContent, 'container mt-3');
@@ -218,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             switch (currentPage) {
                 case PAGES.REGISTRATION:
-                    loadLoginPage();
+                    loadRegistrationPage();
                     break;
                 case PAGES.LOGIN:
                     loadLoginPage();
@@ -227,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadLoginPage();
                     break;
             }
-
         }
     }
     const loadProductsPage = () => {
@@ -1111,6 +1164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const loginContainer = getLoginForm();
         const loginButton = loginContainer.querySelector('#loginButton');
+        const registerButton = loginContainer.querySelector('#registerButton');
         const emailInput = loginContainer.querySelector('#email');
         const passwordInput = loginContainer.querySelector('#password');
         const invalidEmail = loginContainer.querySelector('#invalidEmail');
@@ -1122,8 +1176,16 @@ document.addEventListener('DOMContentLoaded', () => {
             login(email, password).then(response => {
                 if (response.statusCode === 200) {
                     localStorage.setItem(JWT, response.data.jwtToken);
-                    currentPage = PAGES.PRODUCTS;
-                    buildMainContent();
+                    getAuthorizesUser().then(response => {
+                        if(response.statusCode === 200) {
+                            console.log(response.data.user);
+                            authorizedUser = {...response.data.user};
+                        }
+                    }).then(() => {
+                        currentPage = PAGES.PRODUCTS;
+                        clearAndRedrawNavBar();
+                        buildMainContent();
+                    })
                 } else if (response.statusCode === 422) {
                     emailInput.classList.remove('is-invalid');
                     passwordInput.classList.remove('is-invalid');
@@ -1140,10 +1202,131 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
         }
-
+        registerButton.onclick = (e) => {
+            e.preventDefault();
+            currentPage = PAGES.REGISTRATION;
+            buildMainContent();
+        }
         mainContent.append(loginContainer);
     }
 
+    const loadRegistrationPage = () => {
+        history.pushState({page: PAGES.REGISTRATION}, null, '');
+        currentPage = PAGES.REGISTRATION;
+        const getRegistrationForm = () => {
+            const registerContainer = document.createElement('div');
+            addClassesToElement(registerContainer, 'container');
+            registerContainer.innerHTML = `
+            <h1 class="mt-3">Registration Form</h1>
+                <form>
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name:</label>
+                        <input type="text" class="form-control" id="firstName" name="first-name">
+                        <div id="invalidFirstName" class="invalid-feedback"></div>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name:</label>
+                        <input type="text" class="form-control" id="lastName" name="last-name">
+                        <div id="invalidLastName" class="invalid-feedback"></div>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number:</label>
+                        <input type="tel" class="form-control" id="phoneNumber" name="phone-number">
+                        <div id="invalidPhoneNumber" class="invalid-feedback"></div>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                        <div id="invalidEmail" class="invalid-feedback"></div>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <div id="invalidPassword" class="invalid-feedback"></div>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="passwordConfirm" class="form-label">Confirm Password:</label>
+                        <input type="password" class="form-control" id="passwordConfirm" name="password-confirm">
+                        <div id="invalidPasswordConfirm" class="invalid-feedback"></div>
+                    </div>
+                    <button id="registerButton" class="btn btn-primary">Registrate</button>
+                    <button id="loginButton" class="btn btn-primary">Log in</button>
+                </form>`;
+            return registerContainer;
+        }
+        const registerContainer = getRegistrationForm();
+        const registerButton = registerContainer.querySelector('#registerButton');
+        const loginButton = registerContainer.querySelector('#loginButton');
+        const firstNameInput = registerContainer.querySelector('#firstName');
+        const invalidFirstName = registerContainer.querySelector('#invalidFirstName');
+        const lastNameInput = registerContainer.querySelector('#lastName');
+        const invalidLastName = registerContainer.querySelector('#invalidLastName');
+        const phoneNumberInput = registerContainer.querySelector('#phoneNumber');
+        const invalidPhoneNumber = registerContainer.querySelector('#invalidPhoneNumber');
+        const emailInput = registerContainer.querySelector('#email');
+        const invalidEmail = registerContainer.querySelector('#invalidEmail');
+        const passwordInput = registerContainer.querySelector('#password');
+        const invalidPassword = registerContainer.querySelector('#invalidPassword');
+        const passwordConfirmInput = registerContainer.querySelector('#passwordConfirm');
+        const invalidPasswordConfirm = registerContainer.querySelector('#invalidPasswordConfirm');
+        registerButton.onclick = (e) => {
+            e.preventDefault();
+            register(
+                firstNameInput.value, lastNameInput.value, emailInput.value, phoneNumberInput.value, passwordInput.value, passwordConfirmInput.value
+            ).then(response => {
+                if(response.statusCode === 200) {
+                    portalHolder.append(getSuccessMessage(response.message));
+                    currentPage = PAGES.LOGIN;
+                    buildMainContent();
+                } else if (response.statusCode === 422) {
+                    removeClass(firstNameInput, 'is-invalid');
+                    removeClass(lastNameInput, 'is-invalid');
+                    removeClass(emailInput, 'is-invalid');
+                    removeClass(phoneNumberInput, 'is-invalid');
+                    removeClass(passwordInput, 'is-invalid');
+                    removeClass(passwordConfirmInput, 'is-invalid');
+                    if(response.data.firstName) {
+                        addClassesToElement(firstNameInput, 'is-invalid');
+                        invalidFirstName.innerText = response.data.firstName;
+                    }
+                    if(response.data.lastName) {
+                        addClassesToElement(lastNameInput, 'is-invalid');
+                        invalidLastName.innerText = response.data.lastName;
+                    }
+                    if(response.data.email) {
+                        addClassesToElement(emailInput, 'is-invalid');
+                        invalidEmail.innerText = response.data.email;
+                    }
+                    if(response.data.phoneNumber) {
+                        addClassesToElement(phoneNumberInput, 'is-invalid');
+                        invalidPhoneNumber.innerText = response.data.phoneNumber;
+                    }
+                    if(response.data.password) {
+                        addClassesToElement(passwordInput, 'is-invalid');
+                        invalidPassword.innerText = response.data.password;
+                    }
+                    if(response.data.passwordConfirm) {
+                        addClassesToElement(passwordConfirmInput, 'is-invalid');
+                        invalidPasswordConfirm.innerText = response.data.passwordConfirm;
+                    }
+                } else if (response.statusCode >= 400) {
+                    portalHolder.append(getErrorMessage(response.message));
+                }
+            })
+        };
+        loginButton.onclick = (e) => {
+            e.preventDefault();
+            currentPage = PAGES.LOGIN;
+            buildMainContent();
+        };
+
+        mainContent.append(registerContainer);
+    }
 
     rootNode.append(navbar);
     rootNode.append(mainContent);
@@ -1294,6 +1477,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
             };
             const response = await fetch(`${registrationUrl}/login`, requestOptions);
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    const register = async (firstName, lastName, email, phoneNumber, password, passwordConfirm) => {
+        try {
+            const raw = JSON.stringify({
+                "firstName" : firstName,
+                "lastName" : lastName,
+                "phoneNumber" : phoneNumber,
+                "email": email,
+                "password": password,
+                "passwordConfirm": passwordConfirm
+            });
+
+            const response = await fetch(`${registrationUrl}`, {
+                method: 'POST',
+                body: raw,
+                headers: {...getHeaders(), "Content-Type": "application/json"}
+            })
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    const getAuthorizesUserRoles = async () => {
+        try {
+            const options = {
+                headers: getHeaders()
+            }
+
+            const response = await fetch(`${usersUrl}/authorized/roles`, options)
             return await response.json();
         } catch (e) {
             throw e;

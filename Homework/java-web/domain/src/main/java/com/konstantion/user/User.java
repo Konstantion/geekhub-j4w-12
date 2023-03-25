@@ -29,6 +29,10 @@ public class User implements UserDetails {
                 .collect(Collectors.toSet());
     }
 
+    public boolean hasRole(Role role) {
+        return roles.contains(role);
+    }
+
     @Override
     public String getPassword() {
         return password;

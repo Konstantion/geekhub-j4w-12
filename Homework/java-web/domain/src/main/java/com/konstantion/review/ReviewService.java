@@ -16,7 +16,7 @@ public interface ReviewService {
 
     List<ReviewDto> getProductReviews(UUID productUuid);
 
-    List<ReviewDto> getUserReviews(UUID userUuid);
+    List<ReviewDto> getUserReviews(UUID userUuid, User user);
 
     Double getProductRating(UUID productUuid);
 }

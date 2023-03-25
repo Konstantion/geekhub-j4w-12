@@ -12,95 +12,27 @@
     <script defer="defer" src="index.js"></script>
 </head>
 <body>
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-6">
-            <img src="https://via.placeholder.com/400" alt="Product Image" class="img-fluid">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid"><a class="navbar-brand" href="#">Online Shop</a>
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-        <div class="col-md-6">
-            <h2 class="mb-3">Product Name</h2>
-            <p class="lead mb-4">$99.99</p>
-            <p class="mb-4">Product Description</p>
-            <p class="mb-4"><strong>Category:</strong> Electronics</p>
-            <form>
-                <div class="mb-3">
-                    <label for="quantity" class="form-label">Quantity</label>
-                    <input type="number" id="quantity" name="quantity" min="1" max="10" class="form-control" value="1">
-                </div>
-                <button type="submit" class="btn btn-primary mb-3">Add to Cart</button>
-            </form>
-            <h3>Send Review</h3>
-            <div class="row mb-3">
-                <form>
-                    <div class="form-group">
-                        <label for="comment">Leave a Comment:</label>
-                        <textarea class="form-control is-invalid" id="comment" rows="3"></textarea>
-                        <div class="invalid-feedback">
-                            Please provide a valid city.
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="rating">Rating:</label>
-                        <select class="form-control" id="rating">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
-                </form>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Bucket</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Admin</a></li>
+            </ul>
+            <div class="text-dark me-2">
+                User
             </div>
-            <button type="submit" class="btn btn-primary mb-3">Send</button>
-            <button type="submit" class="btn btn-primary mb-3">Edit</button>
+            <button class="btn-primary">Log out</button>
         </div>
-
-        <h1>Reviews</h1>
-        <ul class="list-group">
-            <li class="list-group-item">
-                <div class="d-flex justify-content-between">
-                    <h5 class="mb-1">Review Title</h5>
-                    <small>5/5</small>
-                </div>
-                <p class="mb-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae mollis libero.
-                    Sed consectetur quam et tellus sodales imperdiet. Donec fermentum dolor vel erat ultrices, nec
-                    aliquam arcu mollis. Fusce non lacinia felis.</p>
-            </li>
-
-        </ul>
     </div>
-</div>
-</div>
-<form id="productForm">
-    <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="${product.name ? product.name : ''}">
-        <div id="invalidName" class="invalid-feedback"></div>
-    </div>
-    <div class="mb-3">
-        <label for="price" class="form-label">Price</label>
-        <input type="number" class="form-control" id="price" name="price" min="0" step="0.1" value="${product.price ? product.price : ''}">
-        <div id="invalidPrice" class="invalid-feedback"></div>
-    </div>
-    <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" name="description" rows="3">${product.description ? product.description : ''}</textarea>
-        <div id="invalidDescription" class="invalid-feedback"></div>
-    </div>
-    <div class="mb-3">
-        <label for="category" class="form-label">Category</label>
-        <select class="form-select" id="category" name="category">
-            <option value="">No category specified</option>
-        </select>
-        <div id="invalidCategory" class="invalid-feedback"></div>
-    </div>
-    <div class="mb-3">
-        <label for="file" class="form-label">Image</label>
-        <input type="file" class="form-control" id="file" name="image" accept="image/*">
-    </div>
-    <div id="invalidFile" class="invalid-feedback"></div>
-    <button id="save" class="btn btn-primary">Save Product</button>
-    <button id="close" class="btn btn-primary">Close</button>
+</nav>
 </body>
 </html>

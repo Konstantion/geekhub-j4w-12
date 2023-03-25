@@ -1,14 +1,16 @@
 package com.konstantion.bucket;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-@SessionScope
 @Component
+@SessionScope
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Bucket {
 
     private final Map<UUID, Integer> products;
@@ -58,3 +60,4 @@ public class Bucket {
         return products.size();
     }
 }
+

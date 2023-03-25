@@ -1,8 +1,12 @@
 package com.konstantion.user;
 
+import com.konstantion.exceptions.BadRequestException;
+import com.konstantion.exceptions.ForbiddenException;
 import com.konstantion.exceptions.RegistrationException;
 import com.konstantion.ragistration.token.ConfirmationToken;
 import com.konstantion.ragistration.token.ConfirmationTokenService;
+import com.konstantion.user.dto.UpdateUserDto;
+import com.konstantion.user.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.konstantion.user.Role.ADMIN;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -86,12 +92,40 @@ public record UserServiceImp(
     }
 
     @Override
+    public UUID editUser(UUID uuid, UpdateUserDto updateDto, User user) {
+        return null;
+    }
+
+    @Override
+    public UUID deleteUser(UUID uuid, User user) {
+        return null;
+    }
+
+    @Override
+    public UserDto getUser(UUID uuid, User requester) {
+        if (!requester.getId().equals(uuid)
+            && !requester.hasRole(ADMIN)) {
+            throw new ForbiddenException("You don't have enough permissions to do this operation");
+        }
+
+        User user = findByIdOrThrow(uuid);
+
+        return userMapper.toDto(user);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_MSG, username)
+                                format(USER_NOT_FOUND_MSG, username)
                         )
                 );
+    }
+
+    private User findByIdOrThrow(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> {
+           throw new BadRequestException(format("User with id %s doesn't exist",id));
+        });
     }
 }

@@ -26,8 +26,8 @@ public record JdbcReviewRepository(NamedParameterJdbcTemplate jdbcTemplate,
             """;
 
     private static final String INSERT_REVIEW_QUERY = """
-            INSERT INTO review (uuid, message, rating, user_uuid, product_uuid, created_at)
-            VALUES (:uuid, :message, :rating, :userUuid, :productUuid, :createdAt);
+            INSERT INTO review (message, rating, user_uuid, product_uuid, created_at)
+            VALUES (:message, :rating, :userUuid, :productUuid, :createdAt);
             """;
 
     private static final String FIND_BY_USER_ID_QUERY = """

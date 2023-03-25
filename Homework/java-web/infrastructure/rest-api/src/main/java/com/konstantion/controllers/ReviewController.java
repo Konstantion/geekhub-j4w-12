@@ -6,6 +6,7 @@ import com.konstantion.review.dto.CreationReviewDto;
 import com.konstantion.review.dto.ReviewDto;
 import com.konstantion.user.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RestController
 @RequestMapping("/web-api/reviews")
 public record ReviewController(
-        ReviewService reviewService,
-        User user
+        ReviewService reviewService
 ) {
     @GetMapping("/products/{uuid}")
     public ResponseEntity<Response> getProductReviews(
@@ -70,23 +70,10 @@ public record ReviewController(
 
     @GetMapping("/users/{uuid}")
     public ResponseEntity<Response> getUserReview(
-            @PathVariable("uuid") UUID uuid
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
     ) {
-        List<UUID> uuids = reviewService.getUserReviews(uuid).stream()
-                .map(ReviewDto::uuid).toList();
-
-        return ResponseEntity.ok(Response.builder()
-                .timeStamp(now())
-                .statusCode(OK.value())
-                .status(OK)
-                .message("Users reviews")
-                .data(Map.of("uuids", uuids))
-                .build());
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<Response> getCurrentUserReview() {
-        List<UUID> uuids = reviewService.getUserReviews(user.getId()).stream()
+        List<UUID> uuids = reviewService.getUserReviews(uuid, user).stream()
                 .map(ReviewDto::uuid).toList();
 
         return ResponseEntity.ok(Response.builder()
@@ -100,7 +87,8 @@ public record ReviewController(
 
     @PostMapping
     public ResponseEntity<Response> createReview(
-            @RequestBody CreationReviewDto creationReviewDto
+            @RequestBody CreationReviewDto creationReviewDto,
+            @AuthenticationPrincipal User user
     ) {
         ReviewDto dto = reviewService.createReview(creationReviewDto, user);
 
@@ -115,7 +103,8 @@ public record ReviewController(
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Response> deleteReview(
-            @PathVariable("uuid") UUID uuid
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
     ) {
         ReviewDto dto = reviewService.deleteReview(uuid, user);
 
