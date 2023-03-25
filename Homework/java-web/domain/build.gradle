@@ -4,6 +4,8 @@ dependencies {
     implementation libsUtils.commonsLang3
     implementation libsUtils.faker
 
+    implementation libsSpring.springBootStarterMail
+
     implementation libsJwt.jjwtApi
 
     annotationProcessor libsUtils.mapstructProcessor

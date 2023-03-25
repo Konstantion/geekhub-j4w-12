@@ -1,5 +1,6 @@
 package com.konstantion.ragistration;
 
+import com.konstantion.email.EmailService;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.RegistrationException;
 import com.konstantion.jwt.JwtService;
@@ -33,13 +34,16 @@ public class RegistrationServiceImp implements RegistrationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    public RegistrationServiceImp(UserService userService, ConfirmationTokenService confirmationTokenService, UserValidator validator, AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository) {
+    private final EmailService emailService;
+
+    public RegistrationServiceImp(UserService userService, ConfirmationTokenService confirmationTokenService, UserValidator validator, AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository, EmailService emailService) {
         this.userService = userService;
         this.confirmationTokenService = confirmationTokenService;
         this.validator = validator;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     private static final String CONFIRMATION_API = "http://localhost:8080/web-api/registration/confirm";
@@ -69,12 +73,12 @@ public class RegistrationServiceImp implements RegistrationService {
         String link = UriComponentsBuilder.fromUriString(CONFIRMATION_API)
                 .queryParam("token", token)
                 .toUriString();
-//
-//        emailSender.send(
-//                registrationUserDto.getEmail(),
-//                util.buildEmailTwo(registrationUserDto.getFirstName(), link));
 
-        return link;
+        emailService.send(
+                registrationUserDto.email(),
+                emailService.buildRegistrationEmail(registrationUserDto.firstName(), link));
+
+        return token;
     }
 
     @Override

@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     addClassesToElement(productAddToBucket, 'btn btn-primary me-1');
                     productAddToBucket.onclick = () => {
                         try {
-                            addToBucket.bind(null, product, 1).call()
+                            addToBucket.bind(null, product, "1").call()
                             portalHolder.append(getSuccessMessage(`Product ${product.name} successfully added to the bucket`))
                         } catch (e) {
                             portalHolder.append(getErrorMessage(`${e}`))
@@ -948,7 +948,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const formButton = document.createElement('button');
                 addClassesToElement(formButton, 'btn btn-primary mb-3');
                 formButton.innerText = 'Add to bucket';
-                formButton.onclick = () => {
+                formButton.onclick = (e) => {
+                    e.preventDefault();
                     const quantity = document.querySelector('#quantity').value;
                     addToBucket(product, quantity).then(response => {
                         if (response.statusCode === 200) {

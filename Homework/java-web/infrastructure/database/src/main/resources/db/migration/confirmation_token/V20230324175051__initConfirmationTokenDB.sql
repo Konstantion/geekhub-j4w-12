@@ -11,5 +11,5 @@ create table confirmation_token
     confirmed_at timestamptz,
     user_uuid     uuid        not null
         constraint confirmation_token_user_uuid_fk
-            references "user"
+            references "user" on delete cascade
 );

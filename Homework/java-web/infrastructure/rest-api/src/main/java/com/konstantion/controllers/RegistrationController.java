@@ -8,9 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static java.util.Map.of;
 
@@ -28,24 +28,16 @@ public record RegistrationController(
                 Response.builder()
                         .status(HttpStatus.OK)
                         .statusCode(HttpStatus.OK.value())
-                        .message("Confirmation token sent to your email")
+                        .message("Confirmation token will be send to your email in 1 min, if you don't get it please try again!")
                         .timeStamp(LocalDateTime.now())
-                        .data(Map.of("token", token))
                         .build()
         );
     }
 
     @GetMapping("confirm")
-    public ResponseEntity<Response> confirm(@RequestParam("token") String token) {
+    public RedirectView confirm(@RequestParam("token") String token) {
         registrationService.confirmToken(token);
-        return ResponseEntity.ok(
-                Response.builder()
-                        .status(HttpStatus.OK)
-                        .statusCode(HttpStatus.OK.value())
-                        .message("Token successfully confirmed")
-                        .timeStamp(LocalDateTime.now())
-                        .build()
-        );
+        return new RedirectView("/");
     }
 
     @PostMapping("login")
