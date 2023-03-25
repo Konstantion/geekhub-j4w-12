@@ -1,6 +1,5 @@
 package com.konstantion.jwt;
 
-import com.konstantion.jwt.JwtService;
 import com.konstantion.jwt.config.JwtConfig;
 import com.konstantion.jwt.config.JwtSecretKey;
 import io.jsonwebtoken.Claims;

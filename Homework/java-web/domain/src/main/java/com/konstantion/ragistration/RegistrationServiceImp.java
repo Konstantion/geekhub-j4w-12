@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Component
 public class RegistrationServiceImp implements RegistrationService {
@@ -88,7 +88,7 @@ public class RegistrationServiceImp implements RegistrationService {
                 new BadRequestException(format("User with id %s doesn't exist ", confirmationToken.userId()))
         );
 
-        if (isNull(confirmationToken.confirmedAt())) {
+        if (nonNull(confirmationToken.confirmedAt())) {
             throw new RegistrationException("Token is already confirmed");
         }
 
@@ -106,6 +106,11 @@ public class RegistrationServiceImp implements RegistrationService {
 
     @Override
     public String authenticate(LoginUserDto loginUserDto) {
+        ValidationResult validationResult = validator
+                .validate(loginUserDto);
+
+        ValidationResult.validOrThrow(validationResult);
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginUserDto.email(),

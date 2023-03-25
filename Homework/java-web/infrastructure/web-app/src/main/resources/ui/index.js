@@ -1,9 +1,21 @@
 const PAGES = {
     PRODUCTS: 'PRODUCTS',
     PRODUCT: 'PRODUCT',
-    BUCKET: 'BUCKET'
+    BUCKET: 'BUCKET',
+    REGISTRATION: 'REGISTRATION',
+    LOGIN: 'LOGIN'
 }
+const JWT = 'jwt';
 
+function getHeaders() {
+    const jwt = localStorage.getItem(JWT);
+    if (jwt) {
+        return {
+            Authorization: `Bearer ${jwt}`
+        }
+    }
+    return {};
+}
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
@@ -89,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
     let productPageState = {
         'productUuid': ''
     };
@@ -103,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewsUrl = 'http://localhost:8080/web-api/reviews';
     const bucketsUrl = 'http://localhost:8080/web-api/buckets';
     const ordersUrl = 'http://localhost:8080/web-api/orders';
+    const registrationUrl = 'http://localhost:8080/web-api/registration';
     const getNavbar = (onProductClick, onBucketClick) => {
         const navbar = document.createElement('nav');
         addClassesToElement(navbar, 'navbar navbar-expand-lg navbar-light bg-light');
@@ -182,22 +196,38 @@ document.addEventListener('DOMContentLoaded', () => {
             mainContent.removeChild(mainContent.lastChild);
         }
 
-        switch (currentPage) {
-            case PAGES.PRODUCTS:
-                loadProductsPage();
-                break;
 
-            case PAGES.BUCKET:
-                loadBucketPage();
-                break;
-
-            case PAGES.PRODUCT:
-                if (productPageState.productUuid) {
-                    loadProductPage(productPageState.productUuid);
-                } else {
+        if (localStorage.getItem(JWT)) {
+            switch (currentPage) {
+                case PAGES.PRODUCTS:
                     loadProductsPage();
-                }
-                break;
+                    break;
+
+                case PAGES.BUCKET:
+                    loadBucketPage();
+                    break;
+
+                case PAGES.PRODUCT:
+                    if (productPageState.productUuid) {
+                        loadProductPage(productPageState.productUuid);
+                    } else {
+                        loadProductsPage();
+                    }
+                    break;
+            }
+        } else {
+            switch (currentPage) {
+                case PAGES.REGISTRATION:
+                    loadLoginPage();
+                    break;
+                case PAGES.LOGIN:
+                    loadLoginPage();
+                    break;
+                default:
+                    loadLoginPage();
+                    break;
+            }
+
         }
     }
     const loadProductsPage = () => {
@@ -223,7 +253,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const loadCategories = async () => {
             try {
                 const fetchedCategories = [];
-                const categoriesResponse = await fetch(categoriesUrl);
+                const categoriesResponse = await fetch(categoriesUrl, {
+                    headers: getHeaders()
+                });
                 const data = (await categoriesResponse.json()).data;
                 for (const uuid of data.uuids) {
                     const category = await loadCategoryById(uuid)
@@ -240,7 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             try {
-                const categoryResponse = await fetch(`${categoriesUrl}/${uuid}`);
+                const categoryResponse = await fetch(`${categoriesUrl}/${uuid}`, {
+                    headers: getHeaders()
+                });
                 return (await categoryResponse.json()).data.category;
             } catch (e) {
                 console.error(e);
@@ -251,7 +285,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             try {
-                const reviewResponse = await fetch(`${reviewsUrl}/products/${uuid}/rating`);
+                const reviewResponse = await fetch(`${reviewsUrl}/products/${uuid}/rating`, {
+                    headers: getHeaders()
+                });
                 return (await reviewResponse.json()).data.rating;
             } catch (e) {
                 console.error(e);
@@ -262,7 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const params = getProductsRequestParameters();
                 const paramsString = new URLSearchParams(params);
                 console.log(`request : ${productsUrl}?${paramsString}`);
-                const productsResponse = await fetch(`${productsUrl}?${paramsString}`);
+                const productsResponse = await fetch(`${productsUrl}?${paramsString}`, {
+                    headers: getHeaders()
+                });
                 const page = (await productsResponse.json()).data.page;
                 productsState = {
                     ...productsState,
@@ -580,8 +618,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
         }
-
-
         const moreInfo = (product) => {
             productPageState['productUuid'] = product['uuid'];
             currentPage = PAGES.PRODUCT;
@@ -612,7 +648,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const loadBucketProducts = async () => {
             try {
                 console.log(`${bucketsUrl}/products`);
-                const response = await fetch(`${bucketsUrl}/products`)
+                const response = await fetch(`${bucketsUrl}/products`, {
+                    headers: getHeaders()
+                })
                 const data = (await response.json()).data;
                 for (const uuid of data.uuids) {
                     bucketState.bucketProducts[uuid] = await getProductQuantityById(uuid);
@@ -626,7 +664,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const getProductQuantityById = async (uuid) => {
             try {
                 console.log(`${bucketsUrl}/products/${uuid}/quantity`);
-                const response = await fetch(`${bucketsUrl}/products/${uuid}/quantity`);
+                const response = await fetch(`${bucketsUrl}/products/${uuid}/quantity`, {
+                    headers: getHeaders()
+                });
                 const data = (await response.json()).data;
                 return data.quantity;
             } catch (e) {
@@ -678,7 +718,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isEmpty(bucketState.bucketProducts)) {
                 createButton.onclick = () => {
                     fetch(`${ordersUrl}`, {
-                        method: 'POST'
+                        method: 'POST',
+                        headers: getHeaders()
                     }).then(() => {
                         buildMainContent()
                         portalHolder.append(getSuccessMessage('Order was successfully created'));
@@ -748,7 +789,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const onChangeQuantity = (product, quantityField, subTotalField) => {
             const quantity = quantityField.value;
             const response = fetch(`${bucketsUrl}/products/${product.uuid}/quantity?quantity=${quantity}`, {
-                method: 'PUT'
+                method: 'PUT',
+                headers: getHeaders()
             }).then(response => {
                 return response.json();
             }).then(response => {
@@ -778,7 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             console.log(`${bucketsUrl}/products/remove?${params}`);
             fetch(`${bucketsUrl}/products/remove?${params}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: getHeaders()
             }).then(() => {
                 buildMainContent();
             }).catch(console.error);
@@ -1039,11 +1082,72 @@ document.addEventListener('DOMContentLoaded', () => {
             mainContent.append(view);
         })
     }
+    const loadLoginPage = () => {
+        history.pushState({page: PAGES.LOGIN}, null, '');
+        currentPage = PAGES.LOGIN;
+        const getLoginForm = () => {
+            const container = document.createElement('div');
+            addClassesToElement(container, 'container');
+            container.innerHTML = ` 
+             <h1 class="mt-5">Login Form</h1>
+                  <form>
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email:</label>
+                      <input type="text" class="form-control" id="email" name="email">
+                       <div id="invalidEmail" class="invalid-feedback"></div>
+                    </div>
+            
+                    <div class="mb-3">
+                      <label for="password" class="form-label">Password:</label>
+                      <input type="password" class="form-control" id="password" name="password">
+                       <div id="invalidPassword" class="invalid-feedback"></div>
+                    </div>
+            
+                    <button id="loginButton"  class="btn btn-primary">Log in</button>
+                    <button id="registerButton" class="btn btn-primary">Register</button>
+                  </form>`
+            return container;
+        }
 
-    loadProductsPage();
+        const loginContainer = getLoginForm();
+        const loginButton = loginContainer.querySelector('#loginButton');
+        const emailInput = loginContainer.querySelector('#email');
+        const passwordInput = loginContainer.querySelector('#password');
+        const invalidEmail = loginContainer.querySelector('#invalidEmail');
+        const invalidPassword = loginContainer.querySelector('#invalidPassword');
+        loginButton.onclick = (e) => {
+            e.preventDefault();
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            login(email, password).then(response => {
+                if (response.statusCode === 200) {
+                    localStorage.setItem(JWT, response.data.jwtToken);
+                    currentPage = PAGES.PRODUCTS;
+                    buildMainContent();
+                } else if (response.statusCode === 422) {
+                    emailInput.classList.remove('is-invalid');
+                    passwordInput.classList.remove('is-invalid');
+                    if (response.data.email) {
+                        emailInput.classList.add('is-invalid');
+                        invalidEmail.innerText = response.data.email;
+                    }
+                    if (response.data.password) {
+                        passwordInput.classList.add('is-invalid');
+                        invalidPassword.innerText = response.data.password;
+                    }
+                } else if (response.statusCode >= 400) {
+                    portalHolder.append(getErrorMessage(response.message));
+                }
+            })
+        }
+
+        mainContent.append(loginContainer);
+    }
+
 
     rootNode.append(navbar);
     rootNode.append(mainContent);
+    buildMainContent();
 
     const loadProductReviews = async (reviewsId) => {
         const reviews = [];
@@ -1063,6 +1167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 body: JSON.stringify(requestBody),
                 headers: {
+                    ...getHeaders(),
                     'Content-Type': 'application/json'
                 }
             })
@@ -1072,21 +1177,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     const loadProductById = async (uuid) => {
-        const response = await fetch(`${productsUrl}/${uuid}`);
+        const response = await fetch(`${productsUrl}/${uuid}`, {
+            headers: getHeaders()
+        });
         return (await response.json()).data.product;
     }
     const loadReviewsIdByProductId = async (uuid) => {
-        const response = await fetch(`${reviewsUrl}/products/${uuid}`);
+        const response = await fetch(`${reviewsUrl}/products/${uuid}`, {
+            headers: getHeaders()
+        });
         return (await response.json()).data.uuids;
     }
     const loadReviewById = async (uuid) => {
-        const response = await fetch(`${reviewsUrl}/${uuid}`);
+        const response = await fetch(`${reviewsUrl}/${uuid}`, {
+            headers: getHeaders()
+        });
         const data = (await response.json()).data;
         console.log(data);
         return data.review;
     }
     const loadCategoryById = async (uuid) => {
-        const response = await fetch(`${categoriesUrl}/${uuid}`);
+        const response = await fetch(`${categoriesUrl}/${uuid}`, {
+            headers: getHeaders()
+        });
         return (await response.json()).data.category;
     }
     const addToBucket = async (product, quantity) => {
@@ -1098,7 +1211,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`${bucketsUrl}/products/add?${params}`);
             const response = await fetch(`${bucketsUrl}/products/add?${params}`,
                 {
-                    method: 'PUT'
+                    method: 'PUT',
+                    headers: getHeaders()
                 });
             return await response.json();
         } catch (e) {
@@ -1148,16 +1262,38 @@ document.addEventListener('DOMContentLoaded', () => {
             formdata.append("price", valueOrEmpty(productDto.price));
             formdata.append("description", valueOrEmpty(productDto.description));
             formdata.append("categoryUuid", valueOrEmpty(productDto.category));
-            if(fileInput.files[0]) {
+            if (fileInput.files[0]) {
                 formdata.append("file", fileInput.files[0]);
             }
 
-            var requestOptions = {
+            const requestOptions = {
                 method: 'PUT',
-                body: formdata
+                body: formdata,
+                headers: getHeaders()
             };
 
             const response = await fetch(`${productsUrl}/${uuid}`, requestOptions);
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    const login = async (email, password) => {
+        try {
+            const raw = JSON.stringify({
+                "email": email,
+                "password": password
+            });
+
+            const requestOptions = {
+                method: 'POST',
+                headers: {...getHeaders(), "Content-Type": "application/json"},
+                body: raw,
+                redirect: 'follow',
+
+            };
+            const response = await fetch(`${registrationUrl}/login`, requestOptions);
             return await response.json();
         } catch (e) {
             throw e;

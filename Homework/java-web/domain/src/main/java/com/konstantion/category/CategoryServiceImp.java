@@ -6,6 +6,7 @@ import com.konstantion.category.dto.UpdateCategoryDto;
 import com.konstantion.category.validator.CategoryValidator;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.ValidationException;
+import com.konstantion.user.User;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public record CategoryServiceImp(
     }
 
     @Override
-    public CategoryDto createCategory(CreationCategoryDto creationDto) {
+    public CategoryDto createCategory(CreationCategoryDto creationDto, User user) {
         ValidationResult validationResult = categoryValidator.validate(creationDto);
         if (validationResult.errorsPresent()) {
             throw new ValidationException("Failed to create category, given data is invalid",
@@ -51,7 +52,7 @@ public record CategoryServiceImp(
     }
 
     @Override
-    public CategoryDto updateCategory(UUID categoryId, UpdateCategoryDto updateDto) {
+    public CategoryDto updateCategory(UUID categoryId, UpdateCategoryDto updateDto, User user) {
         Category category = getCategoryByIdOrThrow(categoryId);
 
         ValidationResult validationResult = categoryValidator.validate(updateDto);
@@ -69,7 +70,7 @@ public record CategoryServiceImp(
     }
 
     @Override
-    public CategoryDto deleteCategory(UUID categoryId) {
+    public CategoryDto deleteCategory(UUID categoryId, User user) {
         Category category = getCategoryByIdOrThrow(categoryId);
         categoryRepository.delete(category);
 

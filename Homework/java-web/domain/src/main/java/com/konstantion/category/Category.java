@@ -3,7 +3,12 @@ package com.konstantion.category;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record Category(UUID uuid, String name, LocalDateTime createdAt, UUID userUuid) {
+public record Category(
+        UUID uuid,
+        String name,
+        LocalDateTime createdAt,
+        UUID userUuid
+) {
 
     public static CategoryBuilder builder() {
         return new CategoryBuilder();

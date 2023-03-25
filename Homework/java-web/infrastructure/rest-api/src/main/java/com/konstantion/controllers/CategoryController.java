@@ -5,7 +5,9 @@ import com.konstantion.category.dto.CategoryDto;
 import com.konstantion.category.dto.CreationCategoryDto;
 import com.konstantion.category.dto.UpdateCategoryDto;
 import com.konstantion.response.Response;
+import com.konstantion.user.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,9 +55,10 @@ public record CategoryController(
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Response> createCategory(
-            @ModelAttribute CreationCategoryDto creationDto
+            @ModelAttribute CreationCategoryDto creationDto,
+            @AuthenticationPrincipal User user
             ) {
-        CategoryDto dto = categoryService.createCategory(creationDto);
+        CategoryDto dto = categoryService.createCategory(creationDto, user);
 
         return ResponseEntity.ok(Response.builder()
                 .timeStamp(now())
@@ -69,9 +72,10 @@ public record CategoryController(
     @PutMapping(path = "/{uuid}", consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Response> updateCategory(
             @PathVariable("uuid") UUID uuid,
-            @ModelAttribute UpdateCategoryDto updateDto
+            @ModelAttribute UpdateCategoryDto updateDto,
+            @AuthenticationPrincipal User user
             ) {
-        CategoryDto dto = categoryService.updateCategory(uuid, updateDto);
+        CategoryDto dto = categoryService.updateCategory(uuid, updateDto, user);
 
         return ResponseEntity.ok(Response.builder()
                 .timeStamp(now())
@@ -84,9 +88,10 @@ public record CategoryController(
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Response> deleteCategory(
-            @PathVariable("uuid") UUID uuid
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
     ) {
-        CategoryDto dto = categoryService.deleteCategory(uuid);
+        CategoryDto dto = categoryService.deleteCategory(uuid, user);
 
         return ResponseEntity.ok(Response.builder()
                 .timeStamp(now())
