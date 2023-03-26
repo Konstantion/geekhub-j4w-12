@@ -12,27 +12,34 @@
     <script defer="defer" src="index.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid"><a class="navbar-brand" href="#">Online Shop</a>
-        <div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Bucket</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Admin</a></li>
-            </ul>
-            <div class="text-dark me-2">
-                User
-            </div>
-            <button class="btn-primary">Log out</button>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Order Details</h1>
+            <p><strong>Creation Date:</strong> INSERT CREATION DATE HERE</p>
+            <p><strong>Total Price:</strong> INSERT TOTAL PRICE HERE</p>
+            <p><strong>Status:</strong> INSERT STATUS HERE</p>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- BEGIN PRODUCTS MAP -->
+                <!-- LOOP THROUGH EACH PRODUCT -->
+                <tr>
+                    <td>INSERT PRODUCT NAME HERE</td>
+                    <td>INSERT PRODUCT QUANTITY HERE</td>
+                    <td>INSERT PRODUCT PRICE HERE</td>
+                </tr>
+                <!-- END PRODUCTS MAP -->
+                </tbody>
+            </table>
         </div>
     </div>
-</nav>
+</div>
 </body>
 </html>

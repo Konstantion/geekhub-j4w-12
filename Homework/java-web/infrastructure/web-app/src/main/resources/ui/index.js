@@ -6,7 +6,10 @@ const PAGES = {
     LOGIN: 'LOGIN'
 }
 const JWT = 'jwt';
-
+const ROLES = {
+    USER : "USER",
+    ADMIN : "ADMIN"
+}
 function getHeaders() {
     const jwt = localStorage.getItem(JWT);
     if (jwt) {
@@ -835,7 +838,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             removeButton.onclick = onRemove.bind(null, product, quantityInput);
             quantityInput.onchange = onQuantityChange.bind(null, product, quantityInput, productSubtotal);
-
+            quantityInput.onblur = e => {
+                if(quantityInput.value > quantityInput.max) {
+                    quantityInput.value = quantityInput.max;
+                }
+            }
             return productRow;
         };
 
@@ -947,6 +954,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 bucketInput.setAttribute('value', '1');
                 const formButton = document.createElement('button');
                 addClassesToElement(formButton, 'btn btn-primary mb-3');
+                bucketInput.onblur = e => {
+                    if(bucketInput.value > bucketInput.max) {
+                        bucketInput.value = bucketInput.max;
+                    }
+                }
                 formButton.innerText = 'Add to bucket';
                 formButton.onclick = (e) => {
                     e.preventDefault();
@@ -1111,7 +1123,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 reviewForm.append(formComment, formRating);
                 formDiv.append(reviewForm);
-                productCol.append(productName, productPrice, productDescription, productCategory, bucketForm, sendReviewTitle, formDiv, sendButton, editButton);
+                productCol.append(productName, productPrice, productDescription, productCategory, bucketForm, sendReviewTitle, formDiv, sendButton);
+                if(authorizedUser.roles.includes(ROLES.ADMIN)) {
+                    productCol.append(editButton);
+                }
                 productRow.append(imageCol, productCol, reviewTitle, reviewList);
 
                 return productRow;
