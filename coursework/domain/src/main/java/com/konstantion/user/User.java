@@ -25,12 +25,7 @@ import static java.util.stream.Collectors.toSet;
 @Getter
 @Setter
 
-@Entity
-@Table(name = "user", schema = "public")
 public class User implements UserDetails {
-    @Id
-    @GeneratedValue
-    @UuidGenerator
     private UUID id;
     private String firstName;
     private String lastName;
@@ -39,17 +34,8 @@ public class User implements UserDetails {
     private Integer age;
     private String password;
     private Boolean active;
-
     private LocalDateTime createdAt;
-
-    @ElementCollection
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), foreignKey = @ForeignKey(name = "user_role_fk"))
-    @Enumerated(EnumType.STRING)
     private Set<Role> roles;
-
-    @ElementCollection
-    @CollectionTable(name = "user_permission", joinColumns = @JoinColumn(name = "user_id"), foreignKey = @ForeignKey(name = "user_permission_fk"))
-    @Enumerated(EnumType.STRING)
     private Set<Permission> permissions;
 
     public User() {
@@ -90,12 +76,12 @@ public class User implements UserDetails {
         return !hasPermission(role, permission);
     }
 
-    public boolean hasPermission(Permission permission) {
-        return hasPermission(null, permission);
+    public boolean hasNoPermission(Permission permission) {
+        return !hasPermission(null, permission);
     }
 
-    public boolean hasPermission(Role role) {
-        return hasPermission(role, null);
+    public boolean hasNoPermission(Role role) {
+        return !hasPermission(role, null);
     }
 
     @Override

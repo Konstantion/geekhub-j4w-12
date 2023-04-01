@@ -15,10 +15,32 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1>Order Details</h1>
-            <p><strong>Creation Date:</strong> INSERT CREATION DATE HERE</p>
-            <p><strong>Total Price:</strong> INSERT TOTAL PRICE HERE</p>
-            <p><strong>Status:</strong> INSERT STATUS HERE</p>
+            <h1 class="mb-4">Order Details</h1>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p class="fw-bold mb-0">Customer:</p>
+                    <p class="mb-0">INSERT CUSTOMER NAME HERE</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="fw-bold mb-0">Creation Date:</p>
+                    <p class="mb-0">INSERT CREATION DATE HERE</p>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p class="fw-bold mb-0">Total Price:</p>
+                    <p class="mb-0">INSERT TOTAL PRICE HERE</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="fw-bold mb-0">Status:</p>
+                    <span class="badge bg-primary">INSERT STATUS HERE</span>
+                </div>
+            </div>
+            <div class="mb-4">
+                <button class="btn btn-primary me-2">Pay</button>
+                <button class="btn btn-secondary me-2">Cancel</button>
+                <button class="btn btn-danger">Delete</button>
+            </div>
             <table class="table">
                 <thead>
                 <tr>
@@ -28,14 +50,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <!-- BEGIN PRODUCTS MAP -->
-                <!-- LOOP THROUGH EACH PRODUCT -->
+
                 <tr>
                     <td>INSERT PRODUCT NAME HERE</td>
                     <td>INSERT PRODUCT QUANTITY HERE</td>
                     <td>INSERT PRODUCT PRICE HERE</td>
                 </tr>
-                <!-- END PRODUCTS MAP -->
+
                 </tbody>
             </table>
         </div>

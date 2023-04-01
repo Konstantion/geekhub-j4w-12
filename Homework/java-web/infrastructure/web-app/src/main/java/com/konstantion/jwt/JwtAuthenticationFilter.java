@@ -1,6 +1,5 @@
 package com.konstantion.jwt;
 
-import com.konstantion.bucket.Bucket;
 import com.konstantion.jwt.config.JwtConfig;
 import com.konstantion.user.UserService;
 import jakarta.servlet.FilterChain;

@@ -8,7 +8,5 @@ import java.util.UUID;
 public interface UserService {
     UserDto getUserById(UUID uuid);
 
-    User saveTableUser(User user);
-
-    UserDto createUser(CreationUserDto user);
+    UserDto createWaiter(CreationUserDto cudto, User user);
 }

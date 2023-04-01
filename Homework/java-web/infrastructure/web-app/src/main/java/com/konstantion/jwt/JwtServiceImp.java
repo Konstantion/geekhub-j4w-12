@@ -43,7 +43,6 @@ public record JwtServiceImp(
                 .setExpiration(new Date(System.currentTimeMillis() + Duration.ofDays(jwtConfig.getTokenExpirationAfterDays()).toMillis()))
                 .signWith(secretKey.secretKey(), SignatureAlgorithm.HS256)
                 .compact();
-
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

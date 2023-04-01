@@ -10,7 +10,4 @@ public record CreationTableDto(
         String password,
         String username
 ) {
-    public CreationTableDto setHallUuid(UUID hallUuid) {
-        return new CreationTableDto(name, capacity, tableType, hallUuid, password, username);
-    }
 }

@@ -1,5 +1,6 @@
 package com.konstantion.utils.validator;
 
+import com.konstantion.exception.ValidationException;
 import org.springframework.validation.FieldError;
 
 import java.util.*;
@@ -34,5 +35,21 @@ public record ValidationResult(Set<FieldError> errors, boolean errorsPresent) {
                         )
                 )
         );
+    }
+
+    public static void validOrThrow(ValidationResult validationResult, String message) {
+        if (validationResult.errorsPresent()) {
+            throw new ValidationException(message,
+                    validationResult.errorsMap()
+            );
+        }
+    }
+
+    public static void validOrThrow(ValidationResult validationResult) {
+        validOrThrow(validationResult, "Process failed, given data is invalid");
+    }
+
+    public void validOrTrow() {
+        validOrThrow(this);
     }
 }

@@ -5,7 +5,9 @@ import com.konstantion.order.OrderService;
 import com.konstantion.order.dto.OrderDto;
 import com.konstantion.response.Response;
 import com.konstantion.user.User;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,10 +21,11 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/web-api/orders")
 public record OrderController(OrderService orderService,
-                              Bucket bucket,
-                              User user) {
+                              Bucket bucket) {
     @PostMapping
-    public ResponseEntity<Response> createOrder() {
+    public ResponseEntity<Response> createOrder(
+            @AuthenticationPrincipal User user
+    ) {
         OrderDto dto = orderService.createOrder(user, bucket);
         return ResponseEntity.ok(Response.builder()
                 .status(OK)
@@ -62,9 +65,9 @@ public record OrderController(OrderService orderService,
                 .build());
     }
 
-    @GetMapping()
+    @GetMapping("users/authorized")
     public ResponseEntity<Response> getOrders(
-
+        @AuthenticationPrincipal User user
     ) {
         List<OrderDto> dto = orderService.findOrdersByUserId(user.getId());
         return ResponseEntity.ok(Response.builder()

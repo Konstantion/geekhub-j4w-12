@@ -3,13 +3,17 @@ const PAGES = {
     PRODUCT: 'PRODUCT',
     BUCKET: 'BUCKET',
     REGISTRATION: 'REGISTRATION',
-    LOGIN: 'LOGIN'
+    LOGIN: 'LOGIN',
+    ORDERS: 'ORDERS',
+    ORDER: 'ORDER',
+    PROFILE: 'PROFILE'
 }
 const JWT = 'jwt';
 const ROLES = {
-    USER : "USER",
-    ADMIN : "ADMIN"
+    USER: "USER",
+    ADMIN: "ADMIN"
 }
+
 function getHeaders() {
     const jwt = localStorage.getItem(JWT);
     if (jwt) {
@@ -30,6 +34,17 @@ const hidePortals = () => {
     while (portalHolder.firstChild) {
         portalHolder.removeChild(portalHolder.lastChild);
     }
+}
+
+const getSpinner = () => {
+    const spinner = document.createElement('div');
+    addClassesToElement(spinner, 'd-flex justify-content-center align-items-center');
+    spinner.style.height = '50vh';
+    spinner.innerHTML = `
+            <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>`;
+    return spinner;
 }
 
 const getOverlay = (children, closeOnClick) => {
@@ -118,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     let authorizedUser;
-    try{
+    try {
         authorizedUser = (await getAuthorizesUser()).data.user;
     } catch (e) {
         authorizedUser = {};
@@ -129,10 +144,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         'productUuid': ''
     };
 
+    let orderPageState = {
+        'orderUuid': ''
+    };
+
     let categoriesState = {
         categories: []
     }
-    const getNavbar = (onProductClick, onBucketClick, onAdminClick, onLogoutClick) => {
+    const getNavbar = (onProductClick, onBucketClick, onOrderClick, onAdminClick, onLogoutClick) => {
         const navbar = document.createElement('nav');
         addClassesToElement(navbar, 'navbar navbar-expand-lg navbar-light bg-light');
         navbar.setAttribute('id', 'navbar');
@@ -171,6 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         navbarOrderLink.classList.add('nav-link');
         navbarOrderLink.setAttribute('href', '#');
         navbarOrderLink.textContent = "Orders";
+        navbarOrderLink.onclick = onOrderClick;
         navbarBodyLiOrder.append(navbarOrderLink);
         const navbarBodyLiAdmin = document.createElement('li');
         addClassesToElement(navbarBodyLiAdmin, 'nav-item');
@@ -187,18 +207,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         addClassesToElement(username, "text-dark me-2")
         username.innerText = authorizedUser.email ? authorizedUser.email : '';
         navbarBodyUl.append(navbarBodyLiProduct, navbarBodyLiBucket, navbarBodyLiOrder);
-        if(authorizedUser.roles && authorizedUser.roles.includes("ADMIN")) {
+        if (authorizedUser.roles && authorizedUser.roles.includes("ADMIN")) {
             navbarBodyUl.append(navbarBodyLiAdmin);
         }
         navbarBody.append(navbarBodyUl);
-        if(authorizedUser) {
+        if (authorizedUser) {
             navbarBody.append(username);
         }
-        if(localStorage.getItem(JWT)) {
+        if (localStorage.getItem(JWT)) {
             navbarBody.append(logOutButton);
         }
-        if(authorizedUser)
-        navbarHeader.append(navbarTitle, navbarButton, navbarBody);
+        if (authorizedUser)
+            navbarHeader.append(navbarTitle, navbarButton, navbarBody);
         navbar.append(navbarHeader);
         return navbar;
     }
@@ -212,6 +232,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             () => {
                 console.log(PAGES.BUCKET);
                 currentPage = PAGES.BUCKET;
+                buildMainContent();
+            }, () => {
+                console.log(PAGES.ORDERS);
+                currentPage = PAGES.ORDERS;
                 buildMainContent();
             },
             () => {
@@ -248,11 +272,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mainContent = document.createElement('div');
     addClassesToElement(mainContent, 'container mt-3');
 
-    const buildMainContent = () => {
+    const clearMainContent = () => {
         while (mainContent.firstChild) {
             mainContent.removeChild(mainContent.lastChild);
         }
-
+    }
+    const buildMainContent = () => {
+        clearMainContent();
 
         if (localStorage.getItem(JWT)) {
             switch (currentPage) {
@@ -269,6 +295,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                         loadProductPage(productPageState.productUuid);
                     } else {
                         loadProductsPage();
+                    }
+                    break;
+                case PAGES.ORDERS:
+                    loadOrdersPage();
+                    break;
+                case PAGES.ORDER:
+                    if (orderPageState.orderUuid) {
+                        loadOrderPage(orderPageState.orderUuid);
+                    } else {
+                        loadOrdersPage();
                     }
                     break;
             }
@@ -369,11 +405,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.error(error);
             }
         }
-
+        productsCol.append(getSpinner());
+        mainContent.append(contentRow);
         loadCategories().then()
             .then(() => contentRow.append(getSearchCol()))
-            .then(() => loadProducts())
             .then(() => contentRow.append(productsCol))
+            .then(() => loadProducts())
             .then(() => drawProducts(
                 (product, quantity) => addToBucket(product, quantity),
                 (product) => moreInfo(product)
@@ -384,8 +421,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             })
             .then(() => console.log(productsState));
-
-        mainContent.append(contentRow);
 
         const getSearchCol = () => {
             let searchInputTimeout;
@@ -654,14 +689,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             pageNav.append(pagination);
             productsColl.append(pageNav);
         }
-        const getProductCategoryName = (product) => {
-            if (!product.categoryUuid) {
-                return 'No category';
-            }
-            const url = `http://localhost:8080/web-api/category/${product.categoryUuid}`;
 
-        }
         const loadAndRedrawProducts = () => {
+            while (productsCol.firstChild) {
+                productsCol.removeChild(productsCol.lastChild);
+            }
+            productsCol.append(getSpinner());
             loadProducts()
                 .then(() => drawProducts(
                     addToBucket,
@@ -710,13 +743,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = (await response.json()).data;
                 for (const uuid of data.uuids) {
                     bucketState.bucketProducts[uuid] = await getProductQuantityById(uuid);
-                    productsState.products.push(await loadProductById(uuid));
+                    productsState.products.push((await loadProductById(uuid)).data.product);
                 }
             } catch (e) {
                 console.error(e);
             }
         }
-
         const getProductQuantityById = async (uuid) => {
             try {
                 console.log(`${bucketsUrl}/products/${uuid}/quantity`);
@@ -730,11 +762,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
         }
-
+        mainContent.append(getSpinner());
         loadBucketProducts().then(() => getProductsTable(
             onChangeQuantity,
             onRemove
-        )).then(table => mainContent.append(table));
+        )).then(table => {
+            clearMainContent();
+            mainContent.append(table)
+        });
 
         const getProductsTable = (onQuantityChange, onRemove) => {
             const productsTable = document.createElement('table');
@@ -838,15 +873,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             removeButton.onclick = onRemove.bind(null, product, quantityInput);
             quantityInput.onchange = onQuantityChange.bind(null, product, quantityInput, productSubtotal);
-            quantityInput.onblur = e => {
-                if(quantityInput.value > quantityInput.max) {
-                    quantityInput.value = quantityInput.max;
-                }
-            }
+
             return productRow;
         };
 
         const onChangeQuantity = (product, quantityField, subTotalField) => {
+            quantityField.value = parseInt(quantityField.value) > parseInt(quantityField.max) ? quantityField.max : quantityField.value;
+            quantityField.value = parseInt(quantityField.value) < parseInt(quantityField.min) ? quantityField.min : quantityField.value;
             const quantity = quantityField.value;
             const response = fetch(`${bucketsUrl}/products/${product.uuid}/quantity?quantity=${quantity}`, {
                 method: 'PUT',
@@ -893,8 +926,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             let product;
             let reviews = [];
             let category;
-            return loadProductById(uuid).then(data => {
-                product = data;
+            return loadProductById(uuid).then(response => {
+                product = response.data.product;
                 return product
             }).then(product => {
                 return loadReviewsIdByProductId(product.uuid);
@@ -907,7 +940,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reviews = loadedReviews;
             }).then(() => {
                 if (product.categoryUuid) {
-                    category = loadCategoryById(product.categoryUuid);
+                    return loadCategoryById(product.categoryUuid);
+                }
+            }).then(response => {
+                if (response) {
+                    if (response.statusCode === 200) {
+                        category = response.data.category;
+                    }
                 }
             }).then(() => {
                 let imageUrl = 'https://via.placeholder.com/400';
@@ -954,9 +993,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 bucketInput.setAttribute('value', '1');
                 const formButton = document.createElement('button');
                 addClassesToElement(formButton, 'btn btn-primary mb-3');
-                bucketInput.onblur = e => {
-                    if(bucketInput.value > bucketInput.max) {
+                bucketInput.oninput = () => {
+                    if (parseInt(bucketInput.value) > parseInt(bucketInput.max)) {
                         bucketInput.value = bucketInput.max;
+                    } else if (parseInt(bucketInput.value) < parseInt(bucketInput.min)) {
+                        bucketInput.value = bucketInput.min;
+                    }
+                }
+                bucketInput.onchange = () => {
+                    if (parseInt(bucketInput.value) > parseInt(bucketInput.max)) {
+                        bucketInput.value = bucketInput.max;
+                    } else if (parseInt(bucketInput.value) < parseInt(bucketInput.min)) {
+                        bucketInput.value = bucketInput.min;
                     }
                 }
                 formButton.innerText = 'Add to bucket';
@@ -1124,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reviewForm.append(formComment, formRating);
                 formDiv.append(reviewForm);
                 productCol.append(productName, productPrice, productDescription, productCategory, bucketForm, sendReviewTitle, formDiv, sendButton);
-                if(authorizedUser.roles.includes(ROLES.ADMIN)) {
+                if (authorizedUser.roles.includes(ROLES.ADMIN)) {
                     productCol.append(editButton);
                 }
                 productRow.append(imageCol, productCol, reviewTitle, reviewList);
@@ -1146,8 +1194,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             reviewsElement.append(reviewAuthor, reviewText);
             return reviewsElement;
         }
-
+        mainContent.append(getSpinner());
         drawProductView().then(view => {
+            clearMainContent();
             mainContent.append(view);
         })
     }
@@ -1157,6 +1206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const getLoginForm = () => {
             const container = document.createElement('div');
             addClassesToElement(container, 'container');
+            container.style.width = '70vh'
             container.innerHTML = ` 
              <h1 class="mt-5">Login Form</h1>
                   <form>
@@ -1193,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (response.statusCode === 200) {
                     localStorage.setItem(JWT, response.data.jwtToken);
                     getAuthorizesUser().then(response => {
-                        if(response.statusCode === 200) {
+                        if (response.statusCode === 200) {
                             console.log(response.data.user);
                             authorizedUser = {...response.data.user};
                         }
@@ -1232,6 +1282,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const getRegistrationForm = () => {
             const registerContainer = document.createElement('div');
             addClassesToElement(registerContainer, 'container');
+            registerContainer.style.width = '70vh'
             registerContainer.innerHTML = `
             <h1 class="mt-3">Registration Form</h1>
                 <form>
@@ -1295,7 +1346,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             register(
                 firstNameInput.value, lastNameInput.value, emailInput.value, phoneNumberInput.value, passwordInput.value, passwordConfirmInput.value
             ).then(response => {
-                if(response.statusCode === 200) {
+                if (response.statusCode === 200) {
                     portalHolder.append(getSuccessMessage(response.message));
                     currentPage = PAGES.LOGIN;
                     buildMainContent();
@@ -1306,27 +1357,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                     removeClass(phoneNumberInput, 'is-invalid');
                     removeClass(passwordInput, 'is-invalid');
                     removeClass(passwordConfirmInput, 'is-invalid');
-                    if(response.data.firstName) {
+                    if (response.data.firstName) {
                         addClassesToElement(firstNameInput, 'is-invalid');
                         invalidFirstName.innerText = response.data.firstName;
                     }
-                    if(response.data.lastName) {
+                    if (response.data.lastName) {
                         addClassesToElement(lastNameInput, 'is-invalid');
                         invalidLastName.innerText = response.data.lastName;
                     }
-                    if(response.data.email) {
+                    if (response.data.email) {
                         addClassesToElement(emailInput, 'is-invalid');
                         invalidEmail.innerText = response.data.email;
                     }
-                    if(response.data.phoneNumber) {
+                    if (response.data.phoneNumber) {
                         addClassesToElement(phoneNumberInput, 'is-invalid');
                         invalidPhoneNumber.innerText = response.data.phoneNumber;
                     }
-                    if(response.data.password) {
+                    if (response.data.password) {
                         addClassesToElement(passwordInput, 'is-invalid');
                         invalidPassword.innerText = response.data.password;
                     }
-                    if(response.data.passwordConfirm) {
+                    if (response.data.passwordConfirm) {
                         addClassesToElement(passwordConfirmInput, 'is-invalid');
                         invalidPasswordConfirm.innerText = response.data.passwordConfirm;
                     }
@@ -1344,10 +1395,221 @@ document.addEventListener('DOMContentLoaded', async () => {
         mainContent.append(registerContainer);
     }
 
+    const loadOrdersPage = () => {
+        history.pushState({page: PAGES.ORDERS}, null, '');
+        const container = document.createElement('div');
+        addClassesToElement(container, 'container');
+        const title = document.createElement('h2');
+        title.innerText = 'Orders';
+        const orderRow = document.createElement('div');
+        addClassesToElement(orderRow, 'row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4');
+        container.append(title, orderRow);
+        mainContent.append(getSpinner());
+        loadUserOrders(authorizedUser.id).then(response => {
+            if (response.statusCode === 200) {
+                return response.data.orders;
+            } else {
+                portalHolder.append(getErrorMessage(response.message));
+            }
+        }).then(orders => {
+            for (const order of orders) {
+                orderRow.append(getOrderCol(order));
+            }
+        }).then(() => {
+            clearMainContent();
+            mainContent.append(container);
+        }).catch(e => {
+            portalHolder.append(getErrorMessage(e));
+        })
+
+        const getOrderCol = (order) => {
+            const col = document.createElement('col');
+            const card = document.createElement('div');
+            addClassesToElement(card, 'card');
+            const cardBody = document.createElement('div');
+            addClassesToElement(cardBody, 'card-body')
+            const orderTitle = document.createElement('h5');
+            addClassesToElement(orderTitle, 'card-title');
+            orderTitle.innerText = 'Order';
+            const orderDate = document.createElement('p');
+            addClassesToElement(orderDate, 'card-text');
+            orderDate.innerText = `Creation Date: ${order.placedAt ? dateStringFromArray(order.placedAt) : ''}`;
+            const orderTotalPrice = document.createElement('p');
+            addClassesToElement(orderTotalPrice, 'card-text');
+            orderTotalPrice.innerText = `Total Price: ${order.totalPrice ? order.totalPrice : ''}`;
+            const badge = document.createElement('span');
+            if (order.status === 'NEW') {
+                addClassesToElement(badge, 'badge bg-primary');
+                badge.innerText = 'NEW';
+            } else if (order.status === 'COMPLETE') {
+                addClassesToElement(badge, 'badge bg-success');
+                badge.innerText = 'COMPLETE';
+            } else {
+                addClassesToElement(badge, 'badge bg-danger');
+                badge.innerText = 'CANCELED';
+            }
+            cardBody.append(orderTitle, orderDate, orderTotalPrice, badge);
+            card.append(cardBody);
+            col.append(card);
+            col.onclick = () => {
+                orderPageState.orderUuid = order.uuid;
+                currentPage = PAGES.ORDER;
+                buildMainContent();
+            }
+            return col;
+        }
+    }
+
+    const loadOrderPage = (orderId) => {
+        let order;
+        let customer;
+        let products = [];
+        history.pushState({page: PAGES.ORDER}, null, '');
+        mainContent.append(getSpinner());
+        const getOrderEmptyPage = () => {
+            const container = document.createElement('div');
+            addClassesToElement(container, 'container');
+            container.innerHTML = `<div class="col-12">
+                    <h1 class="mb-4">Order Details</h1>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="fw-bold mb-0">Customer:</p>
+                            <p id="customerName" class="mb-0"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="fw-bold mb-0">Creation Date:</p>
+                            <p id="creationDate" class="mb-0"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="fw-bold mb-0">Total Price:</p>
+                            <p id="totalPrice" class="mb-0"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="fw-bold mb-0">Status:</p>
+                            <span id="status"></span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <button id="pay" class="btn btn-primary me-2">Pay</button>
+                        <button id="cancel" class="btn btn-secondary me-2">Cancel</button>
+                        <button id="delete" class="btn btn-danger">Delete</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productHolder">
+        
+                       
+                        </tbody>
+                    </table>
+                </div>
+            </div>`
+            return container;
+        }
+
+        const container = getOrderEmptyPage();
+        loadOrderById(orderId).then(response => {
+            if (response.statusCode === 200) {
+                order = {...response.data.order};
+            } else if (response.statusCode >= 400) {
+                portalHolder.append(getErrorMessage(response.message));
+            }
+        }).then(() => {
+            return loadUserById(order.userUuid);
+        }).then(response => {
+            if (response.statusCode === 200) {
+                customer = {...response.data.user};
+            } else if (response.statusCode >= 400) {
+                portalHolder.append(getErrorMessage(response.message));
+            }
+        }).then(() => {
+            let fetchedProducts = Object.keys(order.products);
+            let promises = fetchedProducts.map(uuid => {
+                return loadProductById(uuid).then(response => {
+                    if(response.statusCode === 200) {
+                        products.push(response.data.product);
+                    }
+                }).catch(console.error);
+            });
+            return Promise.all(promises);
+        }).then(() => {
+            const customerName = container.querySelector('#customerName');
+            customerName.innerText = customer.email;
+            const creationDate = container.querySelector('#creationDate')
+            creationDate.innerText = dateStringFromArray(order.placedAt);
+            const totalPrice = container.querySelector('#totalPrice');
+            totalPrice.innerText = order.totalPrice;
+            const status = container.querySelector('#status');
+            if(order.status === 'NEW') {
+                addClassesToElement(status, 'badge bg-primary');
+                status.innerText = 'NEW';
+            } else if(order.status === 'COMPLETE') {
+                addClassesToElement(status, 'badge bg-success');
+                status.innerText = 'COMPLETE';
+            } else {
+                addClassesToElement(status, 'badge bg-danger');
+                status.innerText = 'CANCELED';
+            }
+            const productHolder = container.querySelector('#productHolder');
+            for(const [key, value] of Object.entries(order.products)) {
+                const productRow = document.createElement('tr');
+                const productName = document.createElement('td');
+                productName.innerText = products.find(product => product.uuid === key).name;
+                const productQuantity = document.createElement('td');
+                productQuantity.innerText = value.toString();
+                const productPrice = document.createElement('td');
+                productPrice.innerText ='₴' + (parseFloat(products.find(product => product.uuid === key).price) * value).toFixed(2);
+                productRow.append(productName, productQuantity, productPrice);
+                productName.onclick = () => {
+                    productPageState.productUuid = key;
+                    currentPage = PAGES.PRODUCT;
+                    buildMainContent();
+                }
+                productHolder.append(productRow);
+            }
+            clearMainContent();
+            mainContent.append(container);
+        })
+    }
+
     rootNode.append(navbar);
     rootNode.append(mainContent);
     buildMainContent();
 
+
+    const loadUserById = async (uuid) => {
+        const requestOptions = {
+            method: 'GET',
+            headers: getHeaders()
+        };
+
+        const response = await fetch(`${usersUrl}/${uuid}`, requestOptions);
+        return await response.json();
+    }
+    const loadOrderById = async (uuid) => {
+        const requestOptions = {
+            method: 'GET',
+            headers: getHeaders()
+        };
+
+        const response = await fetch(`${ordersUrl}/${uuid}`, requestOptions);
+        return await response.json();
+    }
+    const loadUserOrders = async (uuid) => {
+        const requestOptions = {
+            method: 'GET',
+            headers: getHeaders()
+        };
+        const response = await fetch(`${ordersUrl}/users/${uuid}`, requestOptions);
+        return await response.json();
+    }
     const loadProductReviews = async (reviewsId) => {
         const reviews = [];
         for (const reviewId of reviewsId) {
@@ -1379,7 +1641,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(`${productsUrl}/${uuid}`, {
             headers: getHeaders()
         });
-        return (await response.json()).data.product;
+        return (await response.json());
     }
     const loadReviewsIdByProductId = async (uuid) => {
         const response = await fetch(`${reviewsUrl}/products/${uuid}`, {
@@ -1399,7 +1661,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(`${categoriesUrl}/${uuid}`, {
             headers: getHeaders()
         });
-        return (await response.json()).data.category;
+        return (await response.json());
     }
     const addToBucket = async (product, quantity) => {
         try {
@@ -1502,9 +1764,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const register = async (firstName, lastName, email, phoneNumber, password, passwordConfirm) => {
         try {
             const raw = JSON.stringify({
-                "firstName" : firstName,
-                "lastName" : lastName,
-                "phoneNumber" : phoneNumber,
+                "firstName": firstName,
+                "lastName": lastName,
+                "phoneNumber": phoneNumber,
                 "email": email,
                 "password": password,
                 "passwordConfirm": passwordConfirm
@@ -1548,4 +1810,19 @@ function removeClass(element, className) {
 
 function valueOrEmpty(value) {
     return value ? value : '';
+}
+
+function dateStringFromArray(dataArray) {
+    const date = new Date(Date.UTC(dataArray[0], parseInt(dataArray[1]) - 1, dataArray[2], dataArray[3], dataArray[4], dataArray[5]));
+    const options = {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZone: 'Etc/UTC'
+    };
+    const dateString = date.toLocaleString('en-US', options)
+    return dateString;
 }

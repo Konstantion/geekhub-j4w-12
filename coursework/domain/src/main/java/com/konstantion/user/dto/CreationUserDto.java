@@ -10,7 +10,6 @@ public record CreationUserDto(
         String phoneNumber,
         Integer age,
         String password,
-
         String passwordCopy
 ) {
 }

@@ -15,19 +15,10 @@ import java.util.UUID;
 @Getter
 @Setter
 
-@Entity
-@Table(name = "hall")
 public class Hall {
-    @Id
-    @GeneratedValue
-    @UuidGenerator
     private UUID id;
-
-    @Column(nullable = false, unique = true)
     private String name;
-
     private LocalDateTime createdAt;
-
     private Boolean active;
 
     public Hall() {

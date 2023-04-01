@@ -2,7 +2,6 @@ package com.konstantion.order;
 
 import com.konstantion.order.dto.OrderDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public interface OrderMapper {
                         Map.Entry::getKey, Map.Entry::getValue
                 ));
 
-        return new OrderDto(entity.uuid(), dtoProducts, entity.totalPrice(), entity.userUuid(), entity.status());
+        return new OrderDto(entity.uuid(), dtoProducts, entity.placedAt(), entity.totalPrice(), entity.userUuid(), entity.status());
     }
 
     List<OrderDto> toDto(List<Order> entity);
