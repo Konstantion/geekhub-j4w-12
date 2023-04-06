@@ -4,7 +4,7 @@ plugins {
 
 bootJar {
     archiveFileName = 'my-application.jar'
-    destinationDirectory = file("$buildDir/my-app")
+    destinationDirectory = file("$projectDir/jar")
 }
 
 dependencies {
