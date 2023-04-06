@@ -1,24 +1,30 @@
 package com.konstantion.hall;
 
-import com.konstantion.exception.BadRequestException;
-import com.konstantion.hall.dto.HallDto;
+import com.konstantion.hall.model.CreateHallRequest;
+import com.konstantion.user.User;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static java.lang.String.format;
+import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 
 @Component
 public record HallServiceImpl(
-        HallRepository hallRepository
+        HallPort hallPort
 ) implements HallService {
-    private static final HallMapper hallMapper = HallMapper.INSTANCE;
-    @Override
-    public HallDto findHallById(UUID uuid) {
-        Hall hall = hallRepository.findById(uuid).orElseThrow(() ->
-                new BadRequestException(format("Hall with id %s doesn't exist", uuid))
-        );
 
-        return hallMapper.toDto(hall);
+    @Override
+    public Hall create(CreateHallRequest createHallRequest, User user) {
+        return null;
+    }
+
+    @Override
+    public Hall findHallById(UUID id, User user) {
+        return findByIdOrThrow(id);
+    }
+
+    private Hall findByIdOrThrow(UUID id) {
+        return hallPort.findById(id)
+                .orElseThrow(nonExistingIdSupplier(Hall.class, id));
     }
 }

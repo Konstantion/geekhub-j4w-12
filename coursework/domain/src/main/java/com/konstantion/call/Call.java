@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,9 +18,14 @@ import java.util.UUID;
 public class Call {
     private UUID id;
     private UUID tableId;
-    private List<UUID> waitersId;
+    @Builder.Default
+    private List<UUID> waitersId = new ArrayList<>();
     private Purpose purpose;
     private LocalDateTime openedAt;
     private LocalDateTime closedAt;
     private Boolean active;
+
+    public Call() {
+
+    }
 }

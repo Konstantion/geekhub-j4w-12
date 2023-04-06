@@ -1,9 +1,10 @@
 package com.konstantion.controllers;
 
+import com.konstantion.dto.mappers.UserMapper;
+import com.konstantion.dto.response.ResponseDto;
+import com.konstantion.dto.user.LoginUserDto;
+import com.konstantion.dto.user.RegistrationUserDto;
 import com.konstantion.ragistration.RegistrationService;
-import com.konstantion.response.Response;
-import com.konstantion.user.dto.LoginUserDto;
-import com.konstantion.user.dto.RegistrationUserDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,17 @@ import static java.util.Map.of;
 public record RegistrationController(
         RegistrationService registrationService
 ) {
+    public static final UserMapper userMapper = UserMapper.INSTANCE;
+
     @PostMapping
-    public ResponseEntity<Response> register(
+    public ResponseEntity<ResponseDto> register(
             @RequestBody RegistrationUserDto registrationUserDto
     ) {
-        String token = registrationService.register(registrationUserDto);
+        String token = registrationService.register(
+                userMapper.toEntity(registrationUserDto)
+        );
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(HttpStatus.OK)
                         .statusCode(HttpStatus.OK.value())
                         .message("Confirmation token will be send to your email in 1 min, if you don't get it please try again!")
@@ -41,12 +46,16 @@ public record RegistrationController(
     }
 
     @PostMapping("login")
-    public ResponseEntity<Response> login(@RequestBody LoginUserDto loginUserDto) {
-        String jwtToken = registrationService.authenticate(loginUserDto);
+    public ResponseEntity<ResponseDto> login(
+            @RequestBody LoginUserDto loginUserDto
+    ) {
+        String jwtToken = registrationService.authenticate(
+                userMapper.toEntity(loginUserDto)
+        );
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                .body(Response.builder()
+                .body(ResponseDto.builder()
                         .status(HttpStatus.OK)
                         .statusCode(HttpStatus.OK.value())
                         .message("Successfully logged in")
@@ -54,14 +63,5 @@ public record RegistrationController(
                         .data(of("jwtToken", jwtToken))
                         .build()
                 );
-    }
-
-    @GetMapping
-    public ResponseEntity<Response> testEndPoint() {
-        return ResponseEntity.ok(
-                Response.builder()
-                        .message("Welcome to the secret and point")
-                        .build()
-        );
     }
 }

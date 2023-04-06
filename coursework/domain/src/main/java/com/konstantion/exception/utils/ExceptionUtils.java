@@ -1,13 +1,16 @@
 package com.konstantion.exception.utils;
 
+import com.konstantion.bill.Bill;
 import com.konstantion.exception.BadRequestException;
-import com.konstantion.guest.dto.GuestDto;
+import com.konstantion.exception.NonExistingIdException;
+import com.konstantion.guest.Guest;
+import com.konstantion.hall.Hall;
 import com.konstantion.order.Order;
-import com.konstantion.order.dto.OrderDto;
 import com.konstantion.product.Product;
-import com.konstantion.product.dto.ProductDto;
 import com.konstantion.table.Table;
-import com.konstantion.table.dto.TableDto;
+
+import java.util.UUID;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
@@ -20,26 +23,10 @@ public record ExceptionUtils() {
         return true;
     }
 
-    public static boolean isActiveOrThrow(TableDto table) {
-        boolean isActive = table.active();
-        if(!isActive) {
-            throw new BadRequestException(format("Table with id %s, isn't active", table.id()));
-        }
-        return true;
-    }
-
     public static boolean isActiveOrThrow(Order order) {
         boolean isActive = order.isActive();
         if(!isActive) {
             throw new BadRequestException(format("Order with id %s, isn't active", order.getId()));
-        }
-        return true;
-    }
-
-    public static boolean isActiveOrThrow(OrderDto order) {
-        boolean isActive = order.active();
-        if(!isActive) {
-            throw new BadRequestException(format("Order with id %s, isn't active", order.id()));
         }
         return true;
     }
@@ -52,19 +39,34 @@ public record ExceptionUtils() {
         return true;
     }
 
-    public static boolean isActiveOrThrow(ProductDto product) {
-        boolean isActive = product.active();
+    public static boolean isActiveOrThrow(Guest guest) {
+        boolean isActive = guest.isActive();
         if(!isActive) {
-            throw new BadRequestException(format("Product with id %s, isn't active", product.id()));
+            throw new BadRequestException(format("Guest with id %s, isn't active", guest.getId()));
         }
         return true;
     }
 
-    public static boolean isActiveOrThrow(GuestDto guest) {
-        boolean isActive = guest.active();
+    public static boolean isActiveOrThrow(Bill bill) {
+        boolean isActive = bill.isActive();
         if(!isActive) {
-            throw new BadRequestException(format("Guest with id %s, isn't active", guest.id()));
+            throw new BadRequestException(format("Bill with id %s, isn't active", bill.getId()));
         }
         return true;
+    }
+
+    public static boolean isActiveOrThrow(Hall hall) {
+        boolean isActive = hall.isActive();
+        if(!isActive) {
+            throw new BadRequestException(format("Bill with id %s, isn't active", hall.getId()));
+        }
+        return true;
+    }
+
+    public static <X extends Throwable> Supplier<? extends X> nonExistingIdSupplier(Class target, UUID id) throws X {
+        String className = target.getSimpleName();
+        return () -> {
+          throw new NonExistingIdException(format("%s with id %s, doesn't exist", className, id));
+        };
     }
 }

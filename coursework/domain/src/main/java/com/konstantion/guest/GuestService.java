@@ -1,16 +1,16 @@
 package com.konstantion.guest;
 
-import com.konstantion.guest.dto.CreationGuestDto;
-import com.konstantion.guest.dto.GuestDto;
+import com.konstantion.guest.model.CreateGuestRequest;
+import com.konstantion.guest.model.EditGuestRequest;
 import com.konstantion.user.User;
 
 import java.util.UUID;
 
 public interface GuestService {
-    GuestDto getById(UUID id);
-    GuestDto create(CreationGuestDto cgdto, User user);
+    Guest getById(UUID id);
+    Guest create(CreateGuestRequest createGuestRequest, User user);
 
-    GuestDto edit(UUID id, CreationGuestDto cgdto, User user);
+    Guest edit(UUID id, EditGuestRequest editGuestRequest, User user);
 
-    GuestDto delete(UUID id, User user);
+    Guest delete(UUID id, User user);
 }

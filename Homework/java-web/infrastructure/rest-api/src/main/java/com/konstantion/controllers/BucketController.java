@@ -2,8 +2,10 @@ package com.konstantion.controllers;
 
 import com.konstantion.bucket.Bucket;
 import com.konstantion.bucket.BucketService;
-import com.konstantion.product.dto.ProductDto;
-import com.konstantion.response.Response;
+import com.konstantion.dto.mappers.ProductMapper;
+import com.konstantion.dto.product.ProductDto;
+import com.konstantion.dto.response.ResponseDto;
+import com.konstantion.product.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +23,14 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/web-api/buckets")
 public record BucketController(BucketService bucketService, Bucket bucket) {
 
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
     @PutMapping("/products/add")
-    public ResponseEntity<Response> addProduct(
+    public ResponseEntity<ResponseDto> addProduct(
             @RequestParam("uuid") UUID uuid,
             @RequestParam("quantity") Optional<Integer> quantity
     ) {
-        ProductDto dto = bucketService.addProductToBucket(bucket, uuid, quantity.orElse(1));
-        return ResponseEntity.ok(Response.builder()
+        ProductDto dto = productMapper.toDto(bucketService.addProductToBucket(bucket, uuid, quantity.orElse(1)));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message(String.format("%s product(s) %s successfully added to the bucket", quantity.orElse(1), dto))
@@ -38,14 +41,14 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
     }
 
     @DeleteMapping("/products/remove")
-    public ResponseEntity<Response> removeProduct(
+    public ResponseEntity<ResponseDto> removeProduct(
             @RequestParam("uuid") UUID uuid,
             @RequestParam("quantity") Optional<Integer> quantity
     ) {
         Integer deletedQuantity = bucketService
                 .removeProductFromBucket(bucket, uuid, quantity.orElse(1));
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message(format("%s product(s) with id %s successfully deleted from the bucket", deletedQuantity, uuid))
@@ -56,13 +59,13 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<Response> getProducts() {
+    public ResponseEntity<ResponseDto> getProducts() {
         List<UUID> uuids = bucketService
                 .getBucketProducts(bucket)
-                .stream().map(ProductDto::uuid).toList();
+                .stream().map(Product::uuid).toList();
 
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(OK)
                         .statusCode(OK.value())
                         .message("Products in the bucket")
@@ -73,13 +76,13 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
     }
 
     @GetMapping("/products/map")
-    public ResponseEntity<Response> getProductsMap() {
+    public ResponseEntity<ResponseDto> getProductsMap() {
         var productsMap = bucketService
                 .getBucketProductsMap(bucket);
 
 
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(OK)
                         .statusCode(OK.value())
                         .message("Products in the bucket")
@@ -90,14 +93,14 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
     }
 
     @GetMapping("/products/{uuid}/quantity")
-    public ResponseEntity<Response> getQuantity(
+    public ResponseEntity<ResponseDto> getQuantity(
             @PathVariable("uuid") UUID uuid
     ) {
         Integer quantity = requireNonNullElse(
                 bucketService.getProductQuantity(bucket, uuid), 0);
 
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(OK)
                         .statusCode(OK.value())
                         .message("Bucket count")
@@ -108,14 +111,14 @@ public record BucketController(BucketService bucketService, Bucket bucket) {
     }
 
     @PutMapping("/products/{uuid}/quantity")
-    public ResponseEntity<Response> setQuantity(
+    public ResponseEntity<ResponseDto> setQuantity(
             @PathVariable("uuid") UUID uuid,
             @RequestParam("quantity") Integer quantity
     ) {
         bucketService.setProductQuantity(bucket, uuid, quantity);
 
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(OK)
                         .statusCode(OK.value())
                         .message(format("Product quantity with id %s set to %s", uuid, quantity))

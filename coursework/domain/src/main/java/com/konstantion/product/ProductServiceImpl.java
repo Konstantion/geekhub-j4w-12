@@ -3,8 +3,7 @@ package com.konstantion.product;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
 import com.konstantion.file.MultipartFileService;
-import com.konstantion.product.dto.CreationProductDto;
-import com.konstantion.product.dto.ProductDto;
+import com.konstantion.product.model.CreateProductRequest;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.user.User;
 import com.konstantion.utils.validator.ValidationResult;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.CREATE_PRODUCT;
 import static com.konstantion.user.Permission.DELETE_PRODUCT;
 import static com.konstantion.user.Role.ADMIN;
@@ -22,63 +22,60 @@ import static java.time.LocalDateTime.now;
 
 @Component
 public record ProductServiceImpl(
-        ProductRepository productRepository,
+        ProductPort productPort,
         ProductValidator productValidator,
         MultipartFileService fileService
 ) implements ProductService {
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
-    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
-
-
 
     @Override
-    public ProductDto create(CreationProductDto cpdto, User user) {
+    public Product create(CreateProductRequest createProductRequest, User user) {
         if (user.hasNoPermission(CREATE_PRODUCT)) {
             throw new ForbiddenException("Not enough authorities to create product");
         }
 
         ValidationResult validationResult = productValidator
-                .validate(cpdto);
+                .validate(createProductRequest);
         validationResult.validOrTrow();
 
-        byte[] imageBytes = fileService.getFileBytes(cpdto.image());
+        byte[] imageBytes = fileService.getFileBytes(createProductRequest.image());
 
         Product product = Product.builder()
-                .name(cpdto.name())
-                .price(cpdto.price())
-                .description(cpdto.description())
-                .weight(cpdto.weight())
+                .name(createProductRequest.name())
+                .price(createProductRequest.price())
+                .description(createProductRequest.description())
+                .weight(createProductRequest.weight())
                 .active(true)
                 .creatorId(user.getId())
                 .createdAt(now())
-                .categoryId(cpdto.categoryId())
+                .categoryId(createProductRequest.categoryId())
                 .imageBytes(imageBytes)
                 .build();
 
-        productRepository.save(product);
+        productPort.save(product);
 
         logger.info("Product {} successfully created", product);
 
-        return productMapper.toDto(product);
+        return product;
     }
 
     @Override
-    public ProductDto delete(UUID productId, User user) {
+    public Product delete(UUID productId, User user) {
         if (user.hasNoPermission(DELETE_PRODUCT)) {
             throw new ForbiddenException("Not enough authorities to delete product");
         }
 
         Product product = getByIdOrThrow(productId);
 
-        productRepository.delete(product);
+        productPort.delete(product);
 
         logger.info("Product {} successfully deleted", product);
 
-        return productMapper.toDto(product);
+        return product;
     }
 
     @Override
-    public ProductDto deactivate(UUID productId, User user) {
+    public Product deactivate(UUID productId, User user) {
         if (user.hasNoPermission(ADMIN)) {
             throw new ForbiddenException("Not enough authorities to deactivate product");
         }
@@ -87,19 +84,19 @@ public record ProductServiceImpl(
 
         if (!product.getActive()) {
             logger.info("Product {} is already disabled", product);
-            return productMapper.toDto(product);
+            return product;
         }
 
         prepareToDeactivate(product);
-        productRepository.save(product);
+        productPort.save(product);
 
         logger.info("Product {} successfully deactivated", product);
 
-        return productMapper.toDto(product);
+        return product;
     }
 
     @Override
-    public ProductDto activate(UUID productId, User user) {
+    public Product activate(UUID productId, User user) {
         if (user.hasNoPermission(ADMIN)) {
             throw new ForbiddenException("Not enough authorities to activate product");
         }
@@ -108,21 +105,20 @@ public record ProductServiceImpl(
 
         if (product.getActive()) {
             logger.info("Product {} is already activated", product);
-            return productMapper.toDto(product);
+            return product;
         }
 
         prepareToActivate(product);
-        productRepository.save(product);
+        productPort.save(product);
 
         logger.info("Product {} successfully activated", product);
 
-        return productMapper.toDto(product);
+        return product;
     }
 
     @Override
-    public ProductDto getById(UUID productId) {
-        Product product = getByIdOrThrow(productId);
-        return productMapper.toDto(product);
+    public Product getById(UUID productId) {
+        return getByIdOrThrow(productId);
     }
 
     private void prepareToDeactivate(Product product) {
@@ -136,8 +132,7 @@ public record ProductServiceImpl(
     }
 
     private Product getByIdOrThrow(UUID productId) {
-        return productRepository.findById(productId).orElseThrow(() -> {
-            throw new BadRequestException(format("Product with id %s doesn't exist", productId));
-        });
+        return productPort.findById(productId)
+                .orElseThrow(nonExistingIdSupplier(Product.class, productId));
     }
 }

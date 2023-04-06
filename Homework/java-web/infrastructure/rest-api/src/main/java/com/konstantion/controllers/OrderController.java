@@ -1,11 +1,11 @@
 package com.konstantion.controllers;
 
 import com.konstantion.bucket.Bucket;
+import com.konstantion.dto.mappers.OrderMapper;
+import com.konstantion.dto.order.OrderDto;
+import com.konstantion.dto.response.ResponseDto;
 import com.konstantion.order.OrderService;
-import com.konstantion.order.dto.OrderDto;
-import com.konstantion.response.Response;
 import com.konstantion.user.User;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +22,14 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/web-api/orders")
 public record OrderController(OrderService orderService,
                               Bucket bucket) {
+    public static final OrderMapper orderMapper = OrderMapper.INSTANCE;
+
     @PostMapping
-    public ResponseEntity<Response> createOrder(
+    public ResponseEntity<ResponseDto> createOrder(
             @AuthenticationPrincipal User user
     ) {
-        OrderDto dto = orderService.createOrder(user, bucket);
-        return ResponseEntity.ok(Response.builder()
+        OrderDto dto = orderMapper.toDto(orderService.createOrder(user, bucket));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message(String.format("Order with id %s successfully created", dto.uuid()))
@@ -38,11 +40,11 @@ public record OrderController(OrderService orderService,
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<Response> getOrder(
+    public ResponseEntity<ResponseDto> getOrder(
             @PathVariable("uuid") UUID uuid
     ) {
-        OrderDto dto = orderService.findOrderById(uuid);
-        return ResponseEntity.ok(Response.builder()
+        OrderDto dto = orderMapper.toDto(orderService.findOrderById(uuid));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message(String.format("Order with id %s ", dto.uuid()))
@@ -52,11 +54,11 @@ public record OrderController(OrderService orderService,
     }
 
     @GetMapping("/users/{uuid}")
-    public ResponseEntity<Response> getUserOrders(
+    public ResponseEntity<ResponseDto> getUserOrders(
             @PathVariable("uuid") UUID uuid
     ) {
-        List<OrderDto> dto = orderService.findOrdersByUserId(uuid);
-        return ResponseEntity.ok(Response.builder()
+        List<OrderDto> dto = orderMapper.toDto(orderService.findOrdersByUserId(uuid));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message(format("Order for user with id %s ", uuid))
@@ -66,11 +68,11 @@ public record OrderController(OrderService orderService,
     }
 
     @GetMapping("users/authorized")
-    public ResponseEntity<Response> getOrders(
-        @AuthenticationPrincipal User user
+    public ResponseEntity<ResponseDto> getOrders(
+            @AuthenticationPrincipal User user
     ) {
-        List<OrderDto> dto = orderService.findOrdersByUserId(user.getId());
-        return ResponseEntity.ok(Response.builder()
+        List<OrderDto> dto = orderMapper.toDto(orderService.findOrdersByUserId(user.getId()));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message(format("All orders of user with id %s", user.getId()))
@@ -80,9 +82,9 @@ public record OrderController(OrderService orderService,
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Response> getAllOrders() {
-        List<OrderDto> dto = orderService.findAll();
-        return ResponseEntity.ok(Response.builder()
+    public ResponseEntity<ResponseDto> getAllOrders() {
+        List<OrderDto> dto = orderMapper.toDto(orderService.findAll());
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message("All orders")
@@ -92,12 +94,12 @@ public record OrderController(OrderService orderService,
     }
 
     @PutMapping("/{uuid}/complete")
-    public ResponseEntity<Response> completeOrder(
+    public ResponseEntity<ResponseDto> completeOrder(
             @PathVariable("uuid") UUID uuid
     ) {
         orderService.completeOrder(uuid);
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message("Order completed")

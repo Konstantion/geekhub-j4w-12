@@ -1,8 +1,7 @@
 package com.konstantion.product;
 
-import com.konstantion.product.dto.CreationProductDto;
-import com.konstantion.product.dto.ProductDto;
-import com.konstantion.product.dto.UpdateProductDto;
+import com.konstantion.product.model.CreationProductRequest;
+import com.konstantion.product.model.UpdateProductRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,21 +10,21 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductDto create(CreationProductDto createProductDto, MultipartFile file);
+    Product create(CreationProductRequest createProductDto, MultipartFile file);
 
-    ProductDto getById(UUID uuid);
+    Product getById(UUID uuid);
 
-    ProductDto delete(UUID uuid);
+    Product delete(UUID uuid);
 
-    ProductDto update(UUID uuid, UpdateProductDto productDto);
+    Product update(UUID uuid, UpdateProductRequest productDto);
 
-    List<ProductDto> getAll();
+    List<Product> getAll();
 
-    List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName);
+    List<Product> getAll(Sort.Direction sortOrder, String fieldName);
 
-    List<ProductDto> getAll(Sort.Direction sortOrder, String fieldName, String namePattern);
+    List<Product> getAll(Sort.Direction sortOrder, String fieldName, String namePattern);
 
-    Page<ProductDto> getAll(
+    Page<Product> getAll(
             Integer pageNumber,
             Integer pageSize,
             String fieldName,
@@ -34,7 +33,7 @@ public interface ProductService {
             boolean ascending
     );
 
-    default ProductDto delete(Product product) {
+    default Product delete(Product product) {
         return delete(product.uuid());
     }
 

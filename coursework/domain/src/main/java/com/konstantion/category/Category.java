@@ -14,4 +14,7 @@ import java.util.UUID;
 public class Category {
     private UUID id;
     private String name;
+    private UUID creatorId;
+    public Category() {
+    }
 }

@@ -1,10 +1,12 @@
 package com.konstantion.controllers;
 
+import com.konstantion.category.Category;
 import com.konstantion.category.CategoryService;
-import com.konstantion.category.dto.CategoryDto;
-import com.konstantion.category.dto.CreationCategoryDto;
-import com.konstantion.category.dto.UpdateCategoryDto;
-import com.konstantion.response.Response;
+import com.konstantion.dto.category.CategoryDto;
+import com.konstantion.dto.category.CreationCategoryDto;
+import com.konstantion.dto.category.UpdateCategoryDto;
+import com.konstantion.dto.mappers.CategoryMapper;
+import com.konstantion.dto.response.ResponseDto;
 import com.konstantion.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,12 +26,14 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public record CategoryController(
         CategoryService categoryService
 ) {
-    @GetMapping()
-    public ResponseEntity<Response> getCategories() {
-        List<UUID> categoriesUuid = categoryService.getCategories().stream()
-                .map(CategoryDto::uuid).toList();
+    private static final CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
 
-        return ResponseEntity.ok(Response.builder()
+    @GetMapping()
+    public ResponseEntity<ResponseDto> getCategories() {
+        List<UUID> categoriesUuid = categoryService.getCategories().stream()
+                .map(Category::uuid).toList();
+
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .message("All categories ids")
                 .statusCode(OK.value())
@@ -39,12 +43,12 @@ public record CategoryController(
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<Response> getCategory(
+    public ResponseEntity<ResponseDto> getCategory(
             @PathVariable("uuid") UUID uuid
     ) {
-        CategoryDto dto = categoryService.getCategoryById(uuid);
+        CategoryDto dto = categoryMapper.toDto(categoryService.getCategoryById(uuid));
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .message(format("Category with id %s", uuid))
                 .statusCode(OK.value())
@@ -54,13 +58,15 @@ public record CategoryController(
     }
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Response> createCategory(
+    public ResponseEntity<ResponseDto> createCategory(
             @ModelAttribute CreationCategoryDto creationDto,
             @AuthenticationPrincipal User user
-            ) {
-        CategoryDto dto = categoryService.createCategory(creationDto, user);
+    ) {
+        CategoryDto dto = categoryMapper.toDto(
+                categoryService.createCategory(categoryMapper.toEntity(creationDto), user)
+        );
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .message(format("Category created with id %s", dto.uuid()))
                 .statusCode(OK.value())
@@ -70,14 +76,16 @@ public record CategoryController(
     }
 
     @PutMapping(path = "/{uuid}", consumes = {MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Response> updateCategory(
+    public ResponseEntity<ResponseDto> updateCategory(
             @PathVariable("uuid") UUID uuid,
             @ModelAttribute UpdateCategoryDto updateDto,
             @AuthenticationPrincipal User user
-            ) {
-        CategoryDto dto = categoryService.updateCategory(uuid, updateDto, user);
+    ) {
+        CategoryDto dto = categoryMapper.toDto(
+                categoryService.updateCategory(uuid, categoryMapper.toEntity(updateDto), user)
+        );
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .message(format("Category with id %s updated", dto.uuid()))
                 .statusCode(OK.value())
@@ -87,13 +95,13 @@ public record CategoryController(
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Response> deleteCategory(
+    public ResponseEntity<ResponseDto> deleteCategory(
             @PathVariable("uuid") UUID uuid,
             @AuthenticationPrincipal User user
     ) {
-        CategoryDto dto = categoryService.deleteCategory(uuid, user);
+        CategoryDto dto = categoryMapper.toDto(categoryService.deleteCategory(uuid, user));
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .message(format("Category with id %s deleted", dto.uuid()))
                 .statusCode(OK.value())

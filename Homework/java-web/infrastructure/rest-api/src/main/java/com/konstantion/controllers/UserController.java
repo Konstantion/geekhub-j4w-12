@@ -1,9 +1,10 @@
 package com.konstantion.controllers;
 
-import com.konstantion.response.Response;
+import com.konstantion.dto.mappers.UserMapper;
+import com.konstantion.dto.response.ResponseDto;
+import com.konstantion.dto.user.UserDto;
 import com.konstantion.user.User;
 import com.konstantion.user.UserService;
-import com.konstantion.user.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,14 @@ import static org.springframework.http.HttpStatus.OK;
 public record UserController(
         UserService userService
 ) {
+    public static final UserMapper userMapper = UserMapper.INSTANCE;
+
     @GetMapping("/authorized/roles")
-    public ResponseEntity<Response> getAuthorizedUserRoles(
+    public ResponseEntity<ResponseDto> getAuthorizedUserRoles(
             @AuthenticationPrincipal User requester
     ) {
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(OK)
                         .statusCode(OK.value())
                         .message("Authorized user roles")
@@ -38,14 +41,14 @@ public record UserController(
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<Response> getUser(
+    public ResponseEntity<ResponseDto> getUser(
             @PathVariable("uuid") UUID uuid,
-            @AuthenticationPrincipal User requester
+            @AuthenticationPrincipal User authorized
     ) {
-        UserDto dto = userService.getUser(uuid, requester);
+        UserDto dto = userMapper.toDto(userService.getUser(uuid, authorized));
 
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .status(OK)
                         .statusCode(OK.value())
                         .message(format("User with id %s", uuid))
@@ -55,13 +58,13 @@ public record UserController(
     }
 
     @GetMapping("/authorized")
-    public ResponseEntity<Response> getAuthorizedUser(
+    public ResponseEntity<ResponseDto> getAuthorizedUser(
             @AuthenticationPrincipal User user
     ) {
-        UserDto dto = userService.getUser(user.getId(), user);
+        UserDto dto = userMapper.toDto(userService.getUser(user.getId(), user));
 
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .timeStamp(now())
                         .status(OK)
                         .statusCode(OK.value())

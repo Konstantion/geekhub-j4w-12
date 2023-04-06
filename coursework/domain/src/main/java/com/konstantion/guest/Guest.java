@@ -21,7 +21,13 @@ public class Guest {
     private Double totalSpentSum;
     private Boolean active;
 
+    public Guest() {
+    }
+
     public boolean isActive() {
         return active;
+    }
+    public void addToTotalSum(Double value) {
+        totalSpentSum += value;
     }
 }

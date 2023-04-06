@@ -2,14 +2,10 @@ package com.konstantion.upload;
 
 import com.konstantion.exceptions.FileIOException;
 import com.konstantion.exceptions.ValidationException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 

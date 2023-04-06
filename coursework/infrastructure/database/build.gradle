@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(":coursework:domain")
+
+    implementation libsDatabase.postgresDriver
+    implementation libsDatabase.flywayCore
+}

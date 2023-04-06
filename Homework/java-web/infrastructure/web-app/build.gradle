@@ -1,3 +1,12 @@
+plugins {
+    id 'org.springframework.boot' version '3.0.5'
+}
+
+bootJar {
+    archiveFileName = 'my-application.jar'
+    destinationDirectory = file("$buildDir/my-app")
+}
+
 dependencies {
     implementation project(':Homework:java-web:domain');
     implementation project(':Homework:java-web:infrastructure:database');

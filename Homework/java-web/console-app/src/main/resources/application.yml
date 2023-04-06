@@ -1,9 +1,0 @@
-logging:
-  level:
-    com:
-      zaxxer:
-        hikari:
-          error
-spring:
-  main:
-    allow-bean-definition-overriding: true

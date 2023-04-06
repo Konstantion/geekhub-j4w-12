@@ -4,8 +4,8 @@ create table if not exists public.order_product
     product_uuid uuid not null,
     quantity integer not null,
     constraint order_products_order_fk
-        foreign key (order_uuid) references public."order",
+        foreign key (order_uuid) references public."order" on delete cascade,
     constraint order_products_product_fk
-        foreign key (product_uuid) references public.product
+        foreign key (product_uuid) references public.product on delete cascade
 );
 

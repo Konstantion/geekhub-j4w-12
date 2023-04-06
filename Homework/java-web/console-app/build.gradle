@@ -1,7 +1,0 @@
-dependencies {
-    implementation project(':Homework:java-web:domain');
-    implementation project(':Homework:java-web:infrastructure');
-
-    runtimeOnly libsDatabase.postgres
-    implementation libsDatabase.flywayCore
-}

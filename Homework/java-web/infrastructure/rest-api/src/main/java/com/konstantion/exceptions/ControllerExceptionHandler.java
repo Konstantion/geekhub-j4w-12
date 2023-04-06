@@ -1,6 +1,6 @@
 package com.konstantion.exceptions;
 
-import com.konstantion.response.Response;
+import com.konstantion.dto.response.ResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +18,10 @@ public record ControllerExceptionHandler() {
     public static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<Response> handleValidationException(HttpServletRequest request, ValidationException e) {
+    public ResponseEntity<ResponseDto> handleValidationException(HttpServletRequest request, ValidationException e) {
         HttpStatus httpStatus = ExceptionsStatusesExtractor.extractExceptionStatus(e);
         return ResponseEntity.status(httpStatus).body(
-                Response.builder()
+                ResponseDto.builder()
                         .status(httpStatus)
                         .statusCode(httpStatus.value())
                         .message(e.getMessage())
@@ -37,10 +37,10 @@ public record ControllerExceptionHandler() {
     }
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<Response> handleExceptionWithoutBody(HttpServletRequest request, Exception e) {
+    public ResponseEntity<ResponseDto> handleExceptionWithoutBody(HttpServletRequest request, Exception e) {
         HttpStatus httpStatus = ExceptionsStatusesExtractor.extractExceptionStatus(e);
         return ResponseEntity.status(httpStatus).body(
-                Response.builder()
+                ResponseDto.builder()
                         .status(httpStatus)
                         .statusCode(httpStatus.value())
                         .message(e.getMessage())

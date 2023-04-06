@@ -34,7 +34,15 @@ public class Table {
         return nonNull(orderId);
     }
 
-    public boolean hasWaiters() {return waitersId.isEmpty();}
+    public void removeOrder() {
+        this.orderId = null;
+    }
 
-    public boolean isActive() {return active;}
+    public boolean hasWaiters() {
+        return waitersId.isEmpty();
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 }

@@ -1,11 +1,9 @@
 package com.konstantion.hall;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-
 public class Hall {
     private UUID id;
     private String name;
@@ -22,5 +19,9 @@ public class Hall {
     private Boolean active;
 
     public Hall() {
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

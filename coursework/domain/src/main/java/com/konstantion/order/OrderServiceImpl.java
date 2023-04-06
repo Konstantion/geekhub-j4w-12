@@ -1,13 +1,14 @@
 package com.konstantion.order;
 
+import com.konstantion.bill.Bill;
+import com.konstantion.bill.BillPort;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
 import com.konstantion.exception.utils.ExceptionUtils;
-import com.konstantion.order.dto.OrderDto;
-import com.konstantion.product.ProductService;
-import com.konstantion.product.dto.ProductDto;
-import com.konstantion.table.TableService;
-import com.konstantion.table.dto.TableDto;
+import com.konstantion.product.Product;
+import com.konstantion.product.ProductPort;
+import com.konstantion.table.Table;
+import com.konstantion.table.TablePort;
 import com.konstantion.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,50 +18,46 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
+import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
-import static java.lang.Boolean.FALSE;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Component
 public record OrderServiceImpl(
-        TableService tableService,
-        ProductService productService,
-        OrderRepository orderRepository
+        TablePort tablePort,
+        ProductPort productPort,
+        OrderPort orderPort,
+        BillPort billPort
 ) implements OrderService {
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
-    private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
     @Override
-    public OrderDto getById(UUID id) {
-        return orderMapper.toDto(getByIdOrThrow(id));
+    public Order getById(UUID id) {
+        return getByIdOrThrow(id);
     }
 
     @Override
-    public OrderDto getTableOrder(UUID tableId, User user) {
+    public Order getTableOrder(UUID tableId, User user) {
         if (user.hasNoPermission(GET_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        TableDto table = tableService.getById(tableId, user);
+        Table table = tablePort.findById(tableId)
+                .orElseThrow(nonExistingIdSupplier(Table.class, tableId));
 
-        if (FALSE.equals(table.active())) {
-            throw new BadRequestException(format("Table with id %s isn't active", tableId));
-        }
+        ExceptionUtils.isActiveOrThrow(table);
 
-        if (isNull(table.orderId())) {
+        if (!table.hasOrder()) {
             return null;
         }
 
-        Order order = getByIdOrThrow(table.orderId());
-
-        return orderMapper.toDto(order);
+        return orderPort.findById(table.getOrderId())
+                .orElseThrow(nonExistingIdSupplier(Order.class, table.getOrderId()));
     }
 
     @Override
-    public OrderDto transferToAnotherTable(UUID orderId, UUID tableId, User user) {
+    public Order transferToAnotherTable(UUID orderId, UUID tableId, User user) {
         if (user.hasNoPermission(TRANSFER_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
@@ -68,67 +65,86 @@ public record OrderServiceImpl(
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
 
-        TableDto table = tableService.getById(tableId, user);
+        Table table = tablePort.findById(tableId)
+                .orElseThrow(nonExistingIdSupplier(Table.class, tableId));
         ExceptionUtils.isActiveOrThrow(table);
 
         if (table.hasOrder()) {
-            throw new BadRequestException(format("Table with id %s, already has active order", table.id()));
+            throw new BadRequestException(format("Table with id %s, already has active order with id %s", table.getId(), table.getOrderId()));
         }
 
-        order.setTableId(table.id());
-        orderRepository.save(order);
+        order.setTableId(table.getId());
+        table.setOrderId(order.getId());
 
-        tableService.setOrder(table.id(), orderId, user);
+        orderPort.save(order);
+        tablePort.save(table);
 
-        return orderMapper.toDto(order);
+        return order;
     }
 
     @Override
-    public OrderDto open(UUID tableId, User user) {
+    public Order open(UUID tableId, User user) {
         if (user.hasNoPermission(OPEN_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        TableDto table = tableService.getById(tableId, user);
+        Table table = tablePort.findById(tableId)
+                .orElseThrow(nonExistingIdSupplier(Table.class, tableId));
         ExceptionUtils.isActiveOrThrow(table);
 
-        if (nonNull(table.orderId())) {
-            throw new BadRequestException(format("Table with id %s already has order", table.orderId()));
+        if (table.hasOrder()) {
+            throw new BadRequestException(format("Table with id %s already has order with id %s", table.getId(), table.getOrderId()));
         }
 
         Order order = Order.builder()
                 .userId(user.getId())
-                .tableId(table.id())
+                .tableId(table.getId())
                 .productsId(new ArrayList<>())
                 .createdAt(now())
                 .build();
 
 
-        orderRepository.save(order);
-        tableService.setOrder(table.id(), order.getId(), user);
+        orderPort.save(order);
 
-        return orderMapper.toDto(order);
+        table.setOrderId(order.getId());
+        tablePort.save(table);
+
+        return order;
     }
 
     @Override
-    public OrderDto close(UUID orderId, User user) {
+    public Order close(UUID orderId, User user) {
         if (user.hasNoPermission(CLOSE_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
         Order order = getByIdOrThrow(orderId);
-        ExceptionUtils.isActiveOrThrow(order);
 
-        tableService.clearOrder(order.getTableId(), user);
+        ExceptionUtils.isActiveOrThrow(order);
+        if (!order.hasBill()) {
+            throw new BadRequestException(format("Order with id %s doesn't have a bill", order.getId()));
+        }
+
+        Bill bill = billPort.findById(order.getBillId())
+                .orElseThrow(nonExistingIdSupplier(Bill.class, order.getBillId()));
+        if (bill.isActive()) {
+            throw new BadRequestException(format("Order with id %s has a bill with id %s but it has not been payed", order.getId(), bill.getId()));
+        }
+
+        Table table = tablePort.findById(order.getTableId())
+                .orElseThrow(nonExistingIdSupplier(Table.class, order.getTableId()));
+        table.removeOrder();
+
         prepareToClose(order);
 
-        orderRepository.save(order);
+        tablePort.save(table);
+        orderPort.save(order);
 
-        return orderMapper.toDto(order);
+        return order;
     }
 
     @Override
-    public OrderDto addProduct(UUID orderId, UUID productId, Integer quantity, User user) {
+    public Order addProduct(UUID orderId, UUID productId, Integer quantity, User user) {
         if (user.hasNoPermission(ADD_PRODUCT_TO_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
@@ -137,7 +153,8 @@ public record OrderServiceImpl(
         ExceptionUtils.isActiveOrThrow(order);
 
 
-        ProductDto product = productService.getById(productId);
+        Product product = productPort.findById(productId)
+                .orElseThrow(nonExistingIdSupplier(Product.class, productId));
         ExceptionUtils.isActiveOrThrow(product);
 
         if (quantity <= 0) {
@@ -145,16 +162,16 @@ public record OrderServiceImpl(
         }
 
         for (int i = 0; i < quantity; i++) {
-            order.getProductsId().add(product.id());
+            order.getProductsId().add(product.getId());
         }
 
-        orderRepository.save(order);
+        orderPort.save(order);
 
-        return orderMapper.toDto(order);
+        return order;
     }
 
     @Override
-    public OrderDto removeProduct(UUID orderId, UUID productId, Integer quantity, User user) {
+    public Order removeProduct(UUID orderId, UUID productId, Integer quantity, User user) {
         if (user.hasNoPermission(DELETE_PRODUCT_FROM_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
@@ -163,7 +180,8 @@ public record OrderServiceImpl(
         ExceptionUtils.isActiveOrThrow(order);
 
 
-        ProductDto product = productService.getById(productId);
+        Product product = productPort.findById(productId)
+                .orElseThrow(nonExistingIdSupplier(Product.class, productId));
         ExceptionUtils.isActiveOrThrow(product);
 
         if (quantity <= 0) {
@@ -171,18 +189,18 @@ public record OrderServiceImpl(
         }
 
         for (int i = 0; i < quantity; i++) {
-            if (!order.getProductsId().remove(productId)) {
+            if (!order.getProductsId().remove(product.getId())) {
                 break;
             }
         }
 
-        orderRepository.save(order);
+        orderPort.save(order);
 
-        return orderMapper.toDto(order);
+        return order;
     }
 
     private Order getByIdOrThrow(UUID id) {
-        return orderRepository.findById(id).orElseThrow(() -> {
+        return orderPort.findById(id).orElseThrow(() -> {
             throw new BadRequestException(format("Order with id %s doesn't exist", id));
         });
     }

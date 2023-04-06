@@ -1,21 +1,21 @@
 package com.konstantion.order;
 
 import com.konstantion.bucket.Bucket;
-import com.konstantion.order.dto.OrderDto;
 import com.konstantion.user.User;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
-    List<OrderDto> findAll();
-    OrderDto createOrder(User user, Bucket bucket);
+    List<Order> findAll();
 
-    OrderDto findOrderById(UUID uuid);
+    Order createOrder(User user, Bucket bucket);
 
-    OrderDto deleteOrderById(UUID uuid);
+    Order findOrderById(UUID uuid);
 
-    List<OrderDto> findOrdersByUserId(UUID uuid);
+    Order deleteOrderById(UUID uuid);
+
+    List<Order> findOrdersByUserId(UUID uuid);
 
     void completeOrder(UUID uuid);
 }

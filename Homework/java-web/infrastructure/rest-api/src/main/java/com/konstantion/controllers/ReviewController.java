@@ -1,9 +1,12 @@
 package com.konstantion.controllers;
 
-import com.konstantion.response.Response;
+import com.konstantion.dto.mappers.ReviewMapper;
+import com.konstantion.dto.response.ResponseDto;
+import com.konstantion.dto.review.CreationReviewDto;
+import com.konstantion.dto.review.ReviewDto;
+import com.konstantion.review.Review;
 import com.konstantion.review.ReviewService;
-import com.konstantion.review.dto.CreationReviewDto;
-import com.konstantion.review.dto.ReviewDto;
+import com.konstantion.review.model.CreationReviewRequest;
 import com.konstantion.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,21 +18,21 @@ import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/web-api/reviews")
 public record ReviewController(
         ReviewService reviewService
 ) {
+    public static final ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
     @GetMapping("/products/{uuid}")
-    public ResponseEntity<Response> getProductReviews(
+    public ResponseEntity<ResponseDto> getProductReviews(
             @PathVariable("uuid") UUID uuid
     ) {
         List<UUID> reviewUuids = reviewService.getProductReviews(uuid).stream()
-                .map(ReviewDto::uuid).toList();
+                .map(Review::uuid).toList();
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -39,12 +42,12 @@ public record ReviewController(
     }
 
     @GetMapping("/products/{uuid}/rating")
-    public ResponseEntity<Response> getProductRating(
+    public ResponseEntity<ResponseDto> getProductRating(
             @PathVariable("uuid") UUID uuid
     ) {
         Double productRating = reviewService.getProductRating(uuid);
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -54,12 +57,12 @@ public record ReviewController(
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<Response> getReview(
+    public ResponseEntity<ResponseDto> getReview(
             @PathVariable("uuid") UUID uuid
     ) {
-        ReviewDto dto = reviewService.getReviewById(uuid);
+        ReviewDto dto =reviewMapper.toDto(reviewService.getReviewById(uuid));
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -69,14 +72,14 @@ public record ReviewController(
     }
 
     @GetMapping("/users/{uuid}")
-    public ResponseEntity<Response> getUserReview(
+    public ResponseEntity<ResponseDto> getUserReview(
             @PathVariable("uuid") UUID uuid,
             @AuthenticationPrincipal User user
     ) {
         List<UUID> uuids = reviewService.getUserReviews(uuid, user).stream()
-                .map(ReviewDto::uuid).toList();
+                .map(Review::uuid).toList();
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -86,13 +89,15 @@ public record ReviewController(
     }
 
     @PostMapping
-    public ResponseEntity<Response> createReview(
+    public ResponseEntity<ResponseDto> createReview(
             @RequestBody CreationReviewDto creationReviewDto,
             @AuthenticationPrincipal User user
     ) {
-        ReviewDto dto = reviewService.createReview(creationReviewDto, user);
+        ReviewDto dto = reviewMapper.toDto(
+                reviewService.createReview(reviewMapper.toEntity(creationReviewDto), user)
+        );
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -102,13 +107,13 @@ public record ReviewController(
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Response> deleteReview(
+    public ResponseEntity<ResponseDto> deleteReview(
             @PathVariable("uuid") UUID uuid,
             @AuthenticationPrincipal User user
     ) {
-        ReviewDto dto = reviewService.deleteReview(uuid, user);
+        ReviewDto dto = reviewMapper.toDto(reviewService.deleteReview(uuid, user));
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)

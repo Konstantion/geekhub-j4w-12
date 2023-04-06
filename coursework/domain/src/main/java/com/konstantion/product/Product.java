@@ -1,6 +1,5 @@
 package com.konstantion.product;
 
-import com.konstantion.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -7,6 +7,6 @@ create table if not exists public.category
     constraint category_pk
         primary key (uuid),
     constraint category_user_fk
-        foreign key (user_uuid) references public.user
+        foreign key (user_uuid) references public.user on delete set null
 );
 

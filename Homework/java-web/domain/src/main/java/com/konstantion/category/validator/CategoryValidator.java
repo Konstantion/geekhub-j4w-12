@@ -1,17 +1,17 @@
 package com.konstantion.category.validator;
 
-import com.konstantion.category.dto.CreationCategoryDto;
-import com.konstantion.category.dto.UpdateCategoryDto;
+import com.konstantion.category.model.CreationCategoryRequest;
+import com.konstantion.category.model.UpdateCategoryRequest;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public record CategoryValidator(CategoryValidations categoryValidations) {
-    public ValidationResult validate(CreationCategoryDto categoryDto) {
+    public ValidationResult validate(CreationCategoryRequest categoryDto) {
         return ValidationResult.empty();
     }
 
-    public ValidationResult validate(UpdateCategoryDto categoryDto) {
+    public ValidationResult validate(UpdateCategoryRequest categoryDto) {
         return ValidationResult.empty();
     }
 }

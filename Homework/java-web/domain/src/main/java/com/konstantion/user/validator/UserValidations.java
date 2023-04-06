@@ -29,19 +29,15 @@ public record UserValidations() implements ValidationsUtil {
         return Optional.empty();
     }
 
-    public Optional<String> isPasswordValid(String password, String passwordConfirmation) {
+    public Optional<String> isPasswordValid(String password) {
         List<String> errorList = new ArrayList<>();
 
         if (isBlank(password)) {
             return Optional.of("password shouldn't be empty");
         }
 
-        if (isBlank(passwordConfirmation)) {
-            return Optional.of("confirmation password shouldn't be empty");
-        }
-
-        if (password.length() < 8 || password.length() > 20) {
-            errorList.add("password should be between 8 and 20 characters");
+        if (password.length() < 4 || password.length() > 20) {
+            errorList.add("password should be between 4 and 20 characters");
         }
 
         if (!hasAtLeastDigitCharacters(password, 1)) {
@@ -62,6 +58,18 @@ public record UserValidations() implements ValidationsUtil {
                     PASSWORD_SPECIAL_CHARACTERS
             ));
         }
+
+
+        return listToOptionalString(errorList);
+    }
+
+    public Optional<String> isPasswordConfirmValid(String password, String passwordConfirmation) {
+        List<String> errorList = new ArrayList<>();
+
+        if (isBlank(passwordConfirmation)) {
+            return Optional.of("confirmation password shouldn't be empty");
+        }
+
 
         if (!password.equals(passwordConfirmation)) {
             errorList.add("confirmation password should be the same as password");
@@ -107,7 +115,7 @@ public record UserValidations() implements ValidationsUtil {
     }
 
     public Optional<String> isLoginEmailValid(String email) {
-        if(isBlank(email)) {
+        if (isBlank(email)) {
             return Optional.of("Email shouldn't be empty");
         }
 
@@ -115,7 +123,7 @@ public record UserValidations() implements ValidationsUtil {
     }
 
     public Optional<String> isLoginPasswordValid(String password) {
-        if(isBlank(password)) {
+        if (isBlank(password)) {
             return Optional.of("Password shouldn't be empty");
         }
 

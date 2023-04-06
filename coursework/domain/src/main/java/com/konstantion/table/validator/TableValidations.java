@@ -1,8 +1,7 @@
 package com.konstantion.table.validator;
 
-import com.konstantion.table.Table;
 import com.konstantion.table.TableType;
-import com.konstantion.table.dto.CreationTableDto;
+import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.utils.validator.ValidationUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -30,7 +29,7 @@ public record TableValidations() implements ValidationUtil {
         return setToOptional(violations, table, NAME_FIELD);
     }
 
-    public Optional<FieldError> isTableTypeValid(String tableType, CreationTableDto table) {
+    public Optional<FieldError> isTableTypeValid(String tableType, CreateTableRequest table) {
         Set<String> violations = new HashSet<>();
 
         if (isBlank(tableType)) {

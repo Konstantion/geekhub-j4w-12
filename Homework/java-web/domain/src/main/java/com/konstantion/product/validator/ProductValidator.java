@@ -1,7 +1,7 @@
 package com.konstantion.product.validator;
 
-import com.konstantion.product.dto.CreationProductDto;
-import com.konstantion.product.dto.UpdateProductDto;
+import com.konstantion.product.model.CreationProductRequest;
+import com.konstantion.product.model.UpdateProductRequest;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Component
 public record ProductValidator(ProductValidations productValidations) {
-    public ValidationResult validate(CreationProductDto creationProductDto) {
+    public ValidationResult validate(CreationProductRequest creationProductDto) {
         Set<FieldError> validationErrors = new HashSet<>();
         productValidations.isNameValid(creationProductDto.name()).ifPresent(
                 s -> validationErrors.add(new FieldError(
@@ -34,7 +34,7 @@ public record ProductValidator(ProductValidations productValidations) {
         return ValidationResult.ofAbsentee(validationErrors);
     }
 
-    public ValidationResult validate(UpdateProductDto updateProductDto) {
+    public ValidationResult validate(UpdateProductRequest updateProductDto) {
         Set<FieldError> validationErrors = new HashSet<>();
         productValidations.isNameValid(updateProductDto.name()).ifPresent(
                 s -> validationErrors.add(new FieldError(

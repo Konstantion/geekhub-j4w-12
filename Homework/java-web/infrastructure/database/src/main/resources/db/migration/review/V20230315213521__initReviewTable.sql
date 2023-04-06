@@ -8,9 +8,9 @@ create table if not exists public.review
     created_at timestamp with time zone not null,
     primary key (uuid),
     constraint review_users_fk
-        foreign key (user_uuid) references public.user
-            on delete cascade,
+        foreign key (user_uuid) references public.user on delete cascade,
+
     constraint review_product_fk
-        foreign key (product_uuid) references public.product
+        foreign key (product_uuid) references public.product on delete set null
 );
 

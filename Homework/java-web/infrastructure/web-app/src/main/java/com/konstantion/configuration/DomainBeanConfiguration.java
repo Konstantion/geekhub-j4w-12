@@ -1,25 +1,24 @@
 package com.konstantion.configuration;
 
 import com.konstantion.bucket.BucketService;
-import com.konstantion.bucket.BucketServiceImp;
+import com.konstantion.bucket.BucketServiceImpl;
 import com.konstantion.category.CategoryRepository;
 import com.konstantion.category.CategoryService;
-import com.konstantion.category.CategoryServiceImp;
+import com.konstantion.category.CategoryServiceImpl;
 import com.konstantion.category.validator.CategoryValidator;
 import com.konstantion.file.MultipartFileValidator;
 import com.konstantion.order.OrderRepository;
 import com.konstantion.order.OrderService;
-import com.konstantion.order.OrderServiceImp;
+import com.konstantion.order.OrderServiceImpl;
 import com.konstantion.order.validator.OrderValidator;
 import com.konstantion.product.ProductRepository;
 import com.konstantion.product.ProductService;
-import com.konstantion.product.ProductServiceImp;
+import com.konstantion.product.ProductServiceImpl;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.ragistration.token.ConfirmationTokenService;
-import com.konstantion.reporitories.mappers.UserRowMapper;
 import com.konstantion.review.ReviewRepository;
 import com.konstantion.review.ReviewService;
-import com.konstantion.review.ReviewServiceImp;
+import com.konstantion.review.ReviewServiceImpl;
 import com.konstantion.review.validator.ReviewValidator;
 import com.konstantion.upload.UploadService;
 import com.konstantion.user.*;
@@ -38,7 +37,7 @@ import java.util.UUID;
 public class DomainBeanConfiguration {
     @Bean
     public BucketService bucketService(ProductRepository productRepository, ProductService productService) {
-        return new BucketServiceImp(productRepository, productService);
+        return new BucketServiceImpl(productRepository, productService);
     }
 
     @Bean
@@ -48,7 +47,7 @@ public class DomainBeanConfiguration {
             UserRepository userRepository,
             ProductRepository productRepository
     ) {
-        return new OrderServiceImp(orderRepository, orderValidator, userRepository, productRepository);
+        return new OrderServiceImpl(orderRepository, orderValidator, userRepository, productRepository);
     }
 
     @Bean
@@ -58,14 +57,14 @@ public class DomainBeanConfiguration {
                                          UploadService uploadService,
                                          CategoryService categoryService
     ) {
-        return new ProductServiceImp(productValidator, fileValidator, productRepository, uploadService, categoryService);
+        return new ProductServiceImpl(productValidator, fileValidator, productRepository, uploadService, categoryService);
     }
 
     @Bean
     public ReviewService reviewService(ReviewValidator reviewValidator,
                                        ReviewRepository reviewRepository,
                                        ProductService productService) {
-        return new ReviewServiceImp(reviewValidator, reviewRepository, productService);
+        return new ReviewServiceImpl(reviewValidator, reviewRepository, productService);
     }
 
     @Bean
@@ -92,7 +91,7 @@ public class DomainBeanConfiguration {
     public CategoryService categoryService(
             CategoryRepository categoryRepository,
             CategoryValidator categoryValidator) {
-        return new CategoryServiceImp(categoryRepository, categoryValidator);
+        return new CategoryServiceImpl(categoryRepository, categoryValidator);
     }
 
     @Bean
@@ -101,6 +100,6 @@ public class DomainBeanConfiguration {
             BCryptPasswordEncoder passwordEncoder,
             ConfirmationTokenService tokenService
     ) {
-        return new UserServiceImp(userRepository, passwordEncoder, tokenService);
+        return new UserServiceImpl(userRepository, passwordEncoder, tokenService);
     }
 }

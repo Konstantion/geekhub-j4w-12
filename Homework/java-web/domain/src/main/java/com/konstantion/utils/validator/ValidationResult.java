@@ -45,6 +45,6 @@ public record ValidationResult(Set<FieldError> fieldErrors, boolean errorsPresen
     }
 
     public static void validOrThrow(ValidationResult validationResult) {
-       validOrThrow(validationResult, "Process failed, given data is invalid");
+        validOrThrow(validationResult, "Process failed, given data is invalid");
     }
 }

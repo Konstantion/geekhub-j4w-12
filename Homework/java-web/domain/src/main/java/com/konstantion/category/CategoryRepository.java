@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public interface CategoryRepository {
     List<Category> findAll();
+
     Optional<Category> findById(UUID uuid);
 
     Category save(Category category);

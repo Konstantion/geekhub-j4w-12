@@ -1,17 +1,16 @@
 package com.konstantion.user;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -24,19 +23,20 @@ import static java.util.stream.Collectors.toSet;
 @AllArgsConstructor
 @Getter
 @Setter
-
 public class User implements UserDetails {
     private UUID id;
     private String firstName;
     private String lastName;
-    private String username;
+    private String email;
     private String phoneNumber;
     private Integer age;
     private String password;
     private Boolean active;
     private LocalDateTime createdAt;
-    private Set<Role> roles;
-    private Set<Permission> permissions;
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
+    @Builder.Default
+    private Set<Permission> permissions = new HashSet<>();
 
     public User() {
     }
@@ -91,7 +91,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

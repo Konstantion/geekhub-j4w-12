@@ -1,12 +1,13 @@
 package com.konstantion.bill;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -15,7 +16,6 @@ import java.util.UUID;
 @Setter
 public class Bill {
     private UUID id;
-    private List<UUID> productsId;
     private UUID waiterId;
     private UUID orderId;
     private UUID guestId;
@@ -24,4 +24,11 @@ public class Bill {
     private Boolean active;
     private Double price;
     private Double priceWithDiscount;
+
+    public boolean isActive() {
+        return active;
+    }
+    public Bill() {
+
+    }
 }

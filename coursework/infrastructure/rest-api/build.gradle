@@ -1,6 +1,8 @@
 dependencies {
     implementation project(':coursework:domain')
 
-    implementation libsSpringDoc.openapiStarterWebmvcUi
-    runtimeOnly libsDatabase.postgres
+    implementation libsUtils.mapstruct
+
+    annotationProcessor libsUtils.mapstructProcessor
+    annotationProcessor libsUtils.lombokMapstructBinding
 }

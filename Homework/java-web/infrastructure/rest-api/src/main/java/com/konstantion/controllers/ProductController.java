@@ -1,11 +1,13 @@
 package com.konstantion.controllers;
 
 
+import com.konstantion.dto.mappers.ProductMapper;
+import com.konstantion.dto.product.CreationProductDto;
+import com.konstantion.dto.product.ProductDto;
+import com.konstantion.dto.product.UpdateProductDto;
+import com.konstantion.dto.response.ResponseDto;
+import com.konstantion.product.Product;
 import com.konstantion.product.ProductService;
-import com.konstantion.product.dto.CreationProductDto;
-import com.konstantion.product.dto.ProductDto;
-import com.konstantion.product.dto.UpdateProductDto;
-import com.konstantion.response.Response;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
@@ -26,8 +28,10 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("/web-api/products")
 @SecurityRequirement(name = "bearerAuth")
 public record ProductController(ProductService productService) {
+    public static final ProductMapper productMapper = ProductMapper.INSTANCE;
+
     @GetMapping("/all")
-    public ResponseEntity<Response> getProducts(
+    public ResponseEntity<ResponseDto> getProducts(
             @RequestParam("parameter") Optional<String> parameter,
             @RequestParam("pattern") Optional<String> pattern
     ) {
@@ -35,10 +39,10 @@ public record ProductController(ProductService productService) {
                         DESC,
                         parameter.orElse("name").toLowerCase(),
                         pattern.orElse("").toLowerCase()).stream()
-                .map(ProductDto::uuid).toList();
+                .map(Product::uuid).toList();
 
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -49,7 +53,7 @@ public record ProductController(ProductService productService) {
 
     @GetMapping()
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Response> getProductsPage(
+    public ResponseEntity<ResponseDto> getProductsPage(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,
             @RequestParam("orderBy") Optional<String> fieldName,
@@ -60,17 +64,17 @@ public record ProductController(ProductService productService) {
         if (fieldName.isPresent() && fieldName.get().isEmpty()) {
             fieldName = Optional.of("name");
         }
-        Page<ProductDto> page = productService.getAll(
+        Page<ProductDto> page = productMapper.toDto(productService.getAll(
                 pageNumber.orElse(1),
                 pageSize.orElse(4),
                 fieldName.orElse("name"),
                 searchPattern.orElse(""),
                 categoryUuid.orElse(null),
                 ascending.orElse(true)
-        );
+        ));
 
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -80,13 +84,15 @@ public record ProductController(ProductService productService) {
     }
 
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Response> addProduct(
+    public ResponseEntity<ResponseDto> addProduct(
             @Parameter(description = "Creation product dto")
             @ModelAttribute CreationProductDto product
     ) {
-        ProductDto dto = productService.create(product, product.file());
+        ProductDto dto = productMapper.toDto(
+                productService.create(productMapper.toEntity(product), product.file())
+        );
         return ResponseEntity.ok(
-                Response.builder()
+                ResponseDto.builder()
                         .statusCode(OK.value())
                         .status(OK)
                         .data(Map.of("uuid", dto.uuid()))
@@ -95,11 +101,11 @@ public record ProductController(ProductService productService) {
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Response> deleteProduct(
+    public ResponseEntity<ResponseDto> deleteProduct(
             @PathVariable("uuid") UUID uuid
     ) {
-        ProductDto dto = productService.delete(uuid);
-        return ResponseEntity.ok(Response.builder()
+        ProductDto dto = productMapper.toDto(productService.delete(uuid));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -110,11 +116,11 @@ public record ProductController(ProductService productService) {
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<Response> getProduct(
+    public ResponseEntity<ResponseDto> getProduct(
             @PathVariable("uuid") UUID uuid
     ) {
-        ProductDto dto = productService.getById(uuid);
-        return ResponseEntity.ok(Response.builder()
+        ProductDto dto = productMapper.toDto(productService.getById(uuid));
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -127,14 +133,16 @@ public record ProductController(ProductService productService) {
             path = "/{uuid}",
             consumes = {MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Response> updateProduct(
+    public ResponseEntity<ResponseDto> updateProduct(
             @PathVariable("uuid") UUID uuid,
             @Parameter(description = "Update product dto")
             @ModelAttribute UpdateProductDto updateDto
     ) {
-        ProductDto dto = productService.update(uuid, updateDto);
+        ProductDto dto = productMapper.toDto(
+                productService.update(uuid, productMapper.toEntity(updateDto))
+        );
 
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)
@@ -144,11 +152,11 @@ public record ProductController(ProductService productService) {
     }
 
     @GetMapping("/{uuid}/image/encoded")
-    public ResponseEntity<Response> getProductImageEncoded(
+    public ResponseEntity<ResponseDto> getProductImageEncoded(
             @PathVariable("uuid") UUID uuid
     ) {
         String base64Encoded = productService.getProductImageEncoded(uuid);
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
                 .statusCode(OK.value())
                 .status(OK)

@@ -2,8 +2,7 @@ package com.konstantion.user;
 
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
-import com.konstantion.user.dto.CreationUserDto;
-import com.konstantion.user.dto.UserDto;
+import com.konstantion.user.model.CreateUserRequest;
 import com.konstantion.user.validator.UserValidator;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
+import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.CREATE_WAITER;
 import static com.konstantion.user.Permission.getDefaultWaiterPermission;
 import static com.konstantion.user.Role.ADMIN;
@@ -22,53 +23,49 @@ import static java.time.LocalDateTime.now;
 
 @Component
 public record UserServiceImpl(
-        UserRepository userRepository,
+        UserPort userPort,
         UserValidator userValidator,
         PasswordEncoder passwordEncoder
 ) implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-    private static final UserMapper userMapper = UserMapper.INSTANCE;
-
     @Override
-    public UserDto getUserById(UUID uuid) {
-        User user = getUserByIdOrThrow(uuid);
+    public User getUserById(UUID uuid) {
 
-        return userMapper.toDto(user);
+        return getUserByIdOrThrow(uuid);
     }
 
     @Override
-    public UserDto createWaiter(CreationUserDto cudto, User user) {
+    public User createWaiter(CreateUserRequest createUserRequest, User user) {
         if (user.hasNoPermission(ADMIN, CREATE_WAITER)) {
-            throw new ForbiddenException("Not enough authorities to create waiter");
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        ValidationResult validationResult = userValidator.validate(cudto);
+        ValidationResult validationResult = userValidator.validate(createUserRequest);
         validationResult.validOrTrow();
 
         User waiter = User.builder()
-                .username(cudto.username())
-                .firstName(cudto.firstName())
-                .lastName(cudto.lastName())
-                .phoneNumber(cudto.phoneNumber())
-                .age(cudto.age())
+                .email(createUserRequest.email())
+                .firstName(createUserRequest.firstName())
+                .lastName(createUserRequest.lastName())
+                .phoneNumber(createUserRequest.phoneNumber())
+                .age(createUserRequest.age())
                 .roles(getWaiterRole())
                 .permissions(getDefaultWaiterPermission())
-                .password(passwordEncoder.encode(cudto.password()))
+                .password(passwordEncoder.encode(createUserRequest.password()))
                 .active(true)
                 .createdAt(now())
                 .build();
 
-        userRepository.save(waiter);
+        userPort.save(waiter);
 
         logger.info("User {} successfully created", user);
 
-        return userMapper.toDto(user);
+        return user;
     }
 
     private User getUserByIdOrThrow(UUID uuid) {
-        return userRepository.findById(uuid).orElseThrow(() -> {
-            throw new BadRequestException(format("User with id %s doesn't exist", uuid));
-        });
+        return userPort.findById(uuid)
+                .orElseThrow(nonExistingIdSupplier(User.class, uuid));
     }
 }

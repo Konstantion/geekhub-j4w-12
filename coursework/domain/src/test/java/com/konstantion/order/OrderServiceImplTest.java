@@ -1,5 +1,6 @@
 package com.konstantion.order;
 
+import com.konstantion.product.Product;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,11 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderServiceImplTest {
     @Test
     void arraytest() {
-        String lol = "lol";
-        List<String> list = new ArrayList<>();
-        list.add(lol);
-        list.add(lol);
-        list.remove(lol);
-        System.out.println(list);
+        Product product = Product.builder().build();
+        System.out.println(product.getClass().getSimpleName());
     }
 }

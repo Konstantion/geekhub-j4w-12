@@ -1,6 +1,6 @@
 package com.konstantion.user.validator;
 
-import com.konstantion.user.dto.CreationUserDto;
+import com.konstantion.user.model.CreateUserRequest;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -12,7 +12,7 @@ import java.util.Set;
 public record UserValidator(
   UserValidations userValidations
 ) {
-    public ValidationResult validate(CreationUserDto cudto) {
+    public ValidationResult validate(CreateUserRequest createUserRequest) {
         Set<FieldError> validationErrors = new HashSet<>();
         return ValidationResult.of(validationErrors);
     }
