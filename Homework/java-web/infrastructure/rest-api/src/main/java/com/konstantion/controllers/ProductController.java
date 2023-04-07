@@ -30,27 +30,6 @@ import static org.springframework.http.MediaType.*;
 public record ProductController(ProductService productService) {
     public static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
-    @GetMapping("/all")
-    public ResponseEntity<ResponseDto> getProducts(
-            @RequestParam("parameter") Optional<String> parameter,
-            @RequestParam("pattern") Optional<String> pattern
-    ) {
-        List<UUID> uuids = productService.getAll(
-                        DESC,
-                        parameter.orElse("name").toLowerCase(),
-                        pattern.orElse("").toLowerCase()).stream()
-                .map(Product::uuid).toList();
-
-
-        return ResponseEntity.ok(ResponseDto.builder()
-                .timeStamp(now())
-                .statusCode(OK.value())
-                .status(OK)
-                .data(Map.of("uuids", uuids))
-                .build()
-        );
-    }
-
     @GetMapping()
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ResponseDto> getProductsPage(
@@ -61,9 +40,6 @@ public record ProductController(ProductService productService) {
             @RequestParam("categoryUuid") Optional<UUID> categoryUuid,
             @RequestParam("ascending") Optional<Boolean> ascending
     ) {
-        if (fieldName.isPresent() && fieldName.get().isEmpty()) {
-            fieldName = Optional.of("name");
-        }
         Page<ProductDto> page = productMapper.toDto(productService.getAll(
                 pageNumber.orElse(1),
                 pageSize.orElse(4),
@@ -79,38 +55,6 @@ public record ProductController(ProductService productService) {
                 .statusCode(OK.value())
                 .status(OK)
                 .data(Map.of("page", page))
-                .build()
-        );
-    }
-
-    @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseDto> addProduct(
-            @Parameter(description = "Creation product dto")
-            @ModelAttribute CreationProductDto product
-    ) {
-        ProductDto dto = productMapper.toDto(
-                productService.create(productMapper.toEntity(product), product.file())
-        );
-        return ResponseEntity.ok(
-                ResponseDto.builder()
-                        .statusCode(OK.value())
-                        .status(OK)
-                        .data(Map.of("uuid", dto.uuid()))
-                        .build()
-        );
-    }
-
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<ResponseDto> deleteProduct(
-            @PathVariable("uuid") UUID uuid
-    ) {
-        ProductDto dto = productMapper.toDto(productService.delete(uuid));
-        return ResponseEntity.ok(ResponseDto.builder()
-                .timeStamp(now())
-                .statusCode(OK.value())
-                .status(OK)
-                .data(Map.of("uuid", dto.uuid()))
-                .message("Product successfully deleted")
                 .build()
         );
     }

@@ -1,5 +1,7 @@
 package com.konstantion.dto.category;
 
-public record CreationCategoryDto(String name) {
+public record CreationCategoryDto(
+        String name
+) {
 
 }

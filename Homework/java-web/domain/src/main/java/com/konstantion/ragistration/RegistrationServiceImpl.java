@@ -103,7 +103,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        userService.enableUser(user);
+        userService.enableUser(user.getId());
 
         return "Confirmed";
     }

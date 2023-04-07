@@ -135,27 +135,29 @@ public record ProductServiceImpl(ProductValidator productValidator,
     @Override
     public Page<Product> getAll(
             Integer pageNumber, Integer pageSize,
-            String sortBy, String searchPattern,
+            String fieldName, String searchPattern,
             UUID categoryUuid, boolean ascending) {
-
-        sortBy = sortBy.toLowerCase();
         if (nonNull(categoryUuid)) {
             categoryService.getCategoryById(categoryUuid);
         }
-        if (!isFieldValidForSearch(sortBy)) {
-            throw new BadRequestException(format("Sort products by %s doesn't provided", sortBy));
+
+        fieldName = fieldName.toLowerCase();
+        if (fieldName.isBlank()) {
+            fieldName = "name";
         }
 
-        sortBy = ascending ? sortBy + " ASC " : sortBy + " DESC ";
+        if (!isFieldValidForSearch(fieldName)) {
+            throw new BadRequestException(format("Sort products by %s doesn't provided", fieldName));
+        }
+
+        fieldName = ascending ? fieldName + " ASC " : fieldName + " DESC ";
         searchPattern = searchPattern.trim();
 
         pageNumber = Math.max(pageNumber, 1);
         pageSize = Math.max(pageSize, 1);
 
-        Page<Product> products = productRepository
-                .findAll(pageNumber, pageSize, sortBy, searchPattern, categoryUuid);
-
-        return products;
+        return productRepository
+                .findAll(pageNumber, pageSize, fieldName, searchPattern, categoryUuid);
     }
 
     @Override

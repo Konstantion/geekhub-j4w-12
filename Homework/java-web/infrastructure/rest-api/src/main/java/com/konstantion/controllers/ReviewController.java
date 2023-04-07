@@ -6,7 +6,6 @@ import com.konstantion.dto.review.CreationReviewDto;
 import com.konstantion.dto.review.ReviewDto;
 import com.konstantion.review.Review;
 import com.konstantion.review.ReviewService;
-import com.konstantion.review.model.CreationReviewRequest;
 import com.konstantion.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +24,7 @@ public record ReviewController(
         ReviewService reviewService
 ) {
     public static final ReviewMapper reviewMapper = ReviewMapper.INSTANCE;
+
     @GetMapping("/products/{uuid}")
     public ResponseEntity<ResponseDto> getProductReviews(
             @PathVariable("uuid") UUID uuid
@@ -60,7 +60,7 @@ public record ReviewController(
     public ResponseEntity<ResponseDto> getReview(
             @PathVariable("uuid") UUID uuid
     ) {
-        ReviewDto dto =reviewMapper.toDto(reviewService.getReviewById(uuid));
+        ReviewDto dto = reviewMapper.toDto(reviewService.getReviewById(uuid));
 
         return ResponseEntity.ok(ResponseDto.builder()
                 .timeStamp(now())
@@ -72,7 +72,7 @@ public record ReviewController(
     }
 
     @GetMapping("/users/{uuid}")
-    public ResponseEntity<ResponseDto> getUserReview(
+    public ResponseEntity<ResponseDto> getUserReviews(
             @PathVariable("uuid") UUID uuid,
             @AuthenticationPrincipal User user
     ) {

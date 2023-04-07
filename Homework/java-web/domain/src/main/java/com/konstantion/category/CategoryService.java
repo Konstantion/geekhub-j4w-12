@@ -12,9 +12,9 @@ public interface CategoryService {
 
     Category createCategory(CreationCategoryRequest creationDto, User user);
 
-    Category updateCategory(UUID categoryId, UpdateCategoryRequest updateDto, User user);
+    Category updateCategory(UUID categoryId, UpdateCategoryRequest updateDto);
 
-    Category deleteCategory(UUID categoryId, User user);
+    Category deleteCategory(UUID categoryId);
 
     List<Category> getCategories();
 }

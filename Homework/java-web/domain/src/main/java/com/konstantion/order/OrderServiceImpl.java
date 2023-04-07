@@ -2,6 +2,7 @@ package com.konstantion.order;
 
 import com.konstantion.bucket.Bucket;
 import com.konstantion.exceptions.BadRequestException;
+import com.konstantion.exceptions.ForbiddenException;
 import com.konstantion.exceptions.ValidationException;
 import com.konstantion.order.validator.OrderValidator;
 import com.konstantion.product.Product;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.konstantion.user.Role.ADMIN;
 import static java.lang.String.format;
 
 public record OrderServiceImpl(
@@ -67,17 +69,32 @@ public record OrderServiceImpl(
     }
 
     @Override
-    public Order findOrderById(UUID uuid) {
-        return orderByIdOrThrow(uuid);
+    public Order findOrderById(UUID uuid, User user) {
+        Order order = orderByIdOrThrow(uuid);
+
+        if (!order.userUuid().equals(user.getId())
+            && !user.hasRole(ADMIN)) {
+            throw new ForbiddenException("Not enough authorities to get order");
+        }
+
+        return order;
     }
 
     @Override
-    public Order deleteOrderById(UUID uuid) {
-        return null;
+    public Order deleteOrder(UUID uuid) {
+        Order order = orderByIdOrThrow(uuid);
+
+        orderRepository.delete(order);
+
+        return order;
     }
 
     @Override
-    public List<Order> findOrdersByUserId(UUID uuid) {
+    public List<Order> findOrdersByUserId(UUID uuid, User user) {
+        if (!user.getId().equals(uuid)
+            && !user.hasRole(ADMIN)) {
+            throw new ForbiddenException("Not enough authorities to get orders");
+        }
         userRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("User with uuid %s doesn't exist", uuid)
                 ));
@@ -86,11 +103,33 @@ public record OrderServiceImpl(
     }
 
     @Override
-    public void completeOrder(UUID uuid) {
-        orderByIdOrThrow(uuid);
+    public UUID completeOrder(UUID uuid, User user) {
+        Order order = orderByIdOrThrow(uuid);
+
+        if (!order.userUuid().equals(user.getId())
+            && user.hasRole(ADMIN)) {
+            throw new ForbiddenException("Not enough authorities to complete order");
+        }
 
         orderRepository.updateOrderStatusById(uuid, OrderStatus.COMPLETED);
         logger.info("Order with id {} successfully completed", uuid);
+
+        return uuid;
+    }
+
+    @Override
+    public UUID cancelOrder(UUID uuid, User user) {
+        Order order = orderByIdOrThrow(uuid);
+
+        if (!order.userUuid().equals(user.getId())
+            && user.hasRole(ADMIN)) {
+            throw new ForbiddenException("Not enough authorities to cancel order");
+        }
+
+        orderRepository.updateOrderStatusById(uuid, OrderStatus.CANCELED);
+        logger.info("Order with id {} successfully canceled", uuid);
+
+        return uuid;
     }
 
     private Order orderByIdOrThrow(UUID uuid) {

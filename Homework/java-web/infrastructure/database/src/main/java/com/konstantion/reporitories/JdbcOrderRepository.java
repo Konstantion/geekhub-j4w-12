@@ -7,6 +7,7 @@ import com.konstantion.product.Product;
 import com.konstantion.reporitories.mappers.OrderProductsRowMapper;
 import com.konstantion.reporitories.mappers.OrderRowMapper;
 import com.konstantion.utils.ParameterSourceUtil;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
@@ -60,6 +61,21 @@ public record JdbcOrderRepository(NamedParameterJdbcTemplate jdbcTemplate,
             SET status = :status
             WHERE uuid = :uuid;
             """;
+
+    private static final String DELETE_QUERY = """
+            DELETE FROM public.order
+            WHERE uuid = :uuid;
+            """;
+
+    @Override
+    public void delete(Order order) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("uuid", order.uuid());
+        jdbcTemplate.update(
+                DELETE_QUERY,
+                parameterSource
+        );
+    }
 
     @Override
     public List<Order> findAll() {

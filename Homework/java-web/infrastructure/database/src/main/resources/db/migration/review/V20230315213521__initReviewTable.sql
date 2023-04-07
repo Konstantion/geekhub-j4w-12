@@ -11,6 +11,6 @@ create table if not exists public.review
         foreign key (user_uuid) references public.user on delete cascade,
 
     constraint review_product_fk
-        foreign key (product_uuid) references public.product on delete set null
+        foreign key (product_uuid) references public.product on delete cascade
 );
 

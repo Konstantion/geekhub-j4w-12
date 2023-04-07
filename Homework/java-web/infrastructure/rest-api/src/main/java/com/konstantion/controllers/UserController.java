@@ -2,15 +2,13 @@ package com.konstantion.controllers;
 
 import com.konstantion.dto.mappers.UserMapper;
 import com.konstantion.dto.response.ResponseDto;
+import com.konstantion.dto.user.UpdateUserDto;
 import com.konstantion.dto.user.UserDto;
 import com.konstantion.user.User;
 import com.konstantion.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -68,7 +66,29 @@ public record UserController(
                         .timeStamp(now())
                         .status(OK)
                         .statusCode(OK.value())
-                        .message("Authorized user roles")
+                        .message("Authorized user")
+                        .data(Map.of("user", dto))
+                        .build());
+    }
+
+    @PutMapping("/{uuid}")
+    public ResponseEntity<ResponseDto> updateUser(
+            @PathVariable("uuid") UUID userId,
+            @RequestBody UpdateUserDto updateUserDto,
+            @AuthenticationPrincipal User user
+    ) {
+        UserDto dto = userMapper.toDto(userService.editUser(
+                userId,
+                userMapper.toEntity(updateUserDto),
+                user
+        ));
+
+        return ResponseEntity.ok(
+                ResponseDto.builder()
+                        .timeStamp(now())
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .message("User updated")
                         .data(Map.of("user", dto))
                         .build());
     }

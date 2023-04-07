@@ -6,6 +6,7 @@ import com.konstantion.category.CategoryRepository;
 import com.konstantion.category.CategoryService;
 import com.konstantion.category.CategoryServiceImpl;
 import com.konstantion.category.validator.CategoryValidator;
+import com.konstantion.email.EmailService;
 import com.konstantion.file.MultipartFileValidator;
 import com.konstantion.order.OrderRepository;
 import com.konstantion.order.OrderService;
@@ -22,6 +23,7 @@ import com.konstantion.review.ReviewServiceImpl;
 import com.konstantion.review.validator.ReviewValidator;
 import com.konstantion.upload.UploadService;
 import com.konstantion.user.*;
+import com.konstantion.user.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -98,8 +100,10 @@ public class DomainBeanConfiguration {
     public UserService userService(
             UserRepository userRepository,
             BCryptPasswordEncoder passwordEncoder,
-            ConfirmationTokenService tokenService
+            ConfirmationTokenService tokenService,
+            UserValidator userValidator,
+            EmailService emailService
     ) {
-        return new UserServiceImpl(userRepository, passwordEncoder, tokenService);
+        return new UserServiceImpl(userRepository, passwordEncoder, tokenService, userValidator, emailService);
     }
 }

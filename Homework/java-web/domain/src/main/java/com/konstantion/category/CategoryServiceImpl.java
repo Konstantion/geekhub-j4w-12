@@ -48,7 +48,7 @@ public record CategoryServiceImpl(
     }
 
     @Override
-    public Category updateCategory(UUID categoryId, UpdateCategoryRequest updateDto, User user) {
+    public Category updateCategory(UUID categoryId, UpdateCategoryRequest updateDto) {
         Category category = getCategoryByIdOrThrow(categoryId);
 
         ValidationResult validationResult = categoryValidator.validate(updateDto);
@@ -66,7 +66,7 @@ public record CategoryServiceImpl(
     }
 
     @Override
-    public Category deleteCategory(UUID categoryId, User user) {
+    public Category deleteCategory(UUID categoryId) {
         Category category = getCategoryByIdOrThrow(categoryId);
         categoryRepository.delete(category);
 

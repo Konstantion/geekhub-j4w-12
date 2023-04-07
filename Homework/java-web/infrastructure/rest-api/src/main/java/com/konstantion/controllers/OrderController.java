@@ -40,10 +40,11 @@ public record OrderController(OrderService orderService,
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<ResponseDto> getOrder(
-            @PathVariable("uuid") UUID uuid
+    public ResponseEntity<ResponseDto> getOrderById(
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
     ) {
-        OrderDto dto = orderMapper.toDto(orderService.findOrderById(uuid));
+        OrderDto dto = orderMapper.toDto(orderService.findOrderById(uuid, user));
         return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
@@ -55,9 +56,10 @@ public record OrderController(OrderService orderService,
 
     @GetMapping("/users/{uuid}")
     public ResponseEntity<ResponseDto> getUserOrders(
-            @PathVariable("uuid") UUID uuid
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
     ) {
-        List<OrderDto> dto = orderMapper.toDto(orderService.findOrdersByUserId(uuid));
+        List<OrderDto> dto = orderMapper.toDto(orderService.findOrdersByUserId(uuid, user));
         return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
@@ -67,11 +69,11 @@ public record OrderController(OrderService orderService,
                 .build());
     }
 
-    @GetMapping("users/authorized")
-    public ResponseEntity<ResponseDto> getOrders(
+    @GetMapping("/users/authorized")
+    public ResponseEntity<ResponseDto> getAuthorizedUserOrders(
             @AuthenticationPrincipal User user
     ) {
-        List<OrderDto> dto = orderMapper.toDto(orderService.findOrdersByUserId(user.getId()));
+        List<OrderDto> dto = orderMapper.toDto(orderService.findOrdersByUserId(user.getId(), user));
         return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
@@ -81,28 +83,33 @@ public record OrderController(OrderService orderService,
                 .build());
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<ResponseDto> getAllOrders() {
-        List<OrderDto> dto = orderMapper.toDto(orderService.findAll());
-        return ResponseEntity.ok(ResponseDto.builder()
-                .status(OK)
-                .statusCode(OK.value())
-                .message("All orders")
-                .data(Map.of("orders", dto))
-                .timeStamp(now())
-                .build());
-    }
-
     @PutMapping("/{uuid}/complete")
     public ResponseEntity<ResponseDto> completeOrder(
-            @PathVariable("uuid") UUID uuid
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
     ) {
-        orderService.completeOrder(uuid);
+        orderService.completeOrder(uuid, user);
 
         return ResponseEntity.ok(ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .message("Order completed")
+                .data(Map.of("uuid", uuid))
+                .timeStamp(now())
+                .build());
+    }
+
+    @PutMapping("/{uuid}/cancel")
+    public ResponseEntity<ResponseDto> cancelOrder(
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal User user
+    ) {
+        orderService.cancelOrder(uuid, user);
+
+        return ResponseEntity.ok(ResponseDto.builder()
+                .status(OK)
+                .statusCode(OK.value())
+                .message("Order canceled")
                 .data(Map.of("uuid", uuid))
                 .timeStamp(now())
                 .build());

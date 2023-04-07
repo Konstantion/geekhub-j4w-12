@@ -1,11 +1,17 @@
 package com.konstantion.user;
 
+import com.konstantion.email.EmailService;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.ForbiddenException;
 import com.konstantion.exceptions.RegistrationException;
+import com.konstantion.exceptions.ValidationException;
 import com.konstantion.ragistration.token.ConfirmationToken;
 import com.konstantion.ragistration.token.ConfirmationTokenService;
 import com.konstantion.user.model.UpdateUserRequest;
+import com.konstantion.user.model.UpdateUserRolesRequest;
+import com.konstantion.user.validator.UserValidator;
+import com.konstantion.utils.PasswordUtils;
+import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,9 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.konstantion.user.Role.ADMIN;
 import static java.lang.String.format;
@@ -25,7 +30,9 @@ import static java.util.Objects.nonNull;
 public record UserServiceImpl(
         UserRepository userRepository,
         BCryptPasswordEncoder passwordEncoder,
-        ConfirmationTokenService tokenService
+        ConfirmationTokenService tokenService,
+        UserValidator userValidator,
+        EmailService emailService
 ) implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private static final String USER_NOT_FOUND_MSG =
@@ -85,24 +92,76 @@ public record UserServiceImpl(
     }
 
     @Override
-    public UUID enableUser(User user) {
-        return userRepository.setEnableById(user.getId(), true);
+    public UUID enableUser(UUID uuid) {
+        User user = findByIdOrThrow(uuid);
+        return userRepository.setEnableById(uuid, true);
     }
 
     @Override
-    public UUID editUser(UUID uuid, UpdateUserRequest updateDto, User user) {
+    public User editUser(UUID uuid, UpdateUserRequest updateUserRequest, User authorized) {
+        if (!authorized.getId().equals(uuid)
+            && authorized.hasRole(ADMIN)) {
+            throw new ForbiddenException("Not enough authorities");
+        }
+
+        User user = findByIdOrThrow(uuid);
+
+        ValidationResult validationResult = userValidator.validate(updateUserRequest);
+        if (validationResult.errorsPresent()) {
+            throw new ValidationException(
+                    format("Failed to update user with id %s", uuid),
+                    validationResult.getErrorsAsMap()
+            );
+        }
+
+        updateUser(user, updateUserRequest);
+
+        userRepository.save(user);
+
         return null;
     }
 
     @Override
-    public UUID deleteUser(UUID uuid, User user) {
-        return null;
+    public UUID disableUser(UUID uuid) {
+        User user = findByIdOrThrow(uuid);
+        userRepository.setEnableById(uuid, false);
+
+        return uuid;
     }
 
     @Override
-    public User getUser(UUID uuid, User requester) {
-        if (!requester.getId().equals(uuid)
-            && !requester.hasRole(ADMIN)) {
+    public User editUserRoles(UUID uuid, UpdateUserRolesRequest updateUserRolesRequest) {
+        User user = findByIdOrThrow(uuid);
+
+        updateUserRoles(user, updateUserRolesRequest);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    @Override
+    public String restorePassword(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> {
+            throw new BadRequestException(format("User with email %s doesn't exist", email));
+        });
+
+        String tempPassword = PasswordUtils.generatePassword();
+
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        userRepository.save(user);
+
+        emailService.send(
+                email,
+                emailService.buildRestorePasswordEmail(tempPassword)
+        );
+
+        return tempPassword;
+    }
+
+    @Override
+    public User getUser(UUID uuid, User authorized) {
+        if (!authorized.getId().equals(uuid)
+            && !authorized.hasRole(ADMIN)) {
             throw new ForbiddenException("You don't have enough permissions to do this operation");
         }
 
@@ -117,6 +176,27 @@ public record UserServiceImpl(
                                 format(USER_NOT_FOUND_MSG, username)
                         )
                 );
+    }
+
+    private void updateUser(User user, UpdateUserRequest updateUserRequest) {
+        user.setFirstName(updateUserRequest.firstName());
+        user.setLastName(updateUserRequest.lastName());
+        user.setPhoneNumber(updateUserRequest.phoneNumber());
+        user.setPassword(passwordEncoder.encode(updateUserRequest.password()));
+    }
+
+    private void updateUserRoles(User user, UpdateUserRolesRequest updateUserRolesRequest) {
+        Set<Role> updatedUserRole = new HashSet<>();
+        Set<String> roleNames = Arrays.stream(Role.values())
+                .map(Role::name).collect(Collectors.toSet());
+        updateUserRolesRequest.roles().forEach(roleName -> {
+            String upperCaseRoleName = roleName.toUpperCase();
+            if (roleNames.contains(upperCaseRoleName)) {
+                updatedUserRole.add(Role.valueOf(upperCaseRoleName));
+            }
+        });
+
+        user.setRoles(updatedUserRole);
     }
 
     private User findByIdOrThrow(UUID id) {

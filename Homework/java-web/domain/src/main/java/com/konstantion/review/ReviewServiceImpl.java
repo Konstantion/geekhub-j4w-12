@@ -1,6 +1,7 @@
 package com.konstantion.review;
 
 import com.konstantion.exceptions.BadRequestException;
+import com.konstantion.exceptions.ForbiddenException;
 import com.konstantion.exceptions.ValidationException;
 import com.konstantion.product.ProductService;
 import com.konstantion.review.model.CreationReviewRequest;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.konstantion.user.Role.ADMIN;
+import static com.konstantion.user.Role.MODERATOR;
 import static java.lang.String.format;
 
 public record ReviewServiceImpl(ReviewValidator reviewValidator,
@@ -40,30 +43,32 @@ public record ReviewServiceImpl(ReviewValidator reviewValidator,
 
         review = reviewRepository.save(review);
 
-        logger.info("{} successfully created", review);
+        logger.info("Review with id {} successfully created", review.uuid());
 
         return review;
     }
 
     @Override
     public Review deleteReview(UUID reviewUuid, User user) {
-        Review review = reviewRepository.findById(reviewUuid).orElseThrow(() ->
-                new BadRequestException(format("Review with uuid %s doesn't exist", reviewUuid)
-                ));
+        Review review = getReviewById(reviewUuid);
+
+        if (!review.userUuid().equals(user.getId())
+            && !user.hasRole(ADMIN)
+            && !user.hasRole(MODERATOR)) {
+            throw new ForbiddenException("Not enough authorities to delete review");
+        }
 
         reviewRepository.deleteById(reviewUuid);
 
-        logger.info("Product with uuid {} successfully delete", reviewUuid);
+        logger.info("Review with uuid {} successfully delete", reviewUuid);
         return review;
     }
 
     @Override
     public Review getReviewById(UUID uuid) {
-        Review review = reviewRepository.findById(uuid).orElseThrow(() ->
+        return reviewRepository.findById(uuid).orElseThrow(() ->
                 new BadRequestException(format("Review with uuid %s doesn't exist", uuid)
                 ));
-
-        return review;
     }
 
     @Override
@@ -74,6 +79,10 @@ public record ReviewServiceImpl(ReviewValidator reviewValidator,
 
     @Override
     public List<Review> getUserReviews(UUID userUuid, User user) {
+        if (!user.getId().equals(userUuid)
+            && !user.hasRole(ADMIN)) {
+            throw new ForbiddenException("Not enough authorities to get user reviews");
+        }
         return reviewRepository.findByUserId(userUuid);
     }
 

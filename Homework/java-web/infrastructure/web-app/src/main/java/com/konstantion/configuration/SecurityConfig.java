@@ -3,6 +3,8 @@ package com.konstantion.configuration;
 import com.konstantion.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,11 +37,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and()
+                .cors()
+                .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(SECURITY_WHITELIST).permitAll()
-                .anyRequest().authenticated()
+                    .requestMatchers(SECURITY_WHITELIST).permitAll()
+                    .requestMatchers("/admin-api/**").hasAuthority("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -51,5 +55,13 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(SECURITY_WHITELIST);
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        String hierarchy = "ROLE_ADMIN > ROLE_MODERATOR > ROLE_USER";
+        roleHierarchy.setHierarchy(hierarchy);
+        return roleHierarchy;
     }
 }

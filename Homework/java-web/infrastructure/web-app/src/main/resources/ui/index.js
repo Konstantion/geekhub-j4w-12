@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ordersUrl = 'http://localhost:8080/web-api/orders';
     const registrationUrl = 'http://localhost:8080/web-api/registration';
     const usersUrl = 'http://localhost:8080/web-api/users';
+    const adminApi = 'http://localhost:8080/admin-api';
 
     const getAuthorizesUser = async () => {
         try {
@@ -1733,7 +1734,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 headers: getHeaders()
             };
 
-            const response = await fetch(`${productsUrl}/${uuid}`, requestOptions);
+            const response = await fetch(`${adminApi}/products/${uuid}`, requestOptions);
             return await response.json();
         } catch (e) {
             throw e;

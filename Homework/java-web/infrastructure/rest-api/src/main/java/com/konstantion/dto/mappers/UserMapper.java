@@ -1,13 +1,11 @@
 package com.konstantion.dto.mappers;
 
-import com.konstantion.dto.user.LoginUserDto;
-import com.konstantion.dto.user.RegistrationUserDto;
-import com.konstantion.dto.user.UpdateUserDto;
-import com.konstantion.dto.user.UserDto;
+import com.konstantion.dto.user.*;
 import com.konstantion.user.User;
 import com.konstantion.user.model.LoginUserRequest;
 import com.konstantion.user.model.RegistrationUserRequest;
 import com.konstantion.user.model.UpdateUserRequest;
+import com.konstantion.user.model.UpdateUserRolesRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -26,4 +24,6 @@ public interface UserMapper {
     RegistrationUserRequest toEntity(RegistrationUserDto dto);
 
     UpdateUserRequest toEntity(UpdateUserDto updateUserDto);
+
+    UpdateUserRolesRequest toEntity(UpdateUserRolesDto updateUserRolesDto);
 }

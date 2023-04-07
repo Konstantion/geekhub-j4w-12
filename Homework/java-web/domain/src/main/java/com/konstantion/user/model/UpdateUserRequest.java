@@ -1,4 +1,9 @@
 package com.konstantion.user.model;
 
-public record UpdateUserRequest() {
+public record UpdateUserRequest(
+        String firstName,
+        String lastName,
+        String phoneNumber,
+        String password
+) {
 }

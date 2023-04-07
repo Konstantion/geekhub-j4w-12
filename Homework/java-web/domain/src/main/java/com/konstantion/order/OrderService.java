@@ -11,11 +11,12 @@ public interface OrderService {
 
     Order createOrder(User user, Bucket bucket);
 
-    Order findOrderById(UUID uuid);
+    Order findOrderById(UUID uuid, User user);
 
-    Order deleteOrderById(UUID uuid);
+    Order deleteOrder(UUID uuid);
 
-    List<Order> findOrdersByUserId(UUID uuid);
+    List<Order> findOrdersByUserId(UUID uuid, User user);
 
-    void completeOrder(UUID uuid);
+    UUID completeOrder(UUID uuid, User user);
+    UUID cancelOrder(UUID uuid, User user);
 }

@@ -2,6 +2,7 @@ package com.konstantion.user.validator;
 
 import com.konstantion.user.model.LoginUserRequest;
 import com.konstantion.user.model.RegistrationUserRequest;
+import com.konstantion.user.model.UpdateUserRequest;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -55,6 +56,12 @@ public record UserValidator(UserValidations userValidations) {
                         validationErrors.add(new FieldError(
                                 loginUserRequest.toString(), "password", s)
                         ));
+        return ValidationResult.ofAbsentee(validationErrors);
+    }
+
+    public ValidationResult validate(UpdateUserRequest updateUserRequest) {
+        Set<FieldError> validationErrors = new HashSet<>();
+
         return ValidationResult.ofAbsentee(validationErrors);
     }
 }

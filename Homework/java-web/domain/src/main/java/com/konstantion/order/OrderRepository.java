@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderRepository {
+    void delete(Order order);
 
     List<Order> findAll();
 

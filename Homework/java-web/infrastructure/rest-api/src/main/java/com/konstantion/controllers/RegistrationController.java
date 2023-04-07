@@ -21,6 +21,7 @@ public record RegistrationController(
         RegistrationService registrationService
 ) {
     public static final UserMapper userMapper = UserMapper.INSTANCE;
+    public static final String BAERER_PREFIX = "Bearer ";
 
     @PostMapping
     public ResponseEntity<ResponseDto> register(
@@ -49,12 +50,12 @@ public record RegistrationController(
     public ResponseEntity<ResponseDto> login(
             @RequestBody LoginUserDto loginUserDto
     ) {
-        String jwtToken = registrationService.authenticate(
+        final String jwtToken = registrationService.authenticate(
                 userMapper.toEntity(loginUserDto)
         );
-
+        final String authorizationToken = BAERER_PREFIX + jwtToken;
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .header(HttpHeaders.AUTHORIZATION, authorizationToken)
                 .body(ResponseDto.builder()
                         .status(HttpStatus.OK)
                         .statusCode(HttpStatus.OK.value())

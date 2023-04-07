@@ -14,7 +14,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
     private final EmailUtil emailUtil;
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     public EmailServiceImpl(JavaMailSender mailSender, EmailUtil emailUtil) {
         this.mailSender = mailSender;
@@ -42,6 +42,11 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String buildRegistrationEmail(String userName, String link) {
         return emailUtil.buildEmailTwo(userName, link);
+    }
+
+    @Override
+    public String buildRestorePasswordEmail(String password) {
+        return emailUtil.restorePasswordEmail(password);
     }
 
 

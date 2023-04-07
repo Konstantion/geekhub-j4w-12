@@ -323,4 +323,10 @@ public record EmailUtil() {
                "</body>\n" +
                "</html>\n";
     }
+
+    public String restorePasswordEmail(String password) {
+        return String.format(
+                "Your temporary password: %s", password
+        );
+    }
 }

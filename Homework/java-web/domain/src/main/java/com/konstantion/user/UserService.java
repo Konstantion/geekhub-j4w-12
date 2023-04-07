@@ -1,6 +1,7 @@
 package com.konstantion.user;
 
 import com.konstantion.user.model.UpdateUserRequest;
+import com.konstantion.user.model.UpdateUserRolesRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.UUID;
@@ -8,11 +9,15 @@ import java.util.UUID;
 public interface UserService extends UserDetailsService {
     String signUpUser(User user);
 
-    UUID enableUser(User user);
+    UUID enableUser(UUID uuid);
 
-    UUID editUser(UUID uuid, UpdateUserRequest updateDto, User requester);
+    UUID disableUser(UUID uuid);
 
-    UUID deleteUser(UUID uuid, User requester);
+    User editUser(UUID uuid, UpdateUserRequest updateUserRequest, User authorized);
+
+    User editUserRoles(UUID uuid, UpdateUserRolesRequest updateUserRolesRequest);
+
+    String restorePassword(String email);
 
     User getUser(UUID uuid, User requester);
 }
