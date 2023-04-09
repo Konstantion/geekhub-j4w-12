@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,8 @@ public class Table {
     private TableType tableType;
     private UUID hallId;
     private UUID orderId;
-    private List<UUID> waitersId;
+    @Builder.Default
+    private List<UUID> waitersId = new ArrayList<>();
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

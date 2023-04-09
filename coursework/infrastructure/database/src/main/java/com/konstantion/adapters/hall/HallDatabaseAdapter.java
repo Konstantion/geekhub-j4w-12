@@ -7,10 +7,15 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Objects.nonNull;
 
 @Component
 public record HallDatabaseAdapter(
@@ -52,7 +57,23 @@ public record HallDatabaseAdapter(
 
     @Override
     public Hall save(Hall hall) {
-        return null;
+        if (nonNull(hall.getId())) {
+            return update(hall);
+        }
+
+        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(hall);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(
+                SAVE_QUERY,
+                parameterSource,
+                keyHolder
+        );
+
+        UUID generatedId = (UUID) Objects.requireNonNull(keyHolder.getKeys()).get("id");
+        hall.setId(generatedId);
+
+        return hall;
     }
 
     @Override
