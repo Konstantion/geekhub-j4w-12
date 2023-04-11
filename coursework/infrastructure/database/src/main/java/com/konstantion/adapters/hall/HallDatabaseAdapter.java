@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +44,17 @@ public record HallDatabaseAdapter(
             DELETE FROM public.hall
             WHERE id = :id;
             """;
+    public static final String FIND_ALL_QUERY = """
+            SELECT * FROM public.hall;
+            """;
+
+    @Override
+    public List<Hall> findAll() {
+        return jdbcTemplate.query(
+                FIND_ALL_QUERY,
+                hallRowMapper
+        );
+    }
 
     @Override
     public Optional<Hall> findById(UUID id) {

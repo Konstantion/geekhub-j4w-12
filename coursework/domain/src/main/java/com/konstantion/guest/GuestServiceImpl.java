@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -17,6 +18,11 @@ public record GuestServiceImpl(
         GuestPort guestPort
 ) implements GuestService {
     private static final Logger logger = LoggerFactory.getLogger(GuestServiceImpl.class);
+
+    @Override
+    public List<Guest> getAll() {
+        return null;
+    }
 
     @Override
     public Guest getById(UUID id) {

@@ -1,11 +1,15 @@
 package com.konstantion.table;
 
+import com.konstantion.order.Order;
 import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.user.User;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface TableService {
+    List<Table> getAll();
+
     Table activate(UUID tableId, User user);
 
     Table deactivate(UUID tableId, User user);
@@ -19,5 +23,7 @@ public interface TableService {
      */
     Table delete(UUID tableId, User user);
 
-    Table getById(UUID tableId, User user);
+    Table getById(UUID tableId);
+
+    Order getOrderByTableId(UUID tableId);
 }

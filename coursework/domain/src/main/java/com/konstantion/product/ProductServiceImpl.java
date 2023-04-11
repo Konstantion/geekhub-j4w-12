@@ -1,16 +1,21 @@
 package com.konstantion.product;
 
+import com.konstantion.category.Category;
+import com.konstantion.category.CategoryPort;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
 import com.konstantion.file.MultipartFileService;
 import com.konstantion.product.model.CreateProductRequest;
+import com.konstantion.product.model.GetProductsRequest;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.user.User;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
@@ -19,10 +24,12 @@ import static com.konstantion.user.Permission.DELETE_PRODUCT;
 import static com.konstantion.user.Role.ADMIN;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.nonNull;
 
 @Component
 public record ProductServiceImpl(
         ProductPort productPort,
+        CategoryPort categoryPort,
         ProductValidator productValidator,
         MultipartFileService fileService
 ) implements ProductService {
@@ -57,6 +64,34 @@ public record ProductServiceImpl(
         logger.info("Product {} successfully created", product);
 
         return product;
+    }
+
+    @Override
+    public Page<Product> getAll(GetProductsRequest request) {
+        UUID categoryId = request.categoryId();
+        if (nonNull(categoryId)) {
+            categoryPort.findById(categoryId)
+                    .orElseThrow(nonExistingIdSupplier(Category.class, categoryId));
+        }
+
+        String orderBy = request.orderBy().toLowerCase();
+        if (!isOrderByValid(orderBy)) {
+            throw new BadRequestException(format("Order by %s isn't provide", orderBy));
+        }
+
+        String searchPattern = request.searchPattern().trim();
+        int pageNumber = Math.max(request.pageNumber(), 1);
+        int pageSize = Math.max(request.pageSize(), 1);
+        boolean ascending = request.ascending();
+
+        return productPort.findAll(
+                pageNumber,
+                pageSize,
+                orderBy,
+                searchPattern,
+                categoryId,
+                ascending
+        );
     }
 
     @Override
@@ -134,5 +169,14 @@ public record ProductServiceImpl(
     private Product getByIdOrThrow(UUID productId) {
         return productPort.findById(productId)
                 .orElseThrow(nonExistingIdSupplier(Product.class, productId));
+    }
+
+    private boolean isOrderByValid(String orderBy) {
+        if (orderBy.isBlank()) {
+            orderBy = "name";
+        }
+
+        List<String> validOrderBy = List.of("name", "price", "weight");
+        return validOrderBy.contains(orderBy);
     }
 }

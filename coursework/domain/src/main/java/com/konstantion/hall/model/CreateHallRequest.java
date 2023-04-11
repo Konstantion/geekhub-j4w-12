@@ -1,4 +1,6 @@
 package com.konstantion.hall.model;
 
-public record CreateHallRequest() {
+public record CreateHallRequest(
+        String name
+) {
 }

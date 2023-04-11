@@ -1,5 +1,6 @@
 package com.konstantion.bill;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,6 @@ public interface BillPort {
     Bill save(Bill bill);
 
     void delete(Bill bill);
+
+    List<Bill> findAll();
 }

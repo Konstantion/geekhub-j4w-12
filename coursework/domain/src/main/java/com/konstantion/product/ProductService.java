@@ -1,12 +1,15 @@
 package com.konstantion.product;
 
 import com.konstantion.product.model.CreateProductRequest;
+import com.konstantion.product.model.GetProductsRequest;
 import com.konstantion.user.User;
+import org.springframework.data.domain.Page;
 
 import java.util.UUID;
 
 public interface ProductService {
-    Product create(CreateProductRequest cpdto, User user);
+    Product create(CreateProductRequest createProductRequest, User user);
+    Page<Product> getAll(GetProductsRequest getProductsRequest);
 
     /**
      * This method isn't safe and delete entity in DB,

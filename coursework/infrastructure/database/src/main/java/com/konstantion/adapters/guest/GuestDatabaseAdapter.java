@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,6 +48,18 @@ public record GuestDatabaseAdapter(
                 active = :active
             WHERE id = :id;
             """;
+
+    public static final String FIND_ALL_QUERY = """
+            SELECT * FROM public.guest;
+            """;
+
+    @Override
+    public List<Guest> findAll() {
+        return jdbcTemplate.query(
+                FIND_ALL_QUERY,
+                guestRowMapper
+        );
+    }
 
     @Override
     public Optional<Guest> findById(UUID id) {

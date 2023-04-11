@@ -6,6 +6,8 @@ import com.konstantion.exception.ValidationException;
 import com.konstantion.exception.utils.ExceptionUtils;
 import com.konstantion.hall.Hall;
 import com.konstantion.hall.HallPort;
+import com.konstantion.order.Order;
+import com.konstantion.order.OrderPort;
 import com.konstantion.order.OrderService;
 import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.table.validator.TableValidator;
@@ -17,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
@@ -30,12 +32,19 @@ import static java.time.LocalDateTime.now;
 @Component
 public record TableServiceImpl(
         TableValidator tableValidator,
-        TablePort tableRepository,
+        TablePort tablePort,
         HallPort hallPort,
+        OrderPort orderPort,
         UserService userService,
         OrderService orderService
 ) implements TableService {
     private static final Logger logger = LoggerFactory.getLogger(TableService.class);
+
+    @Override
+    public List<Table> getAll() {
+        return tablePort.findAll();
+    }
+
     @Override
     public Table activate(UUID tableId, User user) {
         if (user.hasNoPermission(ADMIN)) {
@@ -49,7 +58,7 @@ public record TableServiceImpl(
         }
 
         prepareToActivate(table);
-        tableRepository.save(table);
+        tablePort.save(table);
 
         return table;
     }
@@ -69,39 +78,43 @@ public record TableServiceImpl(
         }
 
         prepareToDeactivate(table);
-        tableRepository.save(table);
+        tablePort.save(table);
 
         return table;
     }
 
     @Override
-    public Table create(CreateTableRequest createTableRequest, User user) {
+    public Table create(CreateTableRequest request, User user) {
         if (user.hasNoPermission(CREATE_TABLE)) {
             throw new ForbiddenException("Not enough authorities to create table");
         }
 
         ValidationResult validationResult =
-                tableValidator.validate(createTableRequest);
+                tableValidator.validate(request);
 
         if (validationResult.errorsPresent()) {
             throw new ValidationException("Validation error, table is invalid", validationResult.errorsMap());
         }
 
-        Hall hall = hallPort.findById(createTableRequest.hallUuid())
-                .orElseThrow(nonExistingIdSupplier(Hall.class, createTableRequest.hallUuid()));
+        Hall hall = hallPort.findById(request.hallUuid())
+                .orElseThrow(nonExistingIdSupplier(Hall.class, request.hallUuid()));
         ExceptionUtils.isActiveOrThrow(hall);
 
+        tablePort.findByName(request.name()).ifPresent(table -> {
+            throw new BadRequestException(format("Table with name %s already exist", table.getName()));
+        });
+
         Table table = Table.builder()
-                .name(createTableRequest.name())
-                .capacity(createTableRequest.capacity())
+                .name(request.name())
+                .capacity(request.capacity())
                 .createdAt(now())
                 .active(true)
                 .waitersId(new ArrayList<>())
                 .hallId(hall.getId())
-                .tableType(TableType.valueOf(createTableRequest.tableType()))
+                .tableType(TableType.valueOf(request.tableType()))
                 .build();
 
-        tableRepository.save(table);
+        tablePort.save(table);
 
         logger.info("Table {} successfully created", table);
 
@@ -116,19 +129,35 @@ public record TableServiceImpl(
 
         Table table = getByIdOrThrow(tableId);
 
-        tableRepository.delete(table);
+        tablePort.delete(table);
 
         return table;
     }
 
     @Override
-    public Table getById(UUID tableId, User user) {
+    public Table getById(UUID tableId) {
         return getByIdOrThrow(tableId);
+    }
+
+    @Override
+    public Order getOrderByTableId(UUID tableId) {
+        Table table = getByIdOrThrow(tableId);
+
+        if (!table.hasOrder()) {
+            return null;
+        }
+
+        Order order = orderPort.findById(table.getOrderId())
+                .orElseThrow(nonExistingIdSupplier(Order.class, table.getOrderId()));
+
+        logger.info("Returned order with id {} for table with id {}", order.getId(), tableId);
+
+        return order;
     }
 
 
     private Table getByIdOrThrow(UUID tableId) {
-        return tableRepository.findById(tableId)
+        return tablePort.findById(tableId)
                 .orElseThrow(nonExistingIdSupplier(Table.class, tableId));
     }
 

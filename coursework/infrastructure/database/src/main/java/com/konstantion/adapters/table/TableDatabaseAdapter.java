@@ -23,6 +23,14 @@ public record TableDatabaseAdapter(
         NamedParameterJdbcTemplate jdbcTemplate,
         RowMapper<Table> tableRowMapper
 ) implements TablePort {
+    private static final String FIND_ALL_QUERY = """
+            SELECT * FROM public.table;
+            """;
+
+    private static final String FIND_ALL_WHERE_HALL_ID_QUERY = """
+            SELECT * FROM public.table
+            WHERE hall_id = :hallId;
+            """;
     private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public."table"
             WHERE id = :id;
@@ -114,6 +122,31 @@ public record TableDatabaseAdapter(
         }
 
         return Optional.ofNullable(table);
+    }
+
+    @Override
+    public List<Table> findAll() {
+        List<Table> tables = jdbcTemplate.query(
+                FIND_ALL_QUERY,
+                tableRowMapper
+        );
+
+        for (Table table : tables) {
+            table.setWaitersId(findWaitersByTableId(table.getId()));
+        }
+
+        return tables;
+    }
+
+    @Override
+    public List<Table> findAllWhereHallId(UUID hallId) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("hallId", hallId);
+        return jdbcTemplate.query(
+                FIND_ALL_WHERE_HALL_ID_QUERY,
+                parameterSource,
+                tableRowMapper
+        );
     }
 
     private List<UUID> findWaitersByTableId(UUID tableId) {

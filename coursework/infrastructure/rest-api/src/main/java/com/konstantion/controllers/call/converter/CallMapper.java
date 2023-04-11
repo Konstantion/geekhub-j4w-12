@@ -7,11 +7,15 @@ import com.konstantion.call.model.CreateCallRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper
 public interface CallMapper {
     CallMapper INSTANCE = Mappers.getMapper(CallMapper.class);
 
     CallDto toDto(Call call);
 
-    CreateCallRequest toEntity(CreateCallRequestDto dto);
+    CreateCallRequest toCreateCallRequest(CreateCallRequestDto dto);
+
+    List<CallDto> toDto(List<Call> entities);
 }

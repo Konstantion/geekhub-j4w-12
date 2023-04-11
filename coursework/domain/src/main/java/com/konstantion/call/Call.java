@@ -22,8 +22,6 @@ public class Call {
     private List<UUID> waitersId = new ArrayList<>();
     private Purpose purpose;
     private LocalDateTime openedAt;
-    private LocalDateTime closedAt;
-    private Boolean active;
 
     public Call() {
 

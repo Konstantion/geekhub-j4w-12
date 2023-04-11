@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +40,11 @@ public record BillServiceImpl(
         BillPort billPort
 ) implements BillService {
     private static final Logger logger = LoggerFactory.getLogger(BillServiceImpl.class);
+
+    @Override
+    public List<Bill> getAll() {
+        return billPort.findAll();
+    }
 
     @Override
     public Bill getById(UUID id) {

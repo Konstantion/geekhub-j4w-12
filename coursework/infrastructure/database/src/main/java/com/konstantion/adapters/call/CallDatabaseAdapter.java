@@ -2,6 +2,7 @@ package com.konstantion.adapters.call;
 
 import com.konstantion.call.Call;
 import com.konstantion.call.CallPort;
+import com.konstantion.call.Purpose;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -28,19 +29,20 @@ public record CallDatabaseAdapter(
             WHERE id = :id;
             """;
 
+    public static final String FIND_ALL_QUERY = """
+            SELECT * FROM public.call;
+            """;
 
     public static final String SAVE_QUERY = """
-            INSERT INTO public.call (table_id, purpose, opened_at, closed_at, active)
-            VALUES (:tableId, :purpose, :openedAt, :closedAt, :active);
+            INSERT INTO public.call (table_id, purpose, opened_at)
+            VALUES (:tableId, :purpose, :openedAt);
             """;
 
     public static final String UPDATE_QUERY = """
             UPDATE public.call
                SET table_id = :tableId,
                    purpose = :purpose,
-                   opened_at = :openedAt,
-                   closed_at = :closedAt,
-                   active = :active
+                   opened_at = :openedAt
             WHERE id = :id;
             """;
     public static final String FIND_WAITER_ID_BY_CALL_ID = """
@@ -62,6 +64,24 @@ public record CallDatabaseAdapter(
             DELETE FROM public.call
             WHERE id = :id;
             """;
+
+    public static final String FIND_BY_TABLE_ID_AND_PURPOSE_QUERY = """
+            SELECT * FROM public.call
+            WHERE table_id = :tableId
+            AND purpose = :purpose;
+            """;
+
+    @Override
+    public List<Call> findAll() {
+        List<Call> calls = jdbcTemplate.query(
+                FIND_ALL_QUERY,
+                callRowMapper
+        );
+
+        calls.forEach(call -> call.setWaitersId(fetchWaitersId(call.getId())));
+
+        return calls;
+    }
 
     @Override
     public Optional<Call> findById(UUID id) {
@@ -111,6 +131,19 @@ public record CallDatabaseAdapter(
                 DELETE_QUERY,
                 parameterSource
         );
+    }
+
+    @Override
+    public Optional<Call> findByTableIdAndPurpose(UUID tableId, Purpose purpose) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("tableId", tableId)
+                .addValue("purpose", purpose.name());
+
+        return jdbcTemplate.query(
+                FIND_BY_TABLE_ID_AND_PURPOSE_QUERY,
+                parameterSource,
+                callRowMapper
+        ).stream().findFirst();
     }
 
     private Call update(Call call) {

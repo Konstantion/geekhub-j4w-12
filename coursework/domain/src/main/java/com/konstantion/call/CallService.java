@@ -1,11 +1,17 @@
 package com.konstantion.call;
 
+import com.konstantion.call.model.CreateCallRequest;
 import com.konstantion.user.User;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface CallService {
-    Call createCall(Purpose purpose, UUID tableId);
+    List<Call> getAll();
 
-    Call closeCall(User user);
+    List<Call> getAllByUser(User user);
+
+    Call createCall(CreateCallRequest createCallRequest);
+
+    Call closeCall(UUID callId, User user);
 }

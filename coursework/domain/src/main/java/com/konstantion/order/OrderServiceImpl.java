@@ -119,8 +119,8 @@ public record OrderServiceImpl(
         }
 
         Order order = getByIdOrThrow(orderId);
-
         ExceptionUtils.isActiveOrThrow(order);
+
         if (!order.hasBill()) {
             throw new BadRequestException(format("Order with id %s doesn't have a bill", order.getId()));
         }

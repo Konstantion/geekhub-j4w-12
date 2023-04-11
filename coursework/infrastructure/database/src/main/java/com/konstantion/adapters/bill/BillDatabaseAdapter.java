@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,6 +55,10 @@ public record BillDatabaseAdapter(
     public static final String DELETE_QUERY = """
             DELETE FROM public.bill
             WHERE id = :id;
+            """;
+
+    public static final String FIND_ALL = """
+            SELECT * FROM public.bill;            
             """;
 
     @Override
@@ -107,6 +112,14 @@ public record BillDatabaseAdapter(
         jdbcTemplate.update(
                 DELETE_QUERY,
                 parameterSource
+        );
+    }
+
+    @Override
+    public List<Bill> findAll() {
+        return jdbcTemplate.query(
+                FIND_ALL,
+                billRowMapper
         );
     }
 

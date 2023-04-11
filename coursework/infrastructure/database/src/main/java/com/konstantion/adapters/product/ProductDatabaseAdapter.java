@@ -2,6 +2,9 @@ package com.konstantion.adapters.product;
 
 import com.konstantion.product.Product;
 import com.konstantion.product.ProductPort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,11 +14,15 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record ProductDatabaseAdapter(
@@ -50,6 +57,24 @@ public record ProductDatabaseAdapter(
                 active = :active
             WHERE id = :id;
             """;
+
+    private static final BiFunction<String, UUID, String> FIND_ALL_QUERY =
+            (orderParameter, categoryId) -> {
+                String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
+                return "SELECT * FROM public.product " +
+                       "WHERE LOWER(product.name) LIKE LOWER(:searchPattern) " +
+                       findByCategoryId +
+                       "GROUP BY product.uuid, name, price, product.created_at, product.user_uuid, image_bytes, description, category_uuid " +
+                       "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
+            };
+
+    private static final Function<UUID, String> TOTAL_COUNT_QUERY =
+            categoryId -> {
+                String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
+                return "SELECT COUNT(*) FROM public.product " +
+                       "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
+                       findByCategoryId + ";";
+            };
 
 
     @Override
@@ -92,6 +117,39 @@ public record ProductDatabaseAdapter(
                 parameterSource,
                 productRowMapper
         ).stream().findFirst();
+    }
+
+    @Override
+    public Page<Product> findAll(
+            int pageNumber,
+            int pageSize,
+            String orderBy,
+            String searchPattern,
+            UUID categoryId,
+            boolean ascending
+    ) {
+        int offset = (pageNumber - 1) * pageSize;
+        searchPattern = "%" + searchPattern + "%";
+        orderBy = ascending ? orderBy + " ASC " : orderBy + " DESC ";
+
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("limit", pageSize)
+                .addValue("offset", offset)
+                .addValue("searchPattern", searchPattern)
+                .addValue("categoryId", categoryId);
+
+        List<Product> products = jdbcTemplate.query(
+                FIND_ALL_QUERY.apply(orderBy, categoryId),
+                parameterSource,
+                productRowMapper);
+
+        Integer totalCount = requireNonNullElse(jdbcTemplate.queryForObject(
+                TOTAL_COUNT_QUERY.apply(categoryId),
+                parameterSource,
+                Integer.class
+        ), products.size());
+
+        return new PageImpl<>(products, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
     private Product update(Product product) {
