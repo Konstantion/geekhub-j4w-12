@@ -16,6 +16,9 @@ import com.konstantion.user.UserService;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -36,7 +39,8 @@ public record TableServiceImpl(
         HallPort hallPort,
         OrderPort orderPort,
         UserService userService,
-        OrderService orderService
+        OrderService orderService,
+        PasswordEncoder passwordEncoder
 ) implements TableService {
     private static final Logger logger = LoggerFactory.getLogger(TableService.class);
 
@@ -100,9 +104,15 @@ public record TableServiceImpl(
                 .orElseThrow(nonExistingIdSupplier(Hall.class, request.hallUuid()));
         ExceptionUtils.isActiveOrThrow(hall);
 
-        tablePort.findByName(request.name()).ifPresent(table -> {
-            throw new BadRequestException(format("Table with name %s already exist", table.getName()));
-        });
+        List<Table> dbTables = tablePort.findAll();
+        if (anyMatchTableName(dbTables, request.name())) {
+            throw new BadRequestException(format("Table with name %s already exist", request.name()));
+        }
+
+        if (anyMatchTablePassword(dbTables, request.password())) {
+            throw new BadRequestException(format("Table with password %s already exist", request.password()));
+        }
+
 
         Table table = Table.builder()
                 .name(request.name())
@@ -111,6 +121,7 @@ public record TableServiceImpl(
                 .active(true)
                 .waitersId(new ArrayList<>())
                 .hallId(hall.getId())
+                .password(passwordEncoder.encode(request.password()))
                 .tableType(TableType.valueOf(request.tableType()))
                 .build();
 
@@ -155,6 +166,12 @@ public record TableServiceImpl(
         return order;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return tablePort.findByName(username).orElseThrow(() -> {
+            throw new UsernameNotFoundException(format("User with username %s doesn't exist", username));
+        });
+    }
 
     private Table getByIdOrThrow(UUID tableId) {
         return tablePort.findById(tableId)
@@ -179,4 +196,12 @@ public record TableServiceImpl(
         table.setDeletedAt(null);
     }
 
+    private boolean anyMatchTableName(List<Table> tables, String name) {
+        return tables.stream().anyMatch(table -> table.getName().equals(name));
+    }
+
+    private boolean anyMatchTablePassword(List<Table> tables, String password) {
+        return tables.stream()
+                .anyMatch(table -> passwordEncoder.matches(password, table.getPassword()));
+    }
 }

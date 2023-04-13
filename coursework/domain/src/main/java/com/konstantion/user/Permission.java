@@ -23,4 +23,10 @@ public enum Permission {
                 OPEN_ORDER, CLOSE_ORDER, GET_ORDER
         );
     }
+
+    public static Set<Permission> getDefaultTablePermission() {
+        return Set.of(
+                CALL_WAITER, GET_BILL
+        );
+    }
 }

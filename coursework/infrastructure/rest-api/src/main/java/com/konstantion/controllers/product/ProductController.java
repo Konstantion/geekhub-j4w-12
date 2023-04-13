@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.konstantion.response.ResponseEntitiesNames.PRODUCT;
-import static com.konstantion.response.ResponseEntitiesNames.PRODUCTS;
+import static com.konstantion.utils.EntityNameConstants.PRODUCT;
+import static com.konstantion.utils.EntityNameConstants.PRODUCTS;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.apache.tomcat.util.http.fileupload.FileUploadBase.MULTIPART_FORM_DATA;

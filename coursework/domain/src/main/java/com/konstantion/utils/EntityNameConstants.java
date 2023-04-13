@@ -1,6 +1,7 @@
-package com.konstantion.response;
+package com.konstantion.utils;
 
-public record ResponseEntitiesNames() {
+public record EntityNameConstants() {
+    public static final String ENTITY = "entity";
     public static final String HALL = "hall";
     public static final String HALLS = "halls";
     public static final String TABLE = "table";
@@ -17,4 +18,6 @@ public record ResponseEntitiesNames() {
     public static final String BILL = "bill";
     public static final String ORDER = "order";
     public static final String ORDERS = "orders";
+    public static final String USER = "user";
+    public static final String USERS = "users";
 }

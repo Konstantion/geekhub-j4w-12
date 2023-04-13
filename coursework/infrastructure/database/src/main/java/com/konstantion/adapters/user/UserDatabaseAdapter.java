@@ -23,9 +23,18 @@ public record UserDatabaseAdapter(
         NamedParameterJdbcTemplate jdbcTemplate,
         RowMapper<User> userRowMapper
 ) implements UserPort {
-    private static final String FIND_BY_ID = """
+    private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.user
             WHERE id = :id;
+            """;
+
+    private static final String FIND_BY_EMAIL_QUERY = """
+            SELECT * FROM public.user
+            WHERE email = :email;
+            """;
+
+    private static final String FIND_ALL_QUERY = """
+            SELECT * FROM public.user;
             """;
 
     private static final String DELETE_QUERY = """
@@ -104,11 +113,44 @@ public record UserDatabaseAdapter(
     }
 
     @Override
+    public List<User> findAll() {
+        List<User> users = jdbcTemplate.query(
+                FIND_ALL_QUERY,
+                userRowMapper
+        );
+
+        users.forEach(user ->  {
+            user.setRoles(findRolesByUserId(user.getId()));
+            user.setPermissions(findPermissionsByUserId(user.getId()));
+        });
+
+        return users;
+    }
+
+    @Override
     public Optional<User> findById(UUID id) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("id", id);
         User user = jdbcTemplate.query(
-                FIND_BY_ID,
+                FIND_BY_ID_QUERY,
+                parameterSource,
+                userRowMapper
+        ).stream().findFirst().orElse(null);
+
+        if (nonNull(user)) {
+            user.setRoles(findRolesByUserId(user.getId()));
+            user.setPermissions(findPermissionsByUserId(user.getId()));
+        }
+
+        return Optional.ofNullable(user);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("email", email);
+        User user = jdbcTemplate.query(
+                FIND_BY_EMAIL_QUERY,
                 parameterSource,
                 userRowMapper
         ).stream().findFirst().orElse(null);
@@ -207,7 +249,7 @@ public record UserDatabaseAdapter(
         );
 
         return rolesString.stream()
-                .filter(role -> Arrays.asList(Role.values()).contains(role))
+                .filter(role -> Arrays.stream(Role.values()).map(Role::name).anyMatch(name -> name.equals(role)))
                 .map(Role::valueOf)
                 .collect(Collectors.toSet());
     }
@@ -223,9 +265,8 @@ public record UserDatabaseAdapter(
         );
 
         return permissionsString.stream()
-                .filter(permission -> Arrays.asList(Permission.values()).contains(permission))
+                .filter(permission -> Arrays.stream(Permission.values()).map(Permission::name).anyMatch(name -> name.equals(permission)))
                 .map(Permission::valueOf)
                 .collect(Collectors.toSet());
     }
-
 }

@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':coursework:domain')
+    implementation project(':coursework:infrastructure:rest-api')
+}

@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -107,7 +108,15 @@ public record CallDatabaseAdapter(
             return update(call);
         }
 
-        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(call);
+        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(call) {
+            @Override
+            public int getSqlType(String paramName) {
+                if ("purpose".equals(paramName)) {
+                    return Types.VARCHAR;
+                }
+                return super.getSqlType(paramName);
+            }
+        };
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(

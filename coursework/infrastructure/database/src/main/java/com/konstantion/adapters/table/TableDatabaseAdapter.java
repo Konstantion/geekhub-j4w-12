@@ -36,14 +36,19 @@ public record TableDatabaseAdapter(
             WHERE id = :id;
             """;
 
+    private static final String FIND_BY_NAME_QUERY = """
+            SELECT * FROM public."table"
+            WHERE name = :name;
+            """;
+
     private static final String DELETE_QUERY = """
             DELETE FROM public."table"
             WHERE id = :id;
             """;
 
     private static final String SAVE_QUERY = """
-            INSERT INTO public."table" (name, capacity, table_type, hall_id, order_id, created_at, deleted_at, active)
-            VALUES (:name, :capacity, :tableType, :hallId, :orderId, :createdAt, :deletedAt, :active);
+            INSERT INTO public."table" (name, capacity, table_type, hall_id, order_id, created_at, deleted_at, active, password)
+            VALUES (:name, :capacity, :tableType, :hallId, :orderId, :createdAt, :deletedAt, :active, :password);
             """;
 
     private static final String UPDATE_QUERY = """
@@ -54,6 +59,7 @@ public record TableDatabaseAdapter(
                 hall_id = :hallId,
                 order_id = :orderId,
                 active = :active,
+                password = :password,
                 created_at = :createdAt,
                 deleted_at = :deletedAt
             WHERE id = :id;
@@ -147,6 +153,23 @@ public record TableDatabaseAdapter(
                 parameterSource,
                 tableRowMapper
         );
+    }
+
+    @Override
+    public Optional<Table> findByName(String name) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("name", name);
+        Table table = jdbcTemplate.query(
+                FIND_BY_NAME_QUERY,
+                parameterSource,
+                tableRowMapper
+        ).stream().findFirst().orElse(null);
+
+        if (nonNull(table)) {
+            table.setWaitersId(findWaitersByTableId(table.getId()));
+        }
+
+        return Optional.ofNullable(table);
     }
 
     private List<UUID> findWaitersByTableId(UUID tableId) {

@@ -1,4 +1,11 @@
 package com.konstantion.controllers.call.dto;
 
-public record CreateCallRequestDto() {
+import com.konstantion.call.Purpose;
+
+import java.util.UUID;
+
+public record CreateCallRequestDto(
+        Purpose purpose,
+        UUID tableId
+) {
 }

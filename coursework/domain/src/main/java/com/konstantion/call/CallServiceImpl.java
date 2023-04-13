@@ -54,6 +54,7 @@ public record CallServiceImpl(
 
         Call call = Call.builder()
                 .purpose(purpose)
+                .tableId(tableId)
                 .waitersId(table.getWaitersId())
                 .openedAt(now())
                 .build();

@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.konstantion.response.ResponseEntitiesNames.CALL;
-import static com.konstantion.response.ResponseEntitiesNames.CALLS;
+import static com.konstantion.utils.EntityNameConstants.CALL;
+import static com.konstantion.utils.EntityNameConstants.CALLS;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;

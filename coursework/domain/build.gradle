@@ -1,4 +1,5 @@
 dependencies {
     compileOnly libsUtils.lombok
     annotationProcessor libsUtils.lombok
+    implementation libsJwt.jjwtApi
 }

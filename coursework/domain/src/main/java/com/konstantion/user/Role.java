@@ -4,7 +4,8 @@ import java.util.Set;
 
 public enum Role {
     ADMIN,
-    WAITER;
+    WAITER,
+    TABLE;
 
     public static Set<Role> getWaiterRole() {
         return Set.of(WAITER);

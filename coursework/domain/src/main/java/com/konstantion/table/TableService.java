@@ -3,11 +3,13 @@ package com.konstantion.table;
 import com.konstantion.order.Order;
 import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.user.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface TableService {
+public interface TableService extends UserDetailsService {
     List<Table> getAll();
 
     Table activate(UUID tableId, User user);

@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.konstantion.response.ResponseEntitiesNames.CATEGORIES;
-import static com.konstantion.response.ResponseEntitiesNames.CATEGORY;
+import static com.konstantion.utils.EntityNameConstants.CATEGORIES;
+import static com.konstantion.utils.EntityNameConstants.CATEGORY;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;

@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static com.konstantion.utils.RoleUtils.generateSetOfCombinationWithPrefixWordAndCollectionEnum;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toSet;
 
@@ -43,18 +42,18 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> basicAuthorities = roles
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(toSet());
-        Set<GrantedAuthority> basicPermissions = roles
+        Set<GrantedAuthority> grantedPermissions = permissions
                 .stream()
                 .map(Enum::name)
-                .map(name -> generateSetOfCombinationWithPrefixWordAndCollectionEnum(name, permissions, "_"))
-                .flatMap(Set::stream)
                 .map(SimpleGrantedAuthority::new)
                 .collect(toSet());
-        return Stream.of(basicAuthorities, basicPermissions).flatMap(Set::stream)
+        Set<GrantedAuthority> grantedRoles = roles
+                .stream()
+                .map(Enum::name)
+                .map(name -> "ROLE_" + name)
+                .map(SimpleGrantedAuthority::new)
+                .collect(toSet());
+        return Stream.of(grantedPermissions, grantedRoles).flatMap(Set::stream)
                 .collect(toSet());
     }
 
