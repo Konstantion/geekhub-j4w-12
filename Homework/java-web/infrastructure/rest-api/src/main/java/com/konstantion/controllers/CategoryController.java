@@ -3,14 +3,13 @@ package com.konstantion.controllers;
 import com.konstantion.category.Category;
 import com.konstantion.category.CategoryService;
 import com.konstantion.dto.category.CategoryDto;
-import com.konstantion.dto.category.CreationCategoryDto;
-import com.konstantion.dto.category.UpdateCategoryDto;
 import com.konstantion.dto.mappers.CategoryMapper;
 import com.konstantion.dto.response.ResponseDto;
-import com.konstantion.user.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/web-api/categories")

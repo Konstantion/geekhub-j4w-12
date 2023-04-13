@@ -7,6 +7,7 @@ import com.konstantion.exceptions.RegistrationException;
 import com.konstantion.exceptions.ValidationException;
 import com.konstantion.ragistration.token.ConfirmationToken;
 import com.konstantion.ragistration.token.ConfirmationTokenService;
+import com.konstantion.user.model.CreateUserRequest;
 import com.konstantion.user.model.UpdateUserRequest;
 import com.konstantion.user.model.UpdateUserRolesRequest;
 import com.konstantion.user.validator.UserValidator;
@@ -23,6 +24,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.konstantion.user.Role.ADMIN;
+import static com.konstantion.user.Role.MODERATOR;
+import static com.konstantion.utils.validator.ValidationResult.validOrThrow;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -169,6 +172,16 @@ public record UserServiceImpl(
     }
 
     @Override
+    public User createAdmin(CreateUserRequest request) {
+        return createUserWithRoles(request, Set.of(ADMIN));
+    }
+
+    @Override
+    public User createModerator(CreateUserRequest request) {
+        return createUserWithRoles(request, Set.of(MODERATOR));
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .orElseThrow(() ->
@@ -203,5 +216,28 @@ public record UserServiceImpl(
         return userRepository.findById(id).orElseThrow(() -> {
             throw new BadRequestException(format("User with id %s doesn't exist", id));
         });
+    }
+
+    private User createUserWithRoles(CreateUserRequest request, Set<Role> roles) {
+        ValidationResult validationResult = userValidator.validate(request);
+        validOrThrow(validationResult);
+
+        userRepository.findByEmail(request.email()).ifPresent(dnUser -> {
+            throw new RegistrationException("Email already taken by another user");
+        });
+
+
+        User user = User.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .roles(Set.of(ADMIN))
+                .enabled(true)
+                .accountNonLocked(true)
+                .build();
+
+        userRepository.save(user);
+
+        return user;
     }
 }

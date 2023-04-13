@@ -235,7 +235,7 @@ public record AdminController(
     }
 
     @PutMapping("/users/{uuid}/roles")
-    public ResponseEntity<ResponseDto> disableUser(
+    public ResponseEntity<ResponseDto> updateUserRoles(
             @PathVariable("uuid") UUID userId,
             @RequestBody UpdateUserRolesDto updateUserRolesDto
     ) {

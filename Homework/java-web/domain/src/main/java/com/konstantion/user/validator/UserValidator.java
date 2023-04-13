@@ -1,5 +1,6 @@
 package com.konstantion.user.validator;
 
+import com.konstantion.user.model.CreateUserRequest;
 import com.konstantion.user.model.LoginUserRequest;
 import com.konstantion.user.model.RegistrationUserRequest;
 import com.konstantion.user.model.UpdateUserRequest;
@@ -60,6 +61,12 @@ public record UserValidator(UserValidations userValidations) {
     }
 
     public ValidationResult validate(UpdateUserRequest updateUserRequest) {
+        Set<FieldError> validationErrors = new HashSet<>();
+
+        return ValidationResult.ofAbsentee(validationErrors);
+    }
+
+    public ValidationResult validate(CreateUserRequest request) {
         Set<FieldError> validationErrors = new HashSet<>();
 
         return ValidationResult.ofAbsentee(validationErrors);
