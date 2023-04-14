@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-            integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
-            integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
-            crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-
-    <script src="/static/js/bucketMain.js"></script>
-    <link rel="stylesheet" href="/static/css/bucket.css"/>
     <meta charset="UTF-8">
-    <title>Bucket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Add Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css">
 </head>
-<body>
-<div>
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">GeekHub</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/bucket">Bucket</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container-fluid mt-3" style="max-width: 1000px">
-        <div class="row justify-content-md-center">
-            <div class="col">
-                <table class="table table-dark table-striped">
-                    <thead>
-                    <tr style="text-align:center">
-                        <td style="width:5%">#</td>
-                        <td style="width:10%">Name</td>
-                        <td style="width: 5%">Price</td>
-                        <td style="width: 15%">Image</td>
-                        <td style="width: 5%">Category</td>
-                        <td style="width: 10%">Quantity</td>
-                        <td style="width: 10%">Modify</td>
-                        <td style="width: 10%">Total price</td>
-                    </tr>
-                    </thead>
-                    <tbody id="bucketBody">
 
-                    </tbody>
-                </table>
+<body>
+<div class="container mt-5">
+    <h1>User Profile</h1>
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" id="firstName" class="form-control" placeholder="First Name">
+            </div>
+            <div class="col-md-6">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" id="lastName" class="form-control" placeholder="Last Name">
             </div>
         </div>
-    </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <label for="phoneNumber" class="form-label">Phone Number</label>
+                <input type="text" id="phoneNumber" class="form-control" placeholder="Phone Number">
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="Email">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <label for="roles" class="form-label">Roles</label>
+                <select multiple class="form-select" id="roles">
+                    <option value="user">USER</option>
+                    <option value="moderator">MODERATOR</option>
+                    <option value="admin">ADMIN</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary">Edit</button>
+                <button type="button" class="btn btn-danger">Disable</button>
+                <button type="button" class="btn btn-success">Enable</button>
+            </div>
+        </div>
+    </form>
 </div>
+<div class="container mt-5">
+    <h1>Form Example</h1>
+    <form>
+        <div class="form-group">
+            <label for="inputEmail">Email</label>
+            <input type="email" class="form-control" id="inputEmail" placeholder="Enter email">
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
+<!-- Add Bootstrap 5 JS (Optional) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

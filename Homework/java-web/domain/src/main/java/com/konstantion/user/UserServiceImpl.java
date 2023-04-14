@@ -182,6 +182,15 @@ public record UserServiceImpl(
     }
 
     @Override
+    public User delete(UUID id) {
+        User user = findByIdOrThrow(id);
+
+        userRepository.delete(user);
+
+        return user;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .orElseThrow(() ->
@@ -231,9 +240,10 @@ public record UserServiceImpl(
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .email(request.email())
-                .roles(Set.of(ADMIN))
+                .roles(roles)
                 .enabled(true)
                 .accountNonLocked(true)
+                .password(passwordEncoder.encode(request.password()))
                 .build();
 
         userRepository.save(user);

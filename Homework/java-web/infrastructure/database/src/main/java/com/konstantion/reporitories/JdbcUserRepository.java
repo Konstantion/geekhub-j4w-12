@@ -60,19 +60,24 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
             WHERE uuid = :uuid;
             """;
 
-    private static final String FIND_ROLES_BY_USER_ID = """
+    private static final String FIND_ROLES_BY_USER_ID_QUERY = """
             SELECT name FROM user_role
             WHERE user_uuid = :userUuid;
             """;
 
-    private static final String SAVE_USER_ROLE = """
+    private static final String SAVE_USER_ROLE_QUERY = """
             INSERT INTO user_role
             VALUES (:userUuid, :roleName)
             """;
 
-    private static final String DELETE_USER_ROLES = """
+    private static final String DELETE_USER_ROLES_QUERY = """
             DELETE FROM user_role
             WHERE user_uuid = :userUuid;
+            """;
+
+    private static final String DELETE_USER_QUERY = """
+            DELETE FROM public.user
+            WHERE uuid = :uuid;
             """;
 
     @Override
@@ -83,7 +88,7 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
                 userMapper).stream().findAny().orElse(null);
         if (nonNull(user)) {
             Set<Role> userRoles = new HashSet<>(jdbcTemplate.query(
-                    FIND_ROLES_BY_USER_ID,
+                    FIND_ROLES_BY_USER_ID_QUERY,
                     Map.of("userUuid", uuid),
                     roleRowMapper)
             );
@@ -143,13 +148,24 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
                 userMapper).stream().findAny().orElse(null);
         if (nonNull(user)) {
             Set<Role> userRoles = new HashSet<>(jdbcTemplate.query(
-                    FIND_ROLES_BY_USER_ID,
+                    FIND_ROLES_BY_USER_ID_QUERY,
                     Map.of("userUuid", user.getId()),
                     roleRowMapper)
             );
             user.setRoles(userRoles);
         }
         return Optional.ofNullable(user);
+    }
+
+    @Override
+    public void delete(User user) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue( "uuid", user.getId());
+
+        jdbcTemplate.update(
+                DELETE_USER_QUERY,
+                parameterSource
+        );
     }
 
     private User update(User user) {
@@ -173,7 +189,7 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     private void deleteUserRoles(UUID userId) {
         jdbcTemplate.update(
-                DELETE_USER_ROLES,
+                DELETE_USER_ROLES_QUERY,
                 Map.of("userUuid", userId)
         );
     }
@@ -189,7 +205,7 @@ public record JdbcUserRepository(NamedParameterJdbcTemplate jdbcTemplate,
 
     private void saveUserRole(UUID userUuid, Role role) {
         jdbcTemplate.update(
-                SAVE_USER_ROLE,
+                SAVE_USER_ROLE_QUERY,
                 Map.of(
                         "userUuid", userUuid,
                         "roleName", role.name()

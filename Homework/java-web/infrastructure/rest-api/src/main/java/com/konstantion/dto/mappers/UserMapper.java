@@ -25,4 +25,5 @@ public interface UserMapper {
     UpdateUserRolesRequest toEntity(UpdateUserRolesDto updateUserRolesDto);
 
     CreateUserRequest toCreateUserRequest(CreateUserRequestDto request);
+    RestoreUserRequest toRestoreUserRequest(RestoreUserRequestDto dto);
 }

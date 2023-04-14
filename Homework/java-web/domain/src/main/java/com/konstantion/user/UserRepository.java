@@ -13,4 +13,6 @@ public interface UserRepository {
     UUID setNonLockedById(UUID id, boolean active);
 
     Optional<User> findByEmail(String email);
+
+    void delete(User user);
 }

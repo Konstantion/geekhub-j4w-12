@@ -1225,11 +1225,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             
                     <button id="loginButton"  class="btn btn-primary">Log in</button>
                     <button id="registerButton" class="btn btn-primary">Register</button>
+                    <button id="forgotPassword" class="btn btn-primary">Forgot password</button>
                   </form>`
             return container;
         }
 
         const loginContainer = getLoginForm();
+        const forgotPassword = loginContainer.querySelector('#forgotPassword');
         const loginButton = loginContainer.querySelector('#loginButton');
         const registerButton = loginContainer.querySelector('#registerButton');
         const emailInput = loginContainer.querySelector('#email');
@@ -1273,6 +1275,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             currentPage = PAGES.REGISTRATION;
             buildMainContent();
+        }
+        forgotPassword.onclick = (e) => {
+            e.preventDefault();
+            portalHolder.append(getOverlay(getForgetPasswordTable(), true))
         }
         mainContent.append(loginContainer);
     }
@@ -1534,7 +1540,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let fetchedProducts = Object.keys(order.products);
             let promises = fetchedProducts.map(uuid => {
                 return loadProductById(uuid).then(response => {
-                    if(response.statusCode === 200) {
+                    if (response.statusCode === 200) {
                         products.push(response.data.product);
                     }
                 }).catch(console.error);
@@ -1548,10 +1554,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const totalPrice = container.querySelector('#totalPrice');
             totalPrice.innerText = order.totalPrice;
             const status = container.querySelector('#status');
-            if(order.status === 'NEW') {
+            if (order.status === 'NEW') {
                 addClassesToElement(status, 'badge bg-primary');
                 status.innerText = 'NEW';
-            } else if(order.status === 'COMPLETE') {
+            } else if (order.status === 'COMPLETE') {
                 addClassesToElement(status, 'badge bg-success');
                 status.innerText = 'COMPLETE';
             } else {
@@ -1559,14 +1565,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 status.innerText = 'CANCELED';
             }
             const productHolder = container.querySelector('#productHolder');
-            for(const [key, value] of Object.entries(order.products)) {
+            for (const [key, value] of Object.entries(order.products)) {
                 const productRow = document.createElement('tr');
                 const productName = document.createElement('td');
                 productName.innerText = products.find(product => product.uuid === key).name;
                 const productQuantity = document.createElement('td');
                 productQuantity.innerText = value.toString();
                 const productPrice = document.createElement('td');
-                productPrice.innerText ='₴' + (parseFloat(products.find(product => product.uuid === key).price) * value).toFixed(2);
+                productPrice.innerText = '₴' + (parseFloat(products.find(product => product.uuid === key).price) * value).toFixed(2);
                 productRow.append(productName, productQuantity, productPrice);
                 productName.onclick = () => {
                     productPageState.productUuid = key;
@@ -1740,6 +1746,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw e;
         }
     }
+    const getForgetPasswordTable = () => {
+        const container = document.createElement('div');
+        addClassesToElement(container, "container mt-5")
+        container.innerHTML = `  
+            <h1>Restore password</h1>
+            <form>
+                <div class="form-group mb-3">
+                    <label for="inputEmail">Email</label>
+                    <input type="email" class="form-control mb-3" id="inputEmail" placeholder="Enter email">
+                </div>
+                <button id="restore" class="btn btn-primary mb-3">Send</button>
+            </form>        
+        `;
+
+        const emailInput = container.querySelector('#inputEmail');
+        const restoreButton = container.querySelector('#restore')
+        restoreButton.onclick = (e) => {
+            e.preventDefault();
+            const email = emailInput.value;
+            restore(email).then((response) => {
+                if (response.statusCode === 200) {
+                    portalHolder.append(getSuccessMessage(response.message));
+                } else {
+                    portalHolder.append(getErrorMessage(response.message));
+                }
+            })
+        }
+
+        return container;
+    }
 
     const login = async (email, password) => {
         try {
@@ -1777,6 +1813,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'POST',
                 body: raw,
                 headers: {...getHeaders(), "Content-Type": "application/json"}
+            })
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    const restore = async (email) => {
+        try {
+            const raw = JSON.stringify({
+                "email": email
+            });
+
+            const response = await fetch(`${registrationUrl}/restore`, {
+                method: 'POST',
+                body: raw,
+                headers: {"Content-Type": "application/json"}
             })
             return await response.json();
         } catch (e) {

@@ -1,6 +1,7 @@
 package com.konstantion.user;
 
 import com.konstantion.user.model.CreateUserRequest;
+import com.konstantion.user.model.RestoreUserRequest;
 import com.konstantion.user.model.UpdateUserRequest;
 import com.konstantion.user.model.UpdateUserRolesRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,4 +26,6 @@ public interface UserService extends UserDetailsService {
     User createAdmin(CreateUserRequest request);
 
     User createModerator(CreateUserRequest toCreateUserRequest);
+
+    User delete(UUID id);
 }

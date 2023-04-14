@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
                     new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo(to);
-            helper.setSubject("Confirm your email");
+            helper.setSubject("GeekHub Shop");
             helper.setFrom("botunigroup@gmail.com");
             mailSender.send(mimeMessage);
             LOGGER.info("email successfully sent to {}", to);
@@ -47,6 +47,11 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String buildRestorePasswordEmail(String password) {
         return emailUtil.restorePasswordEmail(password);
+    }
+
+    @Override
+    public String buildConfirmRestoreEmail(String link) {
+        return emailUtil.restoreConfirmEmail(link);
     }
 
 

@@ -6,4 +6,6 @@ public interface EmailService {
     String buildRegistrationEmail(String userName, String link);
 
     String buildRestorePasswordEmail(String password);
+
+    String buildConfirmRestoreEmail(String link);
 }

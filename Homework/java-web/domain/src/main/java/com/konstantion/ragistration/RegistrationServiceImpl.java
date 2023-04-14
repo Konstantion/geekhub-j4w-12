@@ -12,6 +12,7 @@ import com.konstantion.user.UserRepository;
 import com.konstantion.user.UserService;
 import com.konstantion.user.model.LoginUserRequest;
 import com.konstantion.user.model.RegistrationUserRequest;
+import com.konstantion.user.model.RestoreUserRequest;
 import com.konstantion.user.validator.UserValidator;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +23,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
 
 @Component
@@ -47,6 +50,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     private static final String CONFIRMATION_API = "http://localhost:8080/web-api/registration/confirm";
+    private static final String RESTORE_API = "http://localhost:8080/web-api/registration/restore/confirm";
 
 
     @Override
@@ -98,7 +102,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         LocalDateTime expiredAt = confirmationToken.expiresAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now())) {
+        if (expiredAt.isBefore(now())) {
             throw new RegistrationException("Token is expired");
         }
 
@@ -126,5 +130,68 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .orElseThrow();
 
         return jwtService.generateToken(user);
+    }
+
+    @Override
+    public String restorePassword(RestoreUserRequest request) {
+        String email = request.email();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> {
+            throw new BadRequestException(format("User with email %s doesn't exist", email));
+        });
+
+        if(!user.isEnabled()) {
+            throw new BadRequestException(format("User with email %s is disabled", email));
+        }
+
+
+
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = ConfirmationToken.builder()
+                .token(token)
+                .userId(user.getId())
+                .createdAt(now())
+                .expiresAt(now().plusMinutes(15L))
+                .build();
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+        String link = UriComponentsBuilder.fromUriString(RESTORE_API)
+                .queryParam("token", token)
+                .toUriString();
+
+        emailService.send(
+                email,
+                emailService.buildConfirmRestoreEmail(link)
+        );
+
+        return token;
+    }
+
+    @Override
+    public String confirmRestore(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenService
+                .getToken(token)
+                .orElseThrow(() ->
+                        new RegistrationException("Token not found"));
+
+        User user = userRepository.findById(confirmationToken.userId()).orElseThrow(() ->
+                new BadRequestException(format("User with id %s doesn't exist ", confirmationToken.userId()))
+        );
+
+        if (nonNull(confirmationToken.confirmedAt())) {
+            throw new RegistrationException("Token is already confirmed");
+        }
+
+        LocalDateTime expiredAt = confirmationToken.expiresAt();
+
+        if (expiredAt.isBefore(now())) {
+            throw new RegistrationException("Token is expired");
+        }
+
+        confirmationTokenService.setConfirmedAt(token);
+        userService.restorePassword(user.getEmail());
+
+        return "Confirmed";
     }
 }

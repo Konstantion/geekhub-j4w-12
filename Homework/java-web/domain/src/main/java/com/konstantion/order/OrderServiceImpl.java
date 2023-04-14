@@ -107,7 +107,7 @@ public record OrderServiceImpl(
         Order order = orderByIdOrThrow(uuid);
 
         if (!order.userUuid().equals(user.getId())
-            && user.hasRole(ADMIN)) {
+            && !user.hasRole(ADMIN)) {
             throw new ForbiddenException("Not enough authorities to complete order");
         }
 
@@ -122,7 +122,7 @@ public record OrderServiceImpl(
         Order order = orderByIdOrThrow(uuid);
 
         if (!order.userUuid().equals(user.getId())
-            && user.hasRole(ADMIN)) {
+            && !user.hasRole(ADMIN)) {
             throw new ForbiddenException("Not enough authorities to cancel order");
         }
 
