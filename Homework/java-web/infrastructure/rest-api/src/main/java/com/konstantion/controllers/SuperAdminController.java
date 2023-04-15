@@ -5,7 +5,6 @@ import com.konstantion.dto.response.ResponseDto;
 import com.konstantion.dto.user.CreateUserRequestDto;
 import com.konstantion.dto.user.UpdateUserRolesDto;
 import com.konstantion.dto.user.UserDto;
-import com.konstantion.user.User;
 import com.konstantion.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

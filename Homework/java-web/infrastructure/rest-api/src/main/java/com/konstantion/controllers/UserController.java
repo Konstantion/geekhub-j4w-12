@@ -40,10 +40,9 @@ public record UserController(
 
     @GetMapping("/{uuid}")
     public ResponseEntity<ResponseDto> getUser(
-            @PathVariable("uuid") UUID uuid,
-            @AuthenticationPrincipal User authorized
+            @PathVariable("uuid") UUID uuid
     ) {
-        UserDto dto = userMapper.toDto(userService.getUser(uuid, authorized));
+        UserDto dto = userMapper.toDto(userService.getUser(uuid));
 
         return ResponseEntity.ok(
                 ResponseDto.builder()
@@ -59,7 +58,7 @@ public record UserController(
     public ResponseEntity<ResponseDto> getAuthorizedUser(
             @AuthenticationPrincipal User user
     ) {
-        UserDto dto = userMapper.toDto(userService.getUser(user.getId(), user));
+        UserDto dto = userMapper.toDto(user);
 
         return ResponseEntity.ok(
                 ResponseDto.builder()
@@ -88,7 +87,7 @@ public record UserController(
                         .timeStamp(now())
                         .status(OK)
                         .statusCode(OK.value())
-                        .message("User updated")
+                        .message("User successfully updated")
                         .data(Map.of("user", dto))
                         .build());
     }

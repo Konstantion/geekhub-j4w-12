@@ -13,32 +13,37 @@ import java.util.Set;
 
 @Component
 public record UserValidator(UserValidations userValidations) {
-    public ValidationResult validate(RegistrationUserRequest registrationUserRequest) {
+    public ValidationResult validate(RegistrationUserRequest request) {
         Set<FieldError> validationErrors = new HashSet<>();
 
-        userValidations.isEmailValid(registrationUserRequest.email()).ifPresent(s ->
+        userValidations.isEmailValid(request.email()).ifPresent(s ->
                 validationErrors.add(new FieldError(
-                        registrationUserRequest.toString(), "email", s)
+                        request.toString(), "email", s)
                 ));
 
-        userValidations.isFirstnameValid(registrationUserRequest.firstName()).ifPresent(s ->
+        userValidations.isFirstnameValid(request.firstName()).ifPresent(s ->
                 validationErrors.add(new FieldError(
-                        registrationUserRequest.toString(), "firstName", s)
+                        request.toString(), "firstName", s)
                 ));
 
-        userValidations.isLastnameValid(registrationUserRequest.lastName()).ifPresent(s ->
+        userValidations.isLastnameValid(request.lastName()).ifPresent(s ->
                 validationErrors.add(new FieldError(
-                        registrationUserRequest.toString(), "lastName", s)
+                        request.toString(), "lastName", s)
                 ));
 
-        userValidations.isPasswordValid(registrationUserRequest.password()).ifPresent(s ->
+        userValidations.isPasswordValid(request.password()).ifPresent(s ->
                 validationErrors.add(new FieldError(
-                        registrationUserRequest.toString(), "password", s)
+                        request.toString(), "password", s)
                 ));
 
-        userValidations.isPasswordConfirmValid(registrationUserRequest.password(), registrationUserRequest.passwordConfirm()).ifPresent(s ->
+        userValidations.isPasswordConfirmValid(request.password(), request.passwordConfirm()).ifPresent(s ->
                 validationErrors.add(new FieldError(
-                        registrationUserRequest.toString(), "passwordConfirm", s)
+                        request.toString(), "passwordConfirm", s)
+                ));
+
+        userValidations.isPhoneNumberValid(request.phoneNumber()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "phoneNumber", s)
                 ));
 
         return ValidationResult.ofAbsentee(validationErrors);
@@ -60,14 +65,59 @@ public record UserValidator(UserValidations userValidations) {
         return ValidationResult.ofAbsentee(validationErrors);
     }
 
-    public ValidationResult validate(UpdateUserRequest updateUserRequest) {
+    public ValidationResult validate(UpdateUserRequest request) {
         Set<FieldError> validationErrors = new HashSet<>();
+
+        userValidations.isFirstnameValid(request.firstName()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "firstName", s)
+                ));
+
+        userValidations.isLastnameValid(request.lastName()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "lastName", s)
+                ));
+
+        userValidations.isUpdatePasswordValid(request.password()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "password", s)
+        ));
+
+        userValidations.isPhoneNumberValid(request.phoneNumber()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "phoneNumber", s)
+                ));
 
         return ValidationResult.ofAbsentee(validationErrors);
     }
 
     public ValidationResult validate(CreateUserRequest request) {
         Set<FieldError> validationErrors = new HashSet<>();
+
+        userValidations.isEmailValid(request.email()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "email", s)
+                ));
+
+        userValidations.isFirstnameValid(request.firstName()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "firstName", s)
+                ));
+
+        userValidations.isLastnameValid(request.lastName()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "lastName", s)
+                ));
+
+        userValidations.isPasswordValid(request.password()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "password", s)
+                ));
+
+        userValidations.isPhoneNumberValid(request.phoneNumber()).ifPresent(s ->
+                validationErrors.add(new FieldError(
+                        request.toString(), "phoneNumber", s)
+                ));
 
         return ValidationResult.ofAbsentee(validationErrors);
     }

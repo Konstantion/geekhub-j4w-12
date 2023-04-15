@@ -1,7 +1,6 @@
 package com.konstantion.user;
 
 import com.konstantion.user.model.CreateUserRequest;
-import com.konstantion.user.model.RestoreUserRequest;
 import com.konstantion.user.model.UpdateUserRequest;
 import com.konstantion.user.model.UpdateUserRolesRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +20,7 @@ public interface UserService extends UserDetailsService {
 
     String restorePassword(String email);
 
-    User getUser(UUID uuid, User requester);
+    User getUser(UUID uuid);
 
     User createAdmin(CreateUserRequest request);
 

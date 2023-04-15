@@ -6,12 +6,15 @@ const PAGES = {
     LOGIN: 'LOGIN',
     ORDERS: 'ORDERS',
     ORDER: 'ORDER',
-    PROFILE: 'PROFILE'
+    PROFILE: 'PROFILE',
+    ADMIN: 'ADMIN'
 }
 const JWT = 'jwt';
 const ROLES = {
     USER: "USER",
-    ADMIN: "ADMIN"
+    ADMIN: "ADMIN",
+    MODERATOR: "MODERATOR",
+    SUPER_ADMIN: "SUPER_ADMIN"
 }
 
 function getHeaders() {
@@ -112,14 +115,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const MAX_BUCKET_QUANTITY = '128';
-    const categoriesUrl = 'http://localhost:8080/web-api/categories';
-    const productsUrl = 'http://localhost:8080/web-api/products';
-    const reviewsUrl = 'http://localhost:8080/web-api/reviews';
-    const bucketsUrl = 'http://localhost:8080/web-api/buckets';
-    const ordersUrl = 'http://localhost:8080/web-api/orders';
+    const categoriesApi = 'http://localhost:8080/web-api/categories';
+    const productsApi = 'http://localhost:8080/web-api/products';
+    const reviewsApi = 'http://localhost:8080/web-api/reviews';
+    const bucketsApi = 'http://localhost:8080/web-api/buckets';
+    const ordersApi = 'http://localhost:8080/web-api/orders';
     const registrationUrl = 'http://localhost:8080/web-api/registration';
-    const usersUrl = 'http://localhost:8080/web-api/users';
+    const usersApi = 'http://localhost:8080/web-api/users';
     const adminApi = 'http://localhost:8080/admin-api';
+    const superAdminApi = 'http://localhost:8080/super-admin-api';
 
     const getAuthorizesUser = async () => {
         try {
@@ -127,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 headers: getHeaders()
             }
 
-            const response = await fetch(`${usersUrl}/authorized`, options)
+            const response = await fetch(`${usersApi}/authorized`, options)
             return await response.json();
         } catch (e) {
             return {};
@@ -147,6 +151,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let orderPageState = {
         'orderUuid': ''
+    };
+
+    let profilePageState = {
+        'userUuid': authorizedUser.id
     };
 
     let categoriesState = {
@@ -208,7 +216,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         addClassesToElement(username, "text-dark me-2")
         username.innerText = authorizedUser.email ? authorizedUser.email : '';
         navbarBodyUl.append(navbarBodyLiProduct, navbarBodyLiBucket, navbarBodyLiOrder);
-        if (authorizedUser.roles && authorizedUser.roles.includes("ADMIN")) {
+        username.onclick = e => {
+            e.preventDefault();
+            profilePageState.userUuid = authorizedUser.id;
+            currentPage = PAGES.PROFILE;
+            buildMainContent();
+        }
+        if (authorizedUser.roles &&
+            (authorizedUser.roles.includes(ROLES.ADMIN)
+                || authorizedUser.roles.includes(ROLES.SUPER_ADMIN))) {
             navbarBodyUl.append(navbarBodyLiAdmin);
         }
         navbarBody.append(navbarBodyUl);
@@ -240,7 +256,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 buildMainContent();
             },
             () => {
-                console.log("Admin")
+                console.log(PAGES.ADMIN);
+                currentPage = PAGES.ADMIN;
+                buildMainContent();
             },
             () => {
                 console.log("Logged out")
@@ -308,6 +326,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         loadOrdersPage();
                     }
                     break;
+                case PAGES.PROFILE:
+                    loadProfilePage(profilePageState.userUuid);
+                    break;
+                case PAGE.ADMIN:
+                    loadAdminPage();
+                    break;
             }
         } else {
             switch (currentPage) {
@@ -346,7 +370,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const loadCategories = async () => {
             try {
                 const fetchedCategories = [];
-                const categoriesResponse = await fetch(categoriesUrl, {
+                const categoriesResponse = await fetch(categoriesApi, {
                     headers: getHeaders()
                 });
                 const data = (await categoriesResponse.json()).data;
@@ -365,7 +389,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return null;
             }
             try {
-                const categoryResponse = await fetch(`${categoriesUrl}/${uuid}`, {
+                const categoryResponse = await fetch(`${categoriesApi}/${uuid}`, {
                     headers: getHeaders()
                 });
                 return (await categoryResponse.json()).data.category;
@@ -378,7 +402,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return null;
             }
             try {
-                const reviewResponse = await fetch(`${reviewsUrl}/products/${uuid}/rating`, {
+                const reviewResponse = await fetch(`${reviewsApi}/products/${uuid}/rating`, {
                     headers: getHeaders()
                 });
                 return (await reviewResponse.json()).data.rating;
@@ -390,8 +414,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const params = getProductsRequestParameters();
                 const paramsString = new URLSearchParams(params);
-                console.log(`request : ${productsUrl}?${paramsString}`);
-                const productsResponse = await fetch(`${productsUrl}?${paramsString}`, {
+                console.log(`request : ${productsApi}?${paramsString}`);
+                const productsResponse = await fetch(`${productsApi}?${paramsString}`, {
                     headers: getHeaders()
                 });
                 const page = (await productsResponse.json()).data.page;
@@ -737,8 +761,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const loadBucketProducts = async () => {
             try {
-                console.log(`${bucketsUrl}/products`);
-                const response = await fetch(`${bucketsUrl}/products`, {
+                console.log(`${bucketsApi}/products`);
+                const response = await fetch(`${bucketsApi}/products`, {
                     headers: getHeaders()
                 })
                 const data = (await response.json()).data;
@@ -752,8 +776,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const getProductQuantityById = async (uuid) => {
             try {
-                console.log(`${bucketsUrl}/products/${uuid}/quantity`);
-                const response = await fetch(`${bucketsUrl}/products/${uuid}/quantity`, {
+                console.log(`${bucketsApi}/products/${uuid}/quantity`);
+                const response = await fetch(`${bucketsApi}/products/${uuid}/quantity`, {
                     headers: getHeaders()
                 });
                 const data = (await response.json()).data;
@@ -809,7 +833,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             addClassesToElement(createButton, 'btn btn-success');
             if (!isEmpty(bucketState.bucketProducts)) {
                 createButton.onclick = () => {
-                    fetch(`${ordersUrl}`, {
+                    fetch(`${ordersApi}`, {
                         method: 'POST',
                         headers: getHeaders()
                     }).then(() => {
@@ -882,7 +906,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             quantityField.value = parseInt(quantityField.value) > parseInt(quantityField.max) ? quantityField.max : quantityField.value;
             quantityField.value = parseInt(quantityField.value) < parseInt(quantityField.min) ? quantityField.min : quantityField.value;
             const quantity = quantityField.value;
-            const response = fetch(`${bucketsUrl}/products/${product.uuid}/quantity?quantity=${quantity}`, {
+            const response = fetch(`${bucketsApi}/products/${product.uuid}/quantity?quantity=${quantity}`, {
                 method: 'PUT',
                 headers: getHeaders()
             }).then(response => {
@@ -912,8 +936,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'uuid': product.uuid,
                 'quantity': quantity
             })
-            console.log(`${bucketsUrl}/products/remove?${params}`);
-            fetch(`${bucketsUrl}/products/remove?${params}`, {
+            console.log(`${bucketsApi}/products/remove?${params}`);
+            fetch(`${bucketsApi}/products/remove?${params}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             }).then(() => {
@@ -1061,6 +1085,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 createdReview.uuid = response.data.uuid;
                                 createdReview.message = message;
                                 createdReview.rating = rating;
+                                createdReview.username = authorizedUser.email;
                                 reviewList.append(getReviewElement(createdReview));
                                 commentInput.value = '';
                                 ratingInput.value = '1';
@@ -1088,7 +1113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 addClassesToElement(editButton, 'btn btn-primary mb-3');
                 editButton.innerHTML = `Edit product`;
                 editButton.onclick = () => {
-                    const productDiv = getProductInputTable(product);
+                    const productDiv = getProductInputTable('Update product', product);
                     const buttonClose = productDiv.querySelector('#close');
                     const buttonSave = productDiv.querySelector('#save');
                     const productForm = productDiv.querySelector('#productForm');
@@ -1187,12 +1212,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             addClassesToElement(reviewsElement, 'list-group-item');
             const reviewAuthor = document.createElement('div');
             addClassesToElement(reviewAuthor, 'd-flex justify-content-between');
-            reviewAuthor.innerHTML = `<h5 class="mb-1">Username</h5>
+            reviewAuthor.innerHTML = `<h5 class="mb-1">${review.username}</h5>
                     <small>${review.rating}/5</small>`;
             const reviewText = document.createElement('p');
             addClassesToElement(reviewText, 'mb-1');
             reviewText.innerText = `${review.message ? review.message : ''}`;
             reviewsElement.append(reviewAuthor, reviewText);
+            reviewAuthor.onclick = (e) => {
+                if (review.userUuid) {
+                    e.preventDefault();
+                    profilePageState.userUuid = review.userUuid;
+                    currentPage = PAGES.PROFILE;
+                    buildMainContent();
+                }
+            }
             return reviewsElement;
         }
         mainContent.append(getSpinner());
@@ -1222,10 +1255,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                       <input type="password" class="form-control" id="password" name="password">
                        <div id="invalidPassword" class="invalid-feedback"></div>
                     </div>
-            
+                    <div class="mb-2">
                     <button id="loginButton"  class="btn btn-primary">Log in</button>
                     <button id="registerButton" class="btn btn-primary">Register</button>
+                    </div>
+                    <div>
                     <button id="forgotPassword" class="btn btn-primary">Forgot password</button>
+                    </div>
                   </form>`
             return container;
         }
@@ -1278,7 +1314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         forgotPassword.onclick = (e) => {
             e.preventDefault();
-            portalHolder.append(getOverlay(getForgetPasswordTable(), true))
+            portalHolder.append(getOverlay(getForgetPasswordTable()));
         }
         mainContent.append(loginContainer);
     }
@@ -1586,6 +1622,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         })
     }
 
+    const loadProfilePage = (userId) => {
+        history.pushState({page: PAGES.PROFILE}, null, '');
+        mainContent.append(getSpinner());
+
+        loadUserById(userId).then(response => {
+            return response.data.user;
+        }).then(user => {
+            return getUserPage(user);
+        }).then(component => {
+            clearMainContent();
+            mainContent.append(component);
+        });
+    }
+
+    const loadAdminPage = () => {
+
+    }
+
     rootNode.append(navbar);
     rootNode.append(mainContent);
     buildMainContent();
@@ -1597,7 +1651,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             headers: getHeaders()
         };
 
-        const response = await fetch(`${usersUrl}/${uuid}`, requestOptions);
+        const response = await fetch(`${usersApi}/${uuid}`, requestOptions);
         return await response.json();
     }
     const loadOrderById = async (uuid) => {
@@ -1606,7 +1660,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             headers: getHeaders()
         };
 
-        const response = await fetch(`${ordersUrl}/${uuid}`, requestOptions);
+        const response = await fetch(`${ordersApi}/${uuid}`, requestOptions);
         return await response.json();
     }
     const loadUserOrders = async (uuid) => {
@@ -1614,13 +1668,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             method: 'GET',
             headers: getHeaders()
         };
-        const response = await fetch(`${ordersUrl}/users/${uuid}`, requestOptions);
+        const response = await fetch(`${ordersApi}/users/${uuid}`, requestOptions);
         return await response.json();
     }
     const loadProductReviews = async (reviewsId) => {
         const reviews = [];
         for (const reviewId of reviewsId) {
-            reviews.push(await loadReviewById(reviewId));
+            const review = await loadReviewById(reviewId);
+            const user = (await loadUserById(review.userUuid)).data.user;
+            reviews.push({...review, username: user.email});
         }
         return reviews;
     }
@@ -1631,7 +1687,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'rating': rating,
                 'productUuid': productUuid
             }
-            const response = await fetch(`${reviewsUrl}`, {
+            const response = await fetch(`${reviewsApi}`, {
                 method: 'POST',
                 body: JSON.stringify(requestBody),
                 headers: {
@@ -1645,19 +1701,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     const loadProductById = async (uuid) => {
-        const response = await fetch(`${productsUrl}/${uuid}`, {
+        const response = await fetch(`${productsApi}/${uuid}`, {
             headers: getHeaders()
         });
         return (await response.json());
     }
     const loadReviewsIdByProductId = async (uuid) => {
-        const response = await fetch(`${reviewsUrl}/products/${uuid}`, {
+        const response = await fetch(`${reviewsApi}/products/${uuid}`, {
             headers: getHeaders()
         });
         return (await response.json()).data.uuids;
     }
     const loadReviewById = async (uuid) => {
-        const response = await fetch(`${reviewsUrl}/${uuid}`, {
+        const response = await fetch(`${reviewsApi}/${uuid}`, {
             headers: getHeaders()
         });
         const data = (await response.json()).data;
@@ -1665,7 +1721,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return data.review;
     }
     const loadCategoryById = async (uuid) => {
-        const response = await fetch(`${categoriesUrl}/${uuid}`, {
+        const response = await fetch(`${categoriesApi}/${uuid}`, {
             headers: getHeaders()
         });
         return (await response.json());
@@ -1676,8 +1732,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 uuid: product.uuid,
                 quantity: quantity
             });
-            console.log(`${bucketsUrl}/products/add?${params}`);
-            const response = await fetch(`${bucketsUrl}/products/add?${params}`,
+            console.log(`${bucketsApi}/products/add?${params}`);
+            const response = await fetch(`${bucketsApi}/products/add?${params}`,
                 {
                     method: 'PUT',
                     headers: getHeaders()
@@ -1688,9 +1744,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
     };
-    const getProductInputTable = (product) => {
+    const getProductInputTable = (name, product) => {
         const container = document.createElement('div');
-        container.innerHTML = `<h1>Add Product</h1>
+        container.innerHTML = `<h1>${name}</h1>
       <form id="productForm">
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
@@ -1752,29 +1808,219 @@ document.addEventListener('DOMContentLoaded', async () => {
         container.innerHTML = `  
             <h1>Restore password</h1>
             <form>
-                <div class="form-group mb-3">
-                    <label for="inputEmail">Email</label>
+                <div>
+                    <label  class="form-group mb-1" for="inputEmail">Email</label>
                     <input type="email" class="form-control mb-3" id="inputEmail" placeholder="Enter email">
+                    <div id="invalidEmail" class="invalid-feedback"></div> 
                 </div>
                 <button id="restore" class="btn btn-primary mb-3">Send</button>
+                <button id="close" class="btn btn-danger mb-3">Close</button>
             </form>        
         `;
 
         const emailInput = container.querySelector('#inputEmail');
+        const invalidEmail = container.querySelector('#invalidEmail');
         const restoreButton = container.querySelector('#restore')
+        const closeButton = container.querySelector('#close')
+        closeButton.onclick = (e) => {
+            e.preventDefault();
+            hidePortals();
+        }
         restoreButton.onclick = (e) => {
             e.preventDefault();
             const email = emailInput.value;
             restore(email).then((response) => {
                 if (response.statusCode === 200) {
+                    hidePortals();
+                    removeClass(emailInput, 'is-invalid');
                     portalHolder.append(getSuccessMessage(response.message));
                 } else {
-                    portalHolder.append(getErrorMessage(response.message));
+                    addClassesToElement(emailInput, 'is-invalid');
+                    invalidEmail.innerText = response.message;
                 }
             })
         }
 
         return container;
+    }
+    const getUserPage = (user) => {
+        const container = document.createElement('div');
+        addClassesToElement(container, "container mt-5")
+
+        container.innerHTML = `
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">User Profile</h5>
+                            <p><strong>First Name: </strong>${valueOrEmpty(user.firstName)}</p>
+                            <p><strong>Last Name: </strong>${valueOrEmpty(user.firstName)}</p>
+                            <p><strong>Phone Number: </strong>${valueOrEmpty(user.phoneNumber)}</p>
+                            <p><strong>Email: </strong>${valueOrEmpty(user.email)}</p>
+                            <div id="buttonHolder" class="text-center">
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        const buttonHolder = container.querySelector("#buttonHolder");
+        const editButton = document.createElement('button');
+        addClassesToElement(editButton, 'btn btn-primary mx-1');
+        editButton.setAttribute('id', 'editButton');
+        editButton.innerText = 'Edit';
+        const disableButton = document.createElement('button');
+        addClassesToElement(disableButton, 'btn btn-secondary mx-1');
+        disableButton.setAttribute('id', 'disableButton');
+        disableButton.innerText = 'Disable';
+        const enableButton = document.createElement('button');
+        addClassesToElement(enableButton, 'btn btn-success mx-1');
+        enableButton.setAttribute('id', 'enableButton');
+        enableButton.innerText = 'Enable';
+        if (user.id === authorizedUser.id ||
+            authorizedUser.roles.includes(ROLES.SUPER_ADMIN)) {
+            buttonHolder.append(editButton);
+        }
+        if (authorizedUser.roles.includes(ROLES.SUPER_ADMIN)
+            && user.id !== authorizedUser.id) {
+            buttonHolder.append(disableButton);
+            buttonHolder.append(enableButton);
+        }
+        enableButton.onclick = e => {
+            e.preventDefault();
+            enableUser(user.id).then(response => {
+                if (response.statusCode === 200) {
+                    portalHolder.append(getSuccessMessage(response.message));
+                } else {
+                    portalHolder.append(getErrorMessage(response.message));
+                }
+            });
+        }
+
+        disableButton.onclick = e => {
+            e.preventDefault();
+            disableUser(user.id).then(response => {
+                if (response.statusCode === 200) {
+                    portalHolder.append(getSuccessMessage(response.message));
+                } else {
+                    portalHolder.append(getErrorMessage(response.message));
+                }
+            });
+        }
+
+        editButton.onclick = e => {
+            e.preventDefault();
+
+            const container = getUserForm();
+            const sendButton = container.querySelector('#sendButton');
+            container.querySelector('#emailInput').setAttribute('readonly', '');
+            const firstNameInput = container.querySelector('#firstNameInput');
+            const lastNameInput = container.querySelector('#lastNameInput');
+            const phoneNumberInput = container.querySelector('#phoneNumberInput');
+            const passwordInput = container.querySelector('#passwordInput');
+            container.querySelector('#emailInput').value = user.email;
+            firstNameInput.value = user.firstName;
+            lastNameInput.value = user.lastName;
+            phoneNumberInput.value = user.phoneNumber;
+
+            const invalidFirstName = container.querySelector('#invalidFirstName');
+            const invalidLastName = container.querySelector('#invalidLastName');
+            const invalidPhoneNumber = container.querySelector('#invalidPhoneNumber');
+            const invalidPassword = container.querySelector('#invalidPassword');
+
+            sendButton.onclick = e => {
+                e.preventDefault();
+                updateUser(user.id, firstNameInput.value, lastNameInput.value, phoneNumberInput.value, passwordInput.value).then(response => {
+                    if (response.statusCode === 200) {
+                        hidePortals();
+                        portalHolder.append(getSuccessMessage(response.message));
+                    } else if (response.statusCode === 422) {
+                        removeClass(firstNameInput, 'is-invalid');
+                        removeClass(lastNameInput, 'is-invalid');
+                        removeClass(phoneNumberInput, 'is-invalid');
+                        removeClass(passwordInput, 'is-invalid');
+                        if (response.data.firstName) {
+                            addClassesToElement(firstNameInput, 'is-invalid');
+                            invalidFirstName.innerText = response.data.firstName;
+                        }
+                        if (response.data.lastName) {
+                            addClassesToElement(lastNameInput, 'is-invalid');
+                            invalidLastName.innerText = response.data.lastName;
+                        }
+                        if (response.data.phoneNumber) {
+                            addClassesToElement(phoneNumberInput, 'is-invalid');
+                            invalidPhoneNumber.innerText = response.data.phoneNumber;
+                        }
+                        if (response.data.password) {
+                            addClassesToElement(passwordInput, 'is-invalid');
+                            invalidPassword.innerText = response.data.password;
+                        }
+                    } else if (response.statusCode >= 400) {
+                        hidePortals();
+                        portalHolder.append(getErrorMessage(response.message));
+                    }
+                })
+            }
+
+            portalHolder.append(getOverlay(container, false));
+        }
+        return container;
+    }
+    const getUserForm = () => {
+        const container = document.createElement('div');
+        addClassesToElement(container, "container mt-5")
+        container.innerHTML = `<h1>User Form</h1>
+            <form id="myForm">
+                <div class="mb-3">
+                    <label for="emailInput" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="emailInput" name="email">
+                    <div id="invalidEmail" class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="firstNameInput" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstNameInput" name="firstName">
+                    <div id="invalidFirstName" class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="lastNameInput" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastNameInput" name="lastName">
+                    <div id="invalidLastName" class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumberInput" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phoneNumberInput" name="phoneNumber">
+                    <div id="invalidPhoneNumber" class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="passwordInput" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="passwordInput" name="password" >
+                    <div id="invalidPassword" class="invalid-feedback"></div>
+                </div>
+                <button id="sendButton" class="btn btn-primary">Send</button>
+                <button id="closeButton" class="btn btn-danger">Close</button>
+            </form>`;
+        const closeButton = container.querySelector('#closeButton');
+        closeButton.onclick = e => {
+            e.preventDefault();
+            hidePortals();
+        }
+        return container;
+    }
+    const deleteReview = async (reviewId) => {
+        try {
+            const response = await fetch(`${reviewsApi}/${reviewId}`, {
+                method: 'DELETE',
+                headers: {
+                    ...getHeaders(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            return await response.json();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     const login = async (email, password) => {
@@ -1837,13 +2083,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    const disableUser = async (userId) => {
+        try {
+            const response = await fetch(`${superAdminApi}/users/${userId}/disable`, {
+                method: 'PUT',
+                headers: {...getHeaders(), "Content-Type": "application/json"}
+            })
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    const enableUser = async (userId) => {
+        try {
+            const response = await fetch(`${superAdminApi}/users/${userId}/enable`, {
+                method: 'PUT',
+                headers: {...getHeaders(), "Content-Type": "application/json"}
+            })
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    const updateUser = async (userId, firstName, lastName, phoneNumber, password) => {
+        try {
+            const raw = JSON.stringify({
+                "firstName": firstName,
+                "lastName": lastName,
+                "phoneNumber": phoneNumber,
+                "password": password
+            });
+
+            const response = await fetch(`${usersApi}/${userId}`, {
+                method: 'PUT',
+                body: raw,
+                headers: {...getHeaders(), "Content-Type": "application/json"}
+            })
+            return await response.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
     const getAuthorizesUserRoles = async () => {
         try {
             const options = {
                 headers: getHeaders()
             }
 
-            const response = await fetch(`${usersUrl}/authorized/roles`, options)
+            const response = await fetch(`${usersApi}/authorized/roles`, options)
             return await response.json();
         } catch (e) {
             throw e;
@@ -1877,6 +2167,5 @@ function dateStringFromArray(dataArray) {
         second: 'numeric',
         timeZone: 'Etc/UTC'
     };
-    const dateString = date.toLocaleString('en-US', options)
-    return dateString;
+    return date.toLocaleString('en-US', options);
 }

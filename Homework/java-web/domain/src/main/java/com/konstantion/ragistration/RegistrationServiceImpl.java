@@ -22,11 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Component
@@ -51,7 +53,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private static final String CONFIRMATION_API = "http://localhost:8080/web-api/registration/confirm";
     private static final String RESTORE_API = "http://localhost:8080/web-api/registration/restore/confirm";
-
+    private static final String RESTORE_TOKEN_PREFIX = "{restore}";
 
     @Override
     @Transactional
@@ -140,13 +142,26 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new BadRequestException(format("User with email %s doesn't exist", email));
         });
 
-        if(!user.isEnabled()) {
+        if (!user.isEnabled()) {
             throw new BadRequestException(format("User with email %s is disabled", email));
         }
 
+        List<ConfirmationToken> confirmationTokens = confirmationTokenService
+                .getTokens(user)
+                .orElseThrow(() -> {
+                    throw new RegistrationException("User with this email could not restore password");
+                });
+
+        if (confirmationTokens.stream().anyMatch(token ->
+                token.token().startsWith(RESTORE_TOKEN_PREFIX)
+                && token.expiresAt().isAfter(now())
+                && isNull(token.confirmedAt()))
+        ) {
+            throw new BadRequestException("User already has token to confirm");
+        }
 
 
-        String token = UUID.randomUUID().toString();
+        String token = RESTORE_TOKEN_PREFIX + UUID.randomUUID();
         ConfirmationToken confirmationToken = ConfirmationToken.builder()
                 .token(token)
                 .userId(user.getId())

@@ -17,6 +17,9 @@ public record UserValidations() implements ValidationsUtil {
                                                                  + "[^-][\\p{L}0-9-]+(\\.[\\p{L}0-9-]+)*(\\.[\\p{L}]{2,})$";
     private static final String PASSWORD_SPECIAL_CHARACTERS = "@#$%";
 
+    private static final String PHONE_NUMBER_PATTERN = "^\\d{3}-\\d{3}-\\d{4}$";
+    private static final String PHONE_NUMBER_PATTERN_ALTERNATIVE = "^\\d{10}$";
+
     public Optional<String> isEmailValid(String email) {
         if (isBlank(email)) {
             return Optional.of("email shouldn't be empty");
@@ -128,5 +131,53 @@ public record UserValidations() implements ValidationsUtil {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<String> isPhoneNumberValid(String phoneNumber) {
+        List<String> errorList = new ArrayList<>();
+
+        if (isBlank(phoneNumber)) {
+            return Optional.of("Phone number shouldn't be empty");
+        }
+
+        if (!Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber)) {
+            errorList.add("Invalid phone number format, should be |xxx-xxxx-xxx|");
+        }
+
+        return listToOptionalString(errorList);
+    }
+
+    public Optional<String> isUpdatePasswordValid(String password) {
+        List<String> errorList = new ArrayList<>();
+
+        if (isBlank(password)) {
+            return Optional.empty();
+        }
+
+        if (password.length() < 4 || password.length() > 20) {
+            errorList.add("password should be between 4 and 20 characters");
+        }
+
+        if (!hasAtLeastDigitCharacters(password, 1)) {
+            errorList.add("password should contain at least one digit character");
+        }
+
+        if (!hasAtLeastLowerCaseCharacters(password, 1)) {
+            errorList.add("password should contain at least one lower case character");
+        }
+
+        if (!hasAtLeastUpperCaseCharacters(password, 1)) {
+            errorList.add("password should contain at least one upper case character");
+        }
+
+        if (!hasOneOfCharacters(password, PASSWORD_SPECIAL_CHARACTERS)) {
+            errorList.add(String.format(
+                    "password should contain at least at least one special character [%s]",
+                    PASSWORD_SPECIAL_CHARACTERS
+            ));
+        }
+
+
+        return listToOptionalString(errorList);
     }
 }

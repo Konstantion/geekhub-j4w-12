@@ -4,7 +4,6 @@ import com.konstantion.email.EmailService;
 import com.konstantion.exceptions.BadRequestException;
 import com.konstantion.exceptions.ForbiddenException;
 import com.konstantion.exceptions.RegistrationException;
-import com.konstantion.exceptions.ValidationException;
 import com.konstantion.ragistration.token.ConfirmationToken;
 import com.konstantion.ragistration.token.ConfirmationTokenService;
 import com.konstantion.user.model.CreateUserRequest;
@@ -23,12 +22,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.konstantion.user.Role.ADMIN;
-import static com.konstantion.user.Role.MODERATOR;
+import static com.konstantion.user.Role.*;
 import static com.konstantion.utils.validator.ValidationResult.validOrThrow;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public record UserServiceImpl(
         UserRepository userRepository,
@@ -41,6 +40,7 @@ public record UserServiceImpl(
     private static final String USER_NOT_FOUND_MSG =
             "user with email %s not found";
 
+    private static final String REGISTRATION_TOKEN_PREFIX = "{registration}";
 
     @Override
     public String signUpUser(User user) {
@@ -59,7 +59,8 @@ public record UserServiceImpl(
                     });
 
             boolean hasConfirmedToken = confirmationTokens.stream()
-                    .anyMatch(token -> nonNull(token.confirmedAt()));
+                    .anyMatch(token -> nonNull(token.confirmedAt())
+                                       && token.token().startsWith(REGISTRATION_TOKEN_PREFIX));
 
             if (hasConfirmedToken) {
                 throw new RegistrationException("User with this email already registered");
@@ -72,7 +73,7 @@ public record UserServiceImpl(
             if (hasTokenToConfirm) {
                 throw new RegistrationException("User with this email already have token to confirm");
             } else {
-                String token = UUID.randomUUID().toString();
+                String token = REGISTRATION_TOKEN_PREFIX + UUID.randomUUID();
 
                 tokenService.createAndSaveConfirmationToken(token, existingUser);
 
@@ -87,7 +88,7 @@ public record UserServiceImpl(
 
         userRepository.save(user);
 
-        String token = UUID.randomUUID().toString();
+        String token = REGISTRATION_TOKEN_PREFIX + UUID.randomUUID();
 
         tokenService.createAndSaveConfirmationToken(token, user);
 
@@ -103,25 +104,21 @@ public record UserServiceImpl(
     @Override
     public User editUser(UUID uuid, UpdateUserRequest updateUserRequest, User authorized) {
         if (!authorized.getId().equals(uuid)
-            && authorized.hasRole(ADMIN)) {
+            && !authorized.hasRole(ADMIN)
+            && !authorized.hasRole(SUPER_ADMIN)) {
             throw new ForbiddenException("Not enough authorities");
         }
 
         User user = findByIdOrThrow(uuid);
 
         ValidationResult validationResult = userValidator.validate(updateUserRequest);
-        if (validationResult.errorsPresent()) {
-            throw new ValidationException(
-                    format("Failed to update user with id %s", uuid),
-                    validationResult.getErrorsAsMap()
-            );
-        }
+        ValidationResult.validOrThrow(validationResult);
 
         updateUser(user, updateUserRequest);
 
         userRepository.save(user);
 
-        return null;
+        return user;
     }
 
     @Override
@@ -162,12 +159,7 @@ public record UserServiceImpl(
     }
 
     @Override
-    public User getUser(UUID uuid, User authorized) {
-        if (!authorized.getId().equals(uuid)
-            && !authorized.hasRole(ADMIN)) {
-            throw new ForbiddenException("You don't have enough permissions to do this operation");
-        }
-
+    public User getUser(UUID uuid) {
         return findByIdOrThrow(uuid);
     }
 
@@ -204,7 +196,10 @@ public record UserServiceImpl(
         user.setFirstName(updateUserRequest.firstName());
         user.setLastName(updateUserRequest.lastName());
         user.setPhoneNumber(updateUserRequest.phoneNumber());
-        user.setPassword(passwordEncoder.encode(updateUserRequest.password()));
+
+        if (!isBlank(updateUserRequest.password())) {
+            user.setPassword(passwordEncoder.encode(updateUserRequest.password()));
+        }
     }
 
     private void updateUserRoles(User user, UpdateUserRolesRequest updateUserRolesRequest) {

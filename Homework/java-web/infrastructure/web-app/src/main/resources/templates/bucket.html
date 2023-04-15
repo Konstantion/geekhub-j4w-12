@@ -11,58 +11,32 @@
 
 <body>
 <div class="container mt-5">
-    <h1>User Profile</h1>
-    <form>
-        <div class="row">
-            <div class="col-md-6">
-                <label for="firstName" class="form-label">First Name</label>
-                <input type="text" id="firstName" class="form-control" placeholder="First Name">
-            </div>
-            <div class="col-md-6">
-                <label for="lastName" class="form-label">Last Name</label>
-                <input type="text" id="lastName" class="form-control" placeholder="Last Name">
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-md-6">
-                <label for="phoneNumber" class="form-label">Phone Number</label>
-                <input type="text" id="phoneNumber" class="form-control" placeholder="Phone Number">
-            </div>
-            <div class="col-md-6">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="Email">
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <label for="roles" class="form-label">Roles</label>
-                <select multiple class="form-select" id="roles">
-                    <option value="user">USER</option>
-                    <option value="moderator">MODERATOR</option>
-                    <option value="admin">ADMIN</option>
-                </select>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-secondary">Edit</button>
-                <button type="button" class="btn btn-danger">Disable</button>
-                <button type="button" class="btn btn-success">Enable</button>
-            </div>
-        </div>
-    </form>
-</div>
-<div class="container mt-5">
     <h1>Form Example</h1>
-    <form>
-        <div class="form-group">
-            <label for="inputEmail">Email</label>
-            <input type="email" class="form-control" id="inputEmail" placeholder="Enter email">
+    <form id="myForm">
+        <div class="mb-3">
+            <label for="emailInput" class="form-label">Email</label>
+            <input type="email" class="form-control" id="emailInput" name="email" required>
         </div>
-        <button type="submit" class="btn btn-primary">Send</button>
+        <div class="mb-3">
+            <label for="firstNameInput" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="firstNameInput" name="firstName" required>
+        </div>
+        <div class="mb-3">
+            <label for="lastNameInput" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastNameInput" name="lastName" required>
+        </div>
+        <div class="mb-3">
+            <label for="phoneNumberInput" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phoneNumberInput" name="phoneNumber" required>
+        </div>
+        <div class="mb-3">
+            <label for="passwordInput" class="form-label">Password</label>
+            <input type="password" class="form-control" id="passwordInput" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+
 <!-- Add Bootstrap 5 JS (Optional) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
 </body>
