@@ -2,6 +2,7 @@ package com.konstantion.product;
 
 import com.konstantion.product.model.CreateProductRequest;
 import com.konstantion.product.model.GetProductsRequest;
+import com.konstantion.product.model.UpdateProductRequest;
 import com.konstantion.user.User;
 import org.springframework.data.domain.Page;
 
@@ -22,6 +23,8 @@ public interface ProductService {
      * if you want to safely disable entity use {@link #deactivate(UUID, User)} instead.
      */
     Product delete(UUID productId, User user);
+
+    Product update(UUID productId, UpdateProductRequest updateProductRequest, User user);
 
     Product deactivate(UUID productId, User user);
 

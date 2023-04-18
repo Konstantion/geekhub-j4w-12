@@ -1,6 +1,7 @@
 package com.konstantion.category;
 
 import com.konstantion.category.model.CreateCategoryRequest;
+import com.konstantion.category.model.UpdateCategoryRequest;
 import com.konstantion.category.validator.CategoryValidator;
 import com.konstantion.user.User;
 import org.slf4j.Logger;
@@ -25,9 +26,11 @@ public record CategoryServiceImpl(
     }
 
     @Override
-    public Category create(CreateCategoryRequest createCategoryRequest, User user) {
+    public Category create(CreateCategoryRequest request, User user) {
+        categoryValidator.validate(request).validOrTrow();
+
         Category category = Category.builder()
-                .name(createCategoryRequest.name())
+                .name(request.name())
                 .creatorId(user.getId())
                 .build();
 
@@ -43,6 +46,23 @@ public record CategoryServiceImpl(
         categoryPort.delete(category);
 
         return category;
+    }
+
+    @Override
+    public Category update(UUID id, UpdateCategoryRequest request) {
+        categoryValidator.validate(request).validOrTrow();
+
+        Category category = getByIdOrThrow(id);
+
+        updateCategory(category, request);
+
+        categoryPort.save(category);
+
+        return category;
+    }
+
+    private void updateCategory(Category category, UpdateCategoryRequest request) {
+        category.setName(request.name());
     }
 
     @Override

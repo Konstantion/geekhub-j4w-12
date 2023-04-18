@@ -24,15 +24,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
 import static com.konstantion.user.Role.ADMIN;
+import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNullElse;
 
 @Component
@@ -109,11 +109,14 @@ public record TableServiceImpl(
         tableValidator.validate(request).validOrTrow();
 
         List<Table> dbTables = tablePort.findAll();
-        if (anyMatchTable(dbTables, Table::getName, request.name(), Objects::equals)) {
+
+        if (!table.getName().equals(request.name())
+            && anyMatchCollection(dbTables, Table::getName, request.name(), Objects::equals)) {
             throw new BadRequestException(format("Table with name %s already exist", request.name()));
         }
 
-        if (anyMatchTable(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
+        if (!passwordEncoder.matches(table.getPassword(), request.password())
+            && anyMatchCollection(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
             throw new BadRequestException(format("Table with password %s already exist", request.password()));
         }
 
@@ -181,11 +184,11 @@ public record TableServiceImpl(
         ExceptionUtils.isActiveOrThrow(hall);
 
         List<Table> dbTables = tablePort.findAll();
-        if (anyMatchTable(dbTables, Table::getName, request.name(), Objects::equals)) {
+        if (anyMatchCollection(dbTables, Table::getName, request.name(), Objects::equals)) {
             throw new BadRequestException(format("Table with name %s already exist", request.name()));
         }
 
-        if (anyMatchTable(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
+        if (anyMatchCollection(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
             throw new BadRequestException(format("Table with password %s already exist", request.password()));
         }
 
@@ -288,18 +291,14 @@ public record TableServiceImpl(
         table.setDeletedAt(null);
     }
 
-    private <T> boolean anyMatchTable(List<Table> tables, Function<Table, T> extractor, T desired, BiPredicate<T, T> criteria) {
-        return tables.stream()
-                .map(extractor)
-                .anyMatch(value -> criteria.test(desired, value));
-    }
-
-    private void updateTable(Table table, UpdateTableRequest updateTableRequest) {
-        table.setName(requireNonNullElse(updateTableRequest.name(), table.getName()));
-        table.setHallId(requireNonNullElse(updateTableRequest.hallUuid(), table.getHallId()));
-        table.setCapacity(requireNonNullElse(updateTableRequest.capacity(), table.getCapacity()));
-        table.setPassword(requireNonNullElse(passwordEncoder.encode(updateTableRequest.password()), table.getPassword()));
-        table.setTableType(valueOfTableTypeOrDefault(updateTableRequest.tableType(), table.getTableType()));
+    private void updateTable(Table table, UpdateTableRequest request) {
+        table.setName(requireNonNullElse(request.name(), table.getName()));
+        table.setHallId(requireNonNullElse(request.hallUuid(), table.getHallId()));
+        table.setCapacity(requireNonNullElse(request.capacity(), table.getCapacity()));
+        if (nonNull(request.password())) {
+            table.setPassword(passwordEncoder.encode(request.password()));
+        }
+        table.setTableType(valueOfTableTypeOrDefault(request.tableType(), table.getTableType()));
     }
 
     private TableType valueOfTableTypeOrDefault(String tableType, TableType orDefault) {

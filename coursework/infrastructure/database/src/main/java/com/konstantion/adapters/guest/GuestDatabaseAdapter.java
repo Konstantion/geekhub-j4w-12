@@ -28,6 +28,11 @@ public record GuestDatabaseAdapter(
             WHERE id = :id;
             """;
 
+    public static final String FIND_BY_ID_NAME = """
+            SELECT * FROM public.guest
+            WHERE name = :name;
+            """;
+
     public static final String DELETE_QUERY = """
             DELETE FROM public.guest
             WHERE id = :id;
@@ -99,6 +104,17 @@ public record GuestDatabaseAdapter(
                 DELETE_QUERY,
                 parameterSource
         );
+    }
+
+    @Override
+    public Optional<Guest> findByName(String name) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("name", name);
+        return jdbcTemplate.query(
+                FIND_BY_ID_NAME,
+                parameterSource,
+                guestRowMapper
+        ).stream().findFirst();
     }
 
     private Guest update(Guest guest) {

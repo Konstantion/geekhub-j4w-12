@@ -2,7 +2,9 @@ package com.konstantion.user;
 
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
+import com.konstantion.exception.utils.ExceptionUtils;
 import com.konstantion.user.model.CreateUserRequest;
+import com.konstantion.user.model.UpdateUserRequest;
 import com.konstantion.user.validator.UserValidator;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
@@ -13,16 +15,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
-import static com.konstantion.user.Permission.CREATE_WAITER;
-import static com.konstantion.user.Permission.getDefaultWaiterPermission;
-import static com.konstantion.user.Role.ADMIN;
-import static com.konstantion.user.Role.getWaiterRole;
+import static com.konstantion.user.Permission.*;
+import static com.konstantion.user.Role.getAdminRoles;
+import static com.konstantion.user.Role.getWaiterRoles;
+import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record UserServiceImpl(
@@ -33,15 +38,27 @@ public record UserServiceImpl(
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
+
+    @Override
+    public List<User> getAll(boolean onlyActive, Role role) {
+        List<User> users = userPort.findAll();
+        if (onlyActive) {
+            users = users.stream().filter(User::getActive).toList();
+        }
+        if (nonNull(role)) {
+            return users.stream().filter(user -> user.getRoles().contains(role)).toList();
+        }
+        return users;
+    }
+
     @Override
     public User getUserById(UUID uuid) {
-
-        return getUserByIdOrThrow(uuid);
+        return getByIdOrThrow(uuid);
     }
 
     @Override
     public User createWaiter(CreateUserRequest request, User user) {
-        if (user.hasNoPermission(ADMIN, CREATE_WAITER)) {
+        if (user.hasNoPermission(CREATE_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -50,15 +67,228 @@ public record UserServiceImpl(
 
         List<User> dbUsers = userPort.findAll();
 
-        if (matchAnyUserWithEmail(dbUsers, request.email())) {
+        if (anyMatchCollection(dbUsers, User::getEmail, request.email(), Objects::equals)) {
             throw new BadRequestException(format("User with email %s already exist", request.email()));
         }
 
-        User waiter = buildUserFromCreateRequest(request);
+        if (anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
+            throw new BadRequestException(format("User with password %s already exist", request.password()));
+        }
+
+        User waiter = buildWaiterFromRequest(request);
 
         userPort.save(waiter);
 
         logger.info("User {} successfully created", user);
+
+        return user;
+    }
+
+    @Override
+    public User createAdmin(CreateUserRequest request, User user) {
+        if (user.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        ValidationResult validationResult = userValidator.validate(request);
+        validationResult.validOrTrow();
+
+        List<User> dbUsers = userPort.findAll();
+
+        if (anyMatchCollection(dbUsers, User::getEmail, request.email(), Objects::equals)) {
+            throw new BadRequestException(format("User with email %s already exist", request.email()));
+        }
+
+        if (anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
+            throw new BadRequestException(format("User with password %s already exist", request.password()));
+        }
+
+        User admin = buildAdminFromRequest(request);
+
+        userPort.save(admin);
+
+        logger.info("User {} successfully created", user);
+
+        return user;
+    }
+
+    @Override
+    public User addPermission(UUID userId, Permission permission, User authenticated) {
+        if (authenticated.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getByIdOrThrow(userId);
+        ExceptionUtils.isActiveOrThrow(user);
+
+        if (!user.getPermissions().add(permission)) {
+            logger.warn("User with id {} already has permission {}", userId, permission);
+            return user;
+        }
+
+        userPort.save(user);
+
+        logger.info("Permission {} successfully added to the user with id {}", permission, userId);
+
+        return user;
+    }
+
+    @Override
+    public User removePermission(UUID userId, Permission permission, User authenticated) {
+        if (authenticated.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getByIdOrThrow(userId);
+        ExceptionUtils.isActiveOrThrow(user);
+
+        if (!user.getPermissions().remove(permission)) {
+            logger.warn("User with id {} doesn't have permission {}", userId, permission);
+            return user;
+        }
+
+        userPort.save(user);
+
+        logger.info("Permission {} successfully removed from the user with id {}", permission, userId);
+
+        return user;
+    }
+
+    @Override
+    public User addRole(UUID userId, Role role, User authenticated) {
+        if (authenticated.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getByIdOrThrow(userId);
+        ExceptionUtils.isActiveOrThrow(user);
+
+        if (!user.getRoles().add(role)) {
+            logger.warn("User with id {} already has role {}", userId, role);
+            return user;
+        }
+
+        userPort.save(user);
+
+        logger.info("Role {} successfully added to the user with id {}", role, userId);
+
+        return user;
+    }
+
+    @Override
+    public User removeRole(UUID userId, Role role, User authenticated) {
+        if (authenticated.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getByIdOrThrow(userId);
+        ExceptionUtils.isActiveOrThrow(user);
+
+        if (!user.getRoles().remove(role)) {
+            logger.warn("User with id {} doesn't have role {}", userId, role);
+            return user;
+        }
+
+        userPort.save(user);
+
+        logger.info("Role {} successfully removed from the user with id {}", role, userId);
+
+        return user;
+    }
+
+    @Override
+    public User update(UUID userId, UpdateUserRequest request, User authorized) {
+        if (authorized.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        userValidator.validate(request).validOrTrow();
+
+        User user = getUserById(userId);
+
+        List<User> dbUsers = userPort.findAll();
+
+        if (!user.getEmail().equals(request.email())
+            && anyMatchCollection(dbUsers, User::getEmail, request.email(), Objects::equals)) {
+            throw new BadRequestException(format("User with email %s already exist", request.email()));
+        }
+
+        if (passwordEncoder.matches(user.getPassword(), request.password())
+            && anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
+            throw new BadRequestException(format("User with password %s already exist", request.password()));
+        }
+
+        updateUser(user, request);
+
+        userPort.save(user);
+
+        logger.info("User with id {} successfully updated", userId);
+
+        return user;
+    }
+
+    private void updateUser(User user, UpdateUserRequest request) {
+        user.setEmail(requireNonNullElse(request.email(), user.getEmail()));
+        user.setFirstName(requireNonNullElse(request.firstName(), user.getFirstName()));
+        user.setLastName(requireNonNullElse(request.lastName(), user.getLastName()));
+        user.setPhoneNumber(requireNonNullElse(request.phoneNumber(), user.getPhoneNumber()));
+        user.setAge(requireNonNullElse(request.age(), user.getAge()));
+        if (nonNull(request.password())) {
+            user.setPassword(passwordEncoder.encode(request.password()));
+        }
+    }
+
+    @Override
+    public User deactivate(UUID userId, User authenticated) {
+        if (authenticated.hasNoPermission(DEACTIVATE_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getUserById(userId);
+
+        if (!user.getActive()) {
+            logger.warn("User with id {} already deactivated", userId);
+            return user;
+        }
+
+        user.setActive(false);
+        userPort.save(user);
+
+        logger.info("User with id {} successfully deactivated", userId);
+        return user;
+    }
+
+    @Override
+    public User activate(UUID userId, User authenticated) {
+        if (authenticated.hasNoPermission(ACTIVATE_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getUserById(userId);
+
+        if (user.getActive()) {
+            logger.warn("User with id {} already activated", userId);
+            return user;
+        }
+
+        user.setActive(true);
+        userPort.save(user);
+
+        logger.info("User with id {} successfully activated", userId);
+        return user;
+    }
+
+    @Override
+    public User delete(UUID userId, User authorized) {
+        if (authorized.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        User user = getUserById(userId);
+
+        userPort.delete(user);
+
+        logger.info("User with id {} successfully deleted", userId);
 
         return user;
     }
@@ -71,28 +301,37 @@ public record UserServiceImpl(
         );
     }
 
-    private User getUserByIdOrThrow(UUID uuid) {
+    private User getByIdOrThrow(UUID uuid) {
         return userPort.findById(uuid)
                 .orElseThrow(nonExistingIdSupplier(User.class, uuid));
     }
 
-    private User buildUserFromCreateRequest(CreateUserRequest createUserRequest) {
+    private User buildUserFromCreateRequest(CreateUserRequest request) {
         return User.builder()
-                .email(createUserRequest.email())
-                .firstName(createUserRequest.firstName())
-                .lastName(createUserRequest.lastName())
-                .phoneNumber(createUserRequest.phoneNumber())
-                .age(createUserRequest.age())
-                .roles(getWaiterRole())
-                .permissions(getDefaultWaiterPermission())
-                .password(passwordEncoder.encode(createUserRequest.password()))
+                .email(request.email())
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .phoneNumber(request.phoneNumber())
+                .age(request.age())
+                .password(passwordEncoder.encode(request.password()))
                 .active(true)
                 .createdAt(now())
                 .build();
     }
 
-    private boolean matchAnyUserWithEmail(List<User> users, String email) {
-        return users.stream()
-                .anyMatch(user -> user.getEmail().equals(email));
+    private User buildWaiterFromRequest(CreateUserRequest request) {
+        User user = buildUserFromCreateRequest(request);
+        user.setRoles(getWaiterRoles());
+        user.setPermissions(getDefaultWaiterPermission());
+
+        return user;
+    }
+
+    private User buildAdminFromRequest(CreateUserRequest request) {
+        User user = buildUserFromCreateRequest(request);
+        user.setRoles(getAdminRoles());
+        user.setPermissions(getDefaultAdminPermission());
+
+        return user;
     }
 }

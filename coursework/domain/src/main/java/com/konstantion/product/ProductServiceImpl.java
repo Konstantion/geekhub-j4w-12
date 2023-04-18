@@ -4,9 +4,11 @@ import com.konstantion.category.Category;
 import com.konstantion.category.CategoryPort;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
+import com.konstantion.exception.utils.ExceptionUtils;
 import com.konstantion.file.MultipartFileService;
 import com.konstantion.product.model.CreateProductRequest;
 import com.konstantion.product.model.GetProductsRequest;
+import com.konstantion.product.model.UpdateProductRequest;
 import com.konstantion.product.validator.ProductValidator;
 import com.konstantion.user.User;
 import com.konstantion.utils.validator.ValidationResult;
@@ -14,10 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
+import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.CREATE_PRODUCT;
 import static com.konstantion.user.Permission.DELETE_PRODUCT;
@@ -25,6 +29,7 @@ import static com.konstantion.user.Role.ADMIN;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record ProductServiceImpl(
@@ -111,6 +116,36 @@ public record ProductServiceImpl(
     }
 
     @Override
+    public Product update(UUID productId, UpdateProductRequest request, User user) {
+        if (user.hasNoPermission(CREATE_PRODUCT)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        productValidator.validate(request).validOrTrow();
+
+        Product product = getByIdOrThrow(productId);
+        ExceptionUtils.isActiveOrThrow(product);
+
+        UUID categoryId = request.categoryId();
+        if (nonNull(categoryId)) {
+            categoryPort.findById(categoryId)
+                    .orElseThrow(nonExistingIdSupplier(Category.class, categoryId));
+        }
+
+        MultipartFile file = request.image();
+        byte[] imageBytes = null;
+        if (nonNull(file)) {
+            imageBytes = fileService.getFileBytes(file);
+        }
+
+        updateProduct(product, request, imageBytes);
+
+        productPort.save(product);
+
+        return product;
+    }
+
+    @Override
     public Product deactivate(UUID productId, User user) {
         if (user.hasNoPermission(ADMIN)) {
             throw new ForbiddenException("Not enough authorities to deactivate product");
@@ -155,6 +190,15 @@ public record ProductServiceImpl(
     @Override
     public Product getById(UUID productId) {
         return getByIdOrThrow(productId);
+    }
+
+    private void updateProduct(Product product, UpdateProductRequest request, byte[] imageBytes) {
+        product.setName(requireNonNullElse(request.name(), product.getName()));
+        product.setPrice(requireNonNullElse(request.price(), product.getPrice()));
+        product.setWeight(requireNonNullElse(request.weight(), product.getWeight()));
+        product.setDescription(requireNonNullElse(request.description(), product.getDescription()));
+        product.setCategoryId(requireNonNullElse(request.categoryId(), null));
+        product.setImageBytes(requireNonNullElse(imageBytes, product.getImageBytes()));
     }
 
     private void prepareToDeactivate(Product product) {

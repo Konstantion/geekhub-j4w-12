@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -19,7 +19,7 @@ public class Call {
     private UUID id;
     private UUID tableId;
     @Builder.Default
-    private List<UUID> waitersId = new ArrayList<>();
+    private Set<UUID> waitersId = new HashSet<>();
     private Purpose purpose;
     private LocalDateTime openedAt;
 

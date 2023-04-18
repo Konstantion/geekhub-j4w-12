@@ -2,6 +2,7 @@ package com.konstantion.product.validator;
 
 import com.konstantion.product.Product;
 import com.konstantion.product.model.CreateProductRequest;
+import com.konstantion.product.model.UpdateProductRequest;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,11 @@ public record ProductValidator(
     }
 
     public ValidationResult validate(CreateProductRequest createProductRequest) {
+        Set<FieldError> validationErrors = new HashSet<>();
+        return ValidationResult.of(validationErrors);
+    }
+
+    public ValidationResult validate(UpdateProductRequest updateProductRequest) {
         Set<FieldError> validationErrors = new HashSet<>();
         return ValidationResult.of(validationErrors);
     }

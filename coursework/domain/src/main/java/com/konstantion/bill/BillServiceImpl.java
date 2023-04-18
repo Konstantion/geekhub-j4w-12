@@ -124,7 +124,9 @@ public record BillServiceImpl(
         }
 
         Bill bill = getByIdOrThrow(billId);
-        ExceptionUtils.isActiveOrThrow(bill);
+        if (!bill.isActive()) {
+            return bill;
+        }
 
         prepareToClose(bill);
 
@@ -135,7 +137,21 @@ public record BillServiceImpl(
 
     @Override
     public Bill activate(UUID billId, User user) {
-        return null;
+        if (user.hasNoPermission(ACTIVATE_BILL)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        Bill bill = getByIdOrThrow(billId);
+
+        if (bill.isActive()) {
+            return bill;
+        }
+
+        prepareToActivate(bill);
+
+        billPort.save(bill);
+
+        return bill;
     }
 
     private Bill getByIdOrThrow(UUID id) {
@@ -171,6 +187,12 @@ public record BillServiceImpl(
         bill.setClosedAt(now());
         bill.setActive(false);
     }
+
+    private void prepareToActivate(Bill bill) {
+        bill.setClosedAt(null);
+        bill.setActive(true);
+    }
+
 
     private Guest guestOrNull(UUID guestId) {
         boolean guestPresent = guestId != null;

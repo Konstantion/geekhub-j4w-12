@@ -13,10 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Types;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.Objects.nonNull;
 
@@ -167,14 +164,14 @@ public record CallDatabaseAdapter(
         return call;
     }
 
-    private List<UUID> fetchWaitersId(UUID callId) {
+    private Set<UUID> fetchWaitersId(UUID callId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("callId", callId);
-        return jdbcTemplate.queryForList(
+        return new HashSet<>(jdbcTemplate.queryForList(
                 FIND_WAITER_ID_BY_CALL_ID,
                 parameterSource,
                 UUID.class
-        );
+        ));
     }
 
     private void updateWaitersId(Call call) {

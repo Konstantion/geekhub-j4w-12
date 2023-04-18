@@ -11,4 +11,6 @@ public interface GuestPort {
     Guest save(Guest guest);
 
     void delete(Guest guest);
+
+    Optional<Guest> findByName(String name);
 }

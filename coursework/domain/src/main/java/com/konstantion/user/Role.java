@@ -7,7 +7,11 @@ public enum Role {
     WAITER,
     TABLE;
 
-    public static Set<Role> getWaiterRole() {
+    public static Set<Role> getWaiterRoles() {
         return Set.of(WAITER);
+    }
+
+    public static Set<Role> getAdminRoles() {
+        return Set.of(ADMIN);
     }
 }

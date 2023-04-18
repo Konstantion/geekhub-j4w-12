@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':coursework:domain')
+    implementation libsUtils.mapstruct
+
+    annotationProcessor libsUtils.mapstructProcessor
+    annotationProcessor libsUtils.lombokMapstructBinding
+}

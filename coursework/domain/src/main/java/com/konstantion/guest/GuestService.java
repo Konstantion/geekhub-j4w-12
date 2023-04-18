@@ -1,7 +1,7 @@
 package com.konstantion.guest;
 
 import com.konstantion.guest.model.CreateGuestRequest;
-import com.konstantion.guest.model.EditGuestRequest;
+import com.konstantion.guest.model.UpdateGuestRequest;
 import com.konstantion.user.User;
 
 import java.util.List;
@@ -18,7 +18,11 @@ public interface GuestService {
 
     Guest create(CreateGuestRequest createGuestRequest, User user);
 
-    Guest edit(UUID id, EditGuestRequest editGuestRequest, User user);
+    Guest update(UUID id, UpdateGuestRequest editGuestRequest, User user);
+
+    Guest activate(UUID id);
+
+    Guest deactivate(UUID id);
 
     Guest delete(UUID id, User user);
 }
