@@ -67,7 +67,7 @@ public record ProductServiceImpl(
     }
 
     @Override
-    public Page<Product> getAll(GetProductsRequest request) {
+    public Page<Product> getAll(GetProductsRequest request, boolean onlyActive) {
         UUID categoryId = request.categoryId();
         if (nonNull(categoryId)) {
             categoryPort.findById(categoryId)
@@ -90,7 +90,8 @@ public record ProductServiceImpl(
                 orderBy,
                 searchPattern,
                 categoryId,
-                ascending
+                ascending,
+                onlyActive
         );
     }
 

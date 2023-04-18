@@ -11,10 +11,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -172,14 +170,14 @@ public record TableDatabaseAdapter(
         return Optional.ofNullable(table);
     }
 
-    private List<UUID> findWaitersByTableId(UUID tableId) {
+    private Set<UUID> findWaitersByTableId(UUID tableId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("tableId", tableId);
-        return jdbcTemplate.queryForList(
+        return new HashSet<>(jdbcTemplate.queryForList(
                 FIND_WAITERS_BY_TABLE_ID,
                 parameterSource,
                 UUID.class
-        );
+        ));
     }
 
     private Table update(Table table) {
@@ -208,7 +206,7 @@ public record TableDatabaseAdapter(
         );
     }
 
-    private void saveTableWaiters(UUID tableId, List<UUID> waitersId) {
+    private void saveTableWaiters(UUID tableId, Set<UUID> waitersId) {
         waitersId.forEach(waiterId -> {
             SqlParameterSource parameterSource = new MapSqlParameterSource()
                     .addValue("tableId", tableId)

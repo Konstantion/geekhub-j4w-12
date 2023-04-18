@@ -64,6 +64,10 @@ public record OrderDatabaseAdapter(
             VALUES (:tableId, :userId, :billId, :createdAt, :closedAt, :active);
             """;
 
+    private static final String FIND_ALL_QUERY = """
+            SELECT * FROM public.order;
+            """;
+
     @Override
     public Order save(Order order) {
         if (nonNull(order.getId())) {
@@ -114,6 +118,20 @@ public record OrderDatabaseAdapter(
                 DELETE_QUERY,
                 parameterSource
         );
+    }
+
+    @Override
+    public List<Order> findAll() {
+        List<Order> orders = jdbcTemplate.query(
+                FIND_ALL_QUERY,
+                orderRowMapper
+        );
+
+        for (Order order : orders) {
+            order.setProductsId(findProductsByOrderId(order.getId()));
+        }
+
+        return orders;
     }
 
     private List<UUID> findProductsByOrderId(UUID orderId) {

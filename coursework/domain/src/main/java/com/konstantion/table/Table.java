@@ -29,7 +29,7 @@ public class Table implements UserDetails {
     private UUID hallId;
     private UUID orderId;
     @Builder.Default
-    private List<UUID> waitersId = new ArrayList<>();
+    private Set<UUID> waitersId = new HashSet<>();
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

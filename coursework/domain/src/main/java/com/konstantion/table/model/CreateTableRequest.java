@@ -7,7 +7,6 @@ public record CreateTableRequest(
         Integer capacity,
         String tableType,
         UUID hallUuid,
-        String password,
-        String username
+        String password
 ) {
 }

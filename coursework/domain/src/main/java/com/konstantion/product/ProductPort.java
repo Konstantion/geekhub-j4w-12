@@ -12,5 +12,13 @@ public interface ProductPort {
 
     Optional<Product> findById(UUID id);
 
-    Page<Product> findAll(int pageNumber, int pageSize, String orderBy, String searchPattern, UUID categoryId, boolean ascending);
+    Page<Product> findAll(
+            int pageNumber,
+            int pageSize,
+            String orderBy,
+            String searchPattern,
+            UUID categoryId,
+            boolean ascending,
+            boolean isActive
+    );
 }

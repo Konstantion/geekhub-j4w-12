@@ -26,7 +26,7 @@ public record CallController(
     private static final CallMapper callMapper = CallMapper.INSTANCE;
 
     @GetMapping()
-    public ResponseDto getUserCalls(
+    public ResponseDto getCallsByUser(
             @AuthenticationPrincipal User user
     ) {
         List<CallDto> dtos = callMapper.toDto(callService.getAllByUser(user));

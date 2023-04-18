@@ -8,8 +8,14 @@ import java.util.List;
 import java.util.UUID;
 
 public interface GuestService {
-    List<Guest> getAll();
+    List<Guest> getAll(boolean onlyActive);
+
+    default List<Guest> getAll() {
+        return getAll(true);
+    }
+
     Guest getById(UUID id);
+
     Guest create(CreateGuestRequest createGuestRequest, User user);
 
     Guest edit(UUID id, EditGuestRequest editGuestRequest, User user);

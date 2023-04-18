@@ -27,7 +27,7 @@ public record BillController(
     private static final BillMapper billMapper = BillMapper.INSTANCE;
 
     @GetMapping
-    public ResponseDto getAllBills() {
+    public ResponseDto getAllActiveBills() {
         List<BillDto> dtos = billMapper.toDto(billService.getAll());
 
         return ResponseDto.builder()

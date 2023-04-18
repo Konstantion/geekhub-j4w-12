@@ -5,6 +5,7 @@ import com.konstantion.bill.BillPort;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
 import com.konstantion.exception.utils.ExceptionUtils;
+import com.konstantion.order.model.OrderProductsRequest;
 import com.konstantion.product.Product;
 import com.konstantion.product.ProductPort;
 import com.konstantion.table.Table;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
@@ -31,6 +33,15 @@ public record OrderServiceImpl(
         BillPort billPort
 ) implements OrderService {
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+
+    @Override
+    public List<Order> getAll(boolean onlyActive) {
+        List<Order> orders = orderPort.findAll();
+        if (onlyActive) {
+            return orders.stream().filter(Order::isActive).toList();
+        }
+        return orders;
+    }
 
     @Override
     public Order getById(UUID id) {
@@ -144,10 +155,26 @@ public record OrderServiceImpl(
     }
 
     @Override
-    public Order addProduct(UUID orderId, UUID productId, Integer quantity, User user) {
+    public Order delete(UUID orderId, User user) {
+        if (user.hasNoPermission(DELETE_ORDER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        Order order = getByIdOrThrow(orderId);
+
+        orderPort.delete(order);
+
+        return order;
+    }
+
+    @Override
+    public Order addProduct(UUID orderId, OrderProductsRequest request, User user) {
         if (user.hasNoPermission(ADD_PRODUCT_TO_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
+
+        UUID productId = request.productId();
+        int quantity = request.quantity();
 
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
@@ -171,10 +198,13 @@ public record OrderServiceImpl(
     }
 
     @Override
-    public Order removeProduct(UUID orderId, UUID productId, Integer quantity, User user) {
+    public Order removeProduct(UUID orderId, OrderProductsRequest request, User user) {
         if (user.hasNoPermission(DELETE_PRODUCT_FROM_ORDER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
+
+        UUID productId = request.productId();
+        int quantity = request.quantity();
 
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);

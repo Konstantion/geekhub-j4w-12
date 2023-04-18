@@ -29,7 +29,7 @@ public record ProductController(
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
     @GetMapping()
-    public ResponseDto getProducts(
+    public ResponseDto getAllActiveProducts(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,
             @RequestParam("orderBy") Optional<String> fieldName,

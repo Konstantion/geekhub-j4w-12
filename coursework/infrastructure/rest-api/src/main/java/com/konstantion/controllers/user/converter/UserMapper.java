@@ -9,6 +9,8 @@ import com.konstantion.user.model.LoginUserRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
@@ -17,4 +19,6 @@ public interface UserMapper {
 
     CreateUserRequest toEntity(CreateUserRequestDto dto);
     LoginUserRequest toLoginUserRequest(LoginUserRequestDto dto);
+
+    List<UserDto> toDto(List<User> waitersByTableId);
 }

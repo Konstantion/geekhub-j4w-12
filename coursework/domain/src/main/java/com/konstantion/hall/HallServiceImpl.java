@@ -24,7 +24,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall create(CreateHallRequest request, User user) {
-        if(user.hasNoPermission(CREATE_TABLE)) {
+        if (user.hasNoPermission(CREATE_TABLE)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -45,8 +45,12 @@ public record HallServiceImpl(
     }
 
     @Override
-    public List<Hall> getAll() {
-        return hallPort.findAll();
+    public List<Hall> getAll(boolean onlyActive) {
+        List<Hall> halls = hallPort.findAll();
+        if (onlyActive) {
+            return halls.stream().filter(Hall::isActive).toList();
+        }
+        return halls;
     }
 
     @Override

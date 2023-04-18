@@ -12,12 +12,15 @@ public interface HallService {
 
     Hall getById(UUID id);
 
-    List<Hall> getAll();
+    List<Hall> getAll(boolean onlyActive);
+
+    default List<Hall> getAll() {
+        return getAll(true);
+    }
 
     Hall activate(UUID id, User user);
 
     Hall deactivate(UUID id, User user);
-
 
     Hall delete(UUID id, User user);
 

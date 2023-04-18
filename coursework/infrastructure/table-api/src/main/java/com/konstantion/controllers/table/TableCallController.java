@@ -8,7 +8,7 @@ import com.konstantion.response.ResponseDto;
 import com.konstantion.table.Table;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +25,7 @@ public record TableCallController(
 ) {
     private static final CallMapper callMapper = CallMapper.INSTANCE;
 
-    @PostMapping("/waiter")
+    @GetMapping("/waiter")
     public ResponseDto callWaiter(
             @AuthenticationPrincipal Table table
     ) {
@@ -47,7 +47,7 @@ public record TableCallController(
                 .build();
     }
 
-    @PostMapping("/bill")
+    @GetMapping("/bill")
     public ResponseDto callBill(
             @AuthenticationPrincipal Table table
     ) {

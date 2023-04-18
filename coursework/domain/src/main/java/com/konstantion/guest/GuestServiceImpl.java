@@ -20,8 +20,12 @@ public record GuestServiceImpl(
     private static final Logger logger = LoggerFactory.getLogger(GuestServiceImpl.class);
 
     @Override
-    public List<Guest> getAll() {
-        return null;
+    public List<Guest> getAll(boolean onlyActive) {
+        List<Guest> guests = guestPort.findAll();
+        if (onlyActive) {
+            return guests.stream().filter(Guest::isActive).toList();
+        }
+        return guests;
     }
 
     @Override

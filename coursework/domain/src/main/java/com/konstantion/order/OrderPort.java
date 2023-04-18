@@ -1,5 +1,6 @@
 package com.konstantion.order;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,4 +10,6 @@ public interface OrderPort {
     Optional<Order> findById(UUID id);
 
     void delete(Order order);
+
+    List<Order> findAll();
 }

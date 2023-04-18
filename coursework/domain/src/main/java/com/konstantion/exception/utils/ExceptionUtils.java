@@ -8,6 +8,7 @@ import com.konstantion.hall.Hall;
 import com.konstantion.order.Order;
 import com.konstantion.product.Product;
 import com.konstantion.table.Table;
+import com.konstantion.user.User;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -68,5 +69,13 @@ public record ExceptionUtils() {
         return () -> {
           throw new NonExistingIdException(format("%s with id %s, doesn't exist", className, id));
         };
+    }
+
+    public static boolean isActiveOrThrow(User user) {
+        boolean isActive = user.isEnabled();
+        if(!isActive) {
+            throw new BadRequestException(format("Order with id %s, isn't active", user.getId()));
+        }
+        return true;
     }
 }

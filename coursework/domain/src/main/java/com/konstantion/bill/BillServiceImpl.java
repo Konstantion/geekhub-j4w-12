@@ -42,8 +42,14 @@ public record BillServiceImpl(
     private static final Logger logger = LoggerFactory.getLogger(BillServiceImpl.class);
 
     @Override
-    public List<Bill> getAll() {
-        return billPort.findAll();
+    public List<Bill> getAll(boolean onlyActive) {
+        List<Bill> bills = billPort.findAll();
+
+        if (onlyActive) {
+            return bills.stream().filter(Bill::isActive).toList();
+        }
+
+        return bills;
     }
 
     @Override

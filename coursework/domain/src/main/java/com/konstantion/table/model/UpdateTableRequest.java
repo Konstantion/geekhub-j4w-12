@@ -1,8 +1,8 @@
-package com.konstantion.controllers.table.dto;
+package com.konstantion.table.model;
 
 import java.util.UUID;
 
-public record CreateTableRequestDto(
+public record UpdateTableRequest(
         String name,
         Integer capacity,
         String tableType,

@@ -1,9 +1,11 @@
 package com.konstantion.controllers.table.converter;
 
-import com.konstantion.controllers.table.dto.LoginTableRequestDto;
-import com.konstantion.controllers.table.dto.TableDto;
+import com.konstantion.controllers.table.dto.*;
 import com.konstantion.table.Table;
+import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.table.model.LoginTableRequest;
+import com.konstantion.table.model.TableWaitersRequest;
+import com.konstantion.table.model.UpdateTableRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -18,4 +20,10 @@ public interface TableMapper {
     List<TableDto> toDto(List<Table> entities);
 
     LoginTableRequest toLoginTableRequest(LoginTableRequestDto requestDto);
+
+    CreateTableRequest toCreateTableRequest(CreateTableRequestDto requestDto);
+
+    UpdateTableRequest toUpdateTableRequest(UpdateTableRequestDto requestDto);
+
+    TableWaitersRequest toTableWaitersRequest(TableWaitersRequestDto requestDto);
 }

@@ -63,6 +63,7 @@ public record ProductDatabaseAdapter(
                 String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
                 return "SELECT * FROM public.product " +
                        "WHERE LOWER(product.name) LIKE LOWER(:searchPattern) " +
+                       "AND active = :active " +
                        findByCategoryId +
                        "GROUP BY product.uuid, name, price, product.created_at, product.user_uuid, image_bytes, description, category_uuid " +
                        "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
@@ -73,6 +74,7 @@ public record ProductDatabaseAdapter(
                 String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
                 return "SELECT COUNT(*) FROM public.product " +
                        "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
+                       "AND active = :active " +
                        findByCategoryId + ";";
             };
 
@@ -126,7 +128,8 @@ public record ProductDatabaseAdapter(
             String orderBy,
             String searchPattern,
             UUID categoryId,
-            boolean ascending
+            boolean ascending,
+            boolean active
     ) {
         int offset = (pageNumber - 1) * pageSize;
         searchPattern = "%" + searchPattern + "%";
@@ -136,7 +139,8 @@ public record ProductDatabaseAdapter(
                 .addValue("limit", pageSize)
                 .addValue("offset", offset)
                 .addValue("searchPattern", searchPattern)
-                .addValue("categoryId", categoryId);
+                .addValue("categoryId", categoryId)
+                .addValue("active", active);
 
         List<Product> products = jdbcTemplate.query(
                 FIND_ALL_QUERY.apply(orderBy, categoryId),

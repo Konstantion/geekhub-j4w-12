@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
+import static com.konstantion.utils.EntityNameConstants.JWT_TOKEN;
 import static java.util.Map.of;
 
 @RestController
 @RequestMapping("/table-api/authentication")
-public record TableAuthenticationController(
+public record  TableAuthenticationController(
         TableService tableService,
         AuthenticationService authenticationService
 ) {
@@ -43,7 +44,7 @@ public record TableAuthenticationController(
                         .statusCode(HttpStatus.OK.value())
                         .message("Successfully authenticated")
                         .timeStamp(LocalDateTime.now())
-                        .data(of("jwtToken", jwtToken))
+                        .data(of(JWT_TOKEN, jwtToken))
                         .build()
                 );
     }

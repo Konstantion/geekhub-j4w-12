@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BillService {
-    List<Bill> getAll();
+    List<Bill> getAll(boolean onlyActive);
+
+    default List<Bill> getAll() {
+        return getAll(true);
+    }
+
     Bill getById(UUID id);
 
     Bill create(CreateBillRequest createBillRequest, User user);

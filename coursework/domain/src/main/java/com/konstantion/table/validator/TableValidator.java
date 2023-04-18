@@ -3,6 +3,7 @@ package com.konstantion.table.validator;
 import com.konstantion.table.Table;
 import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.table.model.LoginTableRequest;
+import com.konstantion.table.model.UpdateTableRequest;
 import com.konstantion.utils.validator.ValidationResult;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -37,6 +38,12 @@ public record TableValidator(TableValidations validations) {
     }
 
     public ValidationResult validate(LoginTableRequest request) {
+        Set<FieldError> errors = new HashSet<>();
+
+        return ValidationResult.of(errors);
+    }
+
+    public ValidationResult validate(UpdateTableRequest request) {
         Set<FieldError> errors = new HashSet<>();
 
         return ValidationResult.of(errors);

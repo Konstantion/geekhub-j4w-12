@@ -44,11 +44,11 @@ public record HallController(
     }
 
     @GetMapping()
-    public ResponseDto getHalls() {
+    public ResponseDto getAllActiveHalls() {
         List<HallDto> dtos = hallMapper.toDto(hallService.getAll());
 
         return ResponseDto.builder()
-                .message("All halls")
+                .message("All active halls")
                 .timeStamp(now())
                 .status(OK)
                 .statusCode(OK.value())
@@ -57,7 +57,7 @@ public record HallController(
     }
 
     @GetMapping("/{id}/tables")
-    public ResponseDto getHallTables(
+    public ResponseDto getTablesByHallId(
             @PathVariable("id") UUID id
     ) {
         List<TableDto> dtos = tableMapper.toDto(hallService.getTablesByHallId(id));
