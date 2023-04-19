@@ -76,7 +76,7 @@ public record UserController(
             @RequestBody UpdateUserDto updateUserDto,
             @AuthenticationPrincipal User user
     ) {
-        UserDto dto = userMapper.toDto(userService.editUser(
+        UserDto dto = userMapper.toDto(userService.update(
                 userId,
                 userMapper.toEntity(updateUserDto),
                 user

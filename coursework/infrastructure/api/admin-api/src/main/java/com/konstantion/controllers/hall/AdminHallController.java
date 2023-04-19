@@ -3,6 +3,7 @@ package com.konstantion.controllers.hall;
 import com.konstantion.dto.hall.converter.HallMapper;
 import com.konstantion.dto.hall.dto.CreateHallRequestDto;
 import com.konstantion.dto.hall.dto.HallDto;
+import com.konstantion.dto.hall.dto.UpdateHallRequestDto;
 import com.konstantion.hall.HallService;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.user.User;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import static com.konstantion.utils.EntityNameConstants.HALL;
 import static com.konstantion.utils.EntityNameConstants.HALLS;
+import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -49,7 +51,30 @@ public record AdminHallController(
         ));
 
         return ResponseDto.builder()
-                .message("Created hall")
+                .message("Hall successfully created")
+                .timeStamp(now())
+                .status(OK)
+                .statusCode(OK.value())
+                .data(Map.of(HALL, dto))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseDto updateHall(
+            @PathVariable("id") UUID id,
+            @RequestBody UpdateHallRequestDto requestDto,
+            @AuthenticationPrincipal User user
+    ) {
+        HallDto dto = hallMapper.toDto(
+                hallService.update(
+                        id,
+                        hallMapper.toUpdateHallRequest(requestDto),
+                        user
+                )
+        );
+
+        return ResponseDto.builder()
+                .message(format("Hall with id %s successfully updated", id))
                 .timeStamp(now())
                 .status(OK)
                 .statusCode(OK.value())
@@ -65,7 +90,7 @@ public record AdminHallController(
         HallDto dto = hallMapper.toDto(hallService.activate(id, user));
 
         return ResponseDto.builder()
-                .message("Activated hall")
+                .message(format("Hall with id %s successfully activated", id))
                 .timeStamp(now())
                 .status(OK)
                 .statusCode(OK.value())
@@ -81,7 +106,7 @@ public record AdminHallController(
         HallDto dto = hallMapper.toDto(hallService.deactivate(id, user));
 
         return ResponseDto.builder()
-                .message("Deactivated hall")
+                .message(format("Hall with id %s successfully deactivated", id))
                 .timeStamp(now())
                 .status(OK)
                 .statusCode(OK.value())
@@ -97,7 +122,7 @@ public record AdminHallController(
         HallDto dto = hallMapper.toDto(hallService.delete(id, user));
 
         return ResponseDto.builder()
-                .message("Deleted hall")
+                .message(format("Hall with id %s successfully deleted", id))
                 .timeStamp(now())
                 .status(OK)
                 .statusCode(OK.value())

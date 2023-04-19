@@ -14,18 +14,39 @@ import java.util.Set;
 public record ProductValidator(
         ProductValidations productValidations
 ) {
-    public ValidationResult validate(Product product) {
-        Set<FieldError> validationErrors = new HashSet<>();
-        return ValidationResult.of(validationErrors);
+    public ValidationResult validate(CreateProductRequest request) {
+        Set<FieldError> errors = new HashSet<>();
+
+        productValidations.isNameValid(request.name(), request)
+                .ifPresent(errors::add);
+
+        productValidations.isPriceValid(request.price(), request)
+                .ifPresent(errors::add);
+
+        productValidations.isDescriptionValid(request.description(), request)
+                .ifPresent(errors::add);
+
+        productValidations.isWeightValid(request.weight(), request)
+                .ifPresent(errors::add);
+
+        return ValidationResult.of(errors);
     }
 
-    public ValidationResult validate(CreateProductRequest createProductRequest) {
-        Set<FieldError> validationErrors = new HashSet<>();
-        return ValidationResult.of(validationErrors);
-    }
+    public ValidationResult validate(UpdateProductRequest request) {
+        Set<FieldError> errors = new HashSet<>();
 
-    public ValidationResult validate(UpdateProductRequest updateProductRequest) {
-        Set<FieldError> validationErrors = new HashSet<>();
-        return ValidationResult.of(validationErrors);
+        productValidations.isUpdateNameValid(request.name(), request)
+                .ifPresent(errors::add);
+
+        productValidations.isUpdatePriceValid(request.price(), request)
+                .ifPresent(errors::add);
+
+        productValidations.isUpdateDescriptionValid(request.description(), request)
+                .ifPresent(errors::add);
+
+        productValidations.isUpdateWeightValid(request.weight(), request)
+                .ifPresent(errors::add);
+
+        return ValidationResult.of(errors);
     }
 }

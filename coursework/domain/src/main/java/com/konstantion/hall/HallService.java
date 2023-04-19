@@ -1,6 +1,7 @@
 package com.konstantion.hall;
 
 import com.konstantion.hall.model.CreateHallRequest;
+import com.konstantion.hall.model.UpdateHallRequest;
 import com.konstantion.table.Table;
 import com.konstantion.user.User;
 
@@ -17,6 +18,8 @@ public interface HallService {
     default List<Hall> getAll() {
         return getAll(true);
     }
+
+    Hall update(UUID id, UpdateHallRequest request, User user);
 
     Hall activate(UUID id, User user);
 

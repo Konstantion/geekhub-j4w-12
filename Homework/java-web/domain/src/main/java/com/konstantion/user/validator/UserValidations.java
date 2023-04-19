@@ -141,7 +141,7 @@ public record UserValidations() implements ValidationsUtil {
         }
 
         if (!Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber)) {
-            errorList.add("Invalid phone number format, should be |xxx-xxxx-xxx|");
+            errorList.add("Invalid phone number format, should be |xxx-xxx-xxxx|");
         }
 
         return listToOptionalString(errorList);

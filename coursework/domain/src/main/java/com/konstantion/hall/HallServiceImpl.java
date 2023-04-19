@@ -2,6 +2,8 @@ package com.konstantion.hall;
 
 import com.konstantion.exception.ForbiddenException;
 import com.konstantion.hall.model.CreateHallRequest;
+import com.konstantion.hall.model.UpdateHallRequest;
+import com.konstantion.hall.validator.HallValidator;
 import com.konstantion.table.Table;
 import com.konstantion.table.TablePort;
 import com.konstantion.user.User;
@@ -15,11 +17,13 @@ import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSuppli
 import static com.konstantion.user.Permission.CREATE_TABLE;
 import static com.konstantion.user.Role.ADMIN;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record HallServiceImpl(
         HallPort hallPort,
-        TablePort tablePort
+        TablePort tablePort,
+        HallValidator hallValidator
 ) implements HallService {
 
     @Override
@@ -27,6 +31,8 @@ public record HallServiceImpl(
         if (user.hasNoPermission(CREATE_TABLE)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
+
+        hallValidator.validate(request).validOrTrow();
 
         Hall hall = Hall.builder()
                 .name(request.name())
@@ -41,7 +47,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall getById(UUID id) {
-        return findByIdOrThrow(id);
+        return getByIdOrThrow(id);
     }
 
     @Override
@@ -54,12 +60,29 @@ public record HallServiceImpl(
     }
 
     @Override
+    public Hall update(UUID id, UpdateHallRequest request, User user) {
+        if (user.hasNoPermission(CREATE_TABLE)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        hallValidator.validate(request).validOrTrow();
+
+        Hall hall = getByIdOrThrow(id);
+
+        updateHall(hall, request);
+
+        hallPort.save(hall);
+
+        return hall;
+    }
+
+    @Override
     public Hall activate(UUID id, User user) {
         if (user.hasNoPermission(ADMIN)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        Hall hall = findByIdOrThrow(id);
+        Hall hall = getByIdOrThrow(id);
 
         if (hall.isActive()) {
             return hall;
@@ -78,7 +101,7 @@ public record HallServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        Hall hall = findByIdOrThrow(id);
+        Hall hall = getByIdOrThrow(id);
 
         if (!hall.isActive()) {
             return hall;
@@ -93,7 +116,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall delete(UUID id, User user) {
-        Hall hall = findByIdOrThrow(id);
+        Hall hall = getByIdOrThrow(id);
 
         hallPort.delete(hall);
         return hall;
@@ -101,12 +124,12 @@ public record HallServiceImpl(
 
     @Override
     public List<Table> getTablesByHallId(UUID id) {
-        findByIdOrThrow(id);
+        getByIdOrThrow(id);
 
         return tablePort.findAllWhereHallId(id);
     }
 
-    private Hall findByIdOrThrow(UUID id) {
+    private Hall getByIdOrThrow(UUID id) {
         return hallPort.findById(id)
                 .orElseThrow(nonExistingIdSupplier(Hall.class, id));
     }
@@ -117,5 +140,9 @@ public record HallServiceImpl(
 
     private void prepareToDeactivate(Hall hall) {
         hall.setActive(false);
+    }
+
+    private void updateHall(Hall hall, UpdateHallRequest request) {
+        hall.setName(requireNonNullElse(request.name(), hall.getName()));
     }
 }

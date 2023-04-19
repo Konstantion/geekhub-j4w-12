@@ -102,7 +102,7 @@ public record UserServiceImpl(
     }
 
     @Override
-    public User editUser(UUID uuid, UpdateUserRequest updateUserRequest, User authorized) {
+    public User update(UUID uuid, UpdateUserRequest updateUserRequest, User authorized) {
         if (!authorized.getId().equals(uuid)
             && !authorized.hasRole(ADMIN)
             && !authorized.hasRole(SUPER_ADMIN)) {
@@ -130,7 +130,7 @@ public record UserServiceImpl(
     }
 
     @Override
-    public User editUserRoles(UUID uuid, UpdateUserRolesRequest updateUserRolesRequest) {
+    public User updateUserRoles(UUID uuid, UpdateUserRolesRequest updateUserRolesRequest) {
         User user = findByIdOrThrow(uuid);
 
         updateUserRoles(user, updateUserRolesRequest);

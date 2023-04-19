@@ -1,6 +1,5 @@
 package com.konstantion.table.validator;
 
-import com.konstantion.table.Table;
 import com.konstantion.table.model.CreateTableRequest;
 import com.konstantion.table.model.LoginTableRequest;
 import com.konstantion.table.model.UpdateTableRequest;
@@ -12,25 +11,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public record TableValidator(TableValidations validations) {
-    public ValidationResult validate(Table table) {
+public record TableValidator(
+        TableValidations validations
+) {
+    public ValidationResult validate(CreateTableRequest request) {
         Set<FieldError> errors = new HashSet<>();
 
-        validations.isTableNameValid(table.getName(), table).ifPresent(
+        validations.isNameValid(request.name(), request).ifPresent(
                 (errors::add)
         );
 
-        return ValidationResult.of(errors);
-    }
-
-    public ValidationResult validate(CreateTableRequest table) {
-        Set<FieldError> errors = new HashSet<>();
-
-        validations.isTableNameValid(table.name(), table).ifPresent(
+        validations.isTypeValid(request.tableType(), request).ifPresent(
                 (errors::add)
         );
 
-        validations.isTableTypeValid(table.tableType(), table).ifPresent(
+        validations.isPasswordValid(request.password(), request).ifPresent(
+                (errors::add)
+        );
+
+        validations.isCapacityValid(request.capacity(), request).ifPresent(
                 (errors::add)
         );
 
@@ -40,11 +39,31 @@ public record TableValidator(TableValidations validations) {
     public ValidationResult validate(LoginTableRequest request) {
         Set<FieldError> errors = new HashSet<>();
 
+        validations.isLoginPasswordValid(request.password(), request).ifPresent(
+                (errors::add)
+        );
+
         return ValidationResult.of(errors);
     }
 
     public ValidationResult validate(UpdateTableRequest request) {
         Set<FieldError> errors = new HashSet<>();
+
+        validations.isUpdateNameValid(request.name(), request).ifPresent(
+                (errors::add)
+        );
+
+        validations.isUpdateTypeValid(request.tableType(), request).ifPresent(
+                (errors::add)
+        );
+
+        validations.isUpdatePasswordValid(request.password(), request).ifPresent(
+                (errors::add)
+        );
+
+        validations.isUpdateCapacityValid(request.capacity(), request).ifPresent(
+                (errors::add)
+        );
 
         return ValidationResult.of(errors);
     }

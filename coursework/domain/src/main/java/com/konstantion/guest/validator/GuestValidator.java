@@ -11,15 +11,35 @@ import java.util.Set;
 
 @Component
 public record GuestValidator(
-        GuestValidation guestValidation
+        GuestValidations guestValidation
 ) {
     public ValidationResult validate(CreateGuestRequest request) {
-        Set<FieldError> validationErrors = new HashSet<>();
-        return ValidationResult.of(validationErrors);
+        Set<FieldError> errors = new HashSet<>();
+
+        guestValidation.isNameValid(request.name(), request)
+                .ifPresent(errors::add);
+
+        guestValidation.isDiscountValid(request.discountPercent(), request)
+                .ifPresent(errors::add);
+
+        guestValidation.isPhoneNumberValid(request.phoneNumber(), request)
+                .ifPresent(errors::add);
+
+        return ValidationResult.of(errors);
     }
 
     public ValidationResult validate(UpdateGuestRequest request) {
-        Set<FieldError> validationErrors = new HashSet<>();
-        return ValidationResult.of(validationErrors);
+        Set<FieldError> errors = new HashSet<>();
+
+        guestValidation.isUpdateNameValid(request.name(), request)
+                .ifPresent(errors::add);
+
+        guestValidation.isUpdateDiscountValid(request.discountPercent(), request)
+                .ifPresent(errors::add);
+
+        guestValidation.isUpdatePhoneNumberValid(request.phoneNumber(), request)
+                .ifPresent(errors::add);
+
+        return ValidationResult.of(errors);
     }
 }

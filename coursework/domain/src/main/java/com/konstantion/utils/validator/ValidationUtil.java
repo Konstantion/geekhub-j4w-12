@@ -7,6 +7,10 @@ import java.util.Set;
 
 public interface ValidationUtil {
     default Optional<FieldError> setToOptional(Set<String> validations, Object object, String field) {
+        if (validations.isEmpty()) {
+            return Optional.empty();
+        }
+
         String data = String.join(
                 System.lineSeparator(),
                 validations

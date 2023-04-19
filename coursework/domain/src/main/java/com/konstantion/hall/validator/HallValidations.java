@@ -1,4 +1,4 @@
-package com.konstantion.category.validator;
+package com.konstantion.hall.validator;
 
 import com.konstantion.utils.validator.ValidationUtil;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
-public record CategoryValidations(
+public record HallValidations(
 
 ) implements ValidationUtil {
     public Optional<FieldError> isNameValid(String name, Object sender) {
@@ -31,7 +31,7 @@ public record CategoryValidations(
     }
 
     public Optional<FieldError> isUpdateNameValid(String name, Object sender) {
-        if (isNull(name)) {
+        if(isNull(name)) {
             return Optional.empty();
         }
         return isNameValid(name, sender);

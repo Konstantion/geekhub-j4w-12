@@ -14,9 +14,9 @@ public interface UserService extends UserDetailsService {
 
     UUID disableUser(UUID uuid);
 
-    User editUser(UUID uuid, UpdateUserRequest updateUserRequest, User authorized);
+    User update(UUID uuid, UpdateUserRequest updateUserRequest, User authorized);
 
-    User editUserRoles(UUID uuid, UpdateUserRolesRequest updateUserRolesRequest);
+    User updateUserRoles(UUID uuid, UpdateUserRolesRequest updateUserRolesRequest);
 
     String restorePassword(String email);
 

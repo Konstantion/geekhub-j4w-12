@@ -124,7 +124,6 @@ public record ProductServiceImpl(
         productValidator.validate(request).validOrTrow();
 
         Product product = getByIdOrThrow(productId);
-        ExceptionUtils.isActiveOrThrow(product);
 
         UUID categoryId = request.categoryId();
         if (nonNull(categoryId)) {

@@ -108,7 +108,7 @@ public record SuperAdminController(
             @PathVariable("uuid") UUID userId,
             @RequestBody UpdateUserRolesDto updateUserRolesDto
     ) {
-        UserDto user = userMapper.toDto(userService.editUserRoles(
+        UserDto user = userMapper.toDto(userService.updateUserRoles(
                 userId,
                 userMapper.toEntity(updateUserRolesDto)
         ));
