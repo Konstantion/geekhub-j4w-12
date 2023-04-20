@@ -24,10 +24,10 @@ import static com.konstantion.user.Permission.*;
 import static com.konstantion.user.Role.getAdminRoles;
 import static com.konstantion.user.Role.getWaiterRoles;
 import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
+import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record UserServiceImpl(
@@ -237,11 +237,11 @@ public record UserServiceImpl(
     }
 
     private void updateUser(User user, UpdateUserRequest request) {
-        user.setEmail(requireNonNullElse(request.email(), user.getEmail()));
-        user.setFirstName(requireNonNullElse(request.firstName(), user.getFirstName()));
-        user.setLastName(requireNonNullElse(request.lastName(), user.getLastName()));
-        user.setPhoneNumber(requireNonNullElse(request.phoneNumber(), user.getPhoneNumber()));
-        user.setAge(requireNonNullElse(request.age(), user.getAge()));
+        user.setEmail(requireNonNullOrElseNullable(request.email(), user.getEmail()));
+        user.setFirstName(requireNonNullOrElseNullable(request.firstName(), user.getFirstName()));
+        user.setLastName(requireNonNullOrElseNullable(request.lastName(), user.getLastName()));
+        user.setPhoneNumber(requireNonNullOrElseNullable(request.phoneNumber(), user.getPhoneNumber()));
+        user.setAge(requireNonNullOrElseNullable(request.age(), user.getAge()));
         if (nonNull(request.password())) {
             user.setPassword(passwordEncoder.encode(request.password()));
         }

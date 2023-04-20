@@ -1,5 +1,7 @@
 package com.konstantion.utils;
 
+import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -9,5 +11,9 @@ public record ObjectUtils() {
         return entities.stream()
                 .map(extractor)
                 .anyMatch(value -> criteria.test(desired, value));
+    }
+
+    public static <T> T requireNonNullOrElseNullable(T object, @Nullable T nullable) {
+        return (object != null) ? object : nullable;
     }
 }

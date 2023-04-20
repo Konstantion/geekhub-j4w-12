@@ -4,7 +4,6 @@ import com.konstantion.category.Category;
 import com.konstantion.category.CategoryPort;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
-import com.konstantion.exception.utils.ExceptionUtils;
 import com.konstantion.file.MultipartFileService;
 import com.konstantion.product.model.CreateProductRequest;
 import com.konstantion.product.model.GetProductsRequest;
@@ -24,11 +23,10 @@ import java.util.UUID;
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
-import static com.konstantion.user.Role.ADMIN;
+import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record ProductServiceImpl(
@@ -196,12 +194,12 @@ public record ProductServiceImpl(
     }
 
     private void updateProduct(Product product, UpdateProductRequest request, byte[] imageBytes) {
-        product.setName(requireNonNullElse(request.name(), product.getName()));
-        product.setPrice(requireNonNullElse(request.price(), product.getPrice()));
-        product.setWeight(requireNonNullElse(request.weight(), product.getWeight()));
-        product.setDescription(requireNonNullElse(request.description(), product.getDescription()));
-        product.setCategoryId(requireNonNullElse(request.categoryId(), null));
-        product.setImageBytes(requireNonNullElse(imageBytes, product.getImageBytes()));
+        product.setName(requireNonNullOrElseNullable(request.name(), product.getName()));
+        product.setPrice(requireNonNullOrElseNullable(request.price(), product.getPrice()));
+        product.setWeight(requireNonNullOrElseNullable(request.weight(), product.getWeight()));
+        product.setDescription(requireNonNullOrElseNullable(request.description(), product.getDescription()));
+        product.setCategoryId(requireNonNullOrElseNullable(request.categoryId(), null));
+        product.setImageBytes(requireNonNullOrElseNullable(imageBytes, product.getImageBytes()));
     }
 
     private void prepareToDeactivate(Product product) {

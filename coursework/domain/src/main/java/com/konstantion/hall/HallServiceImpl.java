@@ -15,8 +15,8 @@ import java.util.UUID;
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
+import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record HallServiceImpl(
@@ -150,6 +150,6 @@ public record HallServiceImpl(
     }
 
     private void updateHall(Hall hall, UpdateHallRequest request) {
-        hall.setName(requireNonNullElse(request.name(), hall.getName()));
+        hall.setName(requireNonNullOrElseNullable(request.name(), hall.getName()));
     }
 }

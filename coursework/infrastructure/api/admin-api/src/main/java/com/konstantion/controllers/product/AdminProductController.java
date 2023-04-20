@@ -47,7 +47,8 @@ public record AdminProductController(
                                 searchPattern.orElse(""),
                                 categoryUuid.orElse(null),
                                 ascending.orElse(true)
-                        )
+                        ),
+                        false
                 )
         );
 

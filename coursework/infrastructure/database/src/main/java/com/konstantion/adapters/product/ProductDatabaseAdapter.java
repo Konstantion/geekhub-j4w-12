@@ -70,7 +70,6 @@ public class ProductDatabaseAdapter implements ProductPort {
                        "WHERE LOWER(product.name) LIKE LOWER(:searchPattern) " +
                        "AND active = :active " +
                        findByCategoryId +
-                       "GROUP BY product.uuid, name, price, product.created_at, product.user_uuid, image_bytes, description, category_uuid " +
                        "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
             };
 
@@ -78,7 +77,7 @@ public class ProductDatabaseAdapter implements ProductPort {
             categoryId -> {
                 String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
                 return "SELECT COUNT(*) FROM public.product " +
-                       "WHERE LOWER(product.name) LIKE LOWER(:searchParameter) " +
+                       "WHERE LOWER(product.name) LIKE LOWER(:searchPattern) " +
                        "AND active = :active " +
                        findByCategoryId + ";";
             };

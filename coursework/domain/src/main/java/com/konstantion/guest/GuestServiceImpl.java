@@ -16,9 +16,9 @@ import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.user.Permission.*;
+import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.requireNonNullElse;
 
 @Service
 public record GuestServiceImpl(
@@ -93,9 +93,9 @@ public record GuestServiceImpl(
     }
 
     private void updateGuest(Guest guest, UpdateGuestRequest request) {
-        guest.setName(requireNonNullElse(request.name(), guest.getName()));
-        guest.setPhoneNumber(requireNonNullElse(request.phoneNumber(), guest.getPhoneNumber()));
-        guest.setDiscountPercent(requireNonNullElse(request.discountPercent(), guest.getDiscountPercent()));
+        guest.setName(requireNonNullOrElseNullable(request.name(), guest.getName()));
+        guest.setPhoneNumber(requireNonNullOrElseNullable(request.phoneNumber(), guest.getPhoneNumber()));
+        guest.setDiscountPercent(requireNonNullOrElseNullable(request.discountPercent(), guest.getDiscountPercent()));
     }
 
     @Override

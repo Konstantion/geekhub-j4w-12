@@ -30,10 +30,10 @@ import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSuppli
 import static com.konstantion.user.Permission.*;
 import static com.konstantion.user.Role.ADMIN;
 import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
+import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record TableServiceImpl(
@@ -299,9 +299,9 @@ public record TableServiceImpl(
     }
 
     private void updateTable(Table table, UpdateTableRequest request) {
-        table.setName(requireNonNullElse(request.name(), table.getName()));
-        table.setHallId(requireNonNullElse(request.hallUuid(), table.getHallId()));
-        table.setCapacity(requireNonNullElse(request.capacity(), table.getCapacity()));
+        table.setName(requireNonNullOrElseNullable(request.name(), table.getName()));
+        table.setHallId(requireNonNullOrElseNullable(request.hallUuid(), table.getHallId()));
+        table.setCapacity(requireNonNullOrElseNullable(request.capacity(), table.getCapacity()));
         if (nonNull(request.password())) {
             table.setPassword(passwordEncoder.encode(request.password()));
         }

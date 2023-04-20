@@ -20,6 +20,8 @@ public interface ValidationUtil {
             return Optional.empty();
         }
 
-        return Optional.of(new FieldError(object.toString(), field, data));
+        String objectName = object == null ? "Null" : object.getClass().getSimpleName();
+
+        return Optional.of(new FieldError(objectName, field, data));
     }
 }

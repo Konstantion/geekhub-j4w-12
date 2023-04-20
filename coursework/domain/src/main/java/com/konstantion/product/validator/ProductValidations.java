@@ -65,7 +65,7 @@ public record ProductValidations(
         }
 
         if (weight <= 0) {
-            violations.add("weight should be bigger then 0");
+            violations.add("weight should be bigger than 0");
         }
 
         return setToOptional(violations, sender, WEIGHT_FIELD);
