@@ -48,13 +48,15 @@ public record BillServiceImpl(
         if (onlyActive) {
             return bills.stream().filter(Bill::isActive).toList();
         }
-
+        logger.info("Bills successfully returned");
         return bills;
     }
 
     @Override
     public Bill getById(UUID id) {
-        return getByIdOrThrow(id);
+        Bill bill = getByIdOrThrow(id);
+        logger.info("Bill with id {} successfully returned", id);
+        return bill;
     }
 
     @Override
@@ -72,10 +74,14 @@ public record BillServiceImpl(
             throw new BadRequestException(format("Order with id %s already has bill", order.getId()));
         }
 
+        if (order.getProductsId().isEmpty()) {
+            throw new BadRequestException(format("Cannot create bill for order with id %s because it doesn't contain any product", order.getId()));
+        }
+
         Guest guest = guestOrNull(createBillRequest.guestId());
 
         Double price = calculateOrderPrice(order);
-        Double priceWithDiscount = calculateOrderPriceWithDiscount(order, guest);
+        Double priceWithDiscount = calculatePriceWithDiscount(price, guest);
 
         Bill bill = Bill.builder()
                 .waiterId(user.getId())
@@ -92,6 +98,7 @@ public record BillServiceImpl(
         order.setBillId(bill.getId());
         orderPort.save(order);
 
+        logger.info("Bill successfully created and returned");
         return bill;
     }
 
@@ -104,10 +111,6 @@ public record BillServiceImpl(
 
         Bill bill = getByIdOrThrow(billId);
 
-        if (!bill.isActive()) {
-            throw new BadRequestException("Bill with id %s is already closed");
-        }
-
         Order order = orderPort.findById(bill.getOrderId())
                 .orElseThrow(nonExistingIdSupplier(Order.class, bill.getOrderId()));
 
@@ -116,6 +119,7 @@ public record BillServiceImpl(
         orderPort.save(order);
         billPort.delete(bill);
 
+        logger.info("Bill wth id {} successfully canceled and returned", billId);
         return bill;
     }
 
@@ -128,13 +132,14 @@ public record BillServiceImpl(
 
         Bill bill = getByIdOrThrow(billId);
         if (!bill.isActive()) {
+            logger.warn("Bill with id {} is already closed and returned", billId);
             return bill;
         }
 
         prepareToClose(bill);
 
         billPort.save(bill);
-
+        logger.info("Bill with id {} successfully canceled and returned", billId);
         return bill;
     }
 
@@ -148,6 +153,7 @@ public record BillServiceImpl(
         Bill bill = getByIdOrThrow(billId);
 
         if (bill.isActive()) {
+            logger.warn("Bill with id {} is already active and returned", billId);
             return bill;
         }
 
@@ -155,6 +161,7 @@ public record BillServiceImpl(
 
         billPort.save(bill);
 
+        logger.info("Bill with id {} successfully activated and returned", billId);
         return bill;
     }
 
@@ -176,15 +183,14 @@ public record BillServiceImpl(
     /**
      * Method null save for parameter <b style='color: red'>guest</b>
      */
-    private Double calculateOrderPriceWithDiscount(Order order, @Nullable Guest guest) {
-        Double orderPrice = calculateOrderPrice(order);
+    private Double calculatePriceWithDiscount(Double orderPrice, @Nullable Guest guest) {
         double discountPercent = 0.0;
         if (nonNull(guest)) {
             discountPercent = max(0.0, min(guest.getDiscountPercent(), 100.0));
         }
-        double discountPrice = DoubleUtils.percent(orderPrice, discountPercent);
+        double discountedPrice = orderPrice - DoubleUtils.percent(orderPrice, discountPercent);
 
-        return DoubleUtils.round(discountPrice, 2);
+        return DoubleUtils.round(discountedPrice, 2);
     }
 
     private void prepareToClose(Bill bill) {

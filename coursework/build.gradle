@@ -25,6 +25,7 @@ subprojects {
         testImplementation libsTest.assertjCore
         testImplementation libsTest.mockitoJunitJupiter
         testImplementation libsTest.mockitoInline
+        testImplementation libsTest.springBootStarterTest
     }
 
     configurations {

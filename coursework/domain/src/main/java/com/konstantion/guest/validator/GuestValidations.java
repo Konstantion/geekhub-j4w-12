@@ -51,14 +51,14 @@ public record GuestValidations(
 
         if (isNull(discount)) {
             violations.add("discount shouldn't be null");
-            return setToOptional(violations, sender, PHONE_NUMBER_FIELD);
+            return setToOptional(violations, sender, DISCOUNT_PERCENT_FIELD);
         }
 
         if (discount < 0 || discount > 100) {
             violations.add("discount should be between 1 and 100");
         }
 
-        return setToOptional(violations, sender, PHONE_NUMBER_FIELD);
+        return setToOptional(violations, sender, DISCOUNT_PERCENT_FIELD);
     }
 
     public Optional<FieldError> isUpdateNameValid(String name, Object sender) {

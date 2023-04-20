@@ -15,11 +15,12 @@ import static java.time.LocalDateTime.now;
 @ControllerAdvice
 public record ControllerExceptionHandler() {
 
-    public static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler({ValidationException.class})
     public ResponseEntity<ResponseDto> handleValidationException(HttpServletRequest request, ValidationException e) {
         HttpStatus httpStatus = ExceptionsStatusesExtractor.extractExceptionStatus(e);
+        logger.error(buildLoggerMessage(e));
         return ResponseEntity.status(httpStatus).body(
                 ResponseDto.builder()
                         .status(httpStatus)
@@ -39,6 +40,7 @@ public record ControllerExceptionHandler() {
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ResponseDto> handleExceptionWithoutBody(HttpServletRequest request, Exception e) {
         HttpStatus httpStatus = ExceptionsStatusesExtractor.extractExceptionStatus(e);
+        logger.error(buildLoggerMessage(e));
         return ResponseEntity.status(httpStatus).body(
                 ResponseDto.builder()
                         .status(httpStatus)
@@ -47,5 +49,16 @@ public record ControllerExceptionHandler() {
                         .timeStamp(now())
                         .build()
         );
+    }
+
+    private String buildLoggerMessage(Exception e) {
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append(String.format("Exception [%s] has been throw out of the class [%s] when executing the method [%s], on the line [%s], with message: [%s]. ", e.getClass().getSimpleName(), e.getStackTrace()[0].getClassName(), e.getStackTrace()[0].getMethodName(), e.getStackTrace()[0].getLineNumber(), e.getMessage()));
+        int stackTraceDepth = Math.min(5, e.getStackTrace().length);
+        for (int i = 1; i < stackTraceDepth; i++) {
+            messageBuilder.append(String.format("Caused by executing the method [%s] in the class [%s] on the line [%s]. ", e.getStackTrace()[i].getMethodName(), e.getStackTrace()[i].getClassName(), e.getStackTrace()[i].getLineNumber()));
+        }
+
+        return messageBuilder.toString();
     }
 }

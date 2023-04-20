@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,8 @@ import static java.util.Objects.nonNull;
 @Setter
 public class Order {
     private UUID id;
-    private List<UUID> productsId;
+    @Builder.Default
+    private List<UUID> productsId = new ArrayList<>();
     private UUID tableId;
     private UUID userId;
     private UUID billId;

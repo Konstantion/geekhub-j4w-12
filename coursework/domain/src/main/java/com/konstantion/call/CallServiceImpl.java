@@ -30,15 +30,19 @@ public record CallServiceImpl(
 
     @Override
     public List<Call> getAll() {
-        return callPort.findAll();
+        List<Call> calls = callPort.findAll();
+        logger.info("All calls successfully returned");
+        return calls;
     }
 
     @Override
     public List<Call> getAllByUser(User user) {
-        return callPort.findAll()
+        List<Call> calls = callPort.findAll()
                 .stream()
                 .filter(call -> call.getWaitersId().contains(user.getId()))
                 .toList();
+        logger.info("All calls for user with id {} successfully returned", user.getId());
+        return calls;
     }
 
     @Override
@@ -61,7 +65,7 @@ public record CallServiceImpl(
                 .build();
 
         callPort.save(call);
-
+        logger.info("Call successfully created and returned");
         return call;
     }
 
@@ -79,7 +83,7 @@ public record CallServiceImpl(
         }
 
         callPort.delete(call);
-
+        logger.info("Call with id {} successfully closed and returned", callId);
         return call;
     }
 

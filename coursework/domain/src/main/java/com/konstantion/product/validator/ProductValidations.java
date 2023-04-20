@@ -55,7 +55,7 @@ public record ProductValidations(
             violations.add("description shouldn't be longer then 256 symbols");
         }
 
-        return setToOptional(violations, sender, WEIGHT_FIELD);
+        return setToOptional(violations, sender, DESCRIPTION_FIELD);
     }
 
     public Optional<FieldError> isWeightValid(Double weight, Object sender) {
