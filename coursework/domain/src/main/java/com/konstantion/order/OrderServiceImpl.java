@@ -50,7 +50,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order getTableOrder(UUID tableId, User user) {
-        if (user.hasNoPermission(GET_ORDER)) {
+        if (user.hasNoPermission(GET_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -69,7 +70,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order transferToAnotherTable(UUID orderId, UUID tableId, User user) {
-        if (user.hasNoPermission(TRANSFER_ORDER)) {
+        if (user.hasNoPermission(TRANSFER_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -95,7 +97,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order open(UUID tableId, User user) {
-        if (user.hasNoPermission(OPEN_ORDER)) {
+        if (user.hasNoPermission(OPEN_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -112,6 +115,7 @@ public record OrderServiceImpl(
                 .tableId(table.getId())
                 .productsId(new ArrayList<>())
                 .createdAt(now())
+                .active(true)
                 .build();
 
 
@@ -125,7 +129,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order close(UUID orderId, User user) {
-        if (user.hasNoPermission(CLOSE_ORDER)) {
+        if (user.hasNoPermission(CLOSE_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -156,7 +161,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order delete(UUID orderId, User user) {
-        if (user.hasNoPermission(DELETE_ORDER)) {
+        if (user.hasNoPermission(DELETE_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -169,7 +175,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order addProduct(UUID orderId, OrderProductsRequest request, User user) {
-        if (user.hasNoPermission(ADD_PRODUCT_TO_ORDER)) {
+        if (user.hasNoPermission(ADD_PRODUCT_TO_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -199,7 +206,8 @@ public record OrderServiceImpl(
 
     @Override
     public Order removeProduct(UUID orderId, OrderProductsRequest request, User user) {
-        if (user.hasNoPermission(DELETE_PRODUCT_FROM_ORDER)) {
+        if (user.hasNoPermission(DELETE_PRODUCT_FROM_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 

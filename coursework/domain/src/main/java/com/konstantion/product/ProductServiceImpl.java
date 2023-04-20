@@ -23,8 +23,7 @@ import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
-import static com.konstantion.user.Permission.CREATE_PRODUCT;
-import static com.konstantion.user.Permission.DELETE_PRODUCT;
+import static com.konstantion.user.Permission.*;
 import static com.konstantion.user.Role.ADMIN;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
@@ -42,7 +41,8 @@ public record ProductServiceImpl(
 
     @Override
     public Product create(CreateProductRequest createProductRequest, User user) {
-        if (user.hasNoPermission(CREATE_PRODUCT)) {
+        if (user.hasNoPermission(CREATE_PRODUCT)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to create product");
         }
 
@@ -102,7 +102,8 @@ public record ProductServiceImpl(
 
     @Override
     public Product delete(UUID productId, User user) {
-        if (user.hasNoPermission(DELETE_PRODUCT)) {
+        if (user.hasNoPermission(DELETE_PRODUCT)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to delete product");
         }
 
@@ -117,7 +118,8 @@ public record ProductServiceImpl(
 
     @Override
     public Product update(UUID productId, UpdateProductRequest request, User user) {
-        if (user.hasNoPermission(CREATE_PRODUCT)) {
+        if (user.hasNoPermission(CREATE_PRODUCT)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -146,7 +148,8 @@ public record ProductServiceImpl(
 
     @Override
     public Product deactivate(UUID productId, User user) {
-        if (user.hasNoPermission(ADMIN)) {
+        if (user.hasNoPermission(ACTIVATE_PRODUCT)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to deactivate product");
         }
 
@@ -167,7 +170,8 @@ public record ProductServiceImpl(
 
     @Override
     public Product activate(UUID productId, User user) {
-        if (user.hasNoPermission(ADMIN)) {
+        if (user.hasNoPermission(ACTIVATE_PRODUCT)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to activate product");
         }
 

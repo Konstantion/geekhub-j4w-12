@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,11 +24,16 @@ import java.util.function.Function;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNullElse;
 
-@Component
-public record ProductDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Product> productRowMapper
-) implements ProductPort {
+@Repository
+public class ProductDatabaseAdapter implements ProductPort {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<Product> productRowMapper;
+
+    public ProductDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Product> productRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.productRowMapper = productRowMapper;
+    }
+
     private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.product
             WHERE id = :id;

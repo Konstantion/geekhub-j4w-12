@@ -10,18 +10,23 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
 import java.util.*;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record CallDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Call> callRowMapper
-) implements CallPort {
+@Repository
+public class CallDatabaseAdapter implements CallPort {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<Call> callRowMapper;
+
+    public CallDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Call> callRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.callRowMapper = callRowMapper;
+    }
+
     public static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.call
             WHERE id = :id;
@@ -105,15 +110,7 @@ public record CallDatabaseAdapter(
             return update(call);
         }
 
-        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(call) {
-            @Override
-            public int getSqlType(String paramName) {
-                if ("purpose".equals(paramName)) {
-                    return Types.VARCHAR;
-                }
-                return super.getSqlType(paramName);
-            }
-        };
+        SqlParameterSource parameterSource = getParameterSource(call);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
@@ -153,7 +150,8 @@ public record CallDatabaseAdapter(
     }
 
     private Call update(Call call) {
-        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(call);
+        SqlParameterSource parameterSource = getParameterSource(call);
+
         jdbcTemplate.update(
                 UPDATE_QUERY,
                 parameterSource
@@ -193,5 +191,17 @@ public record CallDatabaseAdapter(
                 SAVE_WAITER_ID,
                 parameterSource
         );
+    }
+
+    private SqlParameterSource getParameterSource(Call call) {
+        return new BeanPropertySqlParameterSource(call) {
+            @Override
+            public int getSqlType(String paramName) {
+                if ("purpose".equals(paramName)) {
+                    return Types.VARCHAR;
+                }
+                return super.getSqlType(paramName);
+            }
+        };
     }
 }

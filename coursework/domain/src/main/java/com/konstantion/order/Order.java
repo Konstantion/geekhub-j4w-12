@@ -24,7 +24,8 @@ public class Order {
     private UUID billId;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
-    private Boolean active;
+    @Builder.Default
+    private Boolean active = true;
 
     public Order() {
     }

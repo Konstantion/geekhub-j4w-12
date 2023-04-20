@@ -58,7 +58,8 @@ public record TableServiceImpl(
 
     @Override
     public Table addWaiter(UUID tableId, TableWaitersRequest request, User user) {
-        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)) {
+        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -81,7 +82,8 @@ public record TableServiceImpl(
 
     @Override
     public Table removeWaiter(UUID tableId, TableWaitersRequest request, User user) {
-        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)) {
+        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -130,7 +132,8 @@ public record TableServiceImpl(
 
     @Override
     public Table activate(UUID tableId, User user) {
-        if (user.hasNoPermission(ADMIN)) {
+        if (user.hasNoPermission(ADMIN)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to activate table");
         }
 
@@ -148,7 +151,8 @@ public record TableServiceImpl(
 
     @Override
     public Table deactivate(UUID tableId, User user) {
-        if (user.hasNoPermission(ADMIN)) {
+        if (user.hasNoPermission(ADMIN)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to deactivate table");
         }
 
@@ -168,7 +172,8 @@ public record TableServiceImpl(
 
     @Override
     public Table create(CreateTableRequest request, User user) {
-        if (user.hasNoPermission(CREATE_TABLE)) {
+        if (user.hasNoPermission(CREATE_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to create table");
         }
 
@@ -204,7 +209,8 @@ public record TableServiceImpl(
 
     @Override
     public Table delete(UUID tableId, User user) {
-        if (user.hasNoPermission(ADMIN, DELETE_TABLE)) {
+        if (user.hasNoPermission(DELETE_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to delete table");
         }
 
@@ -249,7 +255,8 @@ public record TableServiceImpl(
 
     @Override
     public Table removeAllWaiters(UUID tableId, User user) {
-        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)) {
+        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 

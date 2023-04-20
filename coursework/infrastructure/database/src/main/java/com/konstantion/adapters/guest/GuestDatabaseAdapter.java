@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,11 +18,10 @@ import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record GuestDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Guest> guestRowMapper
-) implements GuestPort {
+@Repository
+public class GuestDatabaseAdapter implements GuestPort {
+    private NamedParameterJdbcTemplate jdbcTemplate;
+    private RowMapper<Guest> guestRowMapper;
     public static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.guest
             WHERE id = :id;

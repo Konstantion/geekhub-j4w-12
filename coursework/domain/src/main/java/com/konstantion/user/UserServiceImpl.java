@@ -57,8 +57,9 @@ public record UserServiceImpl(
     }
 
     @Override
-    public User createWaiter(CreateUserRequest request, User user) {
-        if (user.hasNoPermission(CREATE_USER)) {
+    public User createWaiter(CreateUserRequest request, User authorized) {
+        if (authorized.hasNoPermission(CREATE_USER)
+            && authorized.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -79,9 +80,9 @@ public record UserServiceImpl(
 
         userPort.save(waiter);
 
-        logger.info("User {} successfully created", user);
+        logger.info("User {} successfully created", waiter);
 
-        return user;
+        return waiter;
     }
 
     @Override
@@ -90,7 +91,7 @@ public record UserServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        ValidationResult validationResult = userValidator.validate(request);
+        ValidationResult validationResult = userValidator.validateAdmin(request);
         validationResult.validOrTrow();
 
         List<User> dbUsers = userPort.findAll();
@@ -107,15 +108,19 @@ public record UserServiceImpl(
 
         userPort.save(admin);
 
-        logger.info("User {} successfully created", user);
+        logger.info("User {} successfully created", admin);
 
-        return user;
+        return admin;
     }
 
     @Override
     public User addPermission(UUID userId, Permission permission, User authenticated) {
         if (authenticated.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        if (permission.equals(SUPER_USER)) {
+            throw new BadRequestException("Permission SUPER_USER can't be either removed or added");
         }
 
         User user = getByIdOrThrow(userId);
@@ -141,6 +146,10 @@ public record UserServiceImpl(
 
         User user = getByIdOrThrow(userId);
         ExceptionUtils.isActiveOrThrow(user);
+
+        if (permission.equals(SUPER_USER)) {
+            throw new BadRequestException("Permission SUPER_USER can't be either removed or added");
+        }
 
         if (!user.getPermissions().remove(permission)) {
             logger.warn("User with id {} doesn't have permission {}", userId, permission);

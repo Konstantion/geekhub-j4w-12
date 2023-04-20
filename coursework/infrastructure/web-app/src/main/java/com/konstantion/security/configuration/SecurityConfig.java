@@ -1,12 +1,15 @@
 package com.konstantion.security.configuration;
 
 import com.konstantion.security.jwt.JwtAuthorizationFilter;
+import com.konstantion.security.table.TableAuthenticationProvider;
+import com.konstantion.security.user.UserAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
@@ -24,11 +27,14 @@ public class SecurityConfig {
 
     private static final String[] SECURITY_WHITELIST = {
             "/static/**",
-            "/table-api/authentication/**",
-            "/web-api/authentication/**",
             "/web-api/util/**",
             "/v3/api-docs/**",
             "/swagger-ui/**"
+    };
+
+    private static final String[] AUTHENTICATION_WHITELIST = {
+            "/table-api/authentication/**",
+            "/web-api/authentication/**"
     };
 
     @Bean
@@ -38,6 +44,7 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
+                .requestMatchers(AUTHENTICATION_WHITELIST).permitAll()
                 .requestMatchers(SECURITY_WHITELIST).permitAll()
                 .requestMatchers("/admin-api/**").hasRole("ADMIN")
                 .requestMatchers("/table-api/**").hasRole("TABLE")
@@ -65,5 +72,10 @@ public class SecurityConfig {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
         expressionHandler.setRoleHierarchy(roleHierarchy());
         return expressionHandler;
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(AUTHENTICATION_WHITELIST);
     }
 }

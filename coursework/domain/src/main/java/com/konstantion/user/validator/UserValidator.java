@@ -72,4 +72,19 @@ public record UserValidator(
 
         return ValidationResult.of(validationErrors);
     }
+
+    public ValidationResult validateAdmin(CreateUserRequest request) {
+        Set<FieldError> errors = new HashSet<>();
+
+        userValidations.isAdminEmailValid(request.email(), request)
+                .ifPresent(errors::add);
+
+        userValidations.isPasswordValid(request.password(), request)
+                .ifPresent(errors::add);
+
+        userValidations.isPasswordCopyValid(request.password(), request.passwordCopy(), request)
+                .ifPresent(errors::add);
+
+        return ValidationResult.of(errors);
+    }
 }

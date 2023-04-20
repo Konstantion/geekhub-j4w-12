@@ -20,6 +20,7 @@ public class AuthenticationManagerConfig {
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(tableAuthenticationProvider);
         authenticationManagerBuilder.authenticationProvider(userAuthenticationProvider);
+        authenticationManagerBuilder.parentAuthenticationManager(null);
         return authenticationManagerBuilder.build();
     }
 }

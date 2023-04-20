@@ -14,8 +14,7 @@ import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
-import static com.konstantion.user.Permission.CREATE_TABLE;
-import static com.konstantion.user.Role.ADMIN;
+import static com.konstantion.user.Permission.*;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNullElse;
 
@@ -28,7 +27,8 @@ public record HallServiceImpl(
 
     @Override
     public Hall create(CreateHallRequest request, User user) {
-        if (user.hasNoPermission(CREATE_TABLE)) {
+        if (user.hasNoPermission(CREATE_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -61,7 +61,8 @@ public record HallServiceImpl(
 
     @Override
     public Hall update(UUID id, UpdateHallRequest request, User user) {
-        if (user.hasNoPermission(CREATE_TABLE)) {
+        if (user.hasNoPermission(CREATE_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -78,7 +79,8 @@ public record HallServiceImpl(
 
     @Override
     public Hall activate(UUID id, User user) {
-        if (user.hasNoPermission(ADMIN)) {
+        if (user.hasNoPermission(ACTIVATE_HALL)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -97,7 +99,8 @@ public record HallServiceImpl(
 
     @Override
     public Hall deactivate(UUID id, User user) {
-        if (user.hasNoPermission(ADMIN)) {
+        if (user.hasNoPermission(ACTIVATE_HALL)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -116,6 +119,10 @@ public record HallServiceImpl(
 
     @Override
     public Hall delete(UUID id, User user) {
+        if (user.hasNoPermission(DELETE_HALL)
+            && user.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
         Hall hall = getByIdOrThrow(id);
 
         hallPort.delete(hall);

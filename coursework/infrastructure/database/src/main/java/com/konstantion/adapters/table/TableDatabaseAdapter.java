@@ -1,5 +1,6 @@
 package com.konstantion.adapters.table;
 
+import com.konstantion.call.Call;
 import com.konstantion.table.Table;
 import com.konstantion.table.TablePort;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,18 +10,23 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record TableDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Table> tableRowMapper
-) implements TablePort {
+@Repository
+public class TableDatabaseAdapter implements TablePort {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<Table> tableRowMapper;
+
+    public TableDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Table> tableRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.tableRowMapper = tableRowMapper;
+    }
+
     private static final String FIND_ALL_QUERY = """
             SELECT * FROM public.table;
             """;
@@ -84,7 +90,7 @@ public record TableDatabaseAdapter(
             return update(table);
         }
 
-        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(table);
+        SqlParameterSource parameterSource = getParameterSource(table);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
@@ -181,7 +187,7 @@ public record TableDatabaseAdapter(
     }
 
     private Table update(Table table) {
-        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(table);
+        SqlParameterSource parameterSource = getParameterSource(table);
         jdbcTemplate.update(
                 UPDATE_QUERY,
                 parameterSource
@@ -216,5 +222,17 @@ public record TableDatabaseAdapter(
                     parameterSource
             );
         });
+    }
+
+    private SqlParameterSource getParameterSource(Table table) {
+        return new BeanPropertySqlParameterSource(table) {
+            @Override
+            public int getSqlType(String paramName) {
+                if ("tableType".equals(paramName)) {
+                    return Types.VARCHAR;
+                }
+                return super.getSqlType(paramName);
+            }
+        };
     }
 }

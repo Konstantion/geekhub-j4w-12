@@ -31,16 +31,16 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
         UserDetails userDetails = getUserByPassword(password);
         if (userDetails != null && userDetails.isEnabled()) {
-            return new TableAuthenticationToken(
+            return new UserAuthenticationToken(
                     userDetails,
                     userDetails.getPassword(),
                     userDetails.getAuthorities()
             );
         } else {
             if (userDetails == null) {
-                throw new UsernameNotFoundException("User not found");
+                throw new UsernameNotFoundException("User with given password not found");
             } else if (!userDetails.isEnabled()) {
-                throw new DisabledException("User is disabled");
+                throw new DisabledException("User with given password is disabled");
             } else {
                 throw new BadCredentialsException("Bad credentials");
             }

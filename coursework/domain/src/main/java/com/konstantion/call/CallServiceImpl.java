@@ -16,6 +16,7 @@ import java.util.UUID;
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.CLOSE_CALL;
+import static com.konstantion.user.Permission.SUPER_USER;
 import static com.konstantion.user.Role.ADMIN;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
@@ -66,7 +67,8 @@ public record CallServiceImpl(
 
     @Override
     public Call closeCall(UUID callId, User user) {
-        if (user.hasNoPermission(CLOSE_CALL)) {
+        if (user.hasNoPermission(CLOSE_CALL)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
         Call call = getByIdOrThrow(callId);

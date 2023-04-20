@@ -5,6 +5,7 @@ import com.konstantion.dto.user.dto.CreateUserRequestDto;
 import com.konstantion.dto.user.dto.UpdateUserRequestDto;
 import com.konstantion.dto.user.dto.UserDto;
 import com.konstantion.response.ResponseDto;
+import com.konstantion.user.Permission;
 import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import com.konstantion.user.UserService;
@@ -177,6 +178,74 @@ public record AdminUserController(
                 .status(OK)
                 .statusCode(OK.value())
                 .message(format("User with id %s successfully deactivated", id))
+                .timeStamp(now())
+                .data(Map.of(TABLE, dto))
+                .build();
+    }
+
+    @PutMapping("/{id}/roles")
+    public ResponseDto addRoleByUserId(
+            @PathVariable("id") UUID id,
+            @RequestParam("role") Role role,
+            @AuthenticationPrincipal User user
+    ) {
+        UserDto dto = userMapper.toDto(userService.addRole(id, role, user));
+
+        return ResponseDto.builder()
+                .status(OK)
+                .statusCode(OK.value())
+                .message(format("Role %s successfully added to User with id %s", role, id))
+                .timeStamp(now())
+                .data(Map.of(TABLE, dto))
+                .build();
+    }
+
+    @PutMapping("/{id}/permissions")
+    public ResponseDto addPermissionByUserId(
+            @PathVariable("id") UUID id,
+            @RequestParam("permission") Permission permission,
+            @AuthenticationPrincipal User user
+    ) {
+        UserDto dto = userMapper.toDto(userService.addPermission(id, permission, user));
+
+        return ResponseDto.builder()
+                .status(OK)
+                .statusCode(OK.value())
+                .message(format("Permission %s successfully added to User with id %s", permission, id))
+                .timeStamp(now())
+                .data(Map.of(TABLE, dto))
+                .build();
+    }
+
+    @DeleteMapping("/{id}/permissions")
+    public ResponseDto removePermissionByUserId(
+            @PathVariable("id") UUID id,
+            @RequestParam("permission") Permission permission,
+            @AuthenticationPrincipal User user
+    ) {
+        UserDto dto = userMapper.toDto(userService.removePermission(id, permission, user));
+
+        return ResponseDto.builder()
+                .status(OK)
+                .statusCode(OK.value())
+                .message(format("Permission %s successfully removed from User with id %s", permission, id))
+                .timeStamp(now())
+                .data(Map.of(TABLE, dto))
+                .build();
+    }
+
+    @DeleteMapping("/{id}/roles")
+    public ResponseDto removeRoleByUserId(
+            @PathVariable("id") UUID id,
+            @RequestParam("role") Role role,
+            @AuthenticationPrincipal User user
+    ) {
+        UserDto dto = userMapper.toDto(userService.removeRole(id, role, user));
+
+        return ResponseDto.builder()
+                .status(OK)
+                .statusCode(OK.value())
+                .message(format("Permission %s successfully removed from User with id %s", role, id))
                 .timeStamp(now())
                 .data(Map.of(TABLE, dto))
                 .build();

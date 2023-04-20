@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
-import static com.konstantion.user.Permission.CREATE_GUEST;
-import static com.konstantion.user.Permission.DELETE_GUEST;
+import static com.konstantion.user.Permission.*;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNullElse;
@@ -44,7 +43,8 @@ public record GuestServiceImpl(
 
     @Override
     public Guest create(CreateGuestRequest request, User user) {
-        if (user.hasNoPermission(CREATE_GUEST)) {
+        if (user.hasNoPermission(CREATE_GUEST)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -69,7 +69,8 @@ public record GuestServiceImpl(
 
     @Override
     public Guest update(UUID id, UpdateGuestRequest request, User user) {
-        if (user.hasNoPermission(CREATE_GUEST)) {
+        if (user.hasNoPermission(CREATE_GUEST)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -129,7 +130,8 @@ public record GuestServiceImpl(
 
     @Override
     public Guest delete(UUID id, User user) {
-        if (user.hasNoPermission(DELETE_GUEST)) {
+        if (user.hasNoPermission(DELETE_GUEST)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 

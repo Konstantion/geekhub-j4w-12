@@ -1,6 +1,7 @@
 package com.konstantion.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 
 public class ExceptionsStatusesExtractor {
     private ExceptionsStatusesExtractor() {
@@ -13,9 +14,9 @@ public class ExceptionsStatusesExtractor {
             return HttpStatus.BAD_REQUEST;
         }  else if (e instanceof ForbiddenException) {
             return HttpStatus.FORBIDDEN;
-        } /*else if (e instanceof RegistrationException) {
-            return HttpStatus.CONFLICT;
-        }*/ else {
+        } else if (e instanceof AuthenticationException) {
+            return HttpStatus.UNAUTHORIZED;
+        } else {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }

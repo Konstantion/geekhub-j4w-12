@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,11 +18,15 @@ import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record CategoryDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Category> categoryRowMapper
-) implements CategoryPort {
+@Repository
+public class CategoryDatabaseAdapter implements CategoryPort {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<Category> categoryRowMapper;
+
+    public CategoryDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Category> categoryRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.categoryRowMapper = categoryRowMapper;
+    }
 
     public static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.category

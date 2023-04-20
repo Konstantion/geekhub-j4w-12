@@ -59,7 +59,8 @@ public record BillServiceImpl(
 
     @Override
     public Bill create(CreateBillRequest createBillRequest, User user) {
-        if (user.hasNoPermission(CREATE_BILL_FROM_ORDER)) {
+        if (user.hasNoPermission(CREATE_BILL_FROM_ORDER)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -96,7 +97,8 @@ public record BillServiceImpl(
 
     @Override
     public Bill cancel(UUID billId, User user) {
-        if (user.hasNoPermission(CANCEL_BILL)) {
+        if (user.hasNoPermission(CANCEL_BILL)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -119,7 +121,8 @@ public record BillServiceImpl(
 
     @Override
     public Bill close(UUID billId, User user) {
-        if (user.hasNoPermission(CLOSE_BILL)) {
+        if (user.hasNoPermission(CLOSE_BILL)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -137,7 +140,8 @@ public record BillServiceImpl(
 
     @Override
     public Bill activate(UUID billId, User user) {
-        if (user.hasNoPermission(ACTIVATE_BILL)) {
+        if (user.hasNoPermission(ACTIVATE_BILL)
+            && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 

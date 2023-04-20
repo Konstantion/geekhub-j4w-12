@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,11 +18,16 @@ import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record HallDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Hall> hallRowMapper
-) implements HallPort {
+@Repository
+public class HallDatabaseAdapter implements HallPort {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<Hall> hallRowMapper;
+
+    public HallDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Hall> hallRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.hallRowMapper = hallRowMapper;
+    }
+
     public static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.hall
             WHERE id = :id;

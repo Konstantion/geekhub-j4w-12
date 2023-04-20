@@ -1,5 +1,6 @@
 package com.konstantion.user.validator;
 
+import com.konstantion.user.model.CreateUserRequest;
 import com.konstantion.utils.validator.ValidationUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -186,4 +187,13 @@ public record UserValidations(
     }
 
 
+    public Optional<FieldError> isAdminEmailValid(String email, Object sender) {
+        Set<String> violations = new HashSet<>();
+        if (isBlank(email)) {
+            violations.add("email shouldn't be empty");
+            return setToOptional(violations, sender, EMAIL_FIELD);
+        }
+
+        return setToOptional(violations, sender, EMAIL_FIELD);
+    }
 }

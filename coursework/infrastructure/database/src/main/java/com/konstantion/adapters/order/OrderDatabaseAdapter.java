@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,11 +18,16 @@ import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record OrderDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<Order> orderRowMapper
-) implements OrderPort {
+@Repository
+public class OrderDatabaseAdapter implements OrderPort {
+    final NamedParameterJdbcTemplate jdbcTemplate;
+    final RowMapper<Order> orderRowMapper;
+
+    public OrderDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Order> orderRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.orderRowMapper = orderRowMapper;
+    }
+
     private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.order
             WHERE id = :id;
