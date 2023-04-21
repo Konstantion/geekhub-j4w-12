@@ -249,7 +249,7 @@ public record UserServiceImpl(
 
     @Override
     public User deactivate(UUID userId, User authenticated) {
-        if (authenticated.hasNoPermission(DEACTIVATE_USER)) {
+        if (authenticated.hasNoPermission(CHANGE_USER_STATE)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -269,7 +269,7 @@ public record UserServiceImpl(
 
     @Override
     public User activate(UUID userId, User authenticated) {
-        if (authenticated.hasNoPermission(ACTIVATE_USER)) {
+        if (authenticated.hasNoPermission(CHANGE_USER_STATE)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 

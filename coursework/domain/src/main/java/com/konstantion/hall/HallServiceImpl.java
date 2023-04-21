@@ -79,7 +79,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall activate(UUID id, User user) {
-        if (user.hasNoPermission(ACTIVATE_HALL)
+        if (user.hasNoPermission(CHANGE_HALL_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
@@ -99,7 +99,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall deactivate(UUID id, User user) {
-        if (user.hasNoPermission(ACTIVATE_HALL)
+        if (user.hasNoPermission(CHANGE_HALL_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }

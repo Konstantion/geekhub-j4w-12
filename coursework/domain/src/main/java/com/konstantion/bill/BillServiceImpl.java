@@ -145,7 +145,7 @@ public record BillServiceImpl(
 
     @Override
     public Bill activate(UUID billId, User user) {
-        if (user.hasNoPermission(ACTIVATE_BILL)
+        if (user.hasNoPermission(CHANGE_BILL_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }

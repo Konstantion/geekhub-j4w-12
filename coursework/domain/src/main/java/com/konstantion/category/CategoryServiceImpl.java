@@ -22,7 +22,9 @@ public record CategoryServiceImpl(
 
     @Override
     public List<Category> getAll() {
-        return categoryPort.findAll();
+        List<Category> categories = categoryPort.findAll();
+        logger.info("All categories successfully returned");
+        return categories;
     }
 
     @Override
@@ -35,7 +37,7 @@ public record CategoryServiceImpl(
                 .build();
 
         categoryPort.save(category);
-
+        logger.info("Category successfully created and returned");
         return category;
     }
 
@@ -44,7 +46,7 @@ public record CategoryServiceImpl(
         Category category = getByIdOrThrow(id);
 
         categoryPort.delete(category);
-
+        logger.info("Category with id {} successfully created and returned", id);
         return category;
     }
 
@@ -58,6 +60,7 @@ public record CategoryServiceImpl(
 
         categoryPort.save(category);
 
+        logger.info("Category with id {} successfully updated and returned", id);
         return category;
     }
 
@@ -67,7 +70,9 @@ public record CategoryServiceImpl(
 
     @Override
     public Category getById(UUID id) {
-        return getByIdOrThrow(id);
+        Category category = getByIdOrThrow(id);
+        logger.info("Category with id {} successfully returned", id);
+        return category;
     }
 
     private Category getByIdOrThrow(UUID id) {

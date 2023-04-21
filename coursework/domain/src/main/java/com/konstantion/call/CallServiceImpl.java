@@ -75,10 +75,11 @@ public record CallServiceImpl(
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
+
         Call call = getByIdOrThrow(callId);
 
         if (!call.getWaitersId().contains(user.getId())
-            && !user.hasNoPermission(ADMIN)) {
+            && user.hasNoPermission(ADMIN)) {
             throw new BadRequestException(format("Call with id %s doesn't related with user with id %s", callId, user.getId()));
         }
 

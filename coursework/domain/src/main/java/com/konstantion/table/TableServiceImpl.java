@@ -1,8 +1,8 @@
 package com.konstantion.table;
 
+import com.konstantion.exception.ActiveStateException;
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
-import com.konstantion.exception.ValidationException;
 import com.konstantion.exception.utils.ExceptionUtils;
 import com.konstantion.hall.Hall;
 import com.konstantion.hall.HallPort;
@@ -28,7 +28,6 @@ import java.util.*;
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
-import static com.konstantion.user.Role.ADMIN;
 import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
 import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
@@ -53,6 +52,7 @@ public record TableServiceImpl(
         if (onlyActive) {
             return tables.stream().filter(Table::isActive).toList();
         }
+        logger.info("Tables successfully returned");
         return tables;
     }
 
@@ -82,17 +82,15 @@ public record TableServiceImpl(
 
     @Override
     public Table removeWaiter(UUID tableId, TableWaitersRequest request, User user) {
-        if (user.hasNoPermission(ASSIGN_WAITER_TO_TABLE)
+        if (user.hasNoPermission(REMOVE_WAITER_FROM_TABLE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
         Table table = getByIdOrThrow(tableId);
-        ExceptionUtils.isActiveOrThrow(table);
 
         User waiter = userPort.findById(request.waiterId())
                 .orElseThrow(nonExistingIdSupplier(User.class, request.waiterId()));
-        ExceptionUtils.isActiveOrThrow(waiter);
 
         if (table.getWaitersId().remove(waiter.getId())) {
             tablePort.save(table);
@@ -106,6 +104,10 @@ public record TableServiceImpl(
 
     @Override
     public Table update(UUID tableId, UpdateTableRequest request, User user) {
+        if (user.hasNoPermission(UPDATE_TABLE)
+            && user.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
         Table table = getByIdOrThrow(tableId);
 
         tableValidator.validate(request).validOrTrow();
@@ -126,13 +128,14 @@ public record TableServiceImpl(
 
         tablePort.save(table);
 
+        logger.info("Table with id {} successfully updated and returned", tableId);
         return table;
     }
 
 
     @Override
     public Table activate(UUID tableId, User user) {
-        if (user.hasNoPermission(ADMIN)
+        if (user.hasNoPermission(CHANGE_TABLE_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to activate table");
         }
@@ -140,18 +143,20 @@ public record TableServiceImpl(
         Table table = getByIdOrThrow(tableId);
 
         if (table.isActive()) {
+            logger.warn("Table with id {} is active and returned", tableId);
             return table;
         }
 
         prepareToActivate(table);
         tablePort.save(table);
 
+        logger.info("Table with id {} successfully activated and returned", tableId);
         return table;
     }
 
     @Override
     public Table deactivate(UUID tableId, User user) {
-        if (user.hasNoPermission(ADMIN)
+        if (user.hasNoPermission(CHANGE_TABLE_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to deactivate table");
         }
@@ -161,12 +166,14 @@ public record TableServiceImpl(
         canBeDeactivatedOrThrow(table);
 
         if (!table.isActive()) {
+            logger.warn("Table with id {} is inactive and returned", tableId);
             return table;
         }
 
         prepareToDeactivate(table);
         tablePort.save(table);
 
+        logger.info("Table with id {} successfully deactivated and returned", tableId);
         return table;
     }
 
@@ -179,10 +186,7 @@ public record TableServiceImpl(
 
         ValidationResult validationResult =
                 tableValidator.validate(request);
-
-        if (validationResult.errorsPresent()) {
-            throw new ValidationException("Validation error, table is invalid", validationResult.errorsMap());
-        }
+        validationResult.validOrTrow();
 
         Hall hall = hallPort.findById(request.hallUuid())
                 .orElseThrow(nonExistingIdSupplier(Hall.class, request.hallUuid()));
@@ -202,8 +206,7 @@ public record TableServiceImpl(
 
         tablePort.save(table);
 
-        logger.info("Table {} successfully created", table);
-
+        logger.info("Table successfully created and returned");
         return table;
     }
 
@@ -218,6 +221,7 @@ public record TableServiceImpl(
 
         tablePort.delete(table);
 
+        logger.info("Table with id {} successfully deleted and returned", tableId);
         return table;
     }
 
@@ -237,7 +241,7 @@ public record TableServiceImpl(
         Order order = orderPort.findById(table.getOrderId())
                 .orElseThrow(nonExistingIdSupplier(Order.class, table.getOrderId()));
 
-        logger.info("Returned order with id {} for table with id {}", order.getId(), tableId);
+        logger.info("Order with id {} for table with id {} successfully returned", order.getId(), tableId);
 
         return order;
     }
@@ -246,11 +250,13 @@ public record TableServiceImpl(
     public List<User> getWaitersByTableId(UUID tableId) {
         Table table = getByIdOrThrow(tableId);
 
-        return table.getWaitersId().stream()
+        List<User> waiters = table.getWaitersId().stream()
                 .map(userId ->
                         userPort.findById(userId)
                                 .orElseThrow(nonExistingIdSupplier(User.class, userId)))
                 .toList();
+        logger.info("Waiters for table with id {} successfully returned", tableId);
+        return waiters;
     }
 
     @Override
@@ -264,15 +270,17 @@ public record TableServiceImpl(
         table.getWaitersId().clear();
 
         tablePort.save(table);
-
+        logger.info("All waiters successfully removed from the table with id {}", tableId);
         return table;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return tablePort.findByName(username).orElseThrow(() -> {
+        Table table = tablePort.findByName(username).orElseThrow(() -> {
             throw new UsernameNotFoundException(format("User with username %s doesn't exist", username));
         });
+        logger.info("Table with username {} successfully returned", username);
+        return table;
     }
 
     private Table getByIdOrThrow(UUID tableId) {
@@ -282,7 +290,7 @@ public record TableServiceImpl(
 
     private boolean canBeDeactivatedOrThrow(Table table) {
         if (table.hasOrder()) {
-            throw new BadRequestException(format("Table with id %s has active order", table.getId()));
+            throw new ActiveStateException(format("Table with id %s has active order", table.getId()));
         }
         return true;
     }
@@ -312,7 +320,6 @@ public record TableServiceImpl(
         if (Arrays.stream(TableType.values()).map(TableType::name).anyMatch(type -> type.equals(tableType))) {
             return TableType.valueOf(tableType);
         }
-
         return orDefault;
     }
 

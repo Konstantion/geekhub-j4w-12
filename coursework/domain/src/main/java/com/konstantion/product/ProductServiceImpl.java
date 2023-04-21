@@ -146,14 +146,14 @@ public record ProductServiceImpl(
 
     @Override
     public Product deactivate(UUID productId, User user) {
-        if (user.hasNoPermission(ACTIVATE_PRODUCT)
+        if (user.hasNoPermission(CHANGE_PRODUCT_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to deactivate product");
         }
 
         Product product = getByIdOrThrow(productId);
 
-        if (!product.getActive()) {
+        if (!product.isActive()) {
             logger.info("Product {} is already disabled", product);
             return product;
         }
@@ -168,14 +168,14 @@ public record ProductServiceImpl(
 
     @Override
     public Product activate(UUID productId, User user) {
-        if (user.hasNoPermission(ACTIVATE_PRODUCT)
+        if (user.hasNoPermission(CHANGE_PRODUCT_STATE)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException("Not enough authorities to activate product");
         }
 
         Product product = getByIdOrThrow(productId);
 
-        if (product.getActive()) {
+        if (product.isActive()) {
             logger.info("Product {} is already activated", product);
             return product;
         }
