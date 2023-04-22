@@ -18,7 +18,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAll(boolean onlyActive, Role role);
 
-    User getUserById(UUID uuid);
+    User getUserById(UUID id);
 
     User createWaiter(CreateUserRequest createUserRequest, User user);
 

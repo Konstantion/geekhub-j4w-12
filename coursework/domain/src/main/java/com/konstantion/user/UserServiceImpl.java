@@ -46,14 +46,17 @@ public record UserServiceImpl(
             users = users.stream().filter(User::getActive).toList();
         }
         if (nonNull(role)) {
-            return users.stream().filter(user -> user.getRoles().contains(role)).toList();
+            users = users.stream().filter(user -> user.getRoles().contains(role)).toList();
         }
+        logger.info("All users with role {} successfully returned", role);
         return users;
     }
 
     @Override
-    public User getUserById(UUID uuid) {
-        return getByIdOrThrow(uuid);
+    public User getUserById(UUID id) {
+        User user = getByIdOrThrow(id);
+        logger.info("User with id {} successfully returned", user);
+        return user;
     }
 
     @Override
@@ -80,8 +83,7 @@ public record UserServiceImpl(
 
         userPort.save(waiter);
 
-        logger.info("User {} successfully created", waiter);
-
+        logger.info("Waiter successfully created");
         return waiter;
     }
 
@@ -108,7 +110,7 @@ public record UserServiceImpl(
 
         userPort.save(admin);
 
-        logger.info("User {} successfully created", admin);
+        logger.info("Admin successfully created");
 
         return admin;
     }
@@ -144,12 +146,12 @@ public record UserServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        User user = getByIdOrThrow(userId);
-        ExceptionUtils.isActiveOrThrow(user);
-
         if (permission.equals(SUPER_USER)) {
             throw new BadRequestException("Permission SUPER_USER can't be either removed or added");
         }
+
+        User user = getByIdOrThrow(userId);
+        ExceptionUtils.isActiveOrThrow(user);
 
         if (!user.getPermissions().remove(permission)) {
             logger.warn("User with id {} doesn't have permission {}", userId, permission);
@@ -222,7 +224,7 @@ public record UserServiceImpl(
             throw new BadRequestException(format("User with email %s already exist", request.email()));
         }
 
-        if (passwordEncoder.matches(user.getPassword(), request.password())
+        if (!passwordEncoder.matches(user.getPassword(), request.password())
             && anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
             throw new BadRequestException(format("User with password %s already exist", request.password()));
         }
@@ -255,7 +257,7 @@ public record UserServiceImpl(
 
         User user = getUserById(userId);
 
-        if (!user.getActive()) {
+        if (!user.isEnabled()) {
             logger.warn("User with id {} already deactivated", userId);
             return user;
         }
@@ -275,7 +277,7 @@ public record UserServiceImpl(
 
         User user = getUserById(userId);
 
-        if (user.getActive()) {
+        if (user.isEnabled()) {
             logger.warn("User with id {} already activated", userId);
             return user;
         }
