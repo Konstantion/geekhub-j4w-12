@@ -1,4 +1,4 @@
-package com.konstantion.testcontainers;
+package com.konstantion.testcontainers.configuration;
 
 import com.konstantion.bill.Bill;
 import com.konstantion.call.Call;

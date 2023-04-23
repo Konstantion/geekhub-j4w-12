@@ -20,8 +20,14 @@ import static java.util.Objects.nonNull;
 
 @Repository
 public class GuestDatabaseAdapter implements GuestPort {
-    private NamedParameterJdbcTemplate jdbcTemplate;
-    private RowMapper<Guest> guestRowMapper;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<Guest> guestRowMapper;
+
+    public GuestDatabaseAdapter(NamedParameterJdbcTemplate jdbcTemplate, RowMapper<Guest> guestRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.guestRowMapper = guestRowMapper;
+    }
+
     public static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.guest
             WHERE id = :id;

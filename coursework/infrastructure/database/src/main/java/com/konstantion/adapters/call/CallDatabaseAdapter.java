@@ -122,7 +122,8 @@ public class CallDatabaseAdapter implements CallPort {
         UUID generatedId = (UUID) Objects.requireNonNull(keyHolder.getKeys()).get("id");
         call.setId(generatedId);
 
-        updateWaitersId(call);
+        saveWaiters(call);
+
         return call;
     }
 
@@ -142,11 +143,17 @@ public class CallDatabaseAdapter implements CallPort {
                 .addValue("tableId", tableId)
                 .addValue("purpose", purpose.name());
 
-        return jdbcTemplate.query(
+        Call call = jdbcTemplate.query(
                 FIND_BY_TABLE_ID_AND_PURPOSE_QUERY,
                 parameterSource,
                 callRowMapper
-        ).stream().findFirst();
+        ).stream().findFirst().orElse(null);
+
+        if (nonNull(call)) {
+            call.setWaitersId(fetchWaitersId(call.getId()));
+        }
+
+        return Optional.ofNullable(call);
     }
 
     private Call update(Call call) {
@@ -173,13 +180,20 @@ public class CallDatabaseAdapter implements CallPort {
     }
 
     private void updateWaitersId(Call call) {
+        deleteWaitersByCallId(call.getId());
+        saveWaiters(call);
+    }
+
+    private void deleteWaitersByCallId(UUID callId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("callId", call.getId());
+                .addValue("callId", callId);
         jdbcTemplate.update(
                 DELETE_WAITER_ID_BY_CALL_ID,
                 parameterSource
         );
+    }
 
+    private void saveWaiters(Call call) {
         call.getWaitersId().forEach(id -> saveWaiterId(call.getId(), id));
     }
 

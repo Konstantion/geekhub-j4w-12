@@ -1,4 +1,4 @@
-package com.konstantion.testcontainers;
+package com.konstantion.testcontainers.configuration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

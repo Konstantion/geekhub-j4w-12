@@ -2,10 +2,12 @@ package com.konstantion.testcontainers.bill;
 
 import com.konstantion.TestApplication;
 import com.konstantion.adapters.bill.BillDatabaseAdapter;
+import com.konstantion.adapters.order.OrderDatabaseAdapter;
 import com.konstantion.bill.Bill;
 import com.konstantion.config.RowMappersConfiguration;
-import com.konstantion.testcontainers.DatabaseContainer;
-import com.konstantion.testcontainers.DatabaseTestConfiguration;
+import com.konstantion.order.Order;
+import com.konstantion.testcontainers.configuration.DatabaseContainer;
+import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.konstantion.testcontainers.MigrationConstants.ORDER_IDS;
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
@@ -41,11 +43,31 @@ class BillDatabaseAdapterTest {
     @Autowired
     RowMapper<Bill> billRowMapper;
 
-    private BillDatabaseAdapter billAdapter;
+    @Autowired
+    RowMapper<Order> orderRowMapper;
+
+    BillDatabaseAdapter billAdapter;
+    OrderDatabaseAdapter orderDatabaseAdapter;
+    UUID[] ORDER_IDS;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         billAdapter = new BillDatabaseAdapter(jdbcTemplate, billRowMapper);
+
+        //Initialize related entities for tests
+        orderDatabaseAdapter = new OrderDatabaseAdapter(jdbcTemplate, orderRowMapper);
+        Order first = Order.builder()
+                .createdAt(now())
+                .active(true)
+                .build();
+        Order second = Order.builder()
+                .createdAt(now())
+                .active(true)
+                .build();
+        orderDatabaseAdapter.save(first);
+        orderDatabaseAdapter.save(second);
+
+        ORDER_IDS = new UUID[]{first.getId(), second.getId()};
     }
 
     @Test

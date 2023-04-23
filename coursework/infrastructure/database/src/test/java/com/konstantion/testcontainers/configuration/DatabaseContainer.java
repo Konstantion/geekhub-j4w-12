@@ -1,4 +1,4 @@
-package com.konstantion.testcontainers;
+package com.konstantion.testcontainers.configuration;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;

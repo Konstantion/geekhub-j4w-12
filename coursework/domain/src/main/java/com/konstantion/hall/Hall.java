@@ -1,5 +1,6 @@
 package com.konstantion.hall;
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +24,17 @@ public class Hall {
 
     public boolean isActive() {
         return active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Hall hall)) return false;
+        return Objects.equal(id, hall.id) && Objects.equal(name, hall.name) && Objects.equal(createdAt, hall.createdAt) && Objects.equal(active, hall.active);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, name, createdAt, active);
     }
 }

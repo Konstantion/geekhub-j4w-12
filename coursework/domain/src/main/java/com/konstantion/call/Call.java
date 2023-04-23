@@ -1,6 +1,7 @@
 package com.konstantion.call;
 
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,5 +26,17 @@ public class Call {
 
     public Call() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Call call)) return false;
+        return Objects.equal(id, call.id) && Objects.equal(tableId, call.tableId) && Objects.equal(waitersId, call.waitersId) && purpose == call.purpose && Objects.equal(openedAt, call.openedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, tableId, waitersId, purpose, openedAt);
     }
 }

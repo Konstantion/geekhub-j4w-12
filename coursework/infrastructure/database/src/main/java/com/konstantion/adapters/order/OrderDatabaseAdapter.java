@@ -91,7 +91,7 @@ public class OrderDatabaseAdapter implements OrderPort {
         UUID generatedId = (UUID) Objects.requireNonNull(keyHolder.getKeys()).get("id");
         order.setId(generatedId);
 
-        updateOrderProducts(order);
+        saveOrderProducts(order.getId(), order.getProductsId());
 
         return order;
     }

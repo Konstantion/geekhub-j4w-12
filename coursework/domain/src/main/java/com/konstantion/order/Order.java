@@ -1,5 +1,6 @@
 package com.konstantion.order;
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,5 +43,17 @@ public class Order {
 
     public void removeBill() {
         this.billId = null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order order)) return false;
+        return Objects.equal(id, order.id) && Objects.equal(productsId, order.productsId) && Objects.equal(tableId, order.tableId) && Objects.equal(userId, order.userId) && Objects.equal(billId, order.billId) && Objects.equal(createdAt, order.createdAt) && Objects.equal(closedAt, order.closedAt) && Objects.equal(active, order.active);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, productsId, tableId, userId, billId, createdAt, closedAt, active);
     }
 }
