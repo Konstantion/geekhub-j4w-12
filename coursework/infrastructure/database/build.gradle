@@ -1,7 +1,12 @@
 dependencies {
     implementation project(":coursework:domain")
 
-    implementation libsSpring.springBoot
+    implementation libsSpring.springBootStarterDataJpa
+    implementation libsSpring.springBootStarterDataJdbc
+
+    implementation libsTest.testContainersPostgreSql
+    implementation libsTest.testContainersJunit
+
     implementation libsDatabase.postgresDriver
     implementation libsDatabase.flywayCore
 }

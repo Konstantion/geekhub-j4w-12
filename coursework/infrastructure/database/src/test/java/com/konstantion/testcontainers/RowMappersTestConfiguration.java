@@ -1,4 +1,4 @@
-package com.konstantion.config;
+package com.konstantion.testcontainers;
 
 import com.konstantion.bill.Bill;
 import com.konstantion.call.Call;
@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 @Configuration
-public class RowMappersConfig {
+public class RowMappersTestConfiguration {
     @Bean
     public RowMapper<Bill> billRowMapper() {
         return new BeanPropertyRowMapper<>(Bill.class);

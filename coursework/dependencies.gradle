@@ -6,6 +6,7 @@ def mockitoJunitJupiterVersion = '4.8.0'
 def mockitoInline = '3.11.2'
 def mockitoCore = '4.8.0'
 def assertjCoreVersion = '3.23.1'
+def testContainerVersion = '1.17.6'
 
 def guavaVersion = '31.1-jre'
 def commonsLang3Version = '3.12.0'
@@ -29,6 +30,7 @@ ext.libsDatabase = [
 ext.libsSpring = [
         'springBoot'                      : "org.springframework.boot:spring-boot:$springBootVersion",
         'springBootStarterDataJpa'        : "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion",
+        'springBootStarterDataJdbc'        : "org.springframework.boot:spring-boot-starter-data-jdbc:$springBootVersion",
         'springBootStarterValidation'     : "org.springframework.boot:spring-boot-starter-validation:$springBootVersion",
         'springBootStarterWeb'            : "org.springframework.boot:spring-boot-starter-web:$springBootVersion",
         'springBootStarterSecurity'       : "org.springframework.boot:spring-boot-starter-security:$springBootVersion",
@@ -57,15 +59,17 @@ ext.libsSpringDoc = [
 ]
 
 ext.libsTest = [
-        'assertjCore'          : "org.assertj:assertj-core:$assertjCoreVersion",
-        'jupiterApi'           : "org.junit.jupiter:junit-jupiter-api:$jupiterApiVersion",
-        'jupiterParams'        : "org.junit.jupiter:junit-jupiter-params:$jupiterApiVersion",
-        'junitJupiterEngine'   : "org.junit.jupiter:junit-jupiter-engine:$jupiterApiVersion",
-        'mockitoInline'        : "org.mockito:mockito-inline:$mockitoInline",
-        'mockitoCore'          : "org.mockito:mockito-core:$mockitoCore",
-        'mockitoJunitJupiter'  : "org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion",
-        'springBootStarterTest': "org.springframework.boot:spring-boot-starter-test:$springBootVersion",
-        'springSecurityTest'   : "org.springframework.security:spring-security-test:$springBootVersion"
+        'assertjCore'             : "org.assertj:assertj-core:$assertjCoreVersion",
+        'jupiterApi'              : "org.junit.jupiter:junit-jupiter-api:$jupiterApiVersion",
+        'jupiterParams'           : "org.junit.jupiter:junit-jupiter-params:$jupiterApiVersion",
+        'junitJupiterEngine'      : "org.junit.jupiter:junit-jupiter-engine:$jupiterApiVersion",
+        'mockitoInline'           : "org.mockito:mockito-inline:$mockitoInline",
+        'mockitoCore'             : "org.mockito:mockito-core:$mockitoCore",
+        'mockitoJunitJupiter'     : "org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion",
+        'springBootStarterTest'   : "org.springframework.boot:spring-boot-starter-test:$springBootVersion",
+        'springSecurityTest'      : "org.springframework.security:spring-security-test:$springBootVersion",
+        'testContainersPostgreSql': "org.testcontainers:postgresql:$testContainerVersion",
+        'testContainersJunit'     : "org.testcontainers:junit-jupiter:$testContainerVersion"
 ]
 
 ext.libsJwt = [
