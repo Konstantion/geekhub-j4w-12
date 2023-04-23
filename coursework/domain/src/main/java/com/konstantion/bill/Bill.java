@@ -1,5 +1,6 @@
 package com.konstantion.bill;
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +29,17 @@ public class Bill {
     }
     public Bill() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Bill bill)) return false;
+        return Objects.equal(id, bill.id) && Objects.equal(waiterId, bill.waiterId) && Objects.equal(orderId, bill.orderId) && Objects.equal(guestId, bill.guestId) && Objects.equal(createdAt, bill.createdAt) && Objects.equal(closedAt, bill.closedAt) && Objects.equal(active, bill.active) && Objects.equal(price, bill.price) && Objects.equal(priceWithDiscount, bill.priceWithDiscount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, waiterId, orderId, guestId, createdAt, closedAt, active, price, priceWithDiscount);
     }
 }
