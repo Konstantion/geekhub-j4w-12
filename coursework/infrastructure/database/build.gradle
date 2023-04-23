@@ -1,6 +1,7 @@
 dependencies {
     implementation project(":coursework:domain")
 
+    implementation libsSpring.springBoot
     implementation libsDatabase.postgresDriver
     implementation libsDatabase.flywayCore
 }

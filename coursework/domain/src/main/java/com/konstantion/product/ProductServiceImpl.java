@@ -41,7 +41,7 @@ public record ProductServiceImpl(
     public Product create(CreateProductRequest createProductRequest, User user) {
         if (user.hasNoPermission(CREATE_PRODUCT)
             && user.hasNoPermission(SUPER_USER)) {
-            throw new ForbiddenException("Not enough authorities to create product");
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
         ValidationResult validationResult = productValidator
@@ -64,8 +64,7 @@ public record ProductServiceImpl(
 
         productPort.save(product);
 
-        logger.info("Product {} successfully created", product);
-
+        logger.info("Product successfully created and returned");
         return product;
     }
 
@@ -87,7 +86,7 @@ public record ProductServiceImpl(
         int pageSize = Math.max(request.pageSize(), 1);
         boolean ascending = request.ascending();
 
-        return productPort.findAll(
+        Page<Product> products = productPort.findAll(
                 pageNumber,
                 pageSize,
                 orderBy,
@@ -96,21 +95,22 @@ public record ProductServiceImpl(
                 ascending,
                 onlyActive
         );
+        logger.info("All products successfully returned");
+        return products;
     }
 
     @Override
     public Product delete(UUID productId, User user) {
         if (user.hasNoPermission(DELETE_PRODUCT)
             && user.hasNoPermission(SUPER_USER)) {
-            throw new ForbiddenException("Not enough authorities to delete product");
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
         Product product = getByIdOrThrow(productId);
 
         productPort.delete(product);
 
-        logger.info("Product {} successfully deleted", product);
-
+        logger.info("Product with id {} successfully deleted and returned", productId);
         return product;
     }
 
@@ -141,6 +141,7 @@ public record ProductServiceImpl(
 
         productPort.save(product);
 
+        logger.info("Product with id {} successfully updated and returned", productId);
         return product;
     }
 
@@ -148,20 +149,20 @@ public record ProductServiceImpl(
     public Product deactivate(UUID productId, User user) {
         if (user.hasNoPermission(CHANGE_PRODUCT_STATE)
             && user.hasNoPermission(SUPER_USER)) {
-            throw new ForbiddenException("Not enough authorities to deactivate product");
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
         Product product = getByIdOrThrow(productId);
 
         if (!product.isActive()) {
-            logger.info("Product {} is already disabled", product);
+            logger.info("Product with id {} is already inactive", productId);
             return product;
         }
 
         prepareToDeactivate(product);
         productPort.save(product);
 
-        logger.info("Product {} successfully deactivated", product);
+        logger.info("Product with id {} successfully deactivated and returned", product);
 
         return product;
     }
@@ -170,27 +171,28 @@ public record ProductServiceImpl(
     public Product activate(UUID productId, User user) {
         if (user.hasNoPermission(CHANGE_PRODUCT_STATE)
             && user.hasNoPermission(SUPER_USER)) {
-            throw new ForbiddenException("Not enough authorities to activate product");
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
         Product product = getByIdOrThrow(productId);
 
         if (product.isActive()) {
-            logger.info("Product {} is already activated", product);
+            logger.warn("Product with id {} is already active", productId);
             return product;
         }
 
         prepareToActivate(product);
         productPort.save(product);
 
-        logger.info("Product {} successfully activated", product);
-
+        logger.info("Product with id {} successfully activated and returned", productId);
         return product;
     }
 
     @Override
     public Product getById(UUID productId) {
-        return getByIdOrThrow(productId);
+        Product product = getByIdOrThrow(productId);
+        logger.info("Product with id {} successfully returned", productId);
+        return product;
     }
 
     private void updateProduct(Product product, UpdateProductRequest request, byte[] imageBytes) {
@@ -218,9 +220,6 @@ public record ProductServiceImpl(
     }
 
     private boolean isOrderByValid(String orderBy) {
-        if (orderBy.isBlank()) {
-            orderBy = "name";
-        }
 
         List<String> validOrderBy = List.of("name", "price", "weight");
         return validOrderBy.contains(orderBy);

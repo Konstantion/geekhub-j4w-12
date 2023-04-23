@@ -258,7 +258,7 @@ public record UserServiceImpl(
         User user = getUserById(userId);
 
         if (!user.isEnabled()) {
-            logger.warn("User with id {} already deactivated", userId);
+            logger.warn("User with id {} is already inactive", userId);
             return user;
         }
 
@@ -278,7 +278,7 @@ public record UserServiceImpl(
         User user = getUserById(userId);
 
         if (user.isEnabled()) {
-            logger.warn("User with id {} already activated", userId);
+            logger.warn("User with id {} is already active", userId);
             return user;
         }
 

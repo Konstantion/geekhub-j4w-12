@@ -77,19 +77,17 @@ public record OrderController(
             @AuthenticationPrincipal User user
     ) {
 
-        OrderDto dto = orderMapper.toDto(
-                orderService.addProduct(
-                        id,
-                        orderMapper.toOrderProductsRequest(requestDto),
-                        user
-                )
-        );
+        int count = orderService.addProduct(
+                id,
+                orderMapper.toOrderProductsRequest(requestDto),
+                user);
+        OrderDto dto = orderMapper.toDto(orderService.getById(id));
 
         return ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .timeStamp(now())
-                .message(format("Products successfully added to the order with id %s", id))
+                .message(format("%s products with id %s successfully added to the order with id %s", count, requestDto.productId(), id))
                 .data(Map.of(ORDER, dto))
                 .build();
     }
@@ -101,19 +99,18 @@ public record OrderController(
             @AuthenticationPrincipal User user
     ) {
 
-        OrderDto dto = orderMapper.toDto(
-                orderService.removeProduct(
-                        id,
-                        orderMapper.toOrderProductsRequest(requestDto),
-                        user
-                )
-        );
+        int count = orderService.removeProduct(
+                id,
+                orderMapper.toOrderProductsRequest(requestDto),
+                user);
+        OrderDto dto = orderMapper.toDto(orderService.getById(id));
 
         return ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
                 .timeStamp(now())
-                .message(format("Products successfully removed from the order with id %s", id))
+                .message(format("%s products with id %s successfully removed from the order with id %s", count, requestDto.productId(), id))
+                .data(Map.of(ORDER, dto))
                 .data(Map.of(ORDER, dto))
                 .build();
     }

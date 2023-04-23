@@ -40,32 +40,15 @@ public record OrderServiceImpl(
         if (onlyActive) {
             return orders.stream().filter(Order::isActive).toList();
         }
+        logger.info("All orders successfully returned");
         return orders;
     }
 
     @Override
     public Order getById(UUID id) {
-        return getByIdOrThrow(id);
-    }
-
-    @Override
-    public Order getTableOrder(UUID tableId, User user) {
-        if (user.hasNoPermission(GET_ORDER)
-            && user.hasNoPermission(SUPER_USER)) {
-            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
-        }
-
-        Table table = tablePort.findById(tableId)
-                .orElseThrow(nonExistingIdSupplier(Table.class, tableId));
-
-        ExceptionUtils.isActiveOrThrow(table);
-
-        if (!table.hasOrder()) {
-            return null;
-        }
-
-        return orderPort.findById(table.getOrderId())
-                .orElseThrow(nonExistingIdSupplier(Order.class, table.getOrderId()));
+        Order order = getByIdOrThrow(id);
+        logger.info("Order with id {} successfully returned", id);
+        return order;
     }
 
     @Override
@@ -92,6 +75,7 @@ public record OrderServiceImpl(
         orderPort.save(order);
         tablePort.save(table);
 
+        logger.info("Order with id {} successfully transferred to the table with id {}", orderId, tableId);
         return order;
     }
 
@@ -137,14 +121,16 @@ public record OrderServiceImpl(
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
 
-        if (!order.hasBill()) {
-            throw new BadRequestException(format("Order with id %s doesn't have a bill", order.getId()));
-        }
+        if (!order.getProductsId().isEmpty()) {
+            if (!order.hasBill()) {
+                throw new BadRequestException(format("Order with id %s doesn't have a bill", order.getId()));
+            }
 
-        Bill bill = billPort.findById(order.getBillId())
-                .orElseThrow(nonExistingIdSupplier(Bill.class, order.getBillId()));
-        if (bill.isActive()) {
-            throw new BadRequestException(format("Order with id %s has a bill with id %s but it has not been payed", order.getId(), bill.getId()));
+            Bill bill = billPort.findById(order.getBillId())
+                    .orElseThrow(nonExistingIdSupplier(Bill.class, order.getBillId()));
+            if (bill.isActive()) {
+                throw new BadRequestException(format("Order with id %s has a bill with id %s that has not been payed", order.getId(), bill.getId()));
+            }
         }
 
         Table table = tablePort.findById(order.getTableId())
@@ -174,7 +160,7 @@ public record OrderServiceImpl(
     }
 
     @Override
-    public Order addProduct(UUID orderId, OrderProductsRequest request, User user) {
+    public int addProduct(UUID orderId, OrderProductsRequest request, User user) {
         if (user.hasNoPermission(ADD_PRODUCT_TO_ORDER)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
@@ -195,17 +181,18 @@ public record OrderServiceImpl(
             throw new BadRequestException(format("Quantity should be greater then 0, given %s", quantity));
         }
 
-        for (int i = 0; i < quantity; i++) {
+        int counter = 0;
+        for (; counter < quantity; counter++) {
             order.getProductsId().add(product.getId());
         }
 
         orderPort.save(order);
 
-        return order;
+        return counter;
     }
 
     @Override
-    public Order removeProduct(UUID orderId, OrderProductsRequest request, User user) {
+    public int removeProduct(UUID orderId, OrderProductsRequest request, User user) {
         if (user.hasNoPermission(DELETE_PRODUCT_FROM_ORDER)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
@@ -217,30 +204,26 @@ public record OrderServiceImpl(
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
 
-
         Product product = productPort.findById(productId)
                 .orElseThrow(nonExistingIdSupplier(Product.class, productId));
-        ExceptionUtils.isActiveOrThrow(product);
 
         if (quantity <= 0) {
             throw new BadRequestException(format("Quantity should be greater then 0, given %s", quantity));
         }
-
-        for (int i = 0; i < quantity; i++) {
+        int counter = 0;
+        for (; counter < quantity; counter++) {
             if (!order.getProductsId().remove(product.getId())) {
                 break;
             }
         }
-
         orderPort.save(order);
 
-        return order;
+        return counter;
     }
 
     private Order getByIdOrThrow(UUID id) {
-        return orderPort.findById(id).orElseThrow(() -> {
-            throw new BadRequestException(format("Order with id %s doesn't exist", id));
-        });
+        return orderPort.findById(id)
+                .orElseThrow(nonExistingIdSupplier(Order.class, id));
     }
 
     private void prepareToClose(Order order) {

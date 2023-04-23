@@ -15,8 +15,6 @@ public interface OrderService {
 
     Order getById(UUID id);
 
-    Order getTableOrder(UUID tableId, User user);
-
     Order transferToAnotherTable(UUID orderId, UUID tableId, User user);
 
     Order open(UUID tableId, User user);
@@ -25,7 +23,7 @@ public interface OrderService {
 
     Order delete(UUID orderId, User user);
 
-    Order addProduct(UUID orderId, OrderProductsRequest request, User user);
+    int addProduct(UUID orderId, OrderProductsRequest request, User user);
 
-    Order removeProduct(UUID orderId, OrderProductsRequest request, User user);
+    int removeProduct(UUID orderId, OrderProductsRequest request, User user);
 }
