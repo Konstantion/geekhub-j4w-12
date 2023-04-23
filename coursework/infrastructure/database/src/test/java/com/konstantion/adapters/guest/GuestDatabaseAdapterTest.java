@@ -1,4 +1,4 @@
-package com.konstantion.testcontainers.guest;
+package com.konstantion.adapters.guest;
 
 import com.konstantion.TestApplication;
 import com.konstantion.adapters.guest.GuestDatabaseAdapter;

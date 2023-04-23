@@ -1,4 +1,4 @@
-package com.konstantion.testcontainers.call;
+package com.konstantion.adapters.call;
 
 import com.konstantion.TestApplication;
 import com.konstantion.adapters.call.CallDatabaseAdapter;

@@ -1,9 +1,9 @@
-package com.konstantion.testcontainers.hall;
+package com.konstantion.adapters.category;
 
 import com.konstantion.TestApplication;
-import com.konstantion.adapters.hall.HallDatabaseAdapter;
+import com.konstantion.adapters.category.CategoryDatabaseAdapter;
+import com.konstantion.category.Category;
 import com.konstantion.config.RowMappersConfiguration;
-import com.konstantion.hall.Hall;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import org.junit.ClassRule;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = {DatabaseTestConfiguration.class, RowMappersConfiguration.class, TestApplication.class})
 @Testcontainers
-class HallDatabaseAdapterTest {
+class CategoryDatabaseAdapterTest {
     @ClassRule
     @Container
     public static PostgreSQLContainer<DatabaseContainer> postgresSQLContainer = DatabaseContainer.getInstance();
@@ -38,87 +38,81 @@ class HallDatabaseAdapterTest {
     @Autowired
     RowMappersConfiguration rowMappers;
 
-    HallDatabaseAdapter hallAdapter;
+    CategoryDatabaseAdapter categoryAdapter;
 
     @BeforeEach
     public void setUp() {
-        hallAdapter = new HallDatabaseAdapter(jdbcTemplate, rowMappers.hallRowMapper());
+        categoryAdapter = new CategoryDatabaseAdapter(jdbcTemplate, rowMappers.categoryRowMapper());
     }
 
     @Test
-    void shouldReturnHallWithIdWhenSaveHallWithoutId() {
-        Hall hall = Hall.builder()
-                .active(true)
+    void shouldReturnCategoryWithIdWhenSaveCategoryWithoutId() {
+        Category category = Category.builder()
                 .id(null)
                 .name("test")
                 .build();
-        hallAdapter.save(hall);
+        categoryAdapter.save(category);
 
-        assertThat(hall.getId()).isNotNull();
+        assertThat(category.getId()).isNotNull();
     }
 
     @Test
-    void shouldUpdateHallWhenSaveHallWithId() {
-        Hall hall = Hall.builder().active(true)
-                .active(true)
+    void shouldUpdateCategoryWhenSaveCategoryWithId() {
+        Category category = Category.builder()
                 .id(null)
                 .name("test")
                 .build();
-        hallAdapter.save(hall);
-        UUID id = hall.getId();
+        categoryAdapter.save(category);
+        UUID id = category.getId();
 
-        hall.setName("newName");
-        hallAdapter.save(hall);
+        category.setName("newName");
+        categoryAdapter.save(category);
 
-        Optional<Hall> dbHall = hallAdapter.findById(id);
+        Optional<Category> dbCategory = categoryAdapter.findById(id);
 
-        assertThat(dbHall).isPresent()
+        assertThat(dbCategory).isPresent()
                 .get()
                 .matches(matched -> matched.getId().equals(id)
-                                    && matched.getName().equals("newName"));
+                                        && matched.getName().equals("newName"));
     }
 
     @Test
-    void shouldReturnHallsWhenFindAll() {
-        Hall first = Hall.builder()
-                .active(true)
+    void shouldReturnCategoriesWhenFindAll() {
+        Category first = Category.builder()
                 .id(null)
                 .name("first")
                 .build();
-        Hall second = Hall.builder()
-                .active(true)
+        Category second = Category.builder()
                 .id(null)
                 .name("second")
                 .build();
-        hallAdapter.save(first);
-        hallAdapter.save(second);
+        categoryAdapter.save(first);
+        categoryAdapter.save(second);
 
-        List<Hall> dbHall = hallAdapter.findAll();
+        List<Category> dbCategories = categoryAdapter.findAll();
 
-        assertThat(dbHall)
+        assertThat(dbCategories)
                 .hasSize(2)
                 .containsExactlyInAnyOrder(first, second);
     }
 
     @Test
-    void shouldDeleteHallWhenDeleteHall() {
-        Hall first = Hall.builder()
-                .active(true)
+    void shouldDeleteCategoryWhenDeleteCategory() {
+        Category first = Category.builder()
                 .id(null)
                 .name("first")
                 .build();
-        Hall second = Hall.builder()
-                .active(true)
+        Category second = Category.builder()
                 .id(null)
                 .name("second")
                 .build();
-        hallAdapter.save(first);
-        hallAdapter.save(second);
+        categoryAdapter.save(first);
+        categoryAdapter.save(second);
 
-        hallAdapter.delete(first);
-        List<Hall> dbHall = hallAdapter.findAll();
+        categoryAdapter.delete(first);
+        List<Category> dbCategories = categoryAdapter.findAll();
 
-        assertThat(dbHall)
+        assertThat(dbCategories)
                 .hasSize(1)
                 .containsExactlyInAnyOrder(second);
     }

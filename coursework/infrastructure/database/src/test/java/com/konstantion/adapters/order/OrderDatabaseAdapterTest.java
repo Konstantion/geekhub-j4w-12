@@ -1,9 +1,8 @@
-package com.konstantion.testcontainers.order;
+package com.konstantion.adapters.order;
 
 
 import com.google.common.collect.Lists;
 import com.konstantion.TestApplication;
-import com.konstantion.adapters.order.OrderDatabaseAdapter;
 import com.konstantion.adapters.product.ProductDatabaseAdapter;
 import com.konstantion.config.RowMappersConfiguration;
 import com.konstantion.order.Order;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 

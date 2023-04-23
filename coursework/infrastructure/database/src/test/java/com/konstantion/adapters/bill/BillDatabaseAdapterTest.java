@@ -1,4 +1,4 @@
-package com.konstantion.testcontainers.bill;
+package com.konstantion.adapters.bill;
 
 import com.konstantion.TestApplication;
 import com.konstantion.adapters.bill.BillDatabaseAdapter;
