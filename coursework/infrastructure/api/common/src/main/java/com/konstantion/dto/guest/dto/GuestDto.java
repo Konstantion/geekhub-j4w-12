@@ -7,7 +7,6 @@ public record GuestDto(
         String name,
         String phoneNumber,
         Double discountPercent,
-        Double totalSpentSum,
         Boolean active
 ) {
     public boolean isActive() {

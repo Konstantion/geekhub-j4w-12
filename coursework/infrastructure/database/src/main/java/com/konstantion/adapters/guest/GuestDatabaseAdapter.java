@@ -44,8 +44,8 @@ public class GuestDatabaseAdapter implements GuestPort {
             """;
 
     public static final String SAVE_QUERY = """
-            INSERT INTO public.guest (name, phone_number, discount_percent, created_at, total_spent_sum, active)
-            VALUES (:name, :phoneNumber, :discountPercent, :createdAt, :totalSpentSum, :active);
+            INSERT INTO public.guest (name, phone_number, discount_percent, created_at, active)
+            VALUES (:name, :phoneNumber, :discountPercent, :createdAt, :active);
             """;
 
     public static final String UPDATE_QUERY = """
@@ -53,8 +53,7 @@ public class GuestDatabaseAdapter implements GuestPort {
                 SET name = :name,
                 phone_number = :phoneNumber,
                 discount_percent = :discountPercent,
-                created_at = :createdAt,
-                total_spent_sum = :totalSpentSum,
+                created_at = :createdAt,                
                 active = :active
             WHERE id = :id;
             """;

@@ -1,6 +1,5 @@
 package com.konstantion.user.validator;
 
-import com.konstantion.user.model.CreateUserRequest;
 import com.konstantion.utils.validator.ValidationUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;

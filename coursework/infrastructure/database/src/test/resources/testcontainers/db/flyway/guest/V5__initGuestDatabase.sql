@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS guest
     phone_number     VARCHAR(255),
     discount_percent DOUBLE PRECISION,
     created_at       TIMESTAMP WITHOUT TIME ZONE,
-    total_spent_sum  DOUBLE PRECISION,
     active           BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT pk_guest PRIMARY KEY (id)
 );

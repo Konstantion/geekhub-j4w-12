@@ -18,6 +18,7 @@ subprojects {
         implementation libsSpring.springBootStarterSecurity
         implementation libsUtils.guava
         implementation libsUtils.commonsLang3
+        implementation libsUtils.faker
 
         testImplementation libsTest.jupiterApi
         testImplementation libsTest.jupiterParams

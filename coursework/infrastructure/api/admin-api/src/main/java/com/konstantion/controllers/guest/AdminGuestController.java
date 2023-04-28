@@ -99,9 +99,10 @@ public record AdminGuestController(
 
     @PutMapping("/{id}/activate")
     public ResponseDto activateGuestById(
-            @PathVariable("id") UUID id
+            @PathVariable("id") UUID id,
+            @AuthenticationPrincipal User user
     ) {
-        GuestDto dto = guestMapper.toDto(guestService.activate(id));
+        GuestDto dto = guestMapper.toDto(guestService.activate(id, user));
 
         return ResponseDto.builder()
                 .status(OK)
@@ -114,9 +115,10 @@ public record AdminGuestController(
 
     @PutMapping("/{id}/deactivate")
     public ResponseDto deactivateGuestById(
-            @PathVariable("id") UUID id
+            @PathVariable("id") UUID id,
+            @AuthenticationPrincipal User user
     ) {
-        GuestDto dto = guestMapper.toDto(guestService.deactivate(id));
+        GuestDto dto = guestMapper.toDto(guestService.deactivate(id, user));
 
         return ResponseDto.builder()
                 .status(OK)

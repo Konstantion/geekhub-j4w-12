@@ -20,9 +20,9 @@ public interface GuestService {
 
     Guest update(UUID id, UpdateGuestRequest editGuestRequest, User user);
 
-    Guest activate(UUID id);
+    Guest activate(UUID id, User user);
 
-    Guest deactivate(UUID id);
+    Guest deactivate(UUID id, User user);
 
     Guest delete(UUID id, User user);
 }

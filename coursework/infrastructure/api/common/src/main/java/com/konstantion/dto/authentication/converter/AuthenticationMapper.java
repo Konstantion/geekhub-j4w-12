@@ -48,6 +48,8 @@ public interface AuthenticationMapper {
                                     table.getHallId(),
                                     table.getOrderId(),
                                     table.getWaitersId(),
+                                    table.getCreatedAt(),
+                                    table.getDeletedAt(),
                                     table.getActive()
                             ))
             );

@@ -7,6 +7,8 @@ import com.konstantion.hall.validator.HallValidator;
 import com.konstantion.table.Table;
 import com.konstantion.table.TablePort;
 import com.konstantion.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public record HallServiceImpl(
         TablePort tablePort,
         HallValidator hallValidator
 ) implements HallService {
+    private static final Logger logger = LoggerFactory.getLogger(HallServiceImpl.class);
 
     @Override
     public Hall create(CreateHallRequest request, User user) {
@@ -41,13 +44,15 @@ public record HallServiceImpl(
                 .build();
 
         hallPort.save(hall);
-
+        logger.info("Hall with id {} successfully created and returned", hall.getId());
         return hall;
     }
 
     @Override
     public Hall getById(UUID id) {
-        return getByIdOrThrow(id);
+        Hall hall = getByIdOrThrow(id);
+        logger.info("Hall with id {} successfully returned", hall.getId());
+        return hall;
     }
 
     @Override
@@ -56,6 +61,7 @@ public record HallServiceImpl(
         if (onlyActive) {
             return halls.stream().filter(Hall::isActive).toList();
         }
+        logger.info("All halls successfully returned");
         return halls;
     }
 
@@ -73,7 +79,7 @@ public record HallServiceImpl(
         updateHall(hall, request);
 
         hallPort.save(hall);
-
+        logger.info("Hall with id {} successfully updated and returned", id);
         return hall;
     }
 
@@ -87,13 +93,14 @@ public record HallServiceImpl(
         Hall hall = getByIdOrThrow(id);
 
         if (hall.isActive()) {
+            logger.warn("Hall with id {} is already active and returned", id);
             return hall;
         }
 
         prepareToActivate(hall);
 
         hallPort.save(hall);
-
+        logger.info("Hall with id {} successfully activated and returned", id);
         return hall;
     }
 
@@ -107,13 +114,14 @@ public record HallServiceImpl(
         Hall hall = getByIdOrThrow(id);
 
         if (!hall.isActive()) {
+            logger.warn("Hall with id {} is already inactive and returned", id);
             return hall;
         }
 
         prepareToDeactivate(hall);
 
         hallPort.save(hall);
-
+        logger.info("Hall with id {} successfully deactivated and returned", id);
         return hall;
     }
 
@@ -126,6 +134,7 @@ public record HallServiceImpl(
         Hall hall = getByIdOrThrow(id);
 
         hallPort.delete(hall);
+        logger.info("Hall with id {} successfully deleted", id);
         return hall;
     }
 
@@ -133,7 +142,9 @@ public record HallServiceImpl(
     public List<Table> getTablesByHallId(UUID id) {
         getByIdOrThrow(id);
 
-        return tablePort.findAllWhereHallId(id);
+        List<Table> tables = tablePort.findAllWhereHallId(id);
+        logger.info("Tables in hall with id {} successfully returned", id);
+        return tables;
     }
 
     private Hall getByIdOrThrow(UUID id) {

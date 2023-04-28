@@ -2,6 +2,7 @@ package com.konstantion.guest;
 
 import com.konstantion.exception.BadRequestException;
 import com.konstantion.exception.ForbiddenException;
+import com.konstantion.exception.NonExistingIdException;
 import com.konstantion.exception.utils.ExceptionUtils;
 import com.konstantion.guest.model.CreateGuestRequest;
 import com.konstantion.guest.model.UpdateGuestRequest;
@@ -33,12 +34,15 @@ public record GuestServiceImpl(
         if (onlyActive) {
             return guests.stream().filter(Guest::isActive).toList();
         }
+        logger.info("All guests successfully returned");
         return guests;
     }
 
     @Override
     public Guest getById(UUID id) {
-        return getByIdOrThrow(id);
+        Guest guest = getByIdOrThrow(id);
+        logger.info("Guest with id {} successfully returned", id);
+        return guest;
     }
 
     @Override
@@ -50,7 +54,7 @@ public record GuestServiceImpl(
 
         guestValidator.validate(request).validOrTrow();
 
-        guestPort.findByName(request.name()).orElseThrow(() -> {
+        guestPort.findByName(request.name()).ifPresent(dbGuest -> {
             throw new BadRequestException(format("Guest with name %s already exist", request.name()));
         });
 
@@ -59,11 +63,10 @@ public record GuestServiceImpl(
                 .phoneNumber(request.phoneNumber())
                 .discountPercent(request.discountPercent())
                 .createdAt(now())
-                .totalSpentSum(0.0)
                 .build();
 
         guestPort.save(guest);
-
+        logger.info("Guest with id {} successfully created and returned", guest.getId());
         return guest;
     }
 
@@ -80,7 +83,7 @@ public record GuestServiceImpl(
         ExceptionUtils.isActiveOrThrow(guest);
 
         if (!guest.getName().equals(request.name())) {
-            guestPort.findByName(request.name()).orElseThrow(() -> {
+            guestPort.findByName(request.name()).ifPresent(dbGuest -> {
                 throw new BadRequestException(format("Guest with name %s already exist", request.name()));
             });
         }
@@ -88,7 +91,7 @@ public record GuestServiceImpl(
         updateGuest(guest, request);
 
         guestPort.save(guest);
-
+        logger.info("Guest with id {} successfully updated and returned", guest.getId());
         return guest;
     }
 
@@ -99,32 +102,42 @@ public record GuestServiceImpl(
     }
 
     @Override
-    public Guest activate(UUID id) {
+    public Guest activate(UUID id, User user) {
+        if (user.hasNoPermission(CHANGE_GUEST_STATE)
+            && user.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
         Guest guest = getByIdOrThrow(id);
 
         if (guest.isActive()) {
+            logger.warn("Guest with id {} already active and returned", id);
             return guest;
         }
 
         prepareToActivate(guest);
 
         guestPort.save(guest);
-
+        logger.info("Gust with id {} successfully activated", id);
         return guest;
     }
 
     @Override
-    public Guest deactivate(UUID id) {
+    public Guest deactivate(UUID id, User user) {
+        if (user.hasNoPermission(CHANGE_GUEST_STATE)
+            && user.hasNoPermission(SUPER_USER)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
         Guest guest = getByIdOrThrow(id);
 
         if (!guest.isActive()) {
+            logger.warn("Guest with id {} already inactive and returned", id);
             return guest;
         }
 
         prepareToDeactivate(guest);
 
         guestPort.save(guest);
-
+        logger.info("Gust with id {} successfully deactivated", id);
         return guest;
     }
 
@@ -138,13 +151,13 @@ public record GuestServiceImpl(
         Guest guest = getByIdOrThrow(id);
 
         guestPort.delete(guest);
-
+        logger.info("Guest with id {} successfully deleted and returned", id);
         return guest;
     }
 
     private Guest getByIdOrThrow(UUID id) {
         return guestPort.findById(id).orElseThrow(() -> {
-            throw new BadRequestException(format("Guest with id %s, doesn't exist", id));
+            throw new NonExistingIdException(format("Guest with id %s, doesn't exist", id));
         });
     }
 
