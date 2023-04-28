@@ -9,9 +9,14 @@ dependencies {
 
     implementation libsSpringDoc.openapiStarterWebmvcUi
     runtimeOnly libsDatabase.postgres
-    testImplementation libsUtils.jasksonDatabind
-    testImplementation libsTest.springSecurityTest
     implementation libsJwt.jjwtApi
+
+    implementation libsDatabase.flywayCore
     runtimeOnly libsJwt.jjwtImpl
     runtimeOnly libsJwt.jjwtJackson
+
+    testImplementation libsUtils.jasksonDatabind
+    testImplementation libsTest.springSecurityTest
+    testImplementation libsTest.testContainersPostgreSql
+    testImplementation libsTest.testContainersJunit
 }

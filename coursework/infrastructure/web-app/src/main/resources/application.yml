@@ -1,5 +1,4 @@
 spring:
-  #add database
   datasource:
     url: jdbc:postgresql://localhost:5432/geek_hub
     username: postgres
@@ -19,3 +18,9 @@ application:
     secretKey: 294A404E635166546A576E5A7234753778214125442A472D4B6150645367556B
     tokenPrefix: Bearer
     tokenExpirationAfterDays: 10
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
+  exposed-headers: "*"
