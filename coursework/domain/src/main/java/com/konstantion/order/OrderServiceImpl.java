@@ -121,17 +121,22 @@ public record OrderServiceImpl(
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
 
-        if (!order.getProductsId().isEmpty()) {
-            if (!order.hasBill()) {
-                throw new BadRequestException(format("Order with id %s doesn't have a bill", order.getId()));
-            }
-
-            Bill bill = billPort.findById(order.getBillId())
-                    .orElseThrow(nonExistingIdSupplier(Bill.class, order.getBillId()));
-            if (bill.isActive()) {
-                throw new BadRequestException(format("Order with id %s has a bill with id %s that has not been payed", order.getId(), bill.getId()));
-            }
+        if (order.getProductsId().isEmpty()) {
+            orderPort.delete(order);
+            logger.warn("Order with id {} didn't contain any product, so it was successfully deleted and returned", orderId);
+            return order;
         }
+
+        if (!order.hasBill()) {
+            throw new BadRequestException(format("Order with id %s doesn't have a bill", order.getId()));
+        }
+
+        Bill bill = billPort.findById(order.getBillId())
+                .orElseThrow(nonExistingIdSupplier(Bill.class, order.getBillId()));
+        if (bill.isActive()) {
+            throw new BadRequestException(format("Order with id %s has a bill with id %s that has not been payed", order.getId(), bill.getId()));
+        }
+
 
         Table table = tablePort.findById(order.getTableId())
                 .orElseThrow(nonExistingIdSupplier(Table.class, order.getTableId()));
@@ -142,6 +147,7 @@ public record OrderServiceImpl(
         tablePort.save(table);
         orderPort.save(order);
 
+        logger.info("Order with id {} successfully closed and returned", order);
         return order;
     }
 
@@ -156,6 +162,7 @@ public record OrderServiceImpl(
 
         orderPort.delete(order);
 
+        logger.info("Order with id {} successfully deleted and returned", orderId);
         return order;
     }
 
@@ -187,7 +194,7 @@ public record OrderServiceImpl(
         }
 
         orderPort.save(order);
-
+        logger.info("{} product(s) with id {} successfully added to the order with id {}", counter, productId, orderId);
         return counter;
     }
 
@@ -217,7 +224,7 @@ public record OrderServiceImpl(
             }
         }
         orderPort.save(order);
-
+        logger.info("{} product(s) with id {} successfully removed from the order with id {}", counter, productId, orderId);
         return counter;
     }
 

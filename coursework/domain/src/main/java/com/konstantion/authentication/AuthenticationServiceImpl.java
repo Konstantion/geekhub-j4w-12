@@ -1,5 +1,6 @@
 package com.konstantion.authentication;
 
+import com.konstantion.authentication.model.AuthenticationResponse;
 import com.konstantion.jwt.JwtService;
 import com.konstantion.table.authentication.TableAuthenticationToken;
 import com.konstantion.table.model.LoginTableRequest;
@@ -24,7 +25,7 @@ public record AuthenticationServiceImpl(
         UserValidator userValidator
 ) implements AuthenticationService {
     @Override
-    public String authenticate(LoginTableRequest request) {
+    public AuthenticationResponse authenticate(LoginTableRequest request) {
         ValidationResult validationResult = tableValidator.validate(request);
         validationResult.validOrTrow();
 
@@ -39,11 +40,13 @@ public record AuthenticationServiceImpl(
 
         Map<String, Object> extraClaim = Map.of(ENTITY, TABLE);
 
-        return jwtService.generateToken(extraClaim, tableDetails);
+        String token = jwtService.generateToken(extraClaim, tableDetails);
+
+        return new AuthenticationResponse(token, tableDetails, TABLE);
     }
 
     @Override
-    public String authenticate(LoginUserRequest request) {
+    public AuthenticationResponse authenticate(LoginUserRequest request) {
         ValidationResult validationResult = userValidator.validate(request);
         validationResult.validOrTrow();
 
@@ -58,6 +61,8 @@ public record AuthenticationServiceImpl(
 
         Map<String, Object> extraClaim = Map.of(ENTITY, USER);
 
-        return jwtService.generateToken(extraClaim, userDetails);
+        String token = jwtService.generateToken(extraClaim, userDetails);
+
+        return new AuthenticationResponse(token, userDetails, USER);
     }
 }

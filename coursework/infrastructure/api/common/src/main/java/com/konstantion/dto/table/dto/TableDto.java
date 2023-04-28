@@ -2,10 +2,9 @@ package com.konstantion.dto.table.dto;
 
 import com.konstantion.table.TableType;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
-
-import static java.util.Objects.nonNull;
 
 public record TableDto(
         UUID id,
@@ -14,10 +13,9 @@ public record TableDto(
         TableType tableType,
         UUID hallId,
         UUID orderId,
-        List<UUID> waitersId,
+        Set<UUID> waitersId,
+        LocalDateTime createdAt,
+        LocalDateTime deletedAt,
         Boolean active
 ) {
-    public boolean hasOrder() {
-        return nonNull(orderId);
-    }
 }

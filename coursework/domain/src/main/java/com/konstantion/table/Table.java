@@ -89,4 +89,16 @@ public class Table implements UserDetails {
     public boolean isEnabled() {
         return active;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Table table)) return false;
+        return com.google.common.base.Objects.equal(id, table.id) && com.google.common.base.Objects.equal(name, table.name) && com.google.common.base.Objects.equal(capacity, table.capacity) && tableType == table.tableType && com.google.common.base.Objects.equal(password, table.password) && com.google.common.base.Objects.equal(hallId, table.hallId) && com.google.common.base.Objects.equal(orderId, table.orderId) && com.google.common.base.Objects.equal(waitersId, table.waitersId) && com.google.common.base.Objects.equal(active, table.active) && com.google.common.base.Objects.equal(createdAt, table.createdAt) && com.google.common.base.Objects.equal(deletedAt, table.deletedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(id, name, capacity, tableType, password, hallId, orderId, waitersId, active, createdAt, deletedAt);
+    }
 }

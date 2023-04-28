@@ -76,7 +76,7 @@ class AuthenticationServiceImplTest {
         when(jwtService.generateToken(any(), any())).thenReturn("token");
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
 
-        String token = authenticationService.authenticate(userRequest);
+        String token = authenticationService.authenticate(userRequest).token();
 
         assertThat(token).isEqualTo("token");
         verify(jwtService, times(1)).generateToken(any(), any());
@@ -89,7 +89,7 @@ class AuthenticationServiceImplTest {
         when(jwtService.generateToken(any(), any())).thenReturn("token");
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
 
-        String token = authenticationService.authenticate(tableRequest);
+        String token = authenticationService.authenticate(tableRequest).token();
 
         assertThat(token).isEqualTo("token");
         verify(jwtService, times(1)).generateToken(any(), any());

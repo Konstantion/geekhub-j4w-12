@@ -25,8 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.konstantion.user.Permission.SUPER_USER;
-import static com.konstantion.user.Role.ADMIN;
-import static com.konstantion.user.Role.WAITER;
+import static com.konstantion.user.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -359,7 +358,6 @@ class UserServiceImplTest {
         UUID randomId = UUID.randomUUID();
         when(userValidator.validate(any(UpdateUserRequest.class))).thenReturn(ValidationResult.valid());
         when(user.hasNoPermission(any(Permission.class))).thenReturn(false);
-        when(user.hasNoPermission(any(Permission.class))).thenReturn(false);
         when(userPort.findAll()).thenReturn(List.of(User.builder().email("email").password("password").build()));
         when(passwordEncoder.matches(any(), any()))
                 .thenReturn(false)
@@ -373,5 +371,13 @@ class UserServiceImplTest {
                 .matches(user -> user.getEmail().equals("newEmail") && user.getFirstName().equals("newFirstName"));
 
         verify(userPort, times(1)).save(updated);
+    }
+
+    @Test
+    void shouldThrowBadRequestExceptionWhenAppRoleWithRoleTable() {
+        when(user.hasNoPermission(any(Permission.class))).thenReturn(false);
+
+        assertThatThrownBy(() -> userService.addRole(UUID.randomUUID(), TABLE, user))
+                .isInstanceOf(BadRequestException.class);
     }
 }

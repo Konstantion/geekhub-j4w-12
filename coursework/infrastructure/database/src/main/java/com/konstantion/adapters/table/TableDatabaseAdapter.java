@@ -1,6 +1,5 @@
 package com.konstantion.adapters.table;
 
-import com.konstantion.call.Call;
 import com.konstantion.table.Table;
 import com.konstantion.table.TablePort;
 import org.springframework.jdbc.core.RowMapper;
@@ -152,11 +151,16 @@ public class TableDatabaseAdapter implements TablePort {
     public List<Table> findAllWhereHallId(UUID hallId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("hallId", hallId);
-        return jdbcTemplate.query(
+        List<Table> tables = jdbcTemplate.query(
                 FIND_ALL_WHERE_HALL_ID_QUERY,
                 parameterSource,
                 tableRowMapper
         );
+
+        for (Table table : tables) {
+            table.setWaitersId(findWaitersByTableId(table.getId()));
+        }
+        return tables;
     }
 
     @Override
@@ -213,6 +217,8 @@ public class TableDatabaseAdapter implements TablePort {
     }
 
     private void saveTableWaiters(UUID tableId, Set<UUID> waitersId) {
+        if (waitersId == null) return;
+
         waitersId.forEach(waiterId -> {
             SqlParameterSource parameterSource = new MapSqlParameterSource()
                     .addValue("tableId", tableId)

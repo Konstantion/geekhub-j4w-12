@@ -1,10 +1,11 @@
 package com.konstantion.authentication;
 
+import com.konstantion.authentication.model.AuthenticationResponse;
 import com.konstantion.table.model.LoginTableRequest;
 import com.konstantion.user.model.LoginUserRequest;
 
 public interface AuthenticationService {
-    String authenticate(LoginTableRequest request);
+    AuthenticationResponse authenticate(LoginTableRequest request);
 
-    String authenticate(LoginUserRequest request);
+    AuthenticationResponse authenticate(LoginUserRequest request);
 }

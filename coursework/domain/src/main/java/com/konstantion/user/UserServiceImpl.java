@@ -171,6 +171,10 @@ public record UserServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
+        if(role.equals(Role.TABLE)) {
+            throw new BadRequestException("Role TABLE can't be added");
+        }
+
         User user = getByIdOrThrow(userId);
         ExceptionUtils.isActiveOrThrow(user);
 

@@ -1,5 +1,6 @@
 package com.konstantion.dto.bill.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record BillDto(
@@ -8,6 +9,8 @@ public record BillDto(
         UUID orderId,
         UUID guestId,
         Boolean active,
+        LocalDateTime createdAt,
+        LocalDateTime closedAt,
         Double price,
         Double priceWithDiscount
 ) {

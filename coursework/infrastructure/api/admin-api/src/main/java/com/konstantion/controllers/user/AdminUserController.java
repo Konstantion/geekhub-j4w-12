@@ -245,7 +245,7 @@ public record AdminUserController(
         return ResponseDto.builder()
                 .status(OK)
                 .statusCode(OK.value())
-                .message(format("Permission %s successfully removed from User with id %s", role, id))
+                .message(format("Role %s successfully removed from User with id %s", role, id))
                 .timeStamp(now())
                 .data(Map.of(TABLE, dto))
                 .build();

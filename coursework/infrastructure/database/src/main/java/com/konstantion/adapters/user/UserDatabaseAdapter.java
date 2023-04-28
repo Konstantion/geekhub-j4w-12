@@ -11,19 +11,15 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-import java.sql.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
-@Component
-public record UserDatabaseAdapter(
-        NamedParameterJdbcTemplate jdbcTemplate,
-        RowMapper<User> userRowMapper
-) implements UserPort {
+@Repository
+public class UserDatabaseAdapter implements UserPort {
     private static final String FIND_BY_ID_QUERY = """
             SELECT * FROM public.user
             WHERE id = :id;
@@ -88,6 +84,16 @@ public record UserDatabaseAdapter(
             INSERT INTO public.user_permission (user_id, permission)
             VALUES (:userId, :permission);
             """;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<User> userRowMapper;
+
+    public UserDatabaseAdapter(
+            NamedParameterJdbcTemplate jdbcTemplate,
+            RowMapper<User> userRowMapper
+    ) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.userRowMapper = userRowMapper;
+    }
 
     @Override
     public User save(User user) {
@@ -120,7 +126,7 @@ public record UserDatabaseAdapter(
                 userRowMapper
         );
 
-        users.forEach(user ->  {
+        users.forEach(user -> {
             user.setRoles(findRolesByUserId(user.getId()));
             user.setPermissions(findPermissionsByUserId(user.getId()));
         });

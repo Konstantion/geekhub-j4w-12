@@ -1,5 +1,6 @@
 package com.konstantion.user;
 
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -111,5 +112,17 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equal(id, user.id) && Objects.equal(firstName, user.firstName) && Objects.equal(lastName, user.lastName) && Objects.equal(email, user.email) && Objects.equal(phoneNumber, user.phoneNumber) && Objects.equal(age, user.age) && Objects.equal(password, user.password) && Objects.equal(active, user.active) && Objects.equal(createdAt, user.createdAt) && Objects.equal(roles, user.roles) && Objects.equal(permissions, user.permissions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, firstName, lastName, email, phoneNumber, age, password, active, createdAt, roles, permissions);
     }
 }

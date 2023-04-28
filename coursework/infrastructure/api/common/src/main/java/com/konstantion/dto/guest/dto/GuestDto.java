@@ -1,6 +1,5 @@
 package com.konstantion.dto.guest.dto;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record GuestDto(
@@ -8,7 +7,6 @@ public record GuestDto(
         String name,
         String phoneNumber,
         Double discountPercent,
-        LocalDateTime createdAt,
         Double totalSpentSum,
         Boolean active
 ) {

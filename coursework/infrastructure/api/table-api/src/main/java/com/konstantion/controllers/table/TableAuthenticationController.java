@@ -1,6 +1,8 @@
 package com.konstantion.controllers.table;
 
 import com.konstantion.authentication.AuthenticationService;
+import com.konstantion.dto.authentication.converter.AuthenticationMapper;
+import com.konstantion.dto.authentication.dto.AuthenticationResponseDto;
 import com.konstantion.dto.table.converter.TableMapper;
 import com.konstantion.dto.table.dto.LoginTableRequestDto;
 import com.konstantion.response.ResponseDto;
@@ -15,27 +17,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
-import static com.konstantion.utils.EntityNameConstants.JWT_TOKEN;
+import static com.konstantion.utils.EntityNameConstants.AUTHENTICATION;
 import static java.util.Map.of;
 
 @RestController
 @RequestMapping("/table-api/authentication")
-public record  TableAuthenticationController(
+public record TableAuthenticationController(
         TableService tableService,
         AuthenticationService authenticationService
 ) {
     private static final TableMapper tableMapper = TableMapper.INSTANCE;
+    private static final AuthenticationMapper authenticationMapper = AuthenticationMapper.INSTANCE;
     public static final String BEARER_PREFIX = "Bearer ";
 
     @PostMapping()
     public ResponseEntity<ResponseDto> authenticate(
             @RequestBody LoginTableRequestDto requestDto
     ) {
-        String jwtToken = authenticationService.authenticate(
-                tableMapper.toLoginTableRequest(requestDto)
-        );
+        AuthenticationResponseDto responseDto = authenticationMapper.toDto(
+                authenticationService.authenticate(
+                        tableMapper.toLoginTableRequest(requestDto)
+                ));
 
-        String bearerToken = BEARER_PREFIX + jwtToken;
+        String bearerToken = BEARER_PREFIX + responseDto.token();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, bearerToken)
@@ -44,7 +48,7 @@ public record  TableAuthenticationController(
                         .statusCode(HttpStatus.OK.value())
                         .message("Successfully authenticated")
                         .timeStamp(LocalDateTime.now())
-                        .data(of(JWT_TOKEN, jwtToken))
+                        .data(of(AUTHENTICATION, responseDto))
                         .build()
                 );
     }

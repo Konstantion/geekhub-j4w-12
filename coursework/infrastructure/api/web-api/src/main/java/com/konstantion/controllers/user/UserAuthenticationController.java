@@ -1,6 +1,8 @@
 package com.konstantion.controllers.user;
 
 import com.konstantion.authentication.AuthenticationService;
+import com.konstantion.dto.authentication.converter.AuthenticationMapper;
+import com.konstantion.dto.authentication.dto.AuthenticationResponseDto;
 import com.konstantion.dto.user.converter.UserMapper;
 import com.konstantion.dto.user.dto.LoginUserRequestDto;
 import com.konstantion.response.ResponseDto;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
+import static com.konstantion.utils.EntityNameConstants.AUTHENTICATION;
 import static java.util.Map.of;
 
 @RestController
@@ -22,17 +25,19 @@ public record UserAuthenticationController(
         AuthenticationService authenticationService
 ) {
     private static final UserMapper userMapper = UserMapper.INSTANCE;
+    private static final AuthenticationMapper authenticationMapper = AuthenticationMapper.INSTANCE;
     private static final String BEARER_PREFIX = "Bearer ";
 
     @PostMapping()
     public ResponseEntity<ResponseDto> authenticate(
             @RequestBody LoginUserRequestDto requestDto
     ) {
-        String jwtToken = authenticationService.authenticate(
-                userMapper.toLoginUserRequest(requestDto)
-        );
+        AuthenticationResponseDto responseDto = authenticationMapper.toDto(
+                authenticationService.authenticate(
+                        userMapper.toLoginUserRequest(requestDto)
+                ));
 
-        String bearerToken = BEARER_PREFIX + jwtToken;
+        String bearerToken = BEARER_PREFIX + responseDto.token();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, bearerToken)
@@ -41,7 +46,7 @@ public record UserAuthenticationController(
                         .statusCode(HttpStatus.OK.value())
                         .message("Successfully authenticated")
                         .timeStamp(LocalDateTime.now())
-                        .data(of("jwtToken", jwtToken))
+                        .data(of(AUTHENTICATION, responseDto))
                         .build()
                 );
     }

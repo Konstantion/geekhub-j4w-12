@@ -1,6 +1,7 @@
 dependencies {
     implementation project(':coursework:domain')
     implementation project(':coursework:infrastructure:database')
+    implementation project(':coursework:infrastructure:api:common')
     implementation project(':coursework:infrastructure:api:web-api')
     implementation project(':coursework:infrastructure:api:admin-api')
     implementation project(':coursework:infrastructure:api:table-api')
@@ -8,7 +9,8 @@ dependencies {
 
     implementation libsSpringDoc.openapiStarterWebmvcUi
     runtimeOnly libsDatabase.postgres
-
+    testImplementation libsUtils.jasksonDatabind
+    testImplementation libsTest.springSecurityTest
     implementation libsJwt.jjwtApi
     runtimeOnly libsJwt.jjwtImpl
     runtimeOnly libsJwt.jjwtJackson

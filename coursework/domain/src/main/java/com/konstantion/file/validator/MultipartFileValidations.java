@@ -10,7 +10,7 @@ import java.util.*;
 import static java.util.Objects.isNull;
 
 @Component
-public class MultipartFileValidations implements ValidationUtil {
+public record MultipartFileValidations() implements ValidationUtil {
     private static final Double BYTES_IN_MEGABYTE = 1e6;
     private static final String FILE = "file";
     Optional<FieldError> isFileValid(MultipartFile file) {

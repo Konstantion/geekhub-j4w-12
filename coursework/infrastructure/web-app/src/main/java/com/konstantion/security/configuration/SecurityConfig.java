@@ -1,8 +1,6 @@
 package com.konstantion.security.configuration;
 
 import com.konstantion.security.jwt.JwtAuthorizationFilter;
-import com.konstantion.security.table.TableAuthenticationProvider;
-import com.konstantion.security.user.UserAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -65,13 +63,6 @@ public class SecurityConfig {
         String hierarchy = "ROLE_ADMIN > ROLE_WAITER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
-    }
-
-    @Bean
-    public DefaultWebSecurityExpressionHandler webSecurityExpressionHandler() {
-        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-        expressionHandler.setRoleHierarchy(roleHierarchy());
-        return expressionHandler;
     }
 
     @Bean

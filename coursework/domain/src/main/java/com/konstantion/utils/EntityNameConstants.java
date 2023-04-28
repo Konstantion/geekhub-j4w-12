@@ -1,6 +1,7 @@
 package com.konstantion.utils;
 
 public record EntityNameConstants() {
+    public static final String AUTHENTICATION = "authentication";
     public static final String ENTITY = "entity";
     public static final String JWT_TOKEN = "jwtToken";
     public static final String HALL = "hall";

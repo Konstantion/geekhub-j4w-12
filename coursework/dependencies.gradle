@@ -1,4 +1,5 @@
 def springBootVersion = '3.0.4'
+def springVersion = '6.0.2'
 def openApiVersion = '2.0.2'
 
 def jupiterApiVersion = '5.8.1'
@@ -13,6 +14,7 @@ def commonsLang3Version = '3.12.0'
 def mapStructVersion = '1.5.3.Final'
 def lombokVersion = '1.18.24'
 def fakerVersion = '1.0.2'
+def jasksonVersion = '2.14.2'
 
 def hikariCPVersion = '5.0.1'
 def postgresVersion = '42.5.0'
@@ -30,7 +32,7 @@ ext.libsDatabase = [
 ext.libsSpring = [
         'springBoot'                      : "org.springframework.boot:spring-boot:$springBootVersion",
         'springBootStarterDataJpa'        : "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion",
-        'springBootStarterDataJdbc'        : "org.springframework.boot:spring-boot-starter-data-jdbc:$springBootVersion",
+        'springBootStarterDataJdbc'       : "org.springframework.boot:spring-boot-starter-data-jdbc:$springBootVersion",
         'springBootStarterValidation'     : "org.springframework.boot:spring-boot-starter-validation:$springBootVersion",
         'springBootStarterWeb'            : "org.springframework.boot:spring-boot-starter-web:$springBootVersion",
         'springBootStarterSecurity'       : "org.springframework.boot:spring-boot-starter-security:$springBootVersion",
@@ -48,7 +50,8 @@ ext.libsUtils = [
         'mapstructProcessor'    : "org.mapstruct:mapstruct-processor:$mapStructVersion",
         'lombokMapstructBinding': "org.projectlombok:lombok-mapstruct-binding:0.2.0",
         'lombok'                : "org.projectlombok:lombok:$lombokVersion",
-        'faker'                 : "com.github.javafaker:javafaker:$fakerVersion"
+        'faker'                 : "com.github.javafaker:javafaker:$fakerVersion",
+        'jasksonDatabind'       : "com.fasterxml.jackson.core:jackson-databind:$jasksonVersion"
 ]
 
 
@@ -67,7 +70,7 @@ ext.libsTest = [
         'mockitoCore'             : "org.mockito:mockito-core:$mockitoCore",
         'mockitoJunitJupiter'     : "org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion",
         'springBootStarterTest'   : "org.springframework.boot:spring-boot-starter-test:$springBootVersion",
-        'springSecurityTest'      : "org.springframework.security:spring-security-test:$springBootVersion",
+        'springSecurityTest'      : "org.springframework.security:spring-security-test:$springVersion",
         'testContainersPostgreSql': "org.testcontainers:postgresql:$testContainerVersion",
         'testContainersJunit'     : "org.testcontainers:junit-jupiter:$testContainerVersion"
 ]
