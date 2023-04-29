@@ -91,7 +91,7 @@ class UserControllerTest {
                 .email("user")
                 .password("user")
                 .permissions(Permission.getDefaultWaiterPermission())
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .build();
         userPort.save(waiter);
 
@@ -126,7 +126,7 @@ class UserControllerTest {
                 .email("user")
                 .password("user")
                 .permissions(Permission.getDefaultWaiterPermission())
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .build();
         userPort.save(waiter);
         Map<String, Object> extraClaim = Map.of(ENTITY, USER);
@@ -160,7 +160,7 @@ class UserControllerTest {
                 .email("user")
                 .password("user")
                 .permissions(Set.of(Permission.SUPER_USER))
-                .roles(Role.getAdminRoles())
+                .roles(Role.getAdminRole())
                 .build();
         userPort.save(admin);
 
@@ -195,7 +195,7 @@ class UserControllerTest {
                 .email("user")
                 .password("user")
                 .permissions(Permission.getDefaultWaiterPermission())
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .build();
         userPort.save(waiter);
 

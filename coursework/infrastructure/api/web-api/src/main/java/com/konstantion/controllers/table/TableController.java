@@ -10,11 +10,11 @@ import com.konstantion.order.OrderService;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.table.TableService;
 import com.konstantion.user.User;
+import com.konstantion.utils.HashMaps;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static com.konstantion.utils.EntityNameConstants.*;
@@ -42,7 +42,7 @@ public record TableController(
                 .statusCode(OK.value())
                 .message("All active tables")
                 .timeStamp(now())
-                .data(Map.of(TABLES, dtos))
+                .data(HashMaps.of(TABLES, dtos))
                 .build();
     }
 
@@ -57,7 +57,7 @@ public record TableController(
                 .statusCode(OK.value())
                 .message(format("Table with id %s", dto.id()))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(HashMaps.of(TABLE, dto))
                 .build();
     }
 
@@ -72,7 +72,7 @@ public record TableController(
                 .statusCode(OK.value())
                 .message(format("Order for table with id %s", id))
                 .timeStamp(now())
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 
@@ -88,7 +88,7 @@ public record TableController(
                 .statusCode(OK.value())
                 .message("Order successfully created")
                 .timeStamp(now())
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 
@@ -105,7 +105,7 @@ public record TableController(
                 .statusCode(OK.value())
                 .message(format("Waiters for table with id %s", id))
                 .timeStamp(now())
-                .data(Map.of(USERS, dtos))
+                .data(HashMaps.of(USERS, dtos))
                 .build();
     }
 }

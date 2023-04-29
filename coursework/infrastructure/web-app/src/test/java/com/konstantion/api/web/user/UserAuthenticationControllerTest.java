@@ -91,7 +91,7 @@ class UserAuthenticationControllerTest {
                 .createdAt(now())
                 .email("admin")
                 .active(true)
-                .roles(Role.getAdminRoles())
+                .roles(Role.getAdminRole())
                 .permissions(Set.of(Permission.SUPER_USER))
                 .build();
         userPort.save(user);

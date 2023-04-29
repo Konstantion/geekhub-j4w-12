@@ -75,7 +75,7 @@ class TableDatabaseAdapterTest {
                 .password("password")
                 .firstName("name")
                 .lastName("eman")
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .permissions(Permission.getDefaultWaiterPermission())
                 .build();
         userAdapter.save(waiter);

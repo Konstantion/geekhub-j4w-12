@@ -56,7 +56,7 @@ class UserDatabaseAdapterTest {
                 .active(true)
                 .email("email")
                 .permissions(Permission.getDefaultWaiterPermission())
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .password("password")
                 .build();
         userAdapter.save(user);
@@ -70,7 +70,7 @@ class UserDatabaseAdapterTest {
         User user = User.builder()
                 .email("email")
                 .password("password")
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .permissions(Permission.getDefaultWaiterPermission())
                 .active(true)
                 .build();
@@ -87,7 +87,7 @@ class UserDatabaseAdapterTest {
         User user = User.builder()
                 .email("email")
                 .password("password")
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .permissions(Permission.getDefaultWaiterPermission())
                 .active(true)
                 .build();
@@ -108,14 +108,14 @@ class UserDatabaseAdapterTest {
         User first = User.builder()
                 .email("first")
                 .password("first")
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .permissions(Permission.getDefaultWaiterPermission())
                 .active(true)
                 .build();
         User second = User.builder()
                 .email("second")
                 .password("second")
-                .roles(Role.getAdminRoles())
+                .roles(Role.getAdminRole())
                 .permissions(Permission.getDefaultAdminPermission())
                 .active(true)
                 .build();
@@ -135,14 +135,14 @@ class UserDatabaseAdapterTest {
         User first = User.builder()
                 .email("first")
                 .password("first")
-                .roles(Role.getWaiterRoles())
+                .roles(Role.getWaiterRole())
                 .permissions(Permission.getDefaultWaiterPermission())
                 .active(true)
                 .build();
         User second = User.builder()
                 .email("second")
                 .password("second")
-                .roles(Role.getAdminRoles())
+                .roles(Role.getAdminRole())
                 .permissions(Permission.getDefaultAdminPermission())
                 .active(true)
                 .build();
@@ -160,7 +160,7 @@ class UserDatabaseAdapterTest {
         User user = User.builder()
                 .email("email")
                 .password("password")
-                .roles(Role.getAdminRoles())
+                .roles(Role.getAdminRole())
                 .permissions(Permission.getDefaultAdminPermission())
                 .active(true)
                 .build();

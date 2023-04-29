@@ -21,8 +21,8 @@ import java.util.UUID;
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
-import static com.konstantion.user.Role.getAdminRoles;
-import static com.konstantion.user.Role.getWaiterRoles;
+import static com.konstantion.user.Role.getAdminRole;
+import static com.konstantion.user.Role.getWaiterRole;
 import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
 import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
@@ -336,7 +336,7 @@ public record UserServiceImpl(
 
     private User buildWaiterFromRequest(CreateUserRequest request) {
         User user = buildUserFromCreateRequest(request);
-        user.setRoles(getWaiterRoles());
+        user.setRoles(getWaiterRole());
         user.setPermissions(getDefaultWaiterPermission());
 
         return user;
@@ -344,7 +344,7 @@ public record UserServiceImpl(
 
     private User buildAdminFromRequest(CreateUserRequest request) {
         User user = buildUserFromCreateRequest(request);
-        user.setRoles(getAdminRoles());
+        user.setRoles(getAdminRole());
         user.setPermissions(getDefaultAdminPermission());
 
         return user;

@@ -4,10 +4,10 @@ import com.konstantion.dto.product.converter.ProductMapper;
 import com.konstantion.dto.product.dto.ProductDto;
 import com.konstantion.product.ProductService;
 import com.konstantion.response.ResponseDto;
+import com.konstantion.utils.HashMaps;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,7 +51,7 @@ public record ProductController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message("Active page products successfully returned")
-                .data(Map.of(PRODUCTS, productsDto))
+                .data(HashMaps.of(PRODUCTS, productsDto))
                 .build();
     }
 
@@ -66,7 +66,7 @@ public record ProductController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message(format("Product with id %s", id))
-                .data(Map.of(PRODUCT, productDto))
+                .data(HashMaps.of(PRODUCT, productDto))
                 .build();
     }
 }
