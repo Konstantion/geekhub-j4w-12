@@ -61,8 +61,13 @@ public class BillDatabaseAdapter implements BillPort {
             WHERE id = :id;
             """;
 
-    public static final String FIND_ALL = """
+    public static final String FIND_ALL_QUERY = """
             SELECT * FROM public.bill;
+            """;
+
+    public static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.bill
+            WHERE true;
             """;
 
     @Override
@@ -122,8 +127,16 @@ public class BillDatabaseAdapter implements BillPort {
     @Override
     public List<Bill> findAll() {
         return jdbcTemplate.query(
-                FIND_ALL,
+                FIND_ALL_QUERY,
                 billRowMapper
+        );
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
         );
     }
 

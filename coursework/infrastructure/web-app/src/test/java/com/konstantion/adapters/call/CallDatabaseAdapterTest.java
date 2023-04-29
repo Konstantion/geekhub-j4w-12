@@ -1,12 +1,11 @@
 package com.konstantion.adapters.call;
 
-import com.konstantion.TestApplication;
-import com.konstantion.adapters.call.CallDatabaseAdapter;
+import com.konstantion.ApplicationStarter;
 import com.konstantion.adapters.table.TableDatabaseAdapter;
 import com.konstantion.adapters.user.UserDatabaseAdapter;
 import com.konstantion.call.Call;
 import com.konstantion.call.Purpose;
-import com.konstantion.config.RowMappersConfiguration;
+import com.konstantion.configuration.RowMappersConfiguration;
 import com.konstantion.table.Table;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -34,8 +34,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = {DatabaseTestConfiguration.class, RowMappersConfiguration.class, TestApplication.class})
+@ContextConfiguration(classes = {
+        DatabaseTestConfiguration.class,
+        RowMappersConfiguration.class,
+        ApplicationStarter.class})
 @Testcontainers
+@ActiveProfiles("test")
 class CallDatabaseAdapterTest {
     @ClassRule
     @Container
@@ -55,10 +59,12 @@ class CallDatabaseAdapterTest {
     @BeforeEach
     public void setUp() {
         callAdapter = new CallDatabaseAdapter(jdbcTemplate, rowMappers.callRowMapper());
-
+        callAdapter.deleteAll();
         //Initialize related entities for tests
         userDatabaseAdapter = new UserDatabaseAdapter(jdbcTemplate, rowMappers.userRowMapper());
         tableDatabaseAdapter = new TableDatabaseAdapter(jdbcTemplate, rowMappers.tableRowMapper());
+        userDatabaseAdapter.deleteAll();
+        tableDatabaseAdapter.deleteAll();
         Table table = Table.builder()
                 .name("TEST_TABLE")
                 .active(true)

@@ -53,6 +53,11 @@ public class HallDatabaseAdapter implements HallPort {
             SELECT * FROM public.hall;
             """;
 
+    public static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.hall
+            WHERE true;
+            """;
+
     @Override
     public List<Hall> findAll() {
         return jdbcTemplate.query(
@@ -100,6 +105,14 @@ public class HallDatabaseAdapter implements HallPort {
         jdbcTemplate.update(
                 DELETE_QUERY,
                 parameterSource
+        );
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
         );
     }
 

@@ -30,7 +30,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall create(CreateHallRequest request, User user) {
-        if (user.hasNoPermission(CREATE_TABLE)
+        if (user.hasNoPermission(CREATE_HALL)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
@@ -67,7 +67,7 @@ public record HallServiceImpl(
 
     @Override
     public Hall update(UUID id, UpdateHallRequest request, User user) {
-        if (user.hasNoPermission(CREATE_TABLE)
+        if (user.hasNoPermission(UPDATE_HALL)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }

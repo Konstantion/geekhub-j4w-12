@@ -13,4 +13,5 @@ public interface GuestPort {
     void delete(Guest guest);
 
     Optional<Guest> findByName(String name);
+    void deleteAll();
 }

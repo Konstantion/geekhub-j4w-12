@@ -11,4 +11,5 @@ public interface CategoryPort {
     Category save(Category category);
 
     void delete(Category category);
+    void deleteAll();
 }

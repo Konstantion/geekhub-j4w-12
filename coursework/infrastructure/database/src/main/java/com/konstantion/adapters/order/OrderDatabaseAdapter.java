@@ -73,6 +73,11 @@ public class OrderDatabaseAdapter implements OrderPort {
             SELECT * FROM public.order;
             """;
 
+    private static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.order
+            WHERE true;
+            """;
+
     @Override
     public Order save(Order order) {
         if (nonNull(order.getId())) {
@@ -137,6 +142,14 @@ public class OrderDatabaseAdapter implements OrderPort {
         }
 
         return orders;
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
+        );
     }
 
     private List<UUID> findProductsByOrderId(UUID orderId) {

@@ -12,4 +12,5 @@ public interface OrderPort {
     void delete(Order order);
 
     List<Order> findAll();
+    void deleteAll();
 }

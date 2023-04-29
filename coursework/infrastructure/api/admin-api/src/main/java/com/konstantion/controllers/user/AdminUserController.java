@@ -58,7 +58,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message("Waiter successfully created")
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -79,7 +79,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message("Admin successfully created")
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -94,7 +94,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message("All waiters successfully returned")
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -109,7 +109,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message("All admins successfully returned")
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -147,7 +147,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("User with id %s successfully updated", id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -163,7 +163,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("User with id %s successfully activated", id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -179,7 +179,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("User with id %s successfully deactivated", id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -196,7 +196,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("Role %s successfully added to User with id %s", role, id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -213,7 +213,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("Permission %s successfully added to User with id %s", permission, id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -230,7 +230,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("Permission %s successfully removed from User with id %s", permission, id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 
@@ -247,7 +247,7 @@ public record AdminUserController(
                 .statusCode(OK.value())
                 .message(format("Role %s successfully removed from User with id %s", role, id))
                 .timeStamp(now())
-                .data(Map.of(TABLE, dto))
+                .data(Map.of(USER, dto))
                 .build();
     }
 }

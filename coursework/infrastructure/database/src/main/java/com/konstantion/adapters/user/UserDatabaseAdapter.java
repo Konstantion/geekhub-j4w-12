@@ -34,6 +34,11 @@ public class UserDatabaseAdapter implements UserPort {
             SELECT * FROM public.user;
             """;
 
+    private static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.user
+            WHERE true;
+            """;
+
     private static final String DELETE_QUERY = """
             DELETE FROM public.user
             WHERE id = :id;
@@ -177,6 +182,14 @@ public class UserDatabaseAdapter implements UserPort {
         jdbcTemplate.update(
                 DELETE_QUERY,
                 parameterSource
+        );
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
         );
     }
 

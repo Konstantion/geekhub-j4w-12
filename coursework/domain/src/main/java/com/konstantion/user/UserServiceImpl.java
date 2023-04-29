@@ -55,7 +55,7 @@ public record UserServiceImpl(
     @Override
     public User getUserById(UUID id) {
         User user = getByIdOrThrow(id);
-        logger.info("User with id {} successfully returned", user);
+        logger.info("User with id {} successfully returned", id);
         return user;
     }
 

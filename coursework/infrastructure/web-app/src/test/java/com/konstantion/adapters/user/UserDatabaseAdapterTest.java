@@ -1,7 +1,7 @@
 package com.konstantion.adapters.user;
 
-import com.konstantion.TestApplication;
-import com.konstantion.config.RowMappersConfiguration;
+import com.konstantion.ApplicationStarter;
+import com.konstantion.configuration.RowMappersConfiguration;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import com.konstantion.user.Permission;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -27,8 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = {DatabaseTestConfiguration.class, RowMappersConfiguration.class, TestApplication.class})
+@ContextConfiguration(classes = {DatabaseTestConfiguration.class, RowMappersConfiguration.class, ApplicationStarter.class})
 @Testcontainers
+@ActiveProfiles("test")
 class UserDatabaseAdapterTest {
     @ClassRule
     @Container
@@ -44,6 +46,7 @@ class UserDatabaseAdapterTest {
     @BeforeEach
     void setUp() {
         userAdapter = new UserDatabaseAdapter(jdbcTemplate, rowMappers.userRowMapper());
+        userAdapter.deleteAll();
     }
 
     @Test

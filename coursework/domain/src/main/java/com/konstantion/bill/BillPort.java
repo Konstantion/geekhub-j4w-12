@@ -14,4 +14,6 @@ public interface BillPort {
     void delete(Bill bill);
 
     List<Bill> findAll();
+
+    void deleteAll();
 }

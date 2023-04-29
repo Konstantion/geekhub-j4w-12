@@ -30,6 +30,12 @@ public class TableDatabaseAdapter implements TablePort {
             SELECT * FROM public.table;
             """;
 
+    private static final String DELETE_ALL_QUERY = """
+            DELETE  FROM public.table
+            WHERE true;
+            """;
+
+
     private static final String FIND_ALL_WHERE_HALL_ID_QUERY = """
             SELECT * FROM public.table
             WHERE hall_id = :hallId;
@@ -178,6 +184,14 @@ public class TableDatabaseAdapter implements TablePort {
         }
 
         return Optional.ofNullable(table);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
+        );
     }
 
     private Set<UUID> findWaitersByTableId(UUID tableId) {

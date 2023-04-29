@@ -17,4 +17,5 @@ public interface TablePort {
     List<Table> findAllWhereHallId(UUID hallId);
 
     Optional<Table> findByName(String name);
+    void deleteAll();
 }

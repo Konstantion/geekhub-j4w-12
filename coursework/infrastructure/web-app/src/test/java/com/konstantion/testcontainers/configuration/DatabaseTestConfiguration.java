@@ -6,6 +6,7 @@ import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -13,6 +14,7 @@ import javax.sql.DataSource;
 @TestConfiguration
 public class DatabaseTestConfiguration {
     @Bean
+    @Profile("test")
     public HikariDataSource dataSource(
             @Value("${spring.datasource.username}") String username,
             @Value("${spring.datasource.password}") String password,
@@ -28,11 +30,13 @@ public class DatabaseTestConfiguration {
     }
 
     @Bean
+    @Profile("test")
     public NamedParameterJdbcTemplate researchCenterNamedJdbc(HikariDataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Bean(initMethod = "migrate")
+    @Profile("test")
     public Flyway flyway(DataSource database) {
         return Flyway.configure()
                 .dataSource(database)

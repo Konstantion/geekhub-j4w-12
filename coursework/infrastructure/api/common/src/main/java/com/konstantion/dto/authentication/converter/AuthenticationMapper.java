@@ -21,7 +21,7 @@ public interface AuthenticationMapper {
         if (authenticationResponse.type().equals(USER)
             && authenticationResponse.userDetails() instanceof User user) {
 
-            return new AuthenticationResponseDto(
+            return new AuthenticationResponseDto<>(
                     authenticationResponse.token(),
                     Map.of(authenticationResponse.type(), new UserDto(
                             user.getId(),
@@ -37,7 +37,7 @@ public interface AuthenticationMapper {
                     )));
         } else if (authenticationResponse.type().equals(TABLE)
                    && authenticationResponse.userDetails() instanceof Table table) {
-            return new AuthenticationResponseDto(
+            return new AuthenticationResponseDto<>(
                     authenticationResponse.token(),
                     Map.of(authenticationResponse.type(),
                             new TableDto(
@@ -54,7 +54,7 @@ public interface AuthenticationMapper {
                             ))
             );
         } else {
-            return new AuthenticationResponseDto(
+            return new AuthenticationResponseDto<>(
                     authenticationResponse.token(),
                     Map.of(ENTITY, authenticationResponse.userDetails())
             );

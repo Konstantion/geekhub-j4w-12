@@ -35,6 +35,7 @@ ext.libsSpring = [
         'springBootStarterDataJdbc'       : "org.springframework.boot:spring-boot-starter-data-jdbc:$springBootVersion",
         'springBootStarterValidation'     : "org.springframework.boot:spring-boot-starter-validation:$springBootVersion",
         'springBootStarterWeb'            : "org.springframework.boot:spring-boot-starter-web:$springBootVersion",
+        'springBootStarterWebflux'        : "org.springframework.boot:spring-boot-starter-webflux:$springBootVersion",
         'springBootStarterSecurity'       : "org.springframework.boot:spring-boot-starter-security:$springBootVersion",
         'springBootStarterThymeleaf'      : "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion",
         'springBootStarterMail'           : "org.springframework.boot:spring-boot-starter-mail:$springBootVersion",

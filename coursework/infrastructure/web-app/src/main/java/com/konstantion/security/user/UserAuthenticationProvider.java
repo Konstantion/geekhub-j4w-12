@@ -1,6 +1,5 @@
 package com.konstantion.security.user;
 
-import com.konstantion.table.authentication.TableAuthenticationToken;
 import com.konstantion.user.User;
 import com.konstantion.user.UserPort;
 import com.konstantion.user.authentication.UserAuthenticationToken;

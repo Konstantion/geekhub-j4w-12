@@ -21,4 +21,6 @@ public interface ProductPort {
             boolean ascending,
             boolean isActive
     );
+
+    void deleteAll();
 }

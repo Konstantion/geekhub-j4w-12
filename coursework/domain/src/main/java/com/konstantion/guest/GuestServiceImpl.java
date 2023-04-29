@@ -72,7 +72,7 @@ public record GuestServiceImpl(
 
     @Override
     public Guest update(UUID id, UpdateGuestRequest request, User user) {
-        if (user.hasNoPermission(CREATE_GUEST)
+        if (user.hasNoPermission(UPDATE_GUEST)
             && user.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }

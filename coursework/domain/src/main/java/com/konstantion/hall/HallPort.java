@@ -11,4 +11,5 @@ public interface HallPort {
     Hall save(Hall hall);
 
     void delete(Hall hall);
+    void deleteAll();
 }

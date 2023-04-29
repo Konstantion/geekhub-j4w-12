@@ -49,6 +49,11 @@ public class ProductDatabaseAdapter implements ProductPort {
             WHERE id = :id;
             """;
 
+    private static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.product
+            WHERE true;
+            """;
+
     private static final String UPDATE_QUERY = """
             UPDATE public.product
             SET name = :name,
@@ -158,6 +163,14 @@ public class ProductDatabaseAdapter implements ProductPort {
         ), products.size());
 
         return new PageImpl<>(products, PageRequest.of(pageNumber - 1, pageSize), totalCount);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
+        );
     }
 
     private Product update(Product product) {

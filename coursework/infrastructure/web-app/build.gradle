@@ -1,3 +1,13 @@
+plugins {
+    id 'org.springframework.boot' version '3.0.5'
+}
+
+bootJar {
+    archiveFileName = 'my-application.jar'
+    def courseworkDir = this.parent.parent.projectDir;
+    destinationDirectory = file("$courseworkDir/jar")
+}
+
 dependencies {
     implementation project(':coursework:domain')
     implementation project(':coursework:infrastructure:database')
@@ -8,6 +18,7 @@ dependencies {
 
 
     implementation libsSpringDoc.openapiStarterWebmvcUi
+    implementation libsSpring.springBootStarterWebflux
     runtimeOnly libsDatabase.postgres
     implementation libsJwt.jjwtApi
 

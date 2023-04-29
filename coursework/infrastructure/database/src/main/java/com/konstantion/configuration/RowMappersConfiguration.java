@@ -1,4 +1,4 @@
-package com.konstantion.config;
+package com.konstantion.configuration;
 
 import com.konstantion.bill.Bill;
 import com.konstantion.call.Call;

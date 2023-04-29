@@ -1,7 +1,7 @@
 package com.konstantion.adapters.product;
 
-import com.konstantion.TestApplication;
-import com.konstantion.config.RowMappersConfiguration;
+import com.konstantion.ApplicationStarter;
+import com.konstantion.configuration.RowMappersConfiguration;
 import com.konstantion.product.Product;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
@@ -13,12 +13,12 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.data.domain.Page;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,8 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = {DatabaseTestConfiguration.class, RowMappersConfiguration.class, TestApplication.class})
+@ContextConfiguration(classes = {DatabaseTestConfiguration.class, RowMappersConfiguration.class, ApplicationStarter.class})
 @Testcontainers
+@ActiveProfiles("test")
 class ProductDatabaseAdapterTest {
     @ClassRule
     @Container
@@ -43,6 +44,7 @@ class ProductDatabaseAdapterTest {
     @BeforeEach
     void setUp() {
         productAdapter = new ProductDatabaseAdapter(jdbcTemplate, rowMappers.productRowMapper());
+        productAdapter.deleteAll();
     }
 
     @Test

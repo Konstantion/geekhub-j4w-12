@@ -62,6 +62,11 @@ public class GuestDatabaseAdapter implements GuestPort {
             SELECT * FROM public.guest;
             """;
 
+    public static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.guest
+            WHERE true;
+            """;
+
     @Override
     public List<Guest> findAll() {
         return jdbcTemplate.query(
@@ -119,6 +124,14 @@ public class GuestDatabaseAdapter implements GuestPort {
                 parameterSource,
                 guestRowMapper
         ).stream().findFirst();
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
+        );
     }
 
     private Guest update(Guest guest) {

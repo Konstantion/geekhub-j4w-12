@@ -74,6 +74,11 @@ public class CallDatabaseAdapter implements CallPort {
             AND purpose = :purpose;
             """;
 
+    public static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.call
+            WHERE true;
+            """;
+
     @Override
     public List<Call> findAll() {
         List<Call> calls = jdbcTemplate.query(
@@ -154,6 +159,14 @@ public class CallDatabaseAdapter implements CallPort {
         }
 
         return Optional.ofNullable(call);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
+        );
     }
 
     private Call update(Call call) {

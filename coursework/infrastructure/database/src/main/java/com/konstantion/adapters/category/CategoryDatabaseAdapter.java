@@ -54,6 +54,11 @@ public class CategoryDatabaseAdapter implements CategoryPort {
             SELECT * FROM public.category;
             """;
 
+    public static final String DELETE_ALL_QUERY = """
+            DELETE FROM public.category
+            WHERE true;
+            """;
+
     @Override
     public List<Category> findAll() {
         return jdbcTemplate.query(
@@ -102,6 +107,14 @@ public class CategoryDatabaseAdapter implements CategoryPort {
         jdbcTemplate.update(
                 DELETE_QUERY,
                 parameterSource
+        );
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(
+                DELETE_ALL_QUERY,
+                new MapSqlParameterSource()
         );
     }
 

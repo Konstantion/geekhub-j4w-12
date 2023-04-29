@@ -13,4 +13,5 @@ public interface CallPort {
     void delete(Call call);
 
     Optional<Call> findByTableIdAndPurpose(UUID tableId, Purpose purpose);
+    void deleteAll();
 }

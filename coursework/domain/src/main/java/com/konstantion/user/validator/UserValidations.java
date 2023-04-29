@@ -102,13 +102,13 @@ public record UserValidations(
         Set<String> violations = new HashSet<>();
 
         if (isBlank(passwordCopy)) {
-            violations.add("confirmation password shouldn't be empty");
+            violations.add("password copy shouldn't be empty");
             return setToOptional(violations, sender, PASSWORD_COPY_FIELD);
         }
 
 
         if (!password.equals(passwordCopy)) {
-            violations.add("confirmation password should be the same as password");
+            violations.add("password copy should be the same as password");
         }
 
         return setToOptional(violations, sender, PASSWORD_COPY_FIELD);
@@ -118,12 +118,12 @@ public record UserValidations(
         Set<String> violations = new HashSet<>();
 
         if (isBlank(phoneNumber)) {
-            violations.add("Phone number shouldn't be empty");
+            violations.add("phone number shouldn't be empty");
             return setToOptional(violations, sender, PHONE_NUMBER_FIELD);
         }
 
         if (!Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber)) {
-            violations.add("Invalid phone number format, should be |xxx-xxx-xxxx|");
+            violations.add("invalid phone number format, should be <xxx-xxx-xxxx>");
         }
 
         return setToOptional(violations, sender, PHONE_NUMBER_FIELD);
@@ -137,7 +137,7 @@ public record UserValidations(
         }
 
         if (age < 14 || age >= 100) {
-            violations.add("Age should be between 14 and 100");
+            violations.add("age should be between 14 and 100");
         }
 
         return setToOptional(violations, sender, AGE_FIELD);
