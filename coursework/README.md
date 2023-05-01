@@ -42,7 +42,11 @@
 <details>
 <summary>Instructions for build, run, deploy and test project</summary>
 
-
+### Using Docker
+```shell
+  docker compose up -d
+```
+### Using Gradle
 build the project
 ```shell
 ./gradlew build
@@ -50,7 +54,7 @@ build the project
 
 run the project
 ```shell
-./gradlew :yourApplication:application:bootRun
+./gradlew :coursework:infrastructure:web-app:bootRun
 ```
 
 run tests.
@@ -63,6 +67,4 @@ run tests.
 
 
 ### Logging agreements
-> describe frameworks that you use for logging
-
-### and other information about your service that might be useful...
+> Logging is implemented using the <b>Logback</b> framework.

@@ -135,6 +135,27 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void shouldTransferOrderAndClearOldTableWhenTransferToAnotherTableWithTableThatHasOrder() {
+        UUID orderId = UUID.randomUUID();
+        UUID newTableId = UUID.randomUUID();
+        UUID oldTableId = UUID.randomUUID();
+
+        Table dbTable = Table.builder().id(newTableId).active(true).orderId(null).build();
+        when(tablePort.findById(newTableId)).thenReturn(Optional.of(dbTable));
+        when(tablePort.findById(oldTableId)).thenReturn(Optional.of(Table.builder().build()));
+        when(orderPort.findById(orderId)).thenReturn(Optional.of(Order.builder().id(orderId).tableId(oldTableId).build()));
+
+        Order order = orderService.transferToAnotherTable(orderId, newTableId, user);
+
+        assertThat(order)
+                .isNotNull()
+                .extracting(Order::getTableId)
+                .isEqualTo(newTableId );
+
+        verify(tablePort, times(2)).save(any());
+    }
+
+    @Test
     void shouldThrowBadRequestExceptionOrderWithTableThatHasOrder() {
         when(tablePort.findById(any())).thenReturn(Optional.of(Table.builder().active(true).orderId(UUID.randomUUID()).build()));
         when(orderPort.findById(any())).thenReturn(Optional.of(Order.builder().build()));

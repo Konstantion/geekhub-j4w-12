@@ -2,7 +2,6 @@ package com.konstantion.user;
 
 import com.google.common.collect.Sets;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public enum Permission {
@@ -32,9 +31,11 @@ public enum Permission {
 
     public static Set<Permission> getDefaultWaiterPermission() {
         return Sets.newHashSet(
+                OPEN_ORDER, CLOSE_ORDER,
                 ADD_PRODUCT_TO_ORDER, DELETE_PRODUCT_FROM_ORDER,
-                OPEN_ORDER, CLOSE_ORDER, CREATE_BILL_FROM_ORDER, TRANSFER_ORDER,
-                CLOSE_BILL
+                TRANSFER_ORDER,
+                CLOSE_BILL, CREATE_BILL_FROM_ORDER,
+                CLOSE_CALL
         );
     }
 

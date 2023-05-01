@@ -319,4 +319,33 @@ class OrderControllerTest {
                 .hasSize(1)
                 .containsOnly(product.getId());
     }
+
+    @Test
+    void shouldTransferOrderWhenTransferOrder() {
+        Table first = Table.builder().active(true).name("first").password("first").build();
+        Table second = Table.builder().active(true).name("second").password("second").build();
+        tablePort.save(first);
+        tablePort.save(second);
+
+        Order order = Order.builder().active(true).tableId(first.getId()).build();
+        orderPort.save(order);
+
+        first.setOrderId(order.getId());
+        tablePort.save(first);
+
+        EntityExchangeResult<ResponseDto<OrderDto>> result = webTestClient.put()
+                .uri(API_URL + "/{orderId}/transfer/tables/{tableId}", order.getId(), second.getId())
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", jwtToken))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<ResponseDto<OrderDto>>() {
+                }).returnResult();
+
+        OrderDto orderDto = result.getResponseBody()
+                .data().get(ORDER);
+
+        assertThat(orderDto).isNotNull()
+                .extracting(OrderDto::tableId)
+                .isEqualTo(second.getId());
+    }
 }

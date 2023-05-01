@@ -62,19 +62,26 @@ public record OrderServiceImpl(
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
 
-        Table table = tablePort.findById(tableId)
+        Table newTable = tablePort.findById(tableId)
                 .orElseThrow(nonExistingIdSupplier(Table.class, tableId));
-        ExceptionUtils.isActiveOrThrow(table);
+        ExceptionUtils.isActiveOrThrow(newTable);
 
-        if (table.hasOrder()) {
-            throw new BadRequestException(format("Table with id %s, already has active order with id %s", table.getId(), table.getOrderId()));
+        if (newTable.hasOrder()) {
+            throw new BadRequestException(format("Table with id %s, already has active order with id %s", newTable.getId(), newTable.getOrderId()));
         }
 
-        order.setTableId(table.getId());
-        table.setOrderId(order.getId());
+        if (nonNull(order.getTableId())) {
+            Table oldTable = tablePort().findById(order.getTableId())
+                    .orElseThrow(nonExistingIdSupplier(Table.class, order.getTableId()));
+            oldTable.removeOrder();
+            tablePort.save(oldTable);
+        }
+
+        order.setTableId(newTable.getId());
+        newTable.setOrderId(order.getId());
 
         orderPort.save(order);
-        tablePort.save(table);
+        tablePort.save(newTable);
 
         logger.info("Order with id {} successfully transferred to the table with id {}", orderId, tableId);
         return order;

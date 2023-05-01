@@ -16,6 +16,6 @@ public record DoubleUtils() {
      * Take percent of double value, <b style='color:red'>percent</b> should be between 0 and 100
      */
     public static double percent(double value, double percent) {
-        return value  * (percent / 100);
+        return value  * (percent / 100.0);
     }
 }

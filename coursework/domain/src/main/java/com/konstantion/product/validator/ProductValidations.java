@@ -4,6 +4,7 @@ import com.konstantion.utils.validator.ValidationUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +41,11 @@ public record ProductValidations(
 
         if (price <= 0) {
             violations.add("price should be bigger then zero");
+        }
+
+        BigDecimal priceDecimal = BigDecimal.valueOf(price);
+        if (priceDecimal.scale() > 2) {
+            violations.add("price should have at most two decimal digits");
         }
 
         return setToOptional(violations, sender, PRICE_FIELD);
