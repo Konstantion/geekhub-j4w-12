@@ -24,6 +24,7 @@ import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSuppli
 import static com.konstantion.user.Permission.*;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.nonNull;
 
 @Component
 public record OrderServiceImpl(
@@ -137,14 +138,14 @@ public record OrderServiceImpl(
             throw new BadRequestException(format("Order with id %s has a bill with id %s that has not been payed", order.getId(), bill.getId()));
         }
 
-
-        Table table = tablePort.findById(order.getTableId())
-                .orElseThrow(nonExistingIdSupplier(Table.class, order.getTableId()));
-        table.removeOrder();
+        if (nonNull(order.getTableId())) {
+            Table table = tablePort.findById(order.getTableId())
+                    .orElseThrow(nonExistingIdSupplier(Table.class, order.getTableId()));
+            table.removeOrder();
+            tablePort.save(table);
+        }
 
         prepareToClose(order);
-
-        tablePort.save(table);
         orderPort.save(order);
 
         logger.info("Order with id {} successfully closed and returned", order);
@@ -179,6 +180,9 @@ public record OrderServiceImpl(
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
 
+        if (order.hasBill()) {
+            throw new BadRequestException(format("Products can't be added to the order with id %s because it already has a bill with id %s", order.getId(), order.getBillId()));
+        }
 
         Product product = productPort.findById(productId)
                 .orElseThrow(nonExistingIdSupplier(Product.class, productId));
@@ -210,6 +214,10 @@ public record OrderServiceImpl(
 
         Order order = getByIdOrThrow(orderId);
         ExceptionUtils.isActiveOrThrow(order);
+
+        if (order.hasBill()) {
+            throw new BadRequestException(format("Products can't be removed from the order with id %s because it already has a bill with id %s", order.getId(), order.getBillId()));
+        }
 
         Product product = productPort.findById(productId)
                 .orElseThrow(nonExistingIdSupplier(Product.class, productId));

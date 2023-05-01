@@ -1,11 +1,13 @@
 package com.konstantion.api.web.table;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.konstantion.dto.order.dto.OrderDto;
 import com.konstantion.dto.table.converter.TableMapper;
 import com.konstantion.dto.table.dto.TableDto;
+import com.konstantion.dto.user.converter.UserMapper;
+import com.konstantion.dto.user.dto.UserDto;
 import com.konstantion.jwt.JwtService;
+import com.konstantion.order.OrderPort;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.table.Table;
 import com.konstantion.table.TablePort;
@@ -16,10 +18,7 @@ import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import com.konstantion.user.UserPort;
 import org.junit.ClassRule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,6 +34,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.konstantion.table.TableType.COMMON;
@@ -59,11 +59,11 @@ class TableControllerTest {
     @Autowired
     private UserPort userPort;
     @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private OrderPort orderPort;
     private User waiter;
     private String jwtToken;
     private static final TableMapper tableMapper = TableMapper.INSTANCE;
@@ -72,9 +72,6 @@ class TableControllerTest {
 
     @BeforeEach
     void setUp() {
-        tablePort.deleteAll();
-        userPort.deleteAll();
-
         faker = new Faker();
         waiter = User.builder()
                 .email(faker.internet().emailAddress())
@@ -86,6 +83,13 @@ class TableControllerTest {
         userPort.save(waiter);
         Map<String, Object> extraClaim = Map.of(ENTITY, USER);
         jwtToken = jwtService.generateToken(extraClaim, waiter);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        tablePort.deleteAll();
+        userPort.deleteAll();
+        orderPort.deleteAll();
     }
 
     @Test
@@ -203,5 +207,104 @@ class TableControllerTest {
                 .data().get(ORDER);
 
         assertThat(tableDto).isNull();
+    }
+
+    @Test
+    void shouldCreateOrderWhenOpenTableOrder() {
+        Table table = Table.builder()
+                .active(true)
+                .name("test")
+                .password("test")
+                .tableType(COMMON)
+                .build();
+        tablePort.save(table);
+
+        EntityExchangeResult<ResponseDto<OrderDto>> result = webTestClient.post()
+                .uri(API_URL + "/{id}/order", table.getId())
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", jwtToken))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<ResponseDto<OrderDto>>() {
+                })
+                .returnResult();
+
+        OrderDto orderDto = result.getResponseBody()
+                .data().get(ORDER);
+        Table dbTable = tablePort.findById(table.getId()).get();
+
+        assertThat(orderDto).isNotNull()
+                .extracting(OrderDto::id).isNotNull()
+                .isEqualTo(dbTable.getOrderId());
+
+        assertThat(orderDto.tableId())
+                .isEqualTo(dbTable.getId());
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenOpenTableOrderWithTableThatHasOrder() {
+        Table table = Table.builder()
+                .active(true)
+                .name("test")
+                .password("test")
+                .tableType(COMMON)
+                .build();
+        tablePort.save(table);
+
+        webTestClient.post()
+                .uri(API_URL + "/{id}/order", table.getId())
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", jwtToken))
+                .exchange()
+                .expectStatus().isOk();
+
+        webTestClient.post()
+                .uri(API_URL + "/{id}/order", table.getId())
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", jwtToken))
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenOpenTableOrderWithInactiveTable() {
+        Table table = Table.builder()
+                .active(false)
+                .name("test")
+                .password("test")
+                .tableType(COMMON)
+                .build();
+        tablePort.save(table);
+
+        webTestClient.post()
+                .uri(API_URL + "/{id}/order", table.getId())
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", jwtToken))
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void shouldReturnTableWaitersWhenGetWaitersByTableId() {
+        Table table = Table.builder()
+                .active(false)
+                .name("test")
+                .password("test")
+                .tableType(COMMON)
+                .waitersId(Set.of(waiter.getId()))
+                .build();
+        tablePort.save(table);
+
+        EntityExchangeResult<ResponseDto<List<UserDto>>> result = webTestClient.get()
+                .uri(API_URL + "/{id}/waiters", table.getId())
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", jwtToken))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<ResponseDto<List<UserDto>>>() {
+                })
+                .returnResult();
+
+        List<UserDto> userDtos = result.getResponseBody()
+                .data().get(USERS);
+
+        assertThat(userDtos)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(UserMapper.INSTANCE.toDto(waiter));
     }
 }

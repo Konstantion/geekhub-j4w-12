@@ -6,11 +6,11 @@ import com.konstantion.dto.order.dto.OrderProductsRequestDto;
 import com.konstantion.order.OrderService;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.user.User;
+import com.konstantion.utils.HashMaps;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static com.konstantion.utils.EntityNameConstants.ORDER;
@@ -35,7 +35,7 @@ public record OrderController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message("All active orders successfully returned")
-                .data(Map.of(ORDERS, dtos))
+                .data(HashMaps.of(ORDERS, dtos))
                 .build();
     }
 
@@ -50,7 +50,7 @@ public record OrderController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message(format("Order with id %s successfully returned", id))
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 
@@ -66,7 +66,7 @@ public record OrderController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message(format("Order with id %s successfully closed", id))
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 
@@ -88,11 +88,11 @@ public record OrderController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message(format("%s products with id %s successfully added to the order with id %s", count, requestDto.productId(), id))
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 
-    @DeleteMapping("/{id}/products")
+    @PutMapping("/{id}/products/remove")
     public ResponseDto removeProductFromOrder(
             @PathVariable("id") UUID id,
             @RequestBody OrderProductsRequestDto requestDto,
@@ -110,8 +110,7 @@ public record OrderController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message(format("%s products with id %s successfully removed from the order with id %s", count, requestDto.productId(), id))
-                .data(Map.of(ORDER, dto))
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 
@@ -132,7 +131,7 @@ public record OrderController(
                 .statusCode(OK.value())
                 .timeStamp(now())
                 .message(format("Order with id %s successfully transferred to the table with id %s", orderId, tableId))
-                .data(Map.of(ORDER, dto))
+                .data(HashMaps.of(ORDER, dto))
                 .build();
     }
 }

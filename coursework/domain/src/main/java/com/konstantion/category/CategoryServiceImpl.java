@@ -3,6 +3,7 @@ package com.konstantion.category;
 import com.konstantion.category.model.CreateCategoryRequest;
 import com.konstantion.category.model.UpdateCategoryRequest;
 import com.konstantion.category.validator.CategoryValidator;
+import com.konstantion.exception.ForbiddenException;
 import com.konstantion.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
+import static com.konstantion.user.Permission.*;
 
 @Component
 public record CategoryServiceImpl(
@@ -29,6 +32,11 @@ public record CategoryServiceImpl(
 
     @Override
     public Category create(CreateCategoryRequest request, User user) {
+        if (user.hasNoPermission(SUPER_USER)
+            && user.hasNoPermission(CREATE_CATEGORY)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
         categoryValidator.validate(request).validOrTrow();
 
         Category category = Category.builder()
@@ -42,7 +50,11 @@ public record CategoryServiceImpl(
     }
 
     @Override
-    public Category deleteById(UUID id) {
+    public Category deleteById(UUID id, User user) {
+        if (user.hasNoPermission(SUPER_USER)
+            && user.hasNoPermission(CREATE_CATEGORY)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
         Category category = getByIdOrThrow(id);
 
         categoryPort.delete(category);
@@ -51,7 +63,11 @@ public record CategoryServiceImpl(
     }
 
     @Override
-    public Category update(UUID id, UpdateCategoryRequest request) {
+    public Category update(UUID id, UpdateCategoryRequest request, User user) {
+        if (user.hasNoPermission(SUPER_USER)
+            && user.hasNoPermission(UPDATE_CATEGORY)) {
+            throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
         categoryValidator.validate(request).validOrTrow();
 
         Category category = getByIdOrThrow(id);

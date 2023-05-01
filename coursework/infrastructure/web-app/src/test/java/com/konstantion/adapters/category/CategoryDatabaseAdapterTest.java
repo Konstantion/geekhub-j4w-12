@@ -6,6 +6,7 @@ import com.konstantion.configuration.RowMappersConfiguration;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,10 @@ class CategoryDatabaseAdapterTest {
     @BeforeEach
     public void setUp() {
         categoryAdapter = new CategoryDatabaseAdapter(jdbcTemplate, rowMappers.categoryRowMapper());
+    }
+
+    @AfterEach
+    void cleanUp() {
         categoryAdapter.deleteAll();
     }
 

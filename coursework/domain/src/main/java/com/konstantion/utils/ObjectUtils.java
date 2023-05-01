@@ -6,7 +6,10 @@ import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-public record ObjectUtils() {
+public class ObjectUtils {
+    private ObjectUtils() {
+    }
+
     public static <T, U> boolean anyMatchCollection(Collection<T> entities, Function<T, U> extractor, U desired, BiPredicate<U, U> criteria) {
         return entities.stream()
                 .map(extractor)

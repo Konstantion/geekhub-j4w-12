@@ -13,10 +13,7 @@ import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import com.konstantion.user.UserPort;
 import org.junit.ClassRule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -67,6 +64,11 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         faker = new Faker();
+        userPort.deleteAll();
+    }
+
+    @AfterEach
+    void cleanUp() {
         userPort.deleteAll();
     }
 

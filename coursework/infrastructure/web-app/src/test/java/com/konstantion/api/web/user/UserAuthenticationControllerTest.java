@@ -16,6 +16,7 @@ import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import com.konstantion.user.UserPort;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,11 @@ class UserAuthenticationControllerTest {
     @BeforeEach
     void setUp() {
         faker = new Faker();
+        userPort.deleteAll();
+    }
+
+    @AfterEach
+    void cleanUp() {
         userPort.deleteAll();
     }
 

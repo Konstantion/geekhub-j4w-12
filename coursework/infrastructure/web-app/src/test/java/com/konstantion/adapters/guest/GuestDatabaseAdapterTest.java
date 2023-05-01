@@ -6,6 +6,7 @@ import com.konstantion.guest.Guest;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,11 @@ class GuestDatabaseAdapterTest {
     @BeforeEach
     public void setUp() {
         guestAdapter = new GuestDatabaseAdapter(jdbcTemplate, rowMappers.guestRowMapper());
+        guestAdapter.deleteAll();
+    }
+
+    @AfterEach
+    void cleanUp() {
         guestAdapter.deleteAll();
     }
 

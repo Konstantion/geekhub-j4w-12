@@ -11,6 +11,7 @@ import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import com.konstantion.user.User;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +60,9 @@ class CallDatabaseAdapterTest {
     @BeforeEach
     public void setUp() {
         callAdapter = new CallDatabaseAdapter(jdbcTemplate, rowMappers.callRowMapper());
-        callAdapter.deleteAll();
         //Initialize related entities for tests
         userDatabaseAdapter = new UserDatabaseAdapter(jdbcTemplate, rowMappers.userRowMapper());
         tableDatabaseAdapter = new TableDatabaseAdapter(jdbcTemplate, rowMappers.tableRowMapper());
-        userDatabaseAdapter.deleteAll();
-        tableDatabaseAdapter.deleteAll();
         Table table = Table.builder()
                 .name("TEST_TABLE")
                 .active(true)
@@ -79,6 +77,13 @@ class CallDatabaseAdapterTest {
         userDatabaseAdapter.save(user);
         USER_IDS = new UUID[]{user.getId()};
         TABLE_IDS = new UUID[]{table.getId()};
+    }
+
+    @AfterEach
+    void cleanUp() {
+        callAdapter.deleteAll();
+        userDatabaseAdapter.deleteAll();
+        tableDatabaseAdapter.deleteAll();
     }
 
     @Test

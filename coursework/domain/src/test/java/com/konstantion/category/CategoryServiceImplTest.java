@@ -3,8 +3,10 @@ package com.konstantion.category;
 import com.konstantion.category.model.CreateCategoryRequest;
 import com.konstantion.category.model.UpdateCategoryRequest;
 import com.konstantion.category.validator.CategoryValidator;
+import com.konstantion.exception.ForbiddenException;
 import com.konstantion.exception.NonExistingIdException;
 import com.konstantion.exception.ValidationException;
+import com.konstantion.user.Permission;
 import com.konstantion.user.User;
 import com.konstantion.utils.validator.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,11 +43,26 @@ class CategoryServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        when(user.hasNoPermission(any(Permission.class))).thenReturn(false);
         categoryId = UUID.randomUUID();
         categoryName = "name";
 
         createCategoryRequest = new CreateCategoryRequest(categoryName);
         updateCategoryRequest = new UpdateCategoryRequest("updated " + categoryName);
+    }
+
+    @Test
+    void shouldThrowForbiddenExceptionWhenUserWithoutPermission() {
+        when(user.hasNoPermission(any(Permission.class))).thenReturn(true);
+
+        assertThatThrownBy(() -> categoryService.create(null, user))
+                .isExactlyInstanceOf(ForbiddenException.class);
+
+        assertThatThrownBy(() -> categoryService.update(null, null, user))
+                .isExactlyInstanceOf(ForbiddenException.class);
+
+        assertThatThrownBy(() -> categoryService.deleteById(null, user))
+                .isExactlyInstanceOf(ForbiddenException.class);
     }
 
     @Test
@@ -100,7 +117,7 @@ class CategoryServiceImplTest {
     void shouldThrowNonExistingIdExceptionWhenDeleteByIdWithNonExistingId() {
         when(categoryPort.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> categoryService.deleteById(categoryId))
+        assertThatThrownBy(() -> categoryService.deleteById(categoryId, user))
                 .isInstanceOf(NonExistingIdException.class);
     }
 
@@ -108,7 +125,7 @@ class CategoryServiceImplTest {
     void shouldDeleteWhenDeleteByIdWithExistingId() {
         when(categoryPort.findById(categoryId)).thenReturn(Optional.of(Category.builder().build()));
 
-        Category category = categoryService.deleteById(categoryId);
+        Category category = categoryService.deleteById(categoryId, user);
 
         assertThat(category)
                 .isNotNull();
@@ -119,7 +136,7 @@ class CategoryServiceImplTest {
     void shouldThrowValidationExceptionWhenUpdateCategoryInvalidData() {
         when(categoryValidator.validate(any(UpdateCategoryRequest.class))).thenReturn(ValidationResult.invalid(Set.of()));
 
-        assertThatThrownBy(() -> categoryService.update(categoryId, updateCategoryRequest))
+        assertThatThrownBy(() -> categoryService.update(categoryId, updateCategoryRequest, user))
                 .isInstanceOf(ValidationException.class);
     }
 
@@ -128,7 +145,7 @@ class CategoryServiceImplTest {
         when(categoryValidator.validate(any(UpdateCategoryRequest.class))).thenReturn(ValidationResult.valid());
         when(categoryPort.findById(categoryId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> categoryService.update(categoryId, updateCategoryRequest))
+        assertThatThrownBy(() -> categoryService.update(categoryId, updateCategoryRequest, user))
                 .isInstanceOf(NonExistingIdException.class);
     }
 
@@ -137,7 +154,7 @@ class CategoryServiceImplTest {
         when(categoryValidator.validate(any(UpdateCategoryRequest.class))).thenReturn(ValidationResult.valid());
         when(categoryPort.findById(categoryId)).thenReturn(Optional.of(Category.builder().build()));
 
-        Category actual = categoryService.update(categoryId, updateCategoryRequest);
+        Category actual = categoryService.update(categoryId, updateCategoryRequest, user);
         assertThat(actual.getName())
                 .isEqualTo(updateCategoryRequest.name());
         verify(categoryPort, times(1)).save(actual);

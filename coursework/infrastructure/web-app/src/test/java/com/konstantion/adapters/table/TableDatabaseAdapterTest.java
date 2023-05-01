@@ -13,6 +13,7 @@ import com.konstantion.user.Permission;
 import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +58,9 @@ class TableDatabaseAdapterTest {
     @BeforeEach
     void setUp() {
         tableAdapter = new TableDatabaseAdapter(jdbcTemplate, rowMappers.tableRowMapper());
-        tableAdapter.deleteAll();
         //Initialize related entities for tests
         hallAdapter = new HallDatabaseAdapter(jdbcTemplate, rowMappers.hallRowMapper());
         userAdapter = new UserDatabaseAdapter(jdbcTemplate, rowMappers.userRowMapper());
-        hallAdapter.deleteAll();
-        userAdapter.deleteAll();
         Hall hall = Hall.builder()
                 .name("test")
                 .active(true)
@@ -82,6 +80,13 @@ class TableDatabaseAdapterTest {
 
         HALL_IDS = new UUID[]{hall.getId()};
         USER_IDS = new UUID[]{waiter.getId()};
+    }
+
+    @AfterEach
+    void cleanUp() {
+        tableAdapter.deleteAll();
+        hallAdapter.deleteAll();
+        userAdapter.deleteAll();
     }
 
     @Test

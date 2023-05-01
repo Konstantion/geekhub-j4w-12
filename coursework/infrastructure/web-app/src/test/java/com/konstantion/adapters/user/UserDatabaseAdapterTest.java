@@ -8,6 +8,7 @@ import com.konstantion.user.Permission;
 import com.konstantion.user.Role;
 import com.konstantion.user.User;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,10 @@ class UserDatabaseAdapterTest {
     @BeforeEach
     void setUp() {
         userAdapter = new UserDatabaseAdapter(jdbcTemplate, rowMappers.userRowMapper());
+    }
+
+    @AfterEach
+    void cleanUp() {
         userAdapter.deleteAll();
     }
 

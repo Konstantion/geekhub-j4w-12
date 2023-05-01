@@ -9,9 +9,12 @@ import java.util.UUID;
 
 public interface CategoryService {
     List<Category> getAll();
+
     Category create(CreateCategoryRequest createCategoryRequest, User user);
-    Category deleteById(UUID id);
-    Category update(UUID id, UpdateCategoryRequest request);
+
+    Category deleteById(UUID id, User user);
+
+    Category update(UUID id, UpdateCategoryRequest request, User user);
 
     Category getById(UUID id);
 }

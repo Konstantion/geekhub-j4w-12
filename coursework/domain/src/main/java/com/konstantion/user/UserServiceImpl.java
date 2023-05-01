@@ -242,17 +242,6 @@ public record UserServiceImpl(
         return user;
     }
 
-    private void updateUser(User user, UpdateUserRequest request) {
-        user.setEmail(requireNonNullOrElseNullable(request.email(), user.getEmail()));
-        user.setFirstName(requireNonNullOrElseNullable(request.firstName(), user.getFirstName()));
-        user.setLastName(requireNonNullOrElseNullable(request.lastName(), user.getLastName()));
-        user.setPhoneNumber(requireNonNullOrElseNullable(request.phoneNumber(), user.getPhoneNumber()));
-        user.setAge(requireNonNullOrElseNullable(request.age(), user.getAge()));
-        if (nonNull(request.password())) {
-            user.setPassword(passwordEncoder.encode(request.password()));
-        }
-    }
-
     @Override
     public User deactivate(UUID userId, User authenticated) {
         if (authenticated.hasNoPermission(CHANGE_USER_STATE)) {
@@ -319,6 +308,17 @@ public record UserServiceImpl(
     private User getByIdOrThrow(UUID uuid) {
         return userPort.findById(uuid)
                 .orElseThrow(nonExistingIdSupplier(User.class, uuid));
+    }
+
+    private void updateUser(User user, UpdateUserRequest request) {
+        user.setEmail(requireNonNullOrElseNullable(request.email(), user.getEmail()));
+        user.setFirstName(requireNonNullOrElseNullable(request.firstName(), user.getFirstName()));
+        user.setLastName(requireNonNullOrElseNullable(request.lastName(), user.getLastName()));
+        user.setPhoneNumber(requireNonNullOrElseNullable(request.phoneNumber(), user.getPhoneNumber()));
+        user.setAge(requireNonNullOrElseNullable(request.age(), user.getAge()));
+        if (nonNull(request.password())) {
+            user.setPassword(passwordEncoder.encode(request.password()));
+        }
     }
 
     private User buildUserFromCreateRequest(CreateUserRequest request) {

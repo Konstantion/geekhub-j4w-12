@@ -10,6 +10,7 @@ import com.konstantion.product.Product;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +53,8 @@ class OrderDatabaseAdapterTest {
     @BeforeEach
     public void setUp() {
         orderAdapter = new OrderDatabaseAdapter(jdbcTemplate, rowMappers.orderRowMapper());
-        orderAdapter.deleteAll();
         //Initialize related entities for tests
         productAdapter = new ProductDatabaseAdapter(jdbcTemplate, rowMappers.productRowMapper());
-        productAdapter.deleteAll();
         Product first = Product.builder()
                 .name("first")
                 .active(true)
@@ -71,6 +70,12 @@ class OrderDatabaseAdapterTest {
         productAdapter.save(second);
 
         PRODUCT_IDS = new UUID[]{first.getId(), second.getId()};
+    }
+
+    @AfterEach
+    void cleanUp() {
+        orderAdapter.deleteAll();
+        productAdapter.deleteAll();
     }
 
     @Test

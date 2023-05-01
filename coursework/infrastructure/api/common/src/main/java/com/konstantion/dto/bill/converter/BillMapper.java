@@ -20,6 +20,5 @@ public interface BillMapper {
     List<BillDto> toDto(List<Bill> bill);
 
     CreateBillRequest toCreateBillRequest(CreateBillRequestDto dto);
-    EditBillRequest toEditBillRequest(EditBillRequestDto dto);
 }
 

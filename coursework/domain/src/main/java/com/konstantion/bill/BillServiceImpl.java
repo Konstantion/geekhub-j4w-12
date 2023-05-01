@@ -75,7 +75,7 @@ public record BillServiceImpl(
         }
 
         if (order.getProductsId().isEmpty()) {
-            throw new BadRequestException(format("Cannot create bill for order with id %s because it doesn't contain any product", order.getId()));
+            throw new BadRequestException(format("Cannot create bill for order with id %s because it doesn't contain any products", order.getId()));
         }
 
         Guest guest = guestOrNull(createBillRequest.guestId());
@@ -92,7 +92,6 @@ public record BillServiceImpl(
                 .active(true)
                 .createdAt(now())
                 .build();
-
         billPort.save(bill);
 
         order.setBillId(bill.getId());
@@ -119,7 +118,7 @@ public record BillServiceImpl(
         orderPort.save(order);
         billPort.delete(bill);
 
-        logger.info("Bill wth id {} successfully canceled and returned", billId);
+        logger.info("Bill with id {} successfully canceled and returned", billId);
         return bill;
     }
 

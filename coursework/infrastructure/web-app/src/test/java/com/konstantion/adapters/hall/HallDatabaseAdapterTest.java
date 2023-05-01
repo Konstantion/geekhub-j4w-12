@@ -6,6 +6,7 @@ import com.konstantion.hall.Hall;
 import com.konstantion.testcontainers.configuration.DatabaseContainer;
 import com.konstantion.testcontainers.configuration.DatabaseTestConfiguration;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,11 @@ class HallDatabaseAdapterTest {
     @BeforeEach
     public void setUp() {
         hallAdapter = new HallDatabaseAdapter(jdbcTemplate, rowMappers.hallRowMapper());
+        hallAdapter.deleteAll();
+    }
+
+    @AfterEach
+    void cleanUp() {
         hallAdapter.deleteAll();
     }
 

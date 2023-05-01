@@ -46,9 +46,10 @@ public record AdminCategoryController(
 
     @DeleteMapping("/{id}")
     public ResponseDto deleteCategoryById(
-            @PathVariable UUID id
+            @PathVariable UUID id,
+            @AuthenticationPrincipal User user
     ) {
-        CategoryDto dto = categoryMapper.toDto(categoryService.deleteById(id));
+        CategoryDto dto = categoryMapper.toDto(categoryService.deleteById(id, user));
 
         return ResponseDto.builder()
                 .status(OK)
@@ -62,12 +63,14 @@ public record AdminCategoryController(
     @PutMapping("/{id}")
     public ResponseDto updateCategory(
             @PathVariable UUID id,
-            UpdateCategoryRequestDto requestDto
+            UpdateCategoryRequestDto requestDto,
+            @AuthenticationPrincipal User user
     ) {
         CategoryDto dto = categoryMapper.toDto(
                 categoryService.update(
                         id,
-                        categoryMapper.toUpdateCategoryRequest(requestDto)
+                        categoryMapper.toUpdateCategoryRequest(requestDto),
+                        user
                 )
         );
 

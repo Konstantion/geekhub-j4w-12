@@ -188,8 +188,8 @@ class OrderServiceImplTest {
                         .build()
         ));
 
-       assertThatThrownBy(() ->orderService.close(UUID.randomUUID(), user))
-               .isExactlyInstanceOf(BadRequestException.class);
+        assertThatThrownBy(() -> orderService.close(UUID.randomUUID(), user))
+                .isExactlyInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -262,5 +262,17 @@ class OrderServiceImplTest {
 
         verify(orderPort, times(1)).save(any());
         verify(productPort, times(1)).findById(any());
+    }
+
+    @Test
+    void shouldThrowBadRequestExceptionWhenAddProductOrRemoveProductWithOrderThatHasBill() {
+        when(orderPort.findById(any())).thenReturn(Optional.of(Order.builder().active(true).billId(UUID.randomUUID()).productsId(List.of()).build()));
+        when(productPort.findById(any())).thenReturn(Optional.of(Product.builder().active(true).build()));
+
+        assertThatThrownBy(() -> orderService.addProduct(UUID.randomUUID(), new OrderProductsRequest(UUID.randomUUID(), 1), user))
+                .isExactlyInstanceOf(BadRequestException.class);
+
+        assertThatThrownBy(() -> orderService.removeProduct(UUID.randomUUID(), new OrderProductsRequest(UUID.randomUUID(), 1), user))
+                .isExactlyInstanceOf(BadRequestException.class);
     }
 }

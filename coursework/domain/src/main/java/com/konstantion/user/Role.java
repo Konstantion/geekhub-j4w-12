@@ -1,5 +1,7 @@
 package com.konstantion.user;
 
+import com.google.common.collect.Sets;
+
 import java.util.Set;
 
 public enum Role {
@@ -8,10 +10,10 @@ public enum Role {
     TABLE;
 
     public static Set<Role> getWaiterRole() {
-        return Set.of(WAITER);
+        return  Sets.newHashSet(WAITER);
     }
 
     public static Set<Role> getAdminRole() {
-        return Set.of(ADMIN);
+        return  Sets.newHashSet(ADMIN);
     }
 }
