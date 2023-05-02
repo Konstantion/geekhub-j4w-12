@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -36,13 +37,14 @@ class CallServiceImplTest {
     @Mock
     TablePort tablePort;
     @Mock
+    SimpMessagingTemplate simpMessagingTemplate;
+    @InjectMocks
+    CallServiceImpl callService;
+    @Mock
     User user;
     UUID callId;
     UUID tableId;
     CreateCallRequest request;
-
-    @InjectMocks
-    CallServiceImpl callService;
 
     @BeforeEach
     void setUp() {
@@ -54,8 +56,7 @@ class CallServiceImplTest {
 
     @Test
     void shouldReturnObjectWhenUserConstructor() {
-        CallServiceImpl object = new CallServiceImpl(callPort, tablePort);
-        assertThat(object)
+        assertThat(callService)
                 .isNotNull()
                 .isInstanceOf(CallService.class);
     }

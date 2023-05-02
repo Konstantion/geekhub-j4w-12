@@ -15,7 +15,9 @@ subprojects {
         implementation libsSpring.springBootStarterDataJpa
         implementation libsSpring.springBootStarterDataJdbc
         implementation libsSpring.springBootStarterWeb
+        implementation libsSpring.springBootStarterWebsocket
         implementation libsSpring.springBootStarterSecurity
+
         implementation libsUtils.guava
         implementation libsUtils.commonsLang3
         implementation libsUtils.faker

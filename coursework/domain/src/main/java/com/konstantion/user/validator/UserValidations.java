@@ -114,21 +114,6 @@ public record UserValidations(
         return setToOptional(violations, sender, PASSWORD_COPY_FIELD);
     }
 
-    public Optional<FieldError> isPhoneNumberValid(String phoneNumber, Object sender) {
-        Set<String> violations = new HashSet<>();
-
-        if (isBlank(phoneNumber)) {
-            violations.add("phone number shouldn't be empty");
-            return setToOptional(violations, sender, PHONE_NUMBER_FIELD);
-        }
-
-        if (!Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber)) {
-            violations.add("invalid phone number format, should be <xxx-xxx-xxxx>");
-        }
-
-        return setToOptional(violations, sender, PHONE_NUMBER_FIELD);
-    }
-
     public Optional<FieldError> isAgeValid(Integer age, Object sender) {
         Set<String> violations = new HashSet<>();
 

@@ -19,10 +19,10 @@ dependencies {
 
     implementation libsSpringDoc.openapiStarterWebmvcUi
     implementation libsSpring.springBootStarterWebflux
-    runtimeOnly libsDatabase.postgres
     implementation libsJwt.jjwtApi
-
     implementation libsDatabase.flywayCore
+
+    runtimeOnly libsDatabase.postgres
     runtimeOnly libsJwt.jjwtImpl
     runtimeOnly libsJwt.jjwtJackson
 

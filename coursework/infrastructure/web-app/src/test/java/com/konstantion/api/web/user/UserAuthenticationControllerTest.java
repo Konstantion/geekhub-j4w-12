@@ -121,6 +121,6 @@ class UserAuthenticationControllerTest {
 
         assertThat(jwtService.isTokenValid(jwtToken, user)).isTrue();
         assertThat(authenticationResponse.token()).isEqualTo(jwtToken);
-        assertThat(authenticationResponse.userDetails().get(USER).id()).isEqualTo(user.getId());
+        assertThat(authenticationResponse.authenticated().get(USER).id()).isEqualTo(user.getId());
     }
 }

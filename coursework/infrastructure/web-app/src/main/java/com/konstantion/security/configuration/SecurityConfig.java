@@ -25,9 +25,9 @@ public class SecurityConfig {
 
     private static final String[] SECURITY_WHITELIST = {
             "/static/**",
-            "/web-api/util/**",
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/web-api/calls-websocket/**"
     };
 
     private static final String[] AUTHENTICATION_WHITELIST = {

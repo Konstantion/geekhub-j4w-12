@@ -4,6 +4,6 @@ import java.util.Map;
 
 public record AuthenticationResponseDto<T>(
         String token,
-        Map<String, T> userDetails
+        Map<String, T> authenticated
 ) {
 }

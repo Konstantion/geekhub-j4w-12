@@ -8,6 +8,7 @@ import com.konstantion.table.TablePort;
 import com.konstantion.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +25,8 @@ import static java.time.LocalDateTime.now;
 @Component
 public record CallServiceImpl(
         CallPort callPort,
-        TablePort tablePort
+        TablePort tablePort,
+        SimpMessagingTemplate simpMessagingTemplate
 ) implements CallService {
     private static final Logger logger = LoggerFactory.getLogger(CallServiceImpl.class);
 
@@ -65,6 +67,9 @@ public record CallServiceImpl(
                 .build();
 
         callPort.save(call);
+
+        simpMessagingTemplate.convertAndSend("/topic/calls", call);
+
         logger.info("Call successfully created and returned");
         return call;
     }

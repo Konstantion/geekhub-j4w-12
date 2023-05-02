@@ -188,8 +188,8 @@ public record TableServiceImpl(
                 tableValidator.validate(request);
         validationResult.validOrTrow();
 
-        Hall hall = hallPort.findById(request.hallUuid())
-                .orElseThrow(nonExistingIdSupplier(Hall.class, request.hallUuid()));
+        Hall hall = hallPort.findById(request.hallId())
+                .orElseThrow(nonExistingIdSupplier(Hall.class, request.hallId()));
         ExceptionUtils.isActiveOrThrow(hall);
 
         List<Table> dbTables = tablePort.findAll();
@@ -308,7 +308,7 @@ public record TableServiceImpl(
 
     private void updateTable(Table table, UpdateTableRequest request) {
         table.setName(requireNonNullOrElseNullable(request.name(), table.getName()));
-        table.setHallId(requireNonNullOrElseNullable(request.hallUuid(), table.getHallId()));
+        table.setHallId(requireNonNullOrElseNullable(request.hallId(), table.getHallId()));
         table.setCapacity(requireNonNullOrElseNullable(request.capacity(), table.getCapacity()));
         if (nonNull(request.password())) {
             table.setPassword(passwordEncoder.encode(request.password()));

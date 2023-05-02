@@ -6,7 +6,7 @@ public record CreateTableRequestDto(
         String name,
         Integer capacity,
         String tableType,
-        UUID hallUuid,
+        UUID hallId,
         String password
 ) {
 }
