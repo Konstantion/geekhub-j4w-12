@@ -1,26 +1,36 @@
 package com.konstantion.bill;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.konstantion.bill.model.CreateBillRequest;
 import com.konstantion.exception.BadRequestException;
+import com.konstantion.exception.FileIOException;
 import com.konstantion.exception.ForbiddenException;
 import com.konstantion.exception.utils.ExceptionUtils;
+import com.konstantion.file.PdfUtils;
 import com.konstantion.guest.Guest;
 import com.konstantion.guest.GuestPort;
 import com.konstantion.order.Order;
 import com.konstantion.order.OrderPort;
 import com.konstantion.product.Product;
 import com.konstantion.product.ProductPort;
+import com.konstantion.table.Table;
 import com.konstantion.table.TablePort;
 import com.konstantion.user.User;
+import com.konstantion.user.UserPort;
 import com.konstantion.utils.DoubleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
@@ -36,6 +46,7 @@ public record BillServiceImpl(
         OrderPort orderPort,
         TablePort tablePort,
         GuestPort guestPort,
+        UserPort userPort,
         ProductPort productPort,
         BillPort billPort
 ) implements BillService {
@@ -162,6 +173,45 @@ public record BillServiceImpl(
 
         logger.info("Bill with id {} successfully activated and returned", billId);
         return bill;
+    }
+
+    @Override
+    public byte[] getPdfBytesById(UUID id, User user) {
+        Bill bill = getByIdOrThrow(id);
+        Order order = orderPort.findById(bill.getOrderId()).orElseThrow(nonExistingIdSupplier(Order.class, bill.getOrderId()));
+        Map<Product, Long> products = order.getProductsId()
+                .stream()
+                .map(productPort::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.groupingBy(
+                        product -> product,
+                        Collectors.counting()
+                ));
+        Guest guest = guestPort.findById(bill.getGuestId()).orElse(null);
+        Table table = tablePort.findById(order.getTableId()).orElse(null);
+        User waiter = userPort.findById(bill.getWaiterId()).orElse(null);
+
+        try {
+            ByteArrayOutputStream fos = new ByteArrayOutputStream();
+            Document document = new Document();
+            PdfWriter.getInstance(document, fos);
+            document.open();
+            PdfUtils.fillBillDocumentPdf(
+                    bill,
+                    order,
+                    products,
+                    table,
+                    waiter,
+                    guest,
+                    document
+            );
+
+            document.close();
+            return fos.toByteArray();
+        } catch (DocumentException e) {
+            throw new FileIOException(e.getMessage());
+        }
     }
 
     private Bill getByIdOrThrow(UUID id) {

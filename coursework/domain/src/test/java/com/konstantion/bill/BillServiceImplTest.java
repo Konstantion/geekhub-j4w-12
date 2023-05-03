@@ -13,6 +13,7 @@ import com.konstantion.product.ProductPort;
 import com.konstantion.table.TablePort;
 import com.konstantion.user.Permission;
 import com.konstantion.user.User;
+import com.konstantion.user.UserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +36,8 @@ class BillServiceImplTest {
     OrderPort orderPort;
     @Mock
     TablePort tablePort;
+    @Mock
+    UserPort userPort;
     @Mock
     GuestPort guestPort;
     @Mock

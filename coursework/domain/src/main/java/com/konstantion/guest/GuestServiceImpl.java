@@ -63,6 +63,7 @@ public record GuestServiceImpl(
                 .phoneNumber(request.phoneNumber())
                 .discountPercent(request.discountPercent())
                 .createdAt(now())
+                .active(true)
                 .build();
 
         guestPort.save(guest);

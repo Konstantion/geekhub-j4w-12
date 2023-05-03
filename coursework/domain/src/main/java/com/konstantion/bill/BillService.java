@@ -22,4 +22,6 @@ public interface BillService {
     Bill close(UUID billId, User user);
 
     Bill activate(UUID billId, User user);
+
+    byte[] getPdfBytesById(UUID id, User user);
 }

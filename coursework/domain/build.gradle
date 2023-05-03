@@ -1,4 +1,6 @@
 dependencies {
+    implementation libsUtils.itextpdf
+    implementation libsUtils.pdfbox
     compileOnly libsUtils.lombok
     annotationProcessor libsUtils.lombok
     implementation libsJwt.jjwtApi

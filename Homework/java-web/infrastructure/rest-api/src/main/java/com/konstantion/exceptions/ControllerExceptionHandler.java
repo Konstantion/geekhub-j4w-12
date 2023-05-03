@@ -33,7 +33,7 @@ public record ControllerExceptionHandler() {
 
     @ExceptionHandler({NoHandlerFoundException.class})
     public String handleNoHandlerFoundException(NoHandlerFoundException e) {
-        return "error/404";
+        return "{htmlPage}";
     }
 
     @ExceptionHandler({Exception.class})

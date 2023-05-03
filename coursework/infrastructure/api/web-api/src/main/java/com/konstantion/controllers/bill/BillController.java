@@ -6,6 +6,10 @@ import com.konstantion.dto.bill.dto.BillDto;
 import com.konstantion.dto.bill.dto.CreateBillRequestDto;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.user.User;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +22,7 @@ import static com.konstantion.utils.EntityNameConstants.BILLS;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @RestController
 @RequestMapping("/web-api/bills")
@@ -90,5 +95,22 @@ public record BillController(
                 .timeStamp(now())
                 .data(Map.of(BILL, dto))
                 .build();
+    }
+
+    @GetMapping(value = "/{id}/pdf", produces = APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> printBill(
+            @PathVariable("id") UUID id,
+            @AuthenticationPrincipal User user
+    ) {
+        byte[] pdfBytes = billService.getPdfBytesById(id, user);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename("bill.pdf").build());
+        headers.setContentLength(pdfBytes.length);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 }

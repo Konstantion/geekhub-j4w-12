@@ -44,7 +44,7 @@
 
 ### Using Docker
 ```shell
-  docker compose up -d
+docker compose up -d
 ```
 ### Using Gradle
 build the project

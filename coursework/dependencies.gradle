@@ -15,6 +15,8 @@ def mapStructVersion = '1.5.3.Final'
 def lombokVersion = '1.18.24'
 def fakerVersion = '1.0.2'
 def jasksonVersion = '2.14.2'
+def itextpdfVersion = '5.5.13.3'
+def pdfboxVersion = '2.0.24'
 
 def hikariCPVersion = '5.0.1'
 def postgresVersion = '42.5.0'
@@ -53,6 +55,8 @@ ext.libsUtils = [
         'lombokMapstructBinding': "org.projectlombok:lombok-mapstruct-binding:0.2.0",
         'lombok'                : "org.projectlombok:lombok:$lombokVersion",
         'faker'                 : "com.github.javafaker:javafaker:$fakerVersion",
+        'itextpdf'              : "com.itextpdf:itextpdf:$itextpdfVersion",
+        'pdfbox'                : "org.apache.pdfbox:pdfbox:$pdfboxVersion",
         'jasksonDatabind'       : "com.fasterxml.jackson.core:jackson-databind:$jasksonVersion"
 ]
 
