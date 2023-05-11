@@ -1,6 +1,7 @@
 package com.konstantion.order;
 
 import com.konstantion.order.model.OrderProductsRequest;
+import com.konstantion.product.Product;
 import com.konstantion.user.User;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public interface OrderService {
     Order close(UUID orderId, User user);
 
     Order delete(UUID orderId, User user);
+    List<Product> getProductsByOrderId(UUID orderId);
 
     int addProduct(UUID orderId, OrderProductsRequest request, User user);
 

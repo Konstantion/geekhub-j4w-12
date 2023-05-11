@@ -3,18 +3,23 @@ package com.konstantion.controllers.order;
 import com.konstantion.dto.order.converter.OrderMapper;
 import com.konstantion.dto.order.dto.OrderDto;
 import com.konstantion.dto.order.dto.OrderProductsRequestDto;
+import com.konstantion.dto.product.converter.ProductMapper;
+import com.konstantion.dto.product.dto.ProductDto;
 import com.konstantion.order.OrderService;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.user.User;
 import com.konstantion.utils.HashMaps;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-import static com.konstantion.utils.EntityNameConstants.ORDER;
-import static com.konstantion.utils.EntityNameConstants.ORDERS;
+import static com.konstantion.utils.EntityNameConstants.*;
+import static java.lang.Math.max;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
@@ -25,6 +30,7 @@ public record OrderController(
         OrderService orderService
 ) {
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
     @GetMapping()
     public ResponseDto getAllActiveOrders() {
@@ -111,6 +117,24 @@ public record OrderController(
                 .timeStamp(now())
                 .message(format("%s products with id %s successfully removed from the order with id %s", count, requestDto.productId(), id))
                 .data(HashMaps.of(ORDER, dto))
+                .build();
+    }
+
+    @GetMapping("/{id}/products")
+    public ResponseDto getOrderProducts(
+            @PathVariable("id") UUID orderId
+    ) {
+        List<ProductDto> products = productMapper.toDto(
+                orderService.getProductsByOrderId(orderId)
+        );
+        Page<ProductDto> pageDto = new PageImpl<>(products, Pageable.ofSize(max(products.size(), 1)), max(products.size(), 1));
+
+        return ResponseDto.builder()
+                .status(OK)
+                .statusCode(OK.value())
+                .timeStamp(now())
+                .message(format("Products from order with id %s successfully returned", orderId))
+                .data(HashMaps.of(PRODUCTS, pageDto))
                 .build();
     }
 

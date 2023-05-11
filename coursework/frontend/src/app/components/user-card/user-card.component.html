@@ -1,0 +1,28 @@
+<div class="card cursor-pointer">
+    <div class="card-header">
+        <h5 class="card-title"> {{ user.username }}</h5>
+    </div>
+    <div class="card-body">
+        <p class="card-text">First Name: {{ user.firstName }}</p>
+        <p class="card-text">Last Name: {{ user.lastName }}</p>
+        <p class="card-text">Phone Number: {{ user.phoneNumber }}</p>
+        <p class="card-text">Age: {{ user.age }}</p>
+        <p>
+            <span class="badge" [ngClass]="user.active ? 'text-bg-success' : 'text-bg-danger'">
+                {{ user.active ? 'active' : 'inactive' }} </span>
+        </p>
+        <p *ngIf="user.roles">
+            <ng-component *ngFor="let role of user.roles">
+                <span class="badge me-2" [ngClass]="'text-bg-warning'">
+                    {{ role }} </span>
+            </ng-component>
+        </p>
+        <p *ngIf="user.permissions">
+            <ng-component *ngFor="let permission of user.permissions">
+                <span class="badge me-2" [ngClass]="'text-bg-info'">
+                    {{ permission }} </span>
+            </ng-component>
+        </p>
+        <p class="card-text">Created At: {{ user.createdAt }}</p>
+    </div>
+</div>

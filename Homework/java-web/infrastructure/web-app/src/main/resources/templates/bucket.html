@@ -1,44 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <!-- Add Bootstrap 5 CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css">
-</head>
-
-<body>
-<div class="container mt-5">
-    <h1>Form Example</h1>
-    <form id="myForm">
-        <div class="mb-3">
-            <label for="emailInput" class="form-label">Email</label>
-            <input type="email" class="form-control" id="emailInput" name="email" required>
-        </div>
-        <div class="mb-3">
-            <label for="firstNameInput" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="firstNameInput" name="firstName" required>
-        </div>
-        <div class="mb-3">
-            <label for="lastNameInput" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lastNameInput" name="lastName" required>
-        </div>
-        <div class="mb-3">
-            <label for="phoneNumberInput" class="form-label">Phone Number</label>
-            <input type="text" class="form-control" id="phoneNumberInput" name="phoneNumber" required>
-        </div>
-        <div class="mb-3">
-            <label for="passwordInput" class="form-label">Password</label>
-            <input type="password" class="form-control" id="passwordInput" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
-
-<!-- Add Bootstrap 5 JS (Optional) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Your Website Name</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Tables</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Orders</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <span class="navbar-text me-3">Welcome, [User Name]!</span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

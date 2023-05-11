@@ -32,7 +32,7 @@ public enum Permission {
     public static Set<Permission> getDefaultWaiterPermission() {
         return Sets.newHashSet(
                 OPEN_ORDER, CLOSE_ORDER,
-                ADD_PRODUCT_TO_ORDER, DELETE_PRODUCT_FROM_ORDER,
+                ADD_PRODUCT_TO_ORDER,
                 TRANSFER_ORDER,
                 CLOSE_BILL, CREATE_BILL_FROM_ORDER,
                 CLOSE_CALL
@@ -41,6 +41,7 @@ public enum Permission {
 
     public static Set<Permission> getDefaultAdminPermission() {
         Set<Permission> adminPermissions = Sets.newHashSet(
+                DELETE_PRODUCT_FROM_ORDER,
                 CREATE_TABLE, UPDATE_TABLE, CHANGE_TABLE_STATE,
                 CREATE_USER,
                 CANCEL_BILL, CHANGE_BILL_STATE,

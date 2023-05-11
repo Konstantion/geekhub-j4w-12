@@ -26,133 +26,35 @@
 </head>
 <body>
 <div>
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">GeekHub</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+            <a class="navbar-brand" href="#">Your Website Name</a>
+            <div class="navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/products">Products</a>
+                        <a class="nav-link" href="#">Tables</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/bucket">Bucket</a>
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Bills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Admin</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">Welcome, [User Name]!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Logout</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div>
-        <div class="container-fluid">
-            <div class="row">
-                <!--Main page-->
-                <div class="col-6 col-sm-4 py-3">
-                    <div class="container mt-3">
-                        <h2 class="mb-3 px-2">Search</h2>
-                        <div class="float-start">
-                            <form id="productFilter" class="row g-3 mx-auto">
-                                <div class="col-auto">
-                                    <select class="form-select custom-select border-dark" id="sortParameter"
-                                            name="parameter" form="productFilter">
-                                        <option value="name" selected>Name</option>
-                                        <option value="price">Price</option>
-                                        <option value="rating">Rating</option>
-                                    </select>
-                                </div>
-                                <div class="col-auto">
-                                    <input id="namePattern" type="text" class="form-control border-dark"
-                                           placeholder="Name pattern" name="pattern">
-                                </div>
-                                <div class="col-auto">
-                                    <button id="searchButton" type="submit" class="btn btn-dark mb-3">Search
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8 py-3">
-                    <div class="container mt-3">
-                        <div class="d-grid gap-2">
-                            <div class="coll">
-                                <h2 class="mb-3 px-2">Products</h2>
-                            </div>
-                            <div id="productsListError" style="display: none" class="alert alert-danger"
-                                 role="alert">
-                                Wrong input type!
-                            </div>
-                            <div id="productsListInfo" style="display: none" class="alert alert-success"
-                                 role="alert">
-                                Wrong input type!
-                            </div>
-                            <button type="button" class="btn btn-outline-dark mb-3" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
-                                Add product
-                            </button>
-                            <div id="productComponent" class="row row-cols-1 row-cols-md-4 g-4">
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add product form</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="wrongInputAlert" style="display: none" class="alert alert-danger"
-                                 role="alert">
-                                Wrong input type!
-                            </div>
-                            <form id="addProductForm">
-                                <div class="mb-3">
-                                    <label for="nameInput" class="form-label">Product name</label>
-                                    <input type="text" class="form-control" name="name" id="nameInput">
-                                    <div id="nameFeedback" class="invalid-feedback">
-                                        Please choose a name.
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="priceInput" class="form-label">Product price</label>
-                                    <input type="number" class="form-control" name="price" id="priceInput"
-                                           placeholder="0.00">
-                                    <div id="priceFeedback" class="invalid-feedback">
-                                        Please choose a price.
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="fileInput" class="form-label">Product image</label>
-                                    <input class="form-control" type="file" name="file" id="fileInput">
-                                    <div id="fileFeedback" class="invalid-feedback">
-                                        Please choose a file.
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button id="closeModalButton" type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">
-                                        Close
-                                    </button>
-                                    <button id="addProductButton" type="submit" class="btn btn-dark-outline">
-                                        Save
-                                        changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 </html>

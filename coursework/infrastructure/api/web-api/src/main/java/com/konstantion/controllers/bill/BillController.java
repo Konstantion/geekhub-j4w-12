@@ -106,7 +106,7 @@ public record BillController(
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDisposition(ContentDisposition.builder("attachment").filename("bill.pdf").build());
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(format("bill-%s.pdf", id)).build());
         headers.setContentLength(pdfBytes.length);
 
         return ResponseEntity.ok()

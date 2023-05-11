@@ -171,7 +171,7 @@ public record UserServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
-        if(role.equals(Role.TABLE)) {
+        if (role.equals(Role.TABLE)) {
             throw new BadRequestException("Role TABLE can't be added");
         }
 
@@ -228,7 +228,8 @@ public record UserServiceImpl(
             throw new BadRequestException(format("User with email %s already exist", request.email()));
         }
 
-        if (!passwordEncoder.matches(user.getPassword(), request.password())
+        if (nonNull(request.password())
+            && !passwordEncoder.matches(user.getPassword(), request.password())
             && anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
             throw new BadRequestException(format("User with password %s already exist", request.password()));
         }
@@ -244,7 +245,8 @@ public record UserServiceImpl(
 
     @Override
     public User deactivate(UUID userId, User authenticated) {
-        if (authenticated.hasNoPermission(CHANGE_USER_STATE)) {
+        if (authenticated.hasNoPermission(CHANGE_USER_STATE)
+            && authenticated.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
@@ -264,7 +266,8 @@ public record UserServiceImpl(
 
     @Override
     public User activate(UUID userId, User authenticated) {
-        if (authenticated.hasNoPermission(CHANGE_USER_STATE)) {
+        if (authenticated.hasNoPermission(CHANGE_USER_STATE)
+            && authenticated.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 

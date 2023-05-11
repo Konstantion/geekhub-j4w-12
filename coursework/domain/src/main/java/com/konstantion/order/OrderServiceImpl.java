@@ -15,9 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
@@ -174,6 +173,33 @@ public record OrderServiceImpl(
         return order;
     }
 
+    /**
+     * Fast method to get order products <b>without image bytes</b>!
+     * <p> n - products</p>
+     * <p> k - unique products | k є o(n)</p>
+     * <p> db(x) - fetch image from database time;</p>
+     * <p> db(1) + Θ(n) + Θ(n + db(k)) + Θ(n) = O(n + db(k))</p>
+     */
+    @Override
+    public List<Product> getProductsByOrderId(UUID orderId) {
+        Order order = getByIdOrThrow(orderId);
+        List<UUID> productIds = order.getProductsId();
+        Map<UUID, Product> productsMap = new HashSet<>(productIds).stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        id -> {
+                            Product product = productPort.findById(id).orElseThrow();
+                            product.setImageBytes(null);
+                            return product;
+                        }
+                ));
+        List<Product> products = productIds.stream()
+                .map(productsMap::get)
+                .toList();
+        logger.info("Products from order with id {} successfully returned", orderId);
+        return products;
+    }
+
     @Override
     public int addProduct(UUID orderId, OrderProductsRequest request, User user) {
         if (user.hasNoPermission(ADD_PRODUCT_TO_ORDER)
@@ -196,7 +222,11 @@ public record OrderServiceImpl(
         ExceptionUtils.isActiveOrThrow(product);
 
         if (quantity <= 0) {
-            throw new BadRequestException(format("Quantity should be greater then 0, given %s", quantity));
+            throw new BadRequestException(format("Quantity should be greater than 0, given %s", quantity));
+        }
+        long theoreticalQuantity = order.getProductsId().stream().filter(id -> id.equals(product.getId())).count() + quantity;
+        if (theoreticalQuantity > 1 << 10) {
+            throw new BadRequestException(format("Total quantity of product in order should not be greater than 1024, given %s", theoreticalQuantity));
         }
 
         int counter = 0;
@@ -230,7 +260,7 @@ public record OrderServiceImpl(
                 .orElseThrow(nonExistingIdSupplier(Product.class, productId));
 
         if (quantity <= 0) {
-            throw new BadRequestException(format("Quantity should be greater then 0, given %s", quantity));
+            throw new BadRequestException(format("Quantity should be greater than 0, given %s", quantity));
         }
         int counter = 0;
         for (; counter < quantity; counter++) {

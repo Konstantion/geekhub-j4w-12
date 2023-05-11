@@ -25,7 +25,7 @@ public record TableValidations() implements ValidationUtil {
             return setToOptional(violations, sender, NAME_FIELD);
         }
 
-        if(name.length() > 32) {
+        if (name.length() > 32) {
             violations.add("name max length is 32 characters");
         }
 
@@ -36,11 +36,12 @@ public record TableValidations() implements ValidationUtil {
         Set<String> violations = new HashSet<>();
 
         if (isNull(capacity)) {
-            return Optional.empty();
+            violations.add("capacity shouldn't be empty");
+            return setToOptional(violations, sender, CAPACITY_FIELD);
         }
 
-        if (capacity <= 0 || capacity >= 60) {
-            violations.add("capacity should be between 0 and 60");
+        if (capacity <= 0 || capacity >= 13) {
+            violations.add("capacity should be between 1 and 12");
         }
 
         return setToOptional(violations, sender, CAPACITY_FIELD);

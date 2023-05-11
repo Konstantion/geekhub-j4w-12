@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static com.konstantion.utils.EntityNameConstants.*;
 import static java.lang.String.format;
@@ -58,7 +59,6 @@ public record HallController(
             @PathVariable("id") UUID id
     ) {
         List<TableDto> dtos = tableMapper.toDto(hallService.getTablesByHallId(id));
-
         return ResponseDto.builder()
                 .message(format("Tables for hall with id %s", id))
                 .timeStamp(now())

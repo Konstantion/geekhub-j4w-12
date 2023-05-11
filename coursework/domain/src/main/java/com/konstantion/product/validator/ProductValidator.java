@@ -1,6 +1,5 @@
 package com.konstantion.product.validator;
 
-import com.konstantion.product.Product;
 import com.konstantion.product.model.CreateProductRequest;
 import com.konstantion.product.model.UpdateProductRequest;
 import com.konstantion.utils.validator.ValidationResult;

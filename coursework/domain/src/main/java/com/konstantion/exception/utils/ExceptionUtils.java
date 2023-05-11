@@ -74,7 +74,7 @@ public record ExceptionUtils() {
     public static boolean isActiveOrThrow(User user) {
         boolean isActive = user.isEnabled();
         if (!isActive) {
-            throw new ActiveStateException(format("Order with id %s, isn't active", user.getId()));
+            throw new ActiveStateException(format("User with id %s, isn't active", user.getId()));
         }
         return true;
     }

@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static com.itextpdf.text.BaseColor.WHITE;
+import static java.lang.String.format;
 
 public class PdfUtils {
     private static final Font TITLE_FONT = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD);
@@ -42,20 +43,30 @@ public class PdfUtils {
 
         // Add subtitle
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        Paragraph subtitle = new Paragraph(String.format("Date: %s", formatter.format(order.getCreatedAt())), SUBTITLE_FONT);
-        subtitle.setAlignment(Element.ALIGN_CENTER);
+        Paragraph subtitle = new Paragraph(format("Opened at: %s", formatter.format(order.getCreatedAt())), HEADER_FONT);
+        subtitle.setAlignment(Element.ALIGN_LEFT);
         document.add(subtitle);
 
+        // Add bill closed time
+        Paragraph closedAtParagraph = new Paragraph(format("Closed at: %s", formatter.format(bill.getCreatedAt())), HEADER_FONT);
+        closedAtParagraph.setAlignment(Element.ALIGN_LEFT);
+        document.add(closedAtParagraph);
+
         // Add table number, waiter name, and guest name
-        String waiterName = waiter != null ? String.join(" ", waiter.getFirstName(), waiter.getLastName()) : "";
+        String waiterName = waiter != null ? String.join(" ", waiter.getLastName(), waiter.getFirstName()) : "";
         String tableName = table != null ? table.getName() : "";
         String guestName = guest != null ? guest.getName() : "";
-        Paragraph tableInfo = new Paragraph(String.format("Table: %s%n Waiter: %s%n Guest: %s%n",
+        Paragraph tableInfo = new Paragraph(format("Table: %s%nWaiter: %s%nGuest: %s%n",
                 tableName,
                 waiterName,
                 guestName), HEADER_FONT);
-        tableInfo.setAlignment(Element.ALIGN_CENTER);
+        tableInfo.setAlignment(Element.ALIGN_LEFT);
         document.add(tableInfo);
+
+        //Add products title
+        Paragraph productTitle = new Paragraph(format("Products:%n"), SUBTITLE_FONT);
+        productTitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(productTitle);
 
         // Add products table
         PdfPTable productsTable = new PdfPTable(new float[]{4, 4, 2, 2});
@@ -71,29 +82,24 @@ public class PdfUtils {
         products.forEach((product, quantity) -> {
             productsTable.addCell(createCell(product.getName()));
             productsTable.addCell(createCell(String.valueOf(quantity), Element.ALIGN_CENTER));
-            productsTable.addCell(createCell(String.format("%.2f", product.getPrice()), Element.ALIGN_RIGHT));
-            productsTable.addCell(createCell(String.format("%.2f", product.getPrice() * quantity), Element.ALIGN_RIGHT));
+            productsTable.addCell(createCell(format("%.2f", product.getPrice()), Element.ALIGN_RIGHT));
+            productsTable.addCell(createCell(format("%.2f", product.getPrice() * quantity), Element.ALIGN_RIGHT));
         });
 
         // Add products total
         productsTable.addCell(createCell("Total", 3, Element.ALIGN_RIGHT, WHITE));
-        productsTable.addCell(createCell(String.format("%.2f", bill.getPrice()), Element.ALIGN_RIGHT, WHITE));
+        productsTable.addCell(createCell(format("%.2f", bill.getPrice()), Element.ALIGN_RIGHT, WHITE));
 
         // Add discount
         productsTable.addCell(createCell("Discount", 3, Element.ALIGN_RIGHT, WHITE));
         String discount = guest != null ? guest.getDiscountPercent() + "%" : "";
-        productsTable.addCell(createCell(String.format("%s", discount), Element.ALIGN_RIGHT, WHITE));
+        productsTable.addCell(createCell(format("%s", discount), Element.ALIGN_RIGHT, WHITE));
 
         // Add total with discount
         productsTable.addCell(createCell("Total with Discount", 3, Element.ALIGN_RIGHT, WHITE));
-        productsTable.addCell(createCell(String.format("%.2f", bill.getPriceWithDiscount()), Element.ALIGN_RIGHT, WHITE));
+        productsTable.addCell(createCell(format("%.2f", bill.getPriceWithDiscount()), Element.ALIGN_RIGHT, WHITE));
 
         document.add(productsTable);
-
-        // Add bill closed time
-        Paragraph closedAtParagraph = new Paragraph(String.format("Bill closed at: %s", formatter.format(bill.getCreatedAt())), HEADER_FONT);
-        closedAtParagraph.setAlignment(Element.ALIGN_RIGHT);
-        document.add(closedAtParagraph);
     }
 
     private static PdfPCell createCell(String text, int colspan, int alignment, BaseColor background) {

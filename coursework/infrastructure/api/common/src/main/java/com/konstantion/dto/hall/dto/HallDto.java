@@ -6,6 +6,7 @@ import java.util.UUID;
 public record HallDto(
         UUID id,
         String name,
-        Boolean active
+        Boolean active,
+        LocalDateTime createdAt
 ) {
 }

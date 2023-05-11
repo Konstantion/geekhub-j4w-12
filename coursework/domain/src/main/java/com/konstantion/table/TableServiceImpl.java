@@ -33,6 +33,7 @@ import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
+import static org.springframework.data.util.NullableUtils.isNonNull;
 
 @Component
 public record TableServiceImpl(
@@ -112,6 +113,10 @@ public record TableServiceImpl(
 
         tableValidator.validate(request).validOrTrow();
 
+        Hall hall = hallPort.findById(request.hallId())
+                .orElseThrow(nonExistingIdSupplier(Hall.class, request.hallId()));
+        ExceptionUtils.isActiveOrThrow(hall);
+
         List<Table> dbTables = tablePort.findAll();
 
         if (!table.getName().equals(request.name())
@@ -119,7 +124,8 @@ public record TableServiceImpl(
             throw new BadRequestException(format("Table with name %s already exist", request.name()));
         }
 
-        if (!passwordEncoder.matches(table.getPassword(), request.password())
+        if (nonNull(request.password())
+            && !passwordEncoder.matches(table.getPassword(), request.password())
             && anyMatchCollection(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
             throw new BadRequestException(format("Table with password %s already exist", request.password()));
         }
