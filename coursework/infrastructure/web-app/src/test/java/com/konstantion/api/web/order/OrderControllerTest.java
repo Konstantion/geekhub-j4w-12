@@ -87,6 +87,7 @@ class OrderControllerTest {
                 .roles(Role.getWaiterRole())
                 .permissions(Permission.getDefaultWaiterPermission())
                 .build();
+        waiter.getPermissions().add(Permission.DELETE_PRODUCT_FROM_ORDER);
         userPort.save(waiter);
         Map<String, Object> extraClaim = Map.of(ENTITY, USER);
         jwtToken = jwtService.generateToken(extraClaim, waiter);
@@ -284,7 +285,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void shouldRemoveProductToOrderWhenRemoveProductToOrder() {
+    void shouldRemoveProductFromOrderWhenRemoveProductToOrder() {
         Product product = Product.builder()
                 .active(true)
                 .name("product")
