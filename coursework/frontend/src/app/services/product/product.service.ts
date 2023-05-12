@@ -35,17 +35,17 @@ export class ProductService {
       tap(console.log)
     )
 
-  activateProductById = (id: string) => <Observable<ProductResponse>>this.http.put(`${this.adminProductUrl}/${id}/activate`, '')
+  activateProductById$ = (id: string) => <Observable<ProductResponse>>this.http.put(`${this.adminProductUrl}/${id}/activate`, '')
     .pipe(
       tap(console.log)
     )
 
-  deactivateProductById = (id: string) => <Observable<ProductResponse>>this.http.put(`${this.adminProductUrl}/${id}/deactivate`, '')
+  deactivateProductById$ = (id: string) => <Observable<ProductResponse>>this.http.put(`${this.adminProductUrl}/${id}/deactivate`, '')
     .pipe(
       tap(console.log)
     )
 
-  deleteProductById = (id: string) => <Observable<ProductResponse>>this.http.delete(`${this.adminProductUrl}/${id}`)
+  deleteProductById$ = (id: string) => <Observable<ProductResponse>>this.http.delete(`${this.adminProductUrl}/${id}`)
     .pipe(
       tap(console.log)
     )

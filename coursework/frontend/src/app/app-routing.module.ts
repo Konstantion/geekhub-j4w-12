@@ -10,6 +10,7 @@ import { AdminAccessGuardService } from './services/admin-guard/admin-access-gua
 import { OrderComponent } from './components/order/order.component';
 import { ProductsComponent } from './components/products/products.component';
 import { ProductComponent } from './components/product/product.component';
+import { UserComponent } from './components/user/user.component';
 
 const routes: Routes = [{
   path: '',
@@ -23,6 +24,11 @@ const routes: Routes = [{
 {
   path: 'halls/:id',
   component: HallComponent,
+  canActivate: [AccessGuardService]
+},
+{
+  path: 'users/:id',
+  component: UserComponent,
   canActivate: [AccessGuardService]
 },
 {

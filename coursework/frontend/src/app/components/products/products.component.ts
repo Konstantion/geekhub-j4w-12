@@ -20,6 +20,7 @@ import { ProductService } from 'src/app/services/product/product.service';
 })
 export class ProductsComponent implements OnInit {
   @Input() border: boolean = false;
+  @Input() size: number = null;
   @Output() productClick = new EventEmitter<string>();
 
 
@@ -41,7 +42,7 @@ export class ProductsComponent implements OnInit {
   productId = '';
   categories: CategoryDto[] = [];
   showCreateModal = false;
-  findProductsState: FindProductsState = { page: 1, size: 6, category: "", pattern: "" };
+  findProductsState: FindProductsState = { page: 1, size: 10, category: "", pattern: "" };
   productData: CreateProductRequestDto = {
     name: '',
     price: 0,
@@ -54,6 +55,9 @@ export class ProductsComponent implements OnInit {
   readonly DataState = DataState;
 
   ngOnInit(): void {
+    if (this.size) {
+      this.findProductsState.size = this.size;
+    }
     this.categoryService.categories$.pipe(
       concatMap(response => {
         const state = this.pageSubject.value;
@@ -80,8 +84,10 @@ export class ProductsComponent implements OnInit {
   }
 
   updatePattern() {
+
     clearTimeout(this.searchInputTimeout);
     this.searchInputTimeout = setTimeout(() => {
+      this.findProductsState.page = 1;
       this.fetchProducts();
     }, 400);
   }

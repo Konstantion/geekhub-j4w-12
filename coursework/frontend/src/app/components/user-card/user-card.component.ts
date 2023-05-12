@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserDto } from 'src/app/models/dto/user/user-dto';
 
 @Component({
@@ -8,4 +8,10 @@ import { UserDto } from 'src/app/models/dto/user/user-dto';
 })
 export class UserCardComponent {
   @Input() user: UserDto;
+
+  @Output() onClick = new EventEmitter<UserDto>()
+
+  onCardClick() {
+    this.onClick.emit(this.user);
+  }
 }

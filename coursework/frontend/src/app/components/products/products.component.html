@@ -51,7 +51,7 @@
                     <p-progressSpinner></p-progressSpinner>
                 </ng-container>
                 <ng-container *ngIf="pageState.dataState === DataState.LOADED_STATE">
-                    <div class="row row-cols-3 row-cols-md-3 g-4 mb-2" style="height: 600;">
+                    <div class="row row-cols-4 row-cols-md-5 g-4 mb-2" style="height: 600;">
                         <ng-container *ngFor="let product of pageState.page.content">
                             <app-products-card [ngClass]="border && productId === product.id ? 'border border-primary rounded-4 border-3' : null"
                                 (onClick)="onCard($event)" [product]="product"
@@ -63,7 +63,7 @@
         </div>
     </ng-container>
 </div>
-<!--Create table modal-->
+<!--Create product modal-->
 <ng-container *ngIf="showCreateModal">
     <ng-container *ngIf="(createState$ | async) as cSate">
         <app-modal [closeOnClick]="false" [showModal]="showCreateModal" (closeModel)="closeModal()">

@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { MenuModule } from 'primeng/menu';
 import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
 import { MessagesModule } from 'primeng/messages';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageModule } from 'primeng/message';
@@ -34,6 +35,7 @@ import { ProductsComponent } from './components/products/products.component';
 import { ProductsCardComponent } from './components/products-card/products-card.component';
 import { ProductComponent } from './components/product/product.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { UserComponent } from './components/user/user.component';
 
 
 @NgModule({
@@ -52,10 +54,11 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     ProductsComponent,
     ProductsCardComponent,
     ProductComponent, 
-    SpinnerComponent
+    SpinnerComponent, UserComponent
   ],
   imports: [
     BrowserModule,
+    DropdownModule,
     ConfirmPopupModule,
     BrowserAnimationsModule,
     AppRoutingModule,

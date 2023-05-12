@@ -21,8 +21,7 @@ import java.util.UUID;
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
-import static com.konstantion.user.Role.getAdminRole;
-import static com.konstantion.user.Role.getWaiterRole;
+import static com.konstantion.user.Role.*;
 import static com.konstantion.utils.ObjectUtils.anyMatchCollection;
 import static com.konstantion.utils.ObjectUtils.requireNonNullOrElseNullable;
 import static java.lang.String.format;
@@ -122,7 +121,7 @@ public record UserServiceImpl(
         }
 
         if (permission.equals(SUPER_USER)) {
-            throw new BadRequestException("Permission SUPER_USER can't be either removed or added");
+            throw new BadRequestException("Permission SUPER USER can't be either removed or added");
         }
 
         User user = getByIdOrThrow(userId);
@@ -147,7 +146,7 @@ public record UserServiceImpl(
         }
 
         if (permission.equals(SUPER_USER)) {
-            throw new BadRequestException("Permission SUPER_USER can't be either removed or added");
+            throw new BadRequestException("Permission SUPER USER can't be either removed or added");
         }
 
         User user = getByIdOrThrow(userId);
@@ -194,6 +193,10 @@ public record UserServiceImpl(
     public User removeRole(UUID userId, Role role, User authenticated) {
         if (authenticated.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        if(userId.equals(authenticated.getId()) && role.equals(ADMIN)) {
+            throw new BadRequestException("Outstanding Move! And how would you manage the application without this role :)");
         }
 
         User user = getByIdOrThrow(userId);
@@ -250,7 +253,15 @@ public record UserServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
+        if(userId.equals(authenticated.getId())) {
+            throw new BadRequestException("Deactivating yourself is not allowed :)");
+        }
+
         User user = getUserById(userId);
+
+        if(user.hasPermission(SUPER_USER)) {
+            throw new BadRequestException("Deactivating  SUPER USER is not allowed");
+        }
 
         if (!user.isEnabled()) {
             logger.warn("User with id {} is already inactive", userId);
@@ -269,6 +280,10 @@ public record UserServiceImpl(
         if (authenticated.hasNoPermission(CHANGE_USER_STATE)
             && authenticated.hasNoPermission(SUPER_USER)) {
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
+        }
+
+        if(userId.equals(authenticated.getId())) {
+            throw new BadRequestException("Activating yourself is not allowed :)");
         }
 
         User user = getUserById(userId);
@@ -291,7 +306,15 @@ public record UserServiceImpl(
             throw new ForbiddenException(NOT_ENOUGH_AUTHORITIES);
         }
 
+        if(userId.equals(authorized.getId())) {
+            throw new BadRequestException("Chill body suicide is not an option :(");
+        }
+
         User user = getUserById(userId);
+
+        if(user.hasPermission(SUPER_USER)) {
+            throw new BadRequestException("Deleting SUPER USER is not allowed");
+        }
 
         userPort.delete(user);
 

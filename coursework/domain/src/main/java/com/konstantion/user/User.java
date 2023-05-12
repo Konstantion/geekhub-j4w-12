@@ -72,6 +72,10 @@ public class User implements UserDetails {
         return roles.contains(role) && permissions.contains(permission);
     }
 
+    public boolean hasPermission(Permission permission) {
+        return hasPermission(null, permission);
+    }
+
     public boolean hasNoPermission(Role role, Permission permission) {
         return !hasPermission(role, permission);
     }

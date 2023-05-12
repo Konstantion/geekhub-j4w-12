@@ -108,7 +108,7 @@ export class OrderComponent implements OnInit {
   onDelete() {
     this.confirmationService.confirm({
       target: event.target,
-      message: 'Are you sure that you want to delete table?',
+      message: 'Are you sure that you want to delete order?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.delete();

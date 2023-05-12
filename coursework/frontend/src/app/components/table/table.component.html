@@ -23,7 +23,8 @@
                                 [ngClass]="pageState.table.hallId ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ pageState.table.hallId ? 'present' : 'absent' }} </span>
                         </p>
-                        <p (click)="onOrderClick()" class="card-text cursor-pointer"><strong>Order: </strong><span class="badge"
+                        <p (click)="onOrderClick()" class="card-text cursor-pointer"><strong>Order: </strong><span
+                                class="badge"
                                 [ngClass]="pageState.table.orderId ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ pageState.table.orderId ? 'present' : 'absent' }} </span>
                         </p>
@@ -72,7 +73,7 @@
 
                     <ng-container *ngFor="let waiter of pageState.waiters">
                         <div class="col-4">
-                            <app-user-card [user]="waiter">
+                            <app-user-card (onClick)="userRoute($event)" [user]="waiter">
                             </app-user-card>
                         </div>
                     </ng-container>
@@ -146,6 +147,9 @@
                             {{utState.violations.password}}
                         </div>
                     </div>
+                </div>
+                <div class="mb-3">
+                    <p> if you <b>don't want to change </b>the value of a variable, leave its <b>input empty</b>! </p>
                 </div>
             </form>
             <button type="button" class="btn btn-secondary me-2 w-25" (click)="onCloseTableModal()">Close</button>

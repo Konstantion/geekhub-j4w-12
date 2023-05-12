@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.konstantion.utils.validator.ValidationConstants.*;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -17,7 +18,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public record ProductValidations(
 
 ) implements ValidationUtil {
-
+    private static final double MAX_PRICE = 0x10000;
     public Optional<FieldError> isNameValid(String name, Object sender) {
         Set<String> violations = new HashSet<>();
         if (isBlank(name)) {
@@ -41,6 +42,10 @@ public record ProductValidations(
 
         if (price <= 0) {
             violations.add("price should be bigger then zero");
+        }
+
+        if(price > MAX_PRICE) {
+            violations.add(format("price should not be bigger %s", MAX_PRICE));
         }
 
         BigDecimal priceDecimal = BigDecimal.valueOf(price);

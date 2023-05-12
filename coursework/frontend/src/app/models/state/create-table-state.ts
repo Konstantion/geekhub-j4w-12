@@ -5,6 +5,8 @@ export interface CreateTableState {
     dataState?: DataState;
     table?: TableDto;
     invalid?: boolean;
-    violations?: { password?: string, name?: string, tableType?: string, capacity?: string };
+    violations?: {
+        password?: string, name?: string, tableType?: string, capacity?: string
+    };
     message?: string;
 }

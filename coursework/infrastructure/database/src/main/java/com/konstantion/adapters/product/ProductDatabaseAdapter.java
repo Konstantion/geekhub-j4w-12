@@ -62,7 +62,7 @@ public class ProductDatabaseAdapter implements ProductPort {
                 category_id = :categoryId,
                 image_bytes = :imageBytes,
                 description = :description,
-                created_at = :categoryId,
+                created_at = :createdAt,
                 deactivate_at = :deactivateAt,
                 active = :active
             WHERE id = :id;

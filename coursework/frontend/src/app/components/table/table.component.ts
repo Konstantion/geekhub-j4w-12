@@ -11,6 +11,7 @@ import { AddWaiterState } from 'src/app/models/state/add-waiter-state';
 import { CreateTableState } from 'src/app/models/state/create-table-state';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { TablePageState } from 'src/app/models/state/pages/table-page-state';
+import { ObjectUtils } from 'src/app/models/util/object-utils';
 import { HallService } from 'src/app/services/hall/hall.service';
 import { TableService } from 'src/app/services/table/table.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -223,7 +224,7 @@ export class TableComponent implements OnInit {
     if (this.updateTableRequest.password === '') {
       this.updateTableRequest.password = null;
     }
-    this.updateTableState$ = this.tableService.updateTable$(this.tableId, this.updateTableRequest)
+    this.updateTableState$ = this.tableService.updateTable$(this.tableId, ObjectUtils.replaceEmptyWithNull(this.updateTableRequest))
       .pipe(
         map(response => {
           this.tableSubject.next(response.data.table);
@@ -302,7 +303,9 @@ export class TableComponent implements OnInit {
       }
     });
   }
-
+  userRoute(user: UserDto) {
+    this.router.navigate([`users/${user.id}`]);
+  }
   onAddWaiter() {
     this.addWaiterState$ = this.tableService.addWaiter$(this.tableId, this.addWaiterRequest)
       .pipe(

@@ -21,6 +21,8 @@ public record MultipartFileValidations() implements ValidationUtil {
     private static final byte[][] IMAGE_SIGNATURES = {
             // JPEG
             {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0},
+            {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE1},
+            {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xDB},
 
             // PNG
             {(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47},
@@ -30,6 +32,9 @@ public record MultipartFileValidations() implements ValidationUtil {
 
             // BMP
             {(byte) 0x42, (byte) 0x4D},
+
+            // ICO
+            {(byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00},
 
             // TIFF
             {(byte) 0x49, (byte) 0x49, (byte) 0x2A, (byte) 0x00},
@@ -54,7 +59,6 @@ public record MultipartFileValidations() implements ValidationUtil {
         if (!deviousBitsCheck(file)) {
             errorSet.add("I know that it's not an image :), stop!");
         }
-
 
         return setToOptional(errorSet, file, FILE);
     }

@@ -9,6 +9,7 @@ import { TableDto } from 'src/app/models/dto/table/table-dto';
 import { CreateHallState } from 'src/app/models/state/create-hall-state';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { HallPageState } from 'src/app/models/state/pages/hall-page-state';
+import { ObjectUtils } from 'src/app/models/util/object-utils';
 import { HallService } from 'src/app/services/hall/hall.service';
 
 @Component({
@@ -178,7 +179,7 @@ export class HallComponent implements OnInit {
   }
 
   updateHall(): void {
-    this.updateHallState$ = this.hallService.updateHall$(this.hallId, this.updateHallRequest)
+    this.updateHallState$ = this.hallService.updateHall$(this.hallId, ObjectUtils.replaceEmptyWithNull(this.updateHallRequest))
       .pipe(
         map(response => {
           this.updateHallRequest = {};
@@ -234,7 +235,7 @@ export class HallComponent implements OnInit {
   deletePopUp() {
     this.confirmationService.confirm({
       target: event.target,
-      message: 'Are you sure that you want to delete table?',
+      message: 'Are you sure that you want to delete hall?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.onDelete();

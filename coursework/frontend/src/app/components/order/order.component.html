@@ -80,9 +80,9 @@
         </div>
     </div>
     <ng-container *ngIf="addModal">
-        <app-modal [closeOnClick]=false [showModal]="addModal" (closeModel)="onCloseAdd()">
-            <div class="my-2">
-                <app-products [border]="true" (productClick)="onProductClick($event)"></app-products>
+        <app-modal [width]="'200vh'" [height]="'70vh'" [closeOnClick]=false [showModal]="addModal" (closeModel)="onCloseAdd()">
+            <div class="my-2" style="height: 40vh;">
+                <app-products [size]="5" [border]="true" (productClick)="onProductClick($event)"></app-products>
             </div>
             <div class="my-2">
                 <label for="quantity" class="form-label">Quantity</label>

@@ -6,4 +6,5 @@ export interface ProductPageState {
     dataState?: DataState;
     product?: ProductDto;
     category?: CategoryDto;
+    imageUrl?: string;
 }

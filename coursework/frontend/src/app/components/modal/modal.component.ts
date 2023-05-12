@@ -8,6 +8,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ModalComponent {
   @Input() closeOnClick: boolean;
   @Input() showModal: boolean;
+  @Input() width: string;
+  @Input() height: string;
   @Output() closeModel = new EventEmitter<void>();
 
   handleMouseup(): void {  

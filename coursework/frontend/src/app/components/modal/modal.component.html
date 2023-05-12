@@ -1,6 +1,6 @@
 <div *ngIf="showModal" class="overlay" (mouseup)="handleMouseup()">
-  <div class="overlay-background" [style.opacity]="0.5" [style.zIndex]="999"></div>
-  <div class="overlay-data" [style.zIndex]="1000">
+  <div  class="overlay-background" [style.opacity]="0.5" [style.zIndex]="999" ></div>
+  <div class="overlay-data" [style.zIndex]="1000" [style.width]="width" [style.height]="height">
     <ng-content></ng-content>
   </div>
 </div>
