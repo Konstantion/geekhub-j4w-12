@@ -103,6 +103,11 @@ export class BillComponent {
     return of();
   }
 
+  onGuest() {
+    const guestId = this.billPageSubject.value.bill.guestId;
+    if (guestId) this.router.navigate([`guests/${guestId}`]);
+  }
+
   onOrder() {
     const orderId = this.billPageSubject.value.bill.orderId;
 

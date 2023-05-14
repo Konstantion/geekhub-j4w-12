@@ -45,6 +45,10 @@ import { OrdersComponent } from './components/orders/orders.component';
 import { ObjectUtils } from './models/util/object-utils';
 import { BillCardComponent } from './components/bill-card/bill-card.component';
 import { BillsComponent } from './components/bills/bills.component';
+import { GuestComponent } from './components/guest/guest.component';
+import { GuestCardComponent } from './components/guest-card/guest-card.component';
+import { GuestsComponent } from './components/guests/guests.component';
+import { UsersComponent } from './components/users/users.component';
 
 
 @NgModule({
@@ -62,7 +66,7 @@ import { BillsComponent } from './components/bills/bills.component';
     OrderComponent,
     ProductsComponent,
     ProductsCardComponent,
-    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent
+    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent, GuestComponent, GuestCardComponent, GuestsComponent, UsersComponent
   ],
   imports: [
     BrowserModule,

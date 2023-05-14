@@ -14,7 +14,7 @@
                                 class="badge" [ngClass]="pageState.waiter ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ pageState.waiter ? pageState.waiter.username : 'absent' }} </span></p>
 
-                        <p [ngClass]="pageState.guest ? 'cursor-pointer' : null"><strong>Guest: </strong> <span
+                        <p (click)="onGuest()" [ngClass]="pageState.guest ? 'cursor-pointer' : null"><strong>Guest: </strong> <span
                                 class="badge" [ngClass]="pageState.guest ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ pageState.guest ? pageState.guest.name : 'absent' }} </span></p>
 

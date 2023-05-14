@@ -28,12 +28,22 @@ export class GuestService {
       tap(console.log)
     )
 
+    guests$ = <Observable<GuestResponse>>this.http.get(`${this.adminGuestUrl}`)
+    .pipe(
+      tap(console.log)
+    )
+
   activateGuestById$ = (id: string) => <Observable<GuestResponse>>this.http.put(`${this.adminGuestUrl}/${id}/activate`, '')
     .pipe(
       tap(console.log)
     )
 
   deactivateGuestById$ = (id: string) => <Observable<GuestResponse>>this.http.put(`${this.adminGuestUrl}/${id}/deactivate`, '')
+    .pipe(
+      tap(console.log)
+    )
+
+  deleteGuestById$ = (id: string) => <Observable<GuestResponse>>this.http.delete(`${this.adminGuestUrl}/${id}`)
     .pipe(
       tap(console.log)
     )

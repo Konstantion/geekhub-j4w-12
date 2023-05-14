@@ -14,6 +14,7 @@ import { UserComponent } from './components/user/user.component';
 import { BillComponent } from './components/bill/bill.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { BillsComponent } from './components/bills/bills.component';
+import { GuestComponent } from './components/guest/guest.component';
 
 const routes: Routes = [{
   path: '',
@@ -62,6 +63,11 @@ const routes: Routes = [{
 {
   path: 'products/:id',
   component: ProductComponent,
+  canActivate: [AccessGuardService]
+},
+{
+  path: 'guests/:id',
+  component: GuestComponent,
   canActivate: [AccessGuardService]
 },
 {
