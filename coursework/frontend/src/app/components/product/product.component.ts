@@ -7,7 +7,7 @@ import { CreateProductRequestDto } from 'src/app/models/dto/product/create-produ
 import { ProductDto } from 'src/app/models/dto/product/product-dto';
 import { ProductPageDto } from 'src/app/models/dto/product/product-page-dto';
 import { CategoryResponse } from 'src/app/models/responses/category-response';
-import { CreateProductState } from 'src/app/models/state/create-product-state';
+import { CreateProductState } from 'src/app/models/state/crud/create-product-state';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { ProductPageState } from 'src/app/models/state/pages/product-page-state';
 import { CategoryService } from 'src/app/services/category/category.service';
@@ -108,6 +108,7 @@ export class ProductComponent implements OnInit {
       catchError(error => this.handleError(error))
     ).subscribe();
     this.productData = this.generateData();
+    this.createSubject.next({ })
     this.showUpdateModal = true;
   }
 

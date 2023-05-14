@@ -64,8 +64,8 @@
                     <input [ngClass]="cSate.invalid && cSate.violations.price ? 'is-invalid' : null" type="number"
                         class="form-control" id="price" [(ngModel)]="productData.price" name="price">
                     <div *ngIf="cSate.invalid && cSate.violations.price">
-                        <div class="text-red-500">
-                            {{ cSate.violations.price }}
+                        <div class="text-red-500" [innerHTML]="cSate.violations.price">
+                            
                         </div>
                     </div>
                 </div>

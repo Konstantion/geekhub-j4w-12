@@ -10,8 +10,8 @@ import { CreateTableRequestDto } from 'src/app/models/dto/table/create-table-req
 import { ErrorResponse } from 'src/app/models/responses/error-response';
 import { TableResponse } from 'src/app/models/responses/table-response';
 import { CreateHallRequestDto } from 'src/app/models/dto/hall/create-hall-request-dto';
-import { CreateTableState } from 'src/app/models/state/create-table-state';
-import { CreateHallState } from 'src/app/models/state/create-hall-state';
+import { CreateTableState } from 'src/app/models/state/crud/create-table-state';
+import { CreateHallState } from 'src/app/models/state/crud/create-hall-state';
 import { TablesPageState } from 'src/app/models/state/pages/tables-page-state';
 import { Router } from '@angular/router';
 

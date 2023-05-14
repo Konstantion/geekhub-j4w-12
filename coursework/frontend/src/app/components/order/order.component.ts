@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { BehaviorSubject, catchError, concatMap, map, of } from 'rxjs';
+import { GuestDto } from 'src/app/models/dto/guest/guest-dto';
 import { OrderProductRequestDto } from 'src/app/models/dto/order/order-product-request-dto';
 import { ProductDto } from 'src/app/models/dto/product/product-dto';
 import { TableDto } from 'src/app/models/dto/table/table-dto';
@@ -9,6 +10,9 @@ import { TableResponse } from 'src/app/models/responses/table-response';
 import { UserResponse } from 'src/app/models/responses/user-response';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { OrderPageState } from 'src/app/models/state/pages/order-page-state';
+import { ObjectUtils } from 'src/app/models/util/object-utils';
+import { BillService } from 'src/app/services/bill/bill.service';
+import { GuestService } from 'src/app/services/guest/guest.service';
 import { OrderService } from 'src/app/services/order/order.service';
 import { TableService } from 'src/app/services/table/table.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -23,6 +27,8 @@ export class OrderComponent implements OnInit {
 
   constructor(
     private confirmationService: ConfirmationService,
+    private guestService: GuestService,
+    private billService: BillService,
     private messageService: MessageService,
     private orderService: OrderService,
     private tableService: TableService,
@@ -35,10 +41,13 @@ export class OrderComponent implements OnInit {
   private orderPageSubject = new BehaviorSubject<OrderPageState>({});
 
   addModal = false;
+  createModal = false;
   removeModal = false;
   transferModal = false;
   transferToId = '';
+  guestId = '';
   tables: TableDto[] = [];
+  guests: { id?: string, name?: string }[] = [];
   orderProductData: OrderProductRequestDto = {};
 
   pageState$ = this.orderPageSubject.asObservable();
@@ -119,6 +128,30 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  onCreate() {
+    this.guestService.activeGuests$.subscribe(response => {
+      this.guests = response.data.guests.map(guest => {
+        return { id: guest.id, name: guest.name }
+      });
+      this.createModal = true;
+      this.guestId = '';
+    });
+  }
+
+  closeCreate() {
+    this.createModal = false;
+  }
+
+  createBill() {
+    const requestDto = ObjectUtils.replaceEmptyWithNull({ guestId: this.guestId, orderId: this.orderId })
+    this.billService.createBill$(requestDto).pipe(
+      map(response => {
+        this.router.navigate([`bills/${response.data.bill.id}`]);
+      }),
+      catchError(error => this.handleError(error))
+    ).subscribe()
+  }
+
   onClose() {
     this.orderService.closeOrderById$(this.orderId).pipe(
       map(response => {
@@ -140,10 +173,17 @@ export class OrderComponent implements OnInit {
     this.transferModal = true;
     this.tableService.activeTables$.pipe(
       map(response => {
-        this.tables = response.data.tables.filter(table => table.orderId === null && table.active)
+        this.tables = response.data.tables;
       }),
       catchError(error => this.handleError(error))
     ).subscribe();
+  }
+
+  onBill() {
+    const billId = this.orderPageSubject.value.order.billId;
+    if (billId) {
+      this.router.navigate([`bills/${billId}`])
+    }
   }
 
   onCloseAdd() {
@@ -260,5 +300,11 @@ export class OrderComponent implements OnInit {
         state.table = tableResponse.data.table;
       }),
       catchError(error => this.handleError(error))).subscribe();
+  }
+
+  onRow(id: string) {
+    if (id) {
+      this.router.navigate([`products/${id}`]);
+    }
   }
 }

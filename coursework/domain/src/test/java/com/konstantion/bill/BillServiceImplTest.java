@@ -305,6 +305,7 @@ class BillServiceImplTest {
 
     @Test
     void shouldDeactivateBillWhenActivateWithValidBill() {
+        when(orderPort.findById(any())).thenReturn(Optional.of(Order.builder().active(false).build()));
         when(user.hasNoPermission(any(Permission.class))).thenReturn(false);
         when(billPort.findById(any(UUID.class)))
                 .thenReturn(Optional.of(activeBill))

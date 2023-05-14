@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static com.itextpdf.text.BaseColor.WHITE;
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 
 public class PdfUtils {
     private static final Font TITLE_FONT = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD);
@@ -37,18 +38,18 @@ public class PdfUtils {
             Document document
     ) throws DocumentException {
         // Add title
-        Paragraph title = new Paragraph("Bill", TITLE_FONT);
+        Paragraph title = new Paragraph("BILL", TITLE_FONT);
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
 
         // Add subtitle
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        Paragraph subtitle = new Paragraph(format("Opened at: %s", formatter.format(order.getCreatedAt())), HEADER_FONT);
+        Paragraph subtitle = new Paragraph(format("OPENED AT: %s", formatter.format(order.getCreatedAt())), HEADER_FONT);
         subtitle.setAlignment(Element.ALIGN_LEFT);
         document.add(subtitle);
 
         // Add bill closed time
-        Paragraph closedAtParagraph = new Paragraph(format("Closed at: %s", formatter.format(bill.getCreatedAt())), HEADER_FONT);
+        Paragraph closedAtParagraph = new Paragraph(format("PRINTED AT: %s", formatter.format(now())), HEADER_FONT);
         closedAtParagraph.setAlignment(Element.ALIGN_LEFT);
         document.add(closedAtParagraph);
 
@@ -56,7 +57,7 @@ public class PdfUtils {
         String waiterName = waiter != null ? String.join(" ", waiter.getLastName(), waiter.getFirstName()) : "";
         String tableName = table != null ? table.getName() : "";
         String guestName = guest != null ? guest.getName() : "";
-        Paragraph tableInfo = new Paragraph(format("Table: %s%nWaiter: %s%nGuest: %s%n",
+        Paragraph tableInfo = new Paragraph(format("TABLE: %s%nWAITER: %s%nGUEST: %s%n",
                 tableName,
                 waiterName,
                 guestName), HEADER_FONT);
@@ -64,8 +65,9 @@ public class PdfUtils {
         document.add(tableInfo);
 
         //Add products title
-        Paragraph productTitle = new Paragraph(format("Products:%n"), SUBTITLE_FONT);
-        productTitle.setAlignment(Element.ALIGN_CENTER);
+        Paragraph productTitle = new Paragraph(format("PRODUCTS:%n"), SUBTITLE_FONT);
+        productTitle.setSpacingAfter(10f);
+        productTitle.setAlignment(Element.ALIGN_LEFT);
         document.add(productTitle);
 
         // Add products table
@@ -74,10 +76,10 @@ public class PdfUtils {
         productsTable.setHeaderRows(1);
 
         // Add table headers
-        productsTable.addCell(createCell("Product", Element.ALIGN_CENTER, LIGHT_GRAY));
-        productsTable.addCell(createCell("Quantity", Element.ALIGN_CENTER, LIGHT_GRAY));
-        productsTable.addCell(createCell("Price", Element.ALIGN_CENTER, LIGHT_GRAY));
-        productsTable.addCell(createCell("Total", Element.ALIGN_CENTER, LIGHT_GRAY));
+        productsTable.addCell(createCell("PRODUCT", Element.ALIGN_CENTER, LIGHT_GRAY));
+        productsTable.addCell(createCell("QUANTITY", Element.ALIGN_CENTER, LIGHT_GRAY));
+        productsTable.addCell(createCell("PRICE", Element.ALIGN_CENTER, LIGHT_GRAY));
+        productsTable.addCell(createCell("TOTAL", Element.ALIGN_CENTER, LIGHT_GRAY));
 
         products.forEach((product, quantity) -> {
             productsTable.addCell(createCell(product.getName()));
@@ -87,16 +89,16 @@ public class PdfUtils {
         });
 
         // Add products total
-        productsTable.addCell(createCell("Total", 3, Element.ALIGN_RIGHT, WHITE));
+        productsTable.addCell(createCell("TOTAL", 3, Element.ALIGN_RIGHT, WHITE));
         productsTable.addCell(createCell(format("%.2f", bill.getPrice()), Element.ALIGN_RIGHT, WHITE));
 
         // Add discount
-        productsTable.addCell(createCell("Discount", 3, Element.ALIGN_RIGHT, WHITE));
+        productsTable.addCell(createCell("DISCOUNT", 3, Element.ALIGN_RIGHT, WHITE));
         String discount = guest != null ? guest.getDiscountPercent() + "%" : "";
         productsTable.addCell(createCell(format("%s", discount), Element.ALIGN_RIGHT, WHITE));
 
         // Add total with discount
-        productsTable.addCell(createCell("Total with Discount", 3, Element.ALIGN_RIGHT, WHITE));
+        productsTable.addCell(createCell("TOTAL WITH DISCOUNT", 3, Element.ALIGN_RIGHT, WHITE));
         productsTable.addCell(createCell(format("%.2f", bill.getPriceWithDiscount()), Element.ALIGN_RIGHT, WHITE));
 
         document.add(productsTable);

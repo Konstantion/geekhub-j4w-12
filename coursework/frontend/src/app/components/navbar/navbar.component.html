@@ -8,20 +8,23 @@
                         <a class="nav-link cursor-pointer">Tables</a>
                     </li>
                     <li class="nav-item cursor-pointer" (click)="onProducts()">
-                        <a class="nav-link" >Products</a>
+                        <a class="nav-link">Products</a>
                     </li>
-                    <li class="nav-item cursor-pointer">
-                        <a class="nav-link" >Bills</a>
+                    <li class="nav-item cursor-pointer" (click)="onOrders()">
+                        <a class="nav-link">Orders</a>
+                    </li>
+                    <li class="nav-item cursor-pointer" (click)="onBills()">
+                        <a class="nav-link">Bills</a>
                     </li>
                     <ng-container *ngIf="authorizedUser.authenticated.user.roles.includes('ADMIN')">
-                        <li class="nav-item cursor-pointer">
-                            <a class="nav-link" href="#">Admin</a>
+                        <li class="nav-item cursor-pointer" (click)="onAdmin()">
+                            <a class="nav-link">Admin</a>
                         </li>
                     </ng-container>
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <div class="navbar-text me-3">Welcome, <span class="cursor-pointer"> {{
+                        <div class="navbar-text me-3">Welcome, <span (click)="onUser()" class="cursor-pointer"> {{
                                 authorizedUser.authenticated.user.username }}</span>!</div>
                     </li>
                     <li class="nav-item">

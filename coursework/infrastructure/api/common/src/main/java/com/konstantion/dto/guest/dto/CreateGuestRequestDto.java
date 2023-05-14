@@ -5,6 +5,4 @@ public record CreateGuestRequestDto(
         String phoneNumber,
         Double discountPercent
 ) {
-
-
 }

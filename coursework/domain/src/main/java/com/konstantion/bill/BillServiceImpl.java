@@ -26,10 +26,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
@@ -126,8 +123,11 @@ public record BillServiceImpl(
 
         order.removeBill();
 
+        activateOrder(bill);
+
         orderPort.save(order);
         billPort.delete(bill);
+
 
         logger.info("Bill with id {} successfully canceled and returned", billId);
         return bill;
@@ -169,25 +169,30 @@ public record BillServiceImpl(
 
         prepareToActivate(bill);
 
+        activateOrder(bill);
+
         billPort.save(bill);
 
         logger.info("Bill with id {} successfully activated and returned", billId);
         return bill;
     }
 
+    private void activateOrder(Bill bill) {
+        Order order = orderPort.findById(bill.getOrderId())
+                .orElseThrow(nonExistingIdSupplier(Order.class, bill.getOrderId()));
+
+        if (!order.isActive()) {
+            order.setActive(true);
+            order.setClosedAt(null);
+            orderPort.save(order);
+        }
+    }
+
     @Override
     public byte[] getPdfBytesById(UUID id, User user) {
         Bill bill = getByIdOrThrow(id);
         Order order = orderPort.findById(bill.getOrderId()).orElseThrow(nonExistingIdSupplier(Order.class, bill.getOrderId()));
-        Map<Product, Long> products = order.getProductsId()
-                .stream()
-                .map(productPort::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.groupingBy(
-                        product -> product,
-                        Collectors.counting()
-                ));
+        Map<Product, Long> products = productsMap(order.getProductsId());
         Guest guest = guestPort.findById(bill.getGuestId()).orElse(null);
         Table table = tablePort.findById(order.getTableId()).orElse(null);
         User waiter = userPort.findById(bill.getWaiterId()).orElse(null);
@@ -227,6 +232,26 @@ public record BillServiceImpl(
                 .reduce(0.0, Double::sum);
 
         return DoubleUtils.round(orderPrice, 2);
+    }
+
+    private Map<Product, Long> productsMap(List<UUID> productIds) {
+        Map<UUID, Product> productsMap = new HashSet<>(productIds).stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        id -> {
+                            Product product = productPort.findById(id).orElseThrow();
+                            product.setImageBytes(null);
+                            return product;
+                        }
+                ));
+
+        return productIds.stream()
+                .map(productsMap::get)
+                .collect(Collectors.toMap(
+                        product -> product,
+                        product -> 1L,
+                        Long::sum
+                ));
     }
 
     /**

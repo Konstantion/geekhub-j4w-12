@@ -18,7 +18,7 @@ public interface ValidationUtil {
         }
 
         String data = String.join(
-                System.lineSeparator(),
+                "<br>",
                 validations
         );
 

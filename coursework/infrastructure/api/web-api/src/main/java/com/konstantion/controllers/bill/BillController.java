@@ -97,7 +97,7 @@ public record BillController(
                 .build();
     }
 
-    @GetMapping(value = "/{id}/pdf", produces = APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/{id}/generate-pdf", produces = APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> printBill(
             @PathVariable("id") UUID id,
             @AuthenticationPrincipal User user

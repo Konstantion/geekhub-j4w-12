@@ -11,6 +11,9 @@ import { OrderComponent } from './components/order/order.component';
 import { ProductsComponent } from './components/products/products.component';
 import { ProductComponent } from './components/product/product.component';
 import { UserComponent } from './components/user/user.component';
+import { BillComponent } from './components/bill/bill.component';
+import { OrdersComponent } from './components/orders/orders.component';
+import { BillsComponent } from './components/bills/bills.component';
 
 const routes: Routes = [{
   path: '',
@@ -39,6 +42,21 @@ const routes: Routes = [{
 {
   path: 'orders/:id',
   component: OrderComponent,
+  canActivate: [AccessGuardService]
+},
+{
+  path: 'orders',
+  component: OrdersComponent,
+  canActivate: [AccessGuardService]
+},
+{
+  path: 'bills',
+  component: BillsComponent,
+  canActivate: [AccessGuardService]
+},
+{
+  path: 'bills/:id',
+  component: BillComponent,
   canActivate: [AccessGuardService]
 },
 {

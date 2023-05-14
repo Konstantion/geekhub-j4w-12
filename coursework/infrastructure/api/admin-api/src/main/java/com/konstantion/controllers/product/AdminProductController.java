@@ -35,7 +35,7 @@ public record AdminProductController(
             @RequestParam("size") Optional<Integer> pageSize,
             @RequestParam("orderBy") Optional<String> fieldName,
             @RequestParam("pattern") Optional<String> searchPattern,
-            @RequestParam("categoryUuid") Optional<UUID> categoryUuid,
+            @RequestParam("category") Optional<UUID> categoryId,
             @RequestParam("ascending") Optional<Boolean> ascending
     ) {
         Page<ProductDto> productsDto = productMapper.toDto(
@@ -45,7 +45,7 @@ public record AdminProductController(
                                 pageSize.orElse(6),
                                 fieldName.orElse("name"),
                                 searchPattern.orElse(""),
-                                categoryUuid.orElse(null),
+                                categoryId.orElse(null),
                                 ascending.orElse(true)
                         ),
                         false

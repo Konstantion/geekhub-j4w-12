@@ -44,4 +44,21 @@ export class NavbarComponent implements OnInit {
   onProducts() {
     this.router.navigate([`products`]);
   }
+
+  onOrders() {
+    this.router.navigate([`orders`]);
+  }
+
+  onBills() {
+    this.router.navigate([`bills`]);
+  }
+
+  onUser() {
+    const userId = this.authorizedUser.authenticated.user.id;
+    if (userId) this.router.navigate([`users/${userId}`]);
+  }
+
+  onAdmin() {
+    this.router.navigate([`admin`]);
+  }
 }

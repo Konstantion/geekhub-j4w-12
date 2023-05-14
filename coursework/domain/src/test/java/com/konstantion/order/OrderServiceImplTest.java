@@ -215,13 +215,16 @@ class OrderServiceImplTest {
 
     @Test
     void shouldCloseWhenCloseWithValidData() {
+        UUID tableId = UUID.randomUUID();
+        UUID orderId = UUID.randomUUID();
         when(billPort.findById(any())).thenReturn(Optional.of(Bill.builder().active(false).build()));
-        when(tablePort.findById(any())).thenReturn(Optional.of(Table.builder().orderId(UUID.randomUUID()).build()));
+        when(tablePort.findById(any())).thenReturn(Optional.of(Table.builder().id(tableId).orderId(orderId).build()));
         when(orderPort.findById(any())).thenReturn(Optional.of(
                 Order.builder()
+                        .id(orderId)
                         .productsId(List.of(UUID.randomUUID()))
                         .billId(UUID.randomUUID())
-                        .tableId(UUID.randomUUID())
+                        .tableId(tableId)
                         .active(true)
                         .build()
         ));

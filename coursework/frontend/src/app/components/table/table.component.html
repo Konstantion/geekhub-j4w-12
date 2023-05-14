@@ -4,11 +4,6 @@
             <h1 class="text-center">Table: <i> {{ pageState.table.name }} </i></h1>
             <div class="row">
                 <ng-container *ngIf="pageState.tableState === DataState.LOADED_STATE">
-                    <!-- <div *ngIf="pageState.message">
-                        <p-messages (click)="clearMessage()"
-                            [value]="[{ severity: 'error', detail: pageState.message }]">
-                        </p-messages>
-                    </div> -->
                     <div class="col-6">
                         <p><strong>Name:</strong> {{ pageState.table.name }}</p>
                         <p><strong>Capacity:</strong> {{ pageState.table.capacity }}</p>

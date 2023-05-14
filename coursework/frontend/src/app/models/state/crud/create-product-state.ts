@@ -1,5 +1,6 @@
-import { ProductDto } from "../dto/product/product-dto";
-import { DataState } from "./enum/data-state";
+import { ProductDto } from "../../dto/product/product-dto";
+import { DataState } from "../enum/data-state";
+
 
 export interface CreateProductState {
     dataState?: DataState;

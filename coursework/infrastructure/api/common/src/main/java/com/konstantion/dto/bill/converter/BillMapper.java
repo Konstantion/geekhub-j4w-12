@@ -2,10 +2,8 @@ package com.konstantion.dto.bill.converter;
 
 import com.konstantion.bill.Bill;
 import com.konstantion.bill.model.CreateBillRequest;
-import com.konstantion.bill.model.EditBillRequest;
 import com.konstantion.dto.bill.dto.BillDto;
 import com.konstantion.dto.bill.dto.CreateBillRequestDto;
-import com.konstantion.dto.bill.dto.EditBillRequestDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

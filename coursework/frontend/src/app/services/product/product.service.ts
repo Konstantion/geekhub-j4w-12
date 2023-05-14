@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { CreateProductRequestDto } from 'src/app/models/dto/product/create-product-dto';
 import { ProductResponse } from 'src/app/models/responses/product-response';
-import { FindProductsState } from 'src/app/models/state/find-products-state';
+import { FindProductsState } from 'src/app/models/state/crud/find-products-state';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -28,6 +28,18 @@ export class ProductService {
 
 
     return <Observable<ProductResponse>>this.http.get(this.productUrl, { params }).pipe(tap(console.log))
+  }
+
+  products$ = (state: FindProductsState) => {
+
+    let params = new HttpParams();
+    if (state.size) params = params.set('size', state.size);
+    if (state.page) params = params.append('page', state.page);
+    if (state.pattern) params = params.append('pattern', state.pattern);
+    if (state.category) params = params.append('category', state.category);
+
+
+    return <Observable<ProductResponse>>this.http.get(this.adminProductUrl, { params }).pipe(tap(console.log))
   }
 
   productById$ = (id: string) => <Observable<ProductResponse>>this.http.get(`${this.productUrl}/${id}`)

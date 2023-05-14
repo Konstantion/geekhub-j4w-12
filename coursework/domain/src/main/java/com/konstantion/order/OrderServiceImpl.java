@@ -147,8 +147,11 @@ public record OrderServiceImpl(
         if (nonNull(order.getTableId())) {
             Table table = tablePort.findById(order.getTableId())
                     .orElseThrow(nonExistingIdSupplier(Table.class, order.getTableId()));
-            table.removeOrder();
-            tablePort.save(table);
+
+            if(table.getOrderId().equals(order.getId())) {
+                table.removeOrder();
+                tablePort.save(table);
+            }
         }
 
         prepareToClose(order);

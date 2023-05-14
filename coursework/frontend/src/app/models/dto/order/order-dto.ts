@@ -7,6 +7,6 @@ export interface OrderDto {
     tableId: string;
     userId: string;
     billId: string;
-    createdAt: Data;
+    createdAt: Date;
     closedAt: Date;
 }

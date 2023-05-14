@@ -8,7 +8,7 @@ import { TableDto } from 'src/app/models/dto/table/table-dto';
 import { TableWaiterRequestDto } from 'src/app/models/dto/table/table-waiter-request-dto';
 import { UserDto } from 'src/app/models/dto/user/user-dto';
 import { AddWaiterState } from 'src/app/models/state/add-waiter-state';
-import { CreateTableState } from 'src/app/models/state/create-table-state';
+import { CreateTableState } from 'src/app/models/state/crud/create-table-state';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { TablePageState } from 'src/app/models/state/pages/table-page-state';
 import { ObjectUtils } from 'src/app/models/util/object-utils';

@@ -1,16 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { BehaviorSubject, catchError, concatMap, map, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, concatMap, map, of, tap } from 'rxjs';
 import { CategoryDto } from 'src/app/models/dto/category/category-dto';
 import { CreateProductRequestDto } from 'src/app/models/dto/product/create-product-dto';
 import { ProductDto } from 'src/app/models/dto/product/product-dto';
-import { CreateProductState } from 'src/app/models/state/create-product-state';
+import { CreateProductState } from 'src/app/models/state/crud/create-product-state';
 import { DataState } from 'src/app/models/state/enum/data-state';
-import { FindProductsState } from 'src/app/models/state/find-products-state';
+import { FindProductsState } from 'src/app/models/state/crud/find-products-state';
 import { ProductsPageState } from 'src/app/models/state/pages/products-page-state';
 import { CategoryService } from 'src/app/services/category/category.service';
 import { ProductService } from 'src/app/services/product/product.service';
+import { ProductResponse } from 'src/app/models/responses/product-response';
 
 @Component({
   selector: 'app-products',
@@ -21,6 +22,7 @@ import { ProductService } from 'src/app/services/product/product.service';
 export class ProductsComponent implements OnInit {
   @Input() border: boolean = false;
   @Input() size: number = null;
+  @Input() isAdmin: boolean;
   @Output() productClick = new EventEmitter<string>();
 
 
@@ -64,7 +66,8 @@ export class ProductsComponent implements OnInit {
         state.categories = response.data.categories;
         this.categories = response.data.categories;
         this.pageSubject.next(state);
-        return this.productService.activeProducts$(this.findProductsState);
+        if (this.isAdmin) return this.productService.products$(this.findProductsState);
+        else return this.productService.activeProducts$(this.findProductsState);
       }),
       map(response => {
         this.findProductsState.page = response.data.products.number + 1;
@@ -132,7 +135,12 @@ export class ProductsComponent implements OnInit {
     const state = this.pageSubject.value;
     state.dataState = DataState.LOADING_STATE;
     this.pageSubject.next(state);
-    this.productService.activeProducts$(this.findProductsState).pipe(
+    let observable: Observable<ProductResponse>;
+
+    if (this.isAdmin) observable = this.productService.products$(this.findProductsState);
+    else observable = this.productService.activeProducts$(this.findProductsState);
+    
+    observable.pipe(
       map(response => {
         this.findProductsState.page = response.data.products.number + 1;
         const state = this.pageSubject.value;

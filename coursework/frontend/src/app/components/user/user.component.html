@@ -53,8 +53,9 @@
     <ng-container *ngIf="roleModal">
         <app-modal [closeOnClick]="false" [showModal]="roleModal" (closeModel)="closeRole()">
             <div class="mb-3">
-                <p-dropdown [options]="roleMap" [(ngModel)]="selectedRole" optionLabel="name" optionValue="role"
-                    [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a permission">
+                <p-dropdown autoWidth="false" [style]="{'width':'100%'}" [options]="roleMap" [(ngModel)]="selectedRole"
+                    optionLabel="name" optionValue="role" [filter]="true" filterBy="name" [showClear]="true"
+                    placeholder="Select a permission">
                 </p-dropdown>
             </div>
             <button (click)="addRole()" [disabled]="selectedRole === null" class="btn btn-primary me-2">Add
@@ -68,9 +69,9 @@
     <ng-container *ngIf="permissionModal">
         <app-modal [closeOnClick]="false" [showModal]="permissionModal" (closeModel)="closePermission()">
             <div class="mb-3">
-                <p-dropdown [options]="permissionMap" [(ngModel)]="selectedPermission" optionLabel="name"
-                    optionValue="permission" [filter]="true" filterBy="name" [showClear]="true"
-                    placeholder="Select a permission">
+                <p-dropdown autoWidth="false" [style]="{'width':'100%'}" [options]="permissionMap"
+                    [(ngModel)]="selectedPermission" optionLabel="name" optionValue="permission" [filter]="true"
+                    filterBy="name" [showClear]="true" placeholder="Select a permission">
                 </p-dropdown>
             </div>
             <button (click)="addPermission()" [disabled]="selectedPermission === null" class="btn btn-primary me-2">Add
@@ -119,9 +120,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phoneNumber" class="form-label">Phone Number</label>
-                    <input [ngClass]="uState.invalid && uState.violations.phoneNumber ? 'is-invalid' : null" type="text"
-                        class="form-control" id="phoneNumber" [(ngModel)]="updateData.phoneNumber" name="phoneNumber">
+                    <span class="block mb-2">Phone Number</span>
+                    <p-inputMask autoWidth="false" [style]="{'width':'100%'}"
+                        [ngClass]="uState.invalid && uState.violations.phoneNumber ? 'ng-invalid ng-dirty' : null"
+                        mask="999-999-9999" [(ngModel)]="updateData.phoneNumber"
+                        placeholder="999-999-9999"></p-inputMask>
                     <div *ngIf="uState.invalid && uState.violations.phoneNumber">
                         <div class="text-red-500">
                             {{ uState.violations.phoneNumber }}

@@ -7,7 +7,7 @@ import { Role } from 'src/app/models/dto/user/role';
 import { UpdateUserRequestDto } from 'src/app/models/dto/user/update-user-request-dto';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { UserPageState } from 'src/app/models/state/pages/user-page-state';
-import { UpdateUserState } from 'src/app/models/state/update-user-state';
+import { UpdateUserState } from 'src/app/models/state/crud/update-user-state';
 import { ObjectUtils } from 'src/app/models/util/object-utils';
 import { UserService } from 'src/app/services/user/user.service';
 

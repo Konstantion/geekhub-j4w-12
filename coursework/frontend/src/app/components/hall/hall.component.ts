@@ -6,7 +6,7 @@ import { AuthenticationResponseDto } from 'src/app/models/dto/authentication/aut
 import { CreateHallRequestDto } from 'src/app/models/dto/hall/create-hall-request-dto';
 import { HallDto } from 'src/app/models/dto/hall/hall-dto';
 import { TableDto } from 'src/app/models/dto/table/table-dto';
-import { CreateHallState } from 'src/app/models/state/create-hall-state';
+import { CreateHallState } from 'src/app/models/state/crud/create-hall-state';
 import { DataState } from 'src/app/models/state/enum/data-state';
 import { HallPageState } from 'src/app/models/state/pages/hall-page-state';
 import { ObjectUtils } from 'src/app/models/util/object-utils';

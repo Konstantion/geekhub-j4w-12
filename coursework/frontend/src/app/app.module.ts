@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { MenuModule } from 'primeng/menu';
+import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { MessagesModule } from 'primeng/messages';
@@ -18,9 +19,11 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { SidebarModule } from 'primeng/sidebar';
 import { CardModule } from 'primeng/card';
 import { BadgeModule } from 'primeng/badge';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TabViewModule } from 'primeng/tabview';
 import { HttpInterceptorService } from './services/interceptor/http-interceptor.service';
 import { TablesComponent } from './components/tables/tables.component';
 import { ModalComponent } from './components/modal/modal.component';
@@ -36,6 +39,12 @@ import { ProductsCardComponent } from './components/products-card/products-card.
 import { ProductComponent } from './components/product/product.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { UserComponent } from './components/user/user.component';
+import { BillComponent } from './components/bill/bill.component';
+import { OrderCardComponent } from './components/order-card/order-card.component';
+import { OrdersComponent } from './components/orders/orders.component';
+import { ObjectUtils } from './models/util/object-utils';
+import { BillCardComponent } from './components/bill-card/bill-card.component';
+import { BillsComponent } from './components/bills/bills.component';
 
 
 @NgModule({
@@ -53,16 +62,19 @@ import { UserComponent } from './components/user/user.component';
     OrderComponent,
     ProductsComponent,
     ProductsCardComponent,
-    ProductComponent, 
-    SpinnerComponent, UserComponent
+    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent
   ],
   imports: [
     BrowserModule,
     DropdownModule,
     ConfirmPopupModule,
+    ConfirmDialogModule,
+    ToggleButtonModule,
+    TabViewModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
+    InputMaskModule,
     InputTextModule,
     ButtonModule,
     RippleModule,

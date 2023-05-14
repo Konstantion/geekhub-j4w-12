@@ -16,13 +16,13 @@
                                 [ngClass]="pageState.table ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ pageState.table.name ? pageState.table.name : 'absent' }} </span>
                         </p>
-                        <p class="card-text cursor-pointer"><strong>Bill: </strong><span class="badge"
-                                [ngClass]="pageState.order.billId ? 'text-bg-success' : 'text-bg-danger'">
+                        <p (click)="onBill()" class="card-text cursor-pointer"><strong>Bill: </strong><span
+                                class="badge" [ngClass]="pageState.order.billId ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ pageState.order.billId ? 'present' : 'absent' }} </span>
                         </p>
                         <p><strong>Status: </strong> <span class="badge"
                                 [ngClass]="pageState.order.active ? 'text-bg-success' : 'text-bg-danger'">
-                                {{ pageState.order.active ? 'active' : 'inactive' }} </span></p>
+                                {{ pageState.order.active ? 'active' : 'closed' }} </span></p>
                         <div class="mb-3">
                             <button (click)="onClose()"
                                 class="btn btn-warning me-3 w-25 border-1 border-dark">Close</button>
@@ -38,7 +38,8 @@
                                 (click)="onRemoveProduct()">Remove product</button>
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-primary me-3 w-25 border-1 border-dark">Create bill</button>
+                            <button (click)="onCreate()" class="btn btn-primary me-3 w-25 border-1 border-dark">Create
+                                bill</button>
                             <button (click)="onTransfer()"
                                 class="btn btn-primary me-3 w-25 border-1 border-dark">Transfer</button>
                         </div>
@@ -66,7 +67,7 @@
                         </thead>
                         <tbody>
                             <ng-container *ngFor="let product of pageState.products | keyvalue">
-                                <tr>
+                                <tr class="cursor-pointer" (click)="onRow(product.key.id)">
                                     <td> {{ product.key.name }} </td>
                                     <td> {{ product.value }} </td>
                                     <td> {{ product.key.price }} </td>
@@ -79,8 +80,10 @@
             </ng-container>
         </div>
     </div>
+    <!--Add product modal-->
     <ng-container *ngIf="addModal">
-        <app-modal [width]="'200vh'" [height]="'70vh'" [closeOnClick]=false [showModal]="addModal" (closeModel)="onCloseAdd()">
+        <app-modal [width]="'200vh'" [height]="'70vh'" [closeOnClick]=false [showModal]="addModal"
+            (closeModel)="onCloseAdd()">
             <div class="my-2" style="height: 40vh;">
                 <app-products [size]="5" [border]="true" (productClick)="onProductClick($event)"></app-products>
             </div>
@@ -95,6 +98,7 @@
             </div>
         </app-modal>
     </ng-container>
+    <!--Remove product modal-->
     <ng-container *ngIf="removeModal">
         <app-modal [closeOnClick]=false [showModal]="removeModal" (closeModel)="onCloseRemove()">
             <div class="my-2">
@@ -132,19 +136,35 @@
             </div>
         </app-modal>
     </ng-container>
+    <!--Transfer table modal-->
     <ng-container *ngIf="transferModal">
         <app-modal [closeOnClick]=false [showModal]="transferModal" (closeModel)="onCloseTransfer()">
             <div class="my-2">
                 <select [(ngModel)]="transferToId" class="form-select custom-select border-dark mb-3" name="parameter">
                     <ng-container *ngFor="let table of tables">
-                        <option [value]="table.id"> {{ table.name }} </option>
+                        <option [value]="table.id"><b>{{ table.name }}</b> | <span class="badge"
+                                [ngClass]="table.orderId ? 'text-bg-danger' : 'text-bg-success'"> {{ table.orderId ?
+                                'order present' : 'order absent'}}</span> </option>
                     </ng-container>
                 </select>
-            </div>           
+            </div>
             <div class="my-2">
-                <button (click)="transfer()" class="btn btn-primary mx-1">Remove</button>
+                <button (click)="transfer()" class="btn btn-primary mx-1">Transfer</button>
                 <button (click)="onCloseTransfer()" class="btn btn-secondary mx-1">Close</button>
             </div>
+        </app-modal>
+    </ng-container>
+    <!--Create bill modal-->
+    <ng-container *ngIf="createModal">
+        <app-modal [closeOnClick]=false [showModal]="createModal" (closeModel)="onCreate()">
+            <div class="mb-3">
+                <p-dropdown autoWidth="false" [style]="{'width':'100%'}" [options]="guests" [(ngModel)]="guestId"
+                    optionLabel="name" optionValue="id" [filter]="true" filterBy="name" [showClear]="true"
+                    placeholder="Select guest">
+                </p-dropdown>
+            </div>
+            <button (click)="createBill()" class="btn btn-primary me-2">Create bill</button>
+            <button (click)="closeCreate()" class="btn btn-primary me-2">Close</button>
         </app-modal>
     </ng-container>
 </ng-container>

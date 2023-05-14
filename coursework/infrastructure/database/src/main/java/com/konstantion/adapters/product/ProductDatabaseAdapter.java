@@ -73,7 +73,7 @@ public class ProductDatabaseAdapter implements ProductPort {
                 String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
                 return "SELECT * FROM public.product " +
                        "WHERE LOWER(product.name) LIKE LOWER(:searchPattern) " +
-                       "AND active = :active " +
+                       "AND (active = :active OR :inactive) " +
                        findByCategoryId +
                        "ORDER BY " + orderParameter + " LIMIT :limit OFFSET :offset;";
             };
@@ -83,7 +83,7 @@ public class ProductDatabaseAdapter implements ProductPort {
                 String findByCategoryId = categoryId == null ? "" : "AND category_id = :categoryId ";
                 return "SELECT COUNT(*) FROM public.product " +
                        "WHERE LOWER(product.name) LIKE LOWER(:searchPattern) " +
-                       "AND active = :active " +
+                       "AND (active = :active OR :inactive) " +
                        findByCategoryId + ";";
             };
 
@@ -149,7 +149,8 @@ public class ProductDatabaseAdapter implements ProductPort {
                 .addValue("offset", offset)
                 .addValue("searchPattern", searchPattern)
                 .addValue("categoryId", categoryId)
-                .addValue("active", active);
+                .addValue("active", active)
+                .addValue("inactive", !active);
 
         List<Product> products = jdbcTemplate.query(
                 FIND_ALL_QUERY.apply(orderBy, categoryId),
