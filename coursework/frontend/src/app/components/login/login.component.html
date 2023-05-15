@@ -1,39 +1,25 @@
 <div class="flex" style="height: 100vh">
-    <div class="col-6 m-3 flex flex-column justify-content-center">
-      <div class="m-auto">
-        <div class="text-center">         
-          <h1>Sign in to your account</h1>
-        </div>
-        <p-message
-          *ngIf="errorMsg && !validationState.isInvalid"
-          severity="error"
-          [text]="errorMsg"         
-          styleClass="mb-2 w-full"
-        ></p-message>       
-        <div class="field">
-          
-          <input
-            [ngClass]="{'ng-invalid ng-dirty' : validationState.isInvalid}"
-            [(ngModel)]="authenticationRequest.password"
-            id="password"
-            pInputText
-            placeholder="Password"
-            type="password"
-            class="w-full"
-          >
-          <div *ngIf="validationState.isInvalid">
-            <div class="text-red-500">
-                {{validationState.validationError}}
-            </div>            
+  <p-toast></p-toast>
+  <p-confirmPopup></p-confirmPopup>
+  <div class="col-6 m-3 flex flex-column justify-content-center">
+    <div class="m-auto">
+      <div class="text-center">
+        <h1>Sign in to your account</h1>
+      </div>
+      <p-message *ngIf="errorMsg && !validationState.isInvalid" severity="error" [text]="errorMsg"
+        styleClass="mb-2 w-full"></p-message>
+      <div class="field">
+
+        <input [ngClass]="{'ng-invalid ng-dirty' : validationState.isInvalid}"
+          [(ngModel)]="authenticationRequest.password" id="password" pInputText placeholder="Password" type="password"
+          class="w-full">
+        <div *ngIf="validationState.isInvalid">
+          <div class="text-red-500">
+            {{validationState.validationError}}
           </div>
         </div>
-        <button
-          pButton
-          label="Login"
-          class="w-full"
-          (click)="login()"
-        ></button>      
       </div>
-    </div>    
+      <button pButton label="Login" class="w-full" (click)="login()"></button>
+    </div>
   </div>
-  
+</div>

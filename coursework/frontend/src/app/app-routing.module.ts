@@ -84,6 +84,10 @@ const routes: Routes = [{
   path: 'admin',
   component: AdminComponent,
   canActivate: [AdminAccessGuardService]
+},
+{
+  path: '**',
+  redirectTo: 'tables'
 }];
 
 @NgModule({

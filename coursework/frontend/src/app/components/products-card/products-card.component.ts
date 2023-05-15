@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CategoryDto } from 'src/app/models/dto/category/category-dto';
 import { ProductDto } from 'src/app/models/dto/product/product-dto';
 
 @Component({
   selector: 'app-products-card',
   templateUrl: './products-card.component.html',
-  styleUrls: ['./products-card.component.css']
+  styleUrls: ['./products-card.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class ProductsCardComponent {
   @Input() product: ProductDto;

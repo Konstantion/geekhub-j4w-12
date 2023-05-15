@@ -25,6 +25,11 @@ export class UserService {
       tap(console.log)
     );
 
+  users$ = <Observable<UserResponse>>this.http.get(`${this.adminUserUrl}`)
+    .pipe(
+      tap(console.log)
+    );
+
   userById$ = (id: string) => <Observable<UserResponse>>this.http.get(`${this.userUrl}/${id}`)
     .pipe(
       tap(console.log)
@@ -98,5 +103,5 @@ export class UserService {
   updateUser$ = (id: string, requestDto: UpdateUserRequestDto) => <Observable<UserResponse>>this.http.put(`${this.adminUserUrl}/${id}`, requestDto)
     .pipe(
       tap(console.log)
-    )  
+    )
 }

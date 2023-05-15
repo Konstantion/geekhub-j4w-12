@@ -24,6 +24,9 @@ export const environment = {
     //bill
     billUrl: 'web-api/bills',
     adminBillUrl: 'admin-api/bills',
+    //call
+    callUrl: 'web-api/calls',
+    adminCallUrl: 'admin-api/calls',
     //guest
     guestUrl: 'web-api/guests',
     adminGuestUrl: 'admin-api/guests'

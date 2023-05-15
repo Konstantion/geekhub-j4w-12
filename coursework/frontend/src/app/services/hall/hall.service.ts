@@ -29,6 +29,11 @@ export class HallService {
       tap(console.log)
     );
 
+  halls$ = <Observable<HallResponse>>this.http.get<HallResponse>(`${this.adminHallUrl}`)
+    .pipe(
+      tap(console.log)
+    );
+
   hallTables$ = (id: string) => <Observable<TableResponse>>this.http.get<TableResponse>(`${this.hallUrl}/${id}/tables`)
     .pipe(
       tap(console.log)

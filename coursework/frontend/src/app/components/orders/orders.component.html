@@ -1,4 +1,6 @@
 <ng-container *ngIf="(pageState$ | async) as pageState">
+    <p-toast></p-toast>
+    <p-confirmPopup></p-confirmPopup>
     <div class="container mt-2">
         <ng-container *ngIf="pageState.dataState === DataState.LOADING_STATE">
             <p-progressSpinner></p-progressSpinner>

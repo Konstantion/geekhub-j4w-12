@@ -1,13 +1,15 @@
 import { HttpStatusCode } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { LoginUserRequestDto } from 'src/app/models/dto/user/login-user-request-dto';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class LoginComponent {
   authenticationRequest: LoginUserRequestDto = {};

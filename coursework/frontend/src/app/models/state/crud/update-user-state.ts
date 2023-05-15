@@ -7,12 +7,13 @@ export interface UpdateUserState {
     user?: UserDto;
     invalid?: boolean;
     violations?: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        phoneNumber: string;
-        age: number;
-        password: string;
+        firstName?: string;
+        lastName?: string;
+        email?: string;
+        phoneNumber?: string;
+        age?: number;
+        password?: string;
+        passwordCopy?: string;
     };
     message?: string;
 }

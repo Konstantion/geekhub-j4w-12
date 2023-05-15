@@ -1,4 +1,6 @@
 <div class="container-fluid mt-3">
+    <p-toast></p-toast>
+    <p-confirmPopup></p-confirmPopup>
     <p-tabView>
         <p-tabPanel header="Guests">
             <app-guests [isAdmin]="true"></app-guests>
@@ -11,6 +13,12 @@
         </p-tabPanel>
         <p-tabPanel header="Bills">
             <app-bills [isAdmin]="true"></app-bills>
+        </p-tabPanel>
+        <p-tabPanel header="Users">
+            <app-users [isAdmin]="true"></app-users>
+        </p-tabPanel>
+        <p-tabPanel header="Halls">
+            <app-tables class="mt-0" [isAdmin]="true"></app-tables>
         </p-tabPanel>
     </p-tabView>
 </div>

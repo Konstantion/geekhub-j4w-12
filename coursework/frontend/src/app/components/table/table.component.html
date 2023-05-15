@@ -1,4 +1,6 @@
 <ng-container *ngIf="(pageState$ | async) as pageState">
+    <p-toast></p-toast>
+    <p-confirmPopup></p-confirmPopup>
     <div class="container border my-3 rounded" style="height: 100hv;">
         <div class="container">
             <h1 class="text-center">Table: <i> {{ pageState.table.name }} </i></h1>
@@ -34,9 +36,7 @@
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-primary me-3 w-25 border-1 border-dark"
-                                (click)="onShowTableModal()">Update</button>
-                            <p-toast></p-toast>
-                            <p-confirmPopup></p-confirmPopup>
+                                (click)="onShowTableModal()">Update</button>                            
                             <button class="btn btn-danger me-3 w-25 border-1 border-dark"
                                 (click)="deletePopUp()">Delete</button>
                         </div>

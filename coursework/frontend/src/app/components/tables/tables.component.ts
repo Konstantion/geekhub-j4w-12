@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { HallService } from 'src/app/services/hall/hall.service';
 import { TableService } from 'src/app/services/table/table.service';
 import { BehaviorSubject, Observable, catchError, concatMap, flatMap, map, mergeMap, of, startWith, tap } from 'rxjs';
@@ -14,13 +14,18 @@ import { CreateTableState } from 'src/app/models/state/crud/create-table-state';
 import { CreateHallState } from 'src/app/models/state/crud/create-hall-state';
 import { TablesPageState } from 'src/app/models/state/pages/tables-page-state';
 import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { HallResponse } from 'src/app/models/responses/hall-response';
 
 @Component({
   selector: 'app-tables',
   templateUrl: './tables.component.html',
-  styleUrls: ['./tables.component.css']
+  styleUrls: ['./tables.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class TablesComponent implements OnInit {
+  @Input() isAdmin: boolean;
+
   private hallsSubject = new BehaviorSubject<HallDto[]>(null);
   private tablesSubject = new BehaviorSubject<TableDto[]>(null);
   private hallIdSubject = new BehaviorSubject<string>('');
@@ -43,7 +48,10 @@ export class TablesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.pageState$ = this.hallService.activeHalls$.pipe(
+    let observable: Observable<HallResponse>;
+    if (this.isAdmin) observable = this.hallService.halls$;
+    else observable = this.hallService.activeHalls$;
+    this.pageState$ = observable.pipe(
       tap(response => {
         this.hallsSubject.next(response.data.halls);
         if (this.hallsSubject.value.length !== 0) {
@@ -207,5 +215,5 @@ export class TablesComponent implements OnInit {
 
   onSelectedHallClick(): void {
     this.router.navigate([`halls/${this.hallIdSubject.value}`]);
-  }  
+  }
 }

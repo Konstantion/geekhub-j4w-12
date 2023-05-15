@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { OrderDto } from 'src/app/models/dto/order/order-dto';
 import { TableDto } from 'src/app/models/dto/table/table-dto';
 import { ObjectUtils } from 'src/app/models/util/object-utils';
@@ -6,7 +7,8 @@ import { ObjectUtils } from 'src/app/models/util/object-utils';
 @Component({
   selector: 'app-order-card',
   templateUrl: './order-card.component.html',
-  styleUrls: ['./order-card.component.css']
+  styleUrls: ['./order-card.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class OrderCardComponent {
   @Input() order: OrderDto;
