@@ -23,17 +23,23 @@
                             <a class="nav-link">Admin</a>
                         </li>
                     </ng-container>
-                    <li class="nav-item cursor-pointer" (click)="onCalls()">
+                    <li class="nav-item cursor-pointer" (click)="calls.length !== 0 ? onCalls() : null">
                         <a class="nav-link">Calls <span *ngIf="calls.length !== 0" class="badge bg-secondary">
                                 {{calls.length !== 0 ? calls.length : ''}}</span></a>
                         <p-overlay [(visible)]="overlayVisible"
                             [responsive]="{ breakpoint: '640px', direction: 'bottom', contentStyleClass: 'h-20rem' }"
                             contentStyleClass="p-4 surface-overlay shadow-2 border-round">
                             <ng-container *ngFor="let call of calls">
-                                <div>
-                                    {{ call.id }}
+                                <div class="card-body">
+                                    <p class="card-text mt-2">
+                                        Call - Table: <span class="badge bg-success" (click)="onTable(call.table)"> {{
+                                            call.table.name }}</span>
+                                        Purpose: <span class="badge bg-success">
+                                            {{ replaceUnderscore(call.purpose) }} </span>
+                                        <button class="btn btn-primary mx-2" (click)="onCall(call.id)">Close</button>
+                                    </p>
+
                                 </div>
-                                <p-button (onClick)="onCall(call.id)" label="Close"></p-button>
                             </ng-container>
                         </p-overlay>
                     </li>

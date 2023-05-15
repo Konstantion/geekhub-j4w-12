@@ -1,14 +1,18 @@
 <div class="flex" style="height: 100vh">
   <p-toast></p-toast>
   <p-confirmPopup></p-confirmPopup>
-  <div class="col-6 m-3 flex flex-column justify-content-center">
+  <div class="col-3 bg-light"></div>
+  <div class="col-6  flex justify-content-center rounded-4 border border-5 border-light ">
     <div class="m-auto">
-      <div class="text-center">
-        <h1>Sign in to your account</h1>
+      <div class="text-center" style="margin-bottom: 50%;">
+        <h1>Restraint manager</h1>
       </div>
       <p-message *ngIf="errorMsg && !validationState.isInvalid" severity="error" [text]="errorMsg"
         styleClass="mb-2 w-full"></p-message>
-      <div class="field">
+      <div class="text-left">
+        <h2>Sign in </h2>
+      </div>
+      <div class="field" style="width: 50vh; margin-bottom: 50%;">
 
         <input [ngClass]="{'ng-invalid ng-dirty' : validationState.isInvalid}"
           [(ngModel)]="authenticationRequest.password" id="password" pInputText placeholder="Password" type="password"
@@ -18,8 +22,9 @@
             {{validationState.validationError}}
           </div>
         </div>
+        <button pButton label="Login" class="w-full mt-2" (click)="login()"></button>
       </div>
-      <button pButton label="Login" class="w-full" (click)="login()"></button>
     </div>
   </div>
+  <div class="col-3 bg-light"></div>
 </div>

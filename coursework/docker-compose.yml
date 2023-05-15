@@ -23,19 +23,6 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-    ports:
-      - "5080:80"
-    restart: unless-stopped
-    networks:
-      - postgres
-    depends_on:
-      - my-app
 
 networks:
   postgres:

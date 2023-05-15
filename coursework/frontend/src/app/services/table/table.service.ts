@@ -25,6 +25,11 @@ export class TableService {
       tap(console.log)
     );
 
+  tables$ = <Observable<TableResponse>>this.http.get<TableResponse>(`${this.adminTableUrl}`)
+    .pipe(
+      tap(console.log)
+    );
+
   findById$ = (id: string) => <Observable<TableResponse>>this.http.get<TableResponse>(`${this.tableUrl}/${id}`)
     .pipe(
       tap(console.log)

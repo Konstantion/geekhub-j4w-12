@@ -17,8 +17,11 @@
         <p-tabPanel header="Users">
             <app-users [isAdmin]="true"></app-users>
         </p-tabPanel>
-        <p-tabPanel header="Halls">
+        <p-tabPanel header="Halls" style="padding: 0;">
             <app-tables class="mt-0" [isAdmin]="true"></app-tables>
+        </p-tabPanel>
+        <p-tabPanel header="Tables">
+            <app-admin-tables class="mt-0"></app-admin-tables>
         </p-tabPanel>
     </p-tabView>
 </div>
