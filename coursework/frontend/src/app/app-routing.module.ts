@@ -15,6 +15,7 @@ import { BillComponent } from './components/bill/bill.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { BillsComponent } from './components/bills/bills.component';
 import { GuestComponent } from './components/guest/guest.component';
+import { CategoryComponent } from './components/category/category.component';
 
 const routes: Routes = [{
   path: '',
@@ -69,6 +70,11 @@ const routes: Routes = [{
   path: 'guests/:id',
   component: GuestComponent,
   canActivate: [AccessGuardService]
+},
+{
+  path: 'categories/:id',
+  component: CategoryComponent,
+  canActivate: [AdminAccessGuardService]
 },
 {
   path: 'tables',

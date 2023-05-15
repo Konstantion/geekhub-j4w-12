@@ -63,7 +63,7 @@ public record AdminCategoryController(
     @PutMapping("/{id}")
     public ResponseDto updateCategory(
             @PathVariable UUID id,
-            UpdateCategoryRequestDto requestDto,
+            @RequestBody UpdateCategoryRequestDto requestDto,
             @AuthenticationPrincipal User user
     ) {
         CategoryDto dto = categoryMapper.toDto(

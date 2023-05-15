@@ -67,7 +67,9 @@ export class TablesComponent implements OnInit {
           }
           return of(fakeResponse);
         }
-        return this.hallService.hallTables$(this.hallIdSubject.value)
+
+        if (this.isAdmin) return this.hallService.hallTables$(this.hallIdSubject.value);
+        else return this.hallService.hallActiveTables$(this.hallIdSubject.value)
       }),
       map(response => {
         this.tablesSubject.next(response.data.tables);

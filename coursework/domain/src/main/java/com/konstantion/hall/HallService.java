@@ -27,5 +27,9 @@ public interface HallService {
 
     Hall delete(UUID id, User user);
 
-    List<Table> getTablesByHallId(UUID id);
+    default List<Table> getTablesByHallId(UUID id) {
+        return getTablesByHallId(id, true);
+    }
+
+    List<Table> getTablesByHallId(UUID id, boolean onlyActive);
 }

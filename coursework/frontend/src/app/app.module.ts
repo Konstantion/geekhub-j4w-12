@@ -50,7 +50,11 @@ import { GuestCardComponent } from './components/guest-card/guest-card.component
 import { GuestsComponent } from './components/guests/guests.component';
 import { UsersComponent } from './components/users/users.component';
 import { CallsComponent } from './components/calls/calls.component';
+import { CategoryComponent } from './components/category/category.component';
+import { CategoriesComponent } from './components/categories/categories.component';
+import { CategoryCardComponent } from './components/category-card/category-card.component';
 import { AdminTablesComponent } from './components/admin-tables/admin-tables.component';
+
 
 
 @NgModule({
@@ -68,7 +72,7 @@ import { AdminTablesComponent } from './components/admin-tables/admin-tables.com
     OrderComponent,
     ProductsComponent,
     ProductsCardComponent,
-    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent, GuestComponent, GuestCardComponent, GuestsComponent, UsersComponent, CallsComponent, AdminTablesComponent
+    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent, GuestComponent, GuestCardComponent, GuestsComponent, UsersComponent, CallsComponent, AdminTablesComponent, CategoryComponent, CategoriesComponent, CategoryCardComponent
   ],
   imports: [
     BrowserModule,

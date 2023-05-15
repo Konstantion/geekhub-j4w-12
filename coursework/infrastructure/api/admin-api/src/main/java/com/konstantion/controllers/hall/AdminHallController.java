@@ -4,6 +4,8 @@ import com.konstantion.dto.hall.converter.HallMapper;
 import com.konstantion.dto.hall.dto.CreateHallRequestDto;
 import com.konstantion.dto.hall.dto.HallDto;
 import com.konstantion.dto.hall.dto.UpdateHallRequestDto;
+import com.konstantion.dto.table.converter.TableMapper;
+import com.konstantion.dto.table.dto.TableDto;
 import com.konstantion.hall.HallService;
 import com.konstantion.response.ResponseDto;
 import com.konstantion.user.User;
@@ -14,8 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.konstantion.utils.EntityNameConstants.HALL;
-import static com.konstantion.utils.EntityNameConstants.HALLS;
+import static com.konstantion.utils.EntityNameConstants.*;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
@@ -26,6 +27,7 @@ public record AdminHallController(
         HallService hallService
 ) {
     private static final HallMapper hallMapper = HallMapper.INSTANCE;
+    private static final TableMapper tableMapper = TableMapper.INSTANCE;
 
     @GetMapping()
     public ResponseDto getAllHalls() {
@@ -95,6 +97,20 @@ public record AdminHallController(
                 .status(OK)
                 .statusCode(OK.value())
                 .data(Map.of(HALL, dto))
+                .build();
+    }
+
+    @GetMapping("/{id}/tables")
+    public ResponseDto getTablesByHallId(
+            @PathVariable("id") UUID id
+    ) {
+        List<TableDto> dtos = tableMapper.toDto(hallService.getTablesByHallId(id, false));
+        return ResponseDto.builder()
+                .message(format("Tables for hall with id %s", id))
+                .timeStamp(now())
+                .status(OK)
+                .statusCode(OK.value())
+                .data(Map.of(TABLES, dtos))
                 .build();
     }
 

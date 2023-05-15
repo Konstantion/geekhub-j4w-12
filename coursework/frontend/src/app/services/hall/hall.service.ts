@@ -34,7 +34,12 @@ export class HallService {
       tap(console.log)
     );
 
-  hallTables$ = (id: string) => <Observable<TableResponse>>this.http.get<TableResponse>(`${this.hallUrl}/${id}/tables`)
+  hallTables$ = (id: string) => <Observable<TableResponse>>this.http.get<TableResponse>(`${this.adminHallUrl}/${id}/tables`)
+    .pipe(
+      tap(console.log)
+    );
+
+  hallActiveTables$ = (id: string) => <Observable<TableResponse>>this.http.get<TableResponse>(`${this.hallUrl}/${id}/tables`)
     .pipe(
       tap(console.log)
     );

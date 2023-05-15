@@ -139,10 +139,13 @@ public record HallServiceImpl(
     }
 
     @Override
-    public List<Table> getTablesByHallId(UUID id) {
+    public List<Table> getTablesByHallId(UUID id, boolean onlyActive) {
         getByIdOrThrow(id);
 
         List<Table> tables = tablePort.findAllWhereHallId(id);
+        if(onlyActive) {
+            tables = tables.stream().filter(Table::isActive).toList();
+        }
         logger.info("Tables in hall with id {} successfully returned", id);
         return tables;
     }

@@ -1,10 +1,12 @@
 <div (click)="cardClick()" class="card cursor-pointer" style="height: 100%;">
         <p-toast></p-toast>
         <p-confirmPopup></p-confirmPopup>
-        <div class="card-body">
+        <div class="card-header">
                 <div class="mb-2" style="display: flex; justify-content: space-between;">
                         <h5 class="fw-bold card-text"> {{ order.id }} </h5>
                 </div>
+            </div>
+        <div class="card-body">                
                 <p class="card-text cursor-pointer"><strong>Creator: </strong><span class="badge"
                                 [ngClass]="order.userId ? 'text-bg-success' : 'text-bg-danger'">
                                 {{ order.userId ? 'present' : 'absent' }} </span>

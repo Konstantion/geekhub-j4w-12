@@ -10,11 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.konstantion.exception.utils.ExceptionMessages.NOT_ENOUGH_AUTHORITIES;
 import static com.konstantion.exception.utils.ExceptionUtils.nonExistingIdSupplier;
 import static com.konstantion.user.Permission.*;
+import static java.util.Objects.requireNonNullElse;
 
 @Component
 public record CategoryServiceImpl(
@@ -81,7 +83,7 @@ public record CategoryServiceImpl(
     }
 
     private void updateCategory(Category category, UpdateCategoryRequest request) {
-        category.setName(request.name());
+        category.setName(requireNonNullElse(request.name(), category.getName()));
     }
 
     @Override
