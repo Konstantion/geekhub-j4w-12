@@ -75,7 +75,7 @@ public record UserServiceImpl(
         }
 
         if (anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
-            throw new BadRequestException("User with given password %s already exist");
+            throw new BadRequestException("User with given password already exist");
         }
 
         User waiter = buildWaiterFromRequest(request);
@@ -102,7 +102,7 @@ public record UserServiceImpl(
         }
 
         if (anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
-            throw new BadRequestException("User with given password %s already exist");
+            throw new BadRequestException("User with given password already exist");
         }
 
         User admin = buildAdminFromRequest(request);
@@ -234,7 +234,7 @@ public record UserServiceImpl(
         if (nonNull(request.password())
             && !passwordEncoder.matches(user.getPassword(), request.password())
             && anyMatchCollection(dbUsers, User::getPassword, request.password(), passwordEncoder::matches)) {
-            throw new BadRequestException("User with given password %s already exist");
+            throw new BadRequestException("User with given password already exist");
         }
 
         updateUser(user, request);
