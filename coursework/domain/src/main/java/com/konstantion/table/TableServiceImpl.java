@@ -127,7 +127,7 @@ public record TableServiceImpl(
         if (nonNull(request.password())
             && !passwordEncoder.matches(table.getPassword(), request.password())
             && anyMatchCollection(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
-            throw new BadRequestException(format("Table with password %s already exist", request.password()));
+            throw new BadRequestException("Table with give password already exist");
         }
 
         updateTable(table, request);
@@ -204,7 +204,7 @@ public record TableServiceImpl(
         }
 
         if (anyMatchCollection(dbTables, Table::getPassword, request.password(), passwordEncoder::matches)) {
-            throw new BadRequestException(format("Table with password %s already exist", request.password()));
+            throw new BadRequestException("Table with given password already exist");
         }
 
 

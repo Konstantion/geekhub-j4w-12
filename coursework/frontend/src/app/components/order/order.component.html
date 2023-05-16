@@ -82,7 +82,7 @@
     </div>
     <!--Add product modal-->
     <ng-container *ngIf="addModal">
-        <app-modal [width]="'200vh'" [height]="'70vh'" [closeOnClick]=false [showModal]="addModal"
+        <app-modal [width]="'100vw'" [height]="'70vh'" [closeOnClick]=false [showModal]="addModal"
             (closeModel)="onCloseAdd()">
             <div class="my-2" style="height: 40vh;">
                 <app-products [size]="5" [border]="true" (productClick)="onProductClick($event)"></app-products>

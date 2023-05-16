@@ -37,7 +37,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             );
         } else {
             if (userDetails == null) {
-                throw new UsernameNotFoundException("User with given password not found");
+                throw new UsernameNotFoundException("User with given password doesn't exist");
             } else if (!userDetails.isEnabled()) {
                 throw new DisabledException("User with given password is disabled");
             } else {

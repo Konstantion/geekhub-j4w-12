@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class HashMaps {
     private HashMaps() {
-
     }
 
     public static <K, V> Map<K, V> of(@NonNull K key, @Nullable V value) {
