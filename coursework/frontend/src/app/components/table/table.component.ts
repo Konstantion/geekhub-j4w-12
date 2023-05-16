@@ -57,44 +57,46 @@ export class TableComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.tableId = this.activeRoute.snapshot.paramMap.get('id');
-    this.pageSubject.next({
-      tableState: DataState.LOADING_STATE, table: this.tableSubject.value,
-      usersState: DataState.LOADING_STATE, users: this.usersSubject.value
+    this.activeRoute.params.subscribe(params => {
+      this.tableId = params['id'];
+      this.pageSubject.next({
+        tableState: DataState.LOADING_STATE, table: this.tableSubject.value,
+        usersState: DataState.LOADING_STATE, users: this.usersSubject.value
+      });
+      this.tableService.findById$(this.tableId).pipe(
+        tap(response => {
+          this.tableSubject.next(response.data.table);
+          this.pageSubject.next({
+            tableState: DataState.LOADED_STATE, table: this.tableSubject.value,
+            usersState: DataState.LOADING_STATE, users: this.usersSubject.value,
+            waiters: this.waitersSubject.value
+          });
+        }),
+        concatMap(() => {
+          return this.tableService.tableWaiters$(this.tableId);
+        }),
+        concatMap(response => {
+          this.waitersSubject.next(response.data.users);
+          return this.userService.allActiveUsers$
+        }),
+        map(response => {
+          this.usersSubject.next(response.data.users);
+          this.pageSubject.next({
+            tableState: DataState.LOADED_STATE, table: this.tableSubject.value,
+            usersState: DataState.LOADED_STATE, users: this.usersSubject.value,
+            waiters: this.waitersSubject.value
+          });
+        }),
+        catchError(error => {
+          let errorResponse = error.error;
+          this.pageSubject.next({
+            tableState: DataState.ERROR_STATE, usersState: DataState.ERROR_STATE,
+            table: this.tableSubject.value, users: this.usersSubject.value,
+            message: errorResponse.message
+          });
+          return of({});
+        })).subscribe();
     });
-    this.tableService.findById$(this.tableId).pipe(
-      tap(response => {
-        this.tableSubject.next(response.data.table);
-        this.pageSubject.next({
-          tableState: DataState.LOADED_STATE, table: this.tableSubject.value,
-          usersState: DataState.LOADING_STATE, users: this.usersSubject.value,
-          waiters: this.waitersSubject.value
-        });
-      }),
-      concatMap(() => {
-        return this.tableService.tableWaiters$(this.tableId);
-      }),
-      concatMap(response => {
-        this.waitersSubject.next(response.data.users);
-        return this.userService.allActiveUsers$
-      }),
-      map(response => {
-        this.usersSubject.next(response.data.users);
-        this.pageSubject.next({
-          tableState: DataState.LOADED_STATE, table: this.tableSubject.value,
-          usersState: DataState.LOADED_STATE, users: this.usersSubject.value,
-          waiters: this.waitersSubject.value
-        });
-      }),
-      catchError(error => {
-        let errorResponse = error.error;
-        this.pageSubject.next({
-          tableState: DataState.ERROR_STATE, usersState: DataState.ERROR_STATE,
-          table: this.tableSubject.value, users: this.usersSubject.value,
-          message: errorResponse.message
-        });
-        return of({});
-      })).subscribe();
 
     this.hallService.activeHalls$.pipe(
       map(response => {
