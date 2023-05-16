@@ -41,14 +41,14 @@ public enum Permission {
 
     public static Set<Permission> getDefaultAdminPermission() {
         Set<Permission> adminPermissions = Sets.newHashSet(
-                DELETE_PRODUCT_FROM_ORDER,
+                DELETE_PRODUCT_FROM_ORDER, DELETE_ORDER,
                 CREATE_TABLE, UPDATE_TABLE, CHANGE_TABLE_STATE,
-                CREATE_USER,
+                CREATE_USER, CHANGE_USER_STATE,
                 CANCEL_BILL, CHANGE_BILL_STATE,
-                CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, CHANGE_PRODUCT_STATE,
+                CREATE_PRODUCT, UPDATE_PRODUCT, CHANGE_PRODUCT_STATE,
                 CREATE_HALL, UPDATE_HALL, CHANGE_HALL_STATE,
                 CREATE_GUEST, UPDATE_GUEST, CHANGE_GUEST_STATE,
-                CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY
+                CREATE_CATEGORY, UPDATE_CATEGORY
         );
 
         adminPermissions.addAll(getDefaultWaiterPermission());
