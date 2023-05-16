@@ -1,7 +1,7 @@
 <ng-container *ngIf="(pageState$ | async) as pageState">
     <p-toast></p-toast>
     <p-confirmPopup></p-confirmPopup>
-    <div class="container border my-3 rounded" style="height: 100hv;">
+    <div class="container border my-3 rounded" style="height: 100vh;">
         <div class="container">
             <h1 class="text-center">Order: <i> {{ pageState.order.id }} </i></h1>
             <div class="row">
@@ -82,20 +82,21 @@
     </div>
     <!--Add product modal-->
     <ng-container *ngIf="addModal">
-        <app-modal [width]="'100vw'" [height]="'70vh'" [closeOnClick]=false [showModal]="addModal"
+        <app-modal [width]="'90vw'" [height]="'80vh'" [closeOnClick]=false [showModal]="addModal"
             (closeModel)="onCloseAdd()">
-            <div class="my-2" style="height: 40vh;">
-                <app-products [size]="5" [border]="true" (productClick)="onProductClick($event)"></app-products>
+            <div class="my-2" style="height: 30vh;">
+                <app-products [size]="4" [border]="true" (productClick)="onProductClick($event)"></app-products>
             </div>
-            <div class="my-2">
+            <div class="col-lg-3 my-2">
                 <label for="quantity" class="form-label">Quantity</label>
-                <input type="number" [(ngModel)]="orderProductData.quantity" class="form-control" id="price"
+                <input type="number" [(ngModel)]="orderProductData.quantity" class="form-control" id="quantity"
                     name="quantity" max="10000">
-            </div>
-            <div class="my-2">
+              <div class="my-2">
                 <button (click)="addProduct()" class="btn btn-primary mx-1">Add</button>
                 <button (click)="onCloseAdd()" class="btn btn-secondary mx-1">Close</button>
+              </div>
             </div>
+
         </app-modal>
     </ng-container>
     <!--Remove product modal-->

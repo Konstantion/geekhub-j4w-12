@@ -44,7 +44,7 @@ export class ProductsComponent implements OnInit {
   productId = '';
   categories: CategoryDto[] = [];
   showCreateModal = false;
-  findProductsState: FindProductsState = { page: 1, size: 10, category: "", pattern: "" };
+  findProductsState: FindProductsState = { page: 1, size: 8, category: "", pattern: "" };
   productData: CreateProductRequestDto = {
     name: '',
     price: 0,
@@ -139,7 +139,7 @@ export class ProductsComponent implements OnInit {
 
     if (this.isAdmin) observable = this.productService.products$(this.findProductsState);
     else observable = this.productService.activeProducts$(this.findProductsState);
-    
+
     observable.pipe(
       map(response => {
         this.findProductsState.page = response.data.products.number + 1;

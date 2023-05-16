@@ -58,7 +58,7 @@
           <p-progressSpinner></p-progressSpinner>
         </ng-container>
         <ng-container *ngIf="pageState.dataState === DataState.LOADED_STATE">
-          <div class="row row-cols-4 row-cols-md-5 g-4 mb-2" style="height: 600;">
+          <div class="row row-cols-4 row-cols-md-4 g-4 mb-2" style="height: 60vh;">
             <ng-container *ngFor="let product of pageState.page.content">
               <app-products-card
                 [ngClass]="border && productId === product.id ? 'border border-primary rounded-4 border-3' : null"

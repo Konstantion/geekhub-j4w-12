@@ -190,8 +190,8 @@ class HallServiceImplTest {
     void shouldReturnTablesWhenGetTablesByHallId() {
         when(hallPort.findById(any())).thenReturn(Optional.of(Hall.builder().id(UUID.randomUUID()).build()));
         when(tablePort.findAllWhereHallId(any())).thenReturn(List.of(
-                Table.builder().build(),
-                Table.builder().build()
+                Table.builder().active(true).build(),
+                Table.builder().active(true).build()
         ));
 
         List<Table> tables = hallService.getTablesByHallId(UUID.randomUUID());
