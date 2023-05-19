@@ -32,19 +32,19 @@ ext.libsDatabase = [
 ]
 
 ext.libsSpring = [
-        'springBoot'                      : "org.springframework.boot:spring-boot:$springBootVersion",
-        'springBootStarterDataJpa'        : "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion",
-        'springBootStarterDataJdbc'       : "org.springframework.boot:spring-boot-starter-data-jdbc:$springBootVersion",
-        'springBootStarterValidation'     : "org.springframework.boot:spring-boot-starter-validation:$springBootVersion",
-        'springBootStarterWeb'            : "org.springframework.boot:spring-boot-starter-web:$springBootVersion",
-        'springBootStarterWebsocket'      : "org.springframework.boot:spring-boot-starter-websocket:$springBootVersion",
-        'springBootStarterWebflux'        : "org.springframework.boot:spring-boot-starter-webflux:$springBootVersion",
-        'springBootStarterSecurity'       : "org.springframework.boot:spring-boot-starter-security:$springBootVersion",
-        'springBootStarterThymeleaf'      : "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion",
-        'springBootStarterMail'           : "org.springframework.boot:spring-boot-starter-mail:$springBootVersion",
-        'springBootConfigurationProcessor': "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion",
-        'springBootDevtools'              : "org.springframework.boot:spring-boot-devtools:$springBootVersion",
-        'springBootStarterLogging'        : "org.springframework.boot:spring-boot-starter-logging:$springBootVersion"
+        'springBoot'                        : "org.springframework.boot:spring-boot:$springBootVersion",
+        'springBootStarterDataJpa'          : "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion",
+        'springBootStarterDataJdbc'         : "org.springframework.boot:spring-boot-starter-data-jdbc:$springBootVersion",
+        'springBootStarterValidation'       : "org.springframework.boot:spring-boot-starter-validation:$springBootVersion",
+        'springBootStarterWeb'              : "org.springframework.boot:spring-boot-starter-web:$springBootVersion",
+        'springBootStarterWebsocket'        : "org.springframework.boot:spring-boot-starter-websocket:$springBootVersion",
+        'springBootStarterWebflux'          : "org.springframework.boot:spring-boot-starter-webflux:$springBootVersion",
+        'springBootStarterThymeleaf'        : "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion",
+        'springBootStarterSecurity'         : "org.springframework.boot:spring-boot-starter-security:$springBootVersion",
+        'springBootStarterMail'             : "org.springframework.boot:spring-boot-starter-mail:$springBootVersion",
+        'springBootConfigurationProcessor'  : "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion",
+        'springBootDevtools'                : "org.springframework.boot:spring-boot-devtools:$springBootVersion",
+        'springBootStarterLogging'          : "org.springframework.boot:spring-boot-starter-logging:$springBootVersion"
 ]
 
 ext.libsUtils = [

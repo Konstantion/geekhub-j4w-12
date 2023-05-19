@@ -54,6 +54,7 @@ import { CategoryComponent } from './components/category/category.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { CategoryCardComponent } from './components/category-card/category-card.component';
 import { AdminTablesComponent } from './components/admin-tables/admin-tables.component';
+import { WebSocketComponent } from './components/web-socket/web-socket.component';
 
 
 
@@ -72,7 +73,7 @@ import { AdminTablesComponent } from './components/admin-tables/admin-tables.com
     OrderComponent,
     ProductsComponent,
     ProductsCardComponent,
-    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent, GuestComponent, GuestCardComponent, GuestsComponent, UsersComponent, CallsComponent, AdminTablesComponent, CategoryComponent, CategoriesComponent, CategoryCardComponent
+    ProductComponent, SpinnerComponent, UserComponent, BillComponent, OrderCardComponent, OrdersComponent, BillCardComponent, BillsComponent, GuestComponent, GuestCardComponent, GuestsComponent, UsersComponent, CallsComponent, AdminTablesComponent, CategoryComponent, CategoriesComponent, CategoryCardComponent, WebSocketComponent
   ],
   imports: [
     BrowserModule,

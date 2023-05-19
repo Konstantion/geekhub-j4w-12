@@ -16,6 +16,7 @@ import { OrdersComponent } from './components/orders/orders.component';
 import { BillsComponent } from './components/bills/bills.component';
 import { GuestComponent } from './components/guest/guest.component';
 import { CategoryComponent } from './components/category/category.component';
+import { WebSocketComponent } from './components/web-socket/web-socket.component';
 
 const routes: Routes = [{
   path: '',
@@ -79,6 +80,11 @@ const routes: Routes = [{
 {
   path: 'tables',
   component: TablesComponent,
+  canActivate: [AccessGuardService]
+},
+{
+  path: 'socket',
+  component: WebSocketComponent,
   canActivate: [AccessGuardService]
 },
 {

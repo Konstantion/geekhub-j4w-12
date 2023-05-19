@@ -18,6 +18,7 @@ import com.konstantion.user.UserPort;
 import com.konstantion.utils.validator.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +45,7 @@ public record TableServiceImpl(
         UserPort userPort,
         OrderService orderService,
         PasswordEncoder passwordEncoder
-) implements TableService {
+        ) implements TableService {
     private static final Logger logger = LoggerFactory.getLogger(TableService.class);
 
     @Override

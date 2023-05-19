@@ -68,6 +68,11 @@ public record CallServiceImpl(
 
         callPort.save(call);
 
+        for(UUID userId : table.getWaitersId()) {
+            String destination = "/topic/calls/user/" + userId;
+            simpMessagingTemplate.convertAndSend(destination, call);
+        }
+
         simpMessagingTemplate.convertAndSend("/topic/calls", call);
 
         logger.info("Call successfully created and returned");

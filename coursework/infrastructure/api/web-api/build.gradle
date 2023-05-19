@@ -1,3 +1,4 @@
 dependencies {
+    implementation libsSpring.springBootStarterThymeleaf
     implementation project(':coursework:infrastructure:api:common')
 }

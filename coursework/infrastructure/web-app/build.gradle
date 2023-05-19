@@ -16,7 +16,7 @@ dependencies {
     implementation project(':coursework:infrastructure:api:admin-api')
     implementation project(':coursework:infrastructure:api:table-api')
 
-
+    implementation libsSpring.springBootStarterThymeleaf
     implementation libsSpringDoc.openapiStarterWebmvcUi
     implementation libsSpring.springBootStarterWebflux
     implementation libsJwt.jjwtApi

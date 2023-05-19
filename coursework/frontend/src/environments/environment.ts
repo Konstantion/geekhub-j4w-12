@@ -29,6 +29,8 @@ export const environment = {
     adminCallUrl: 'admin-api/calls',
     //guest
     guestUrl: 'web-api/guests',
-    adminGuestUrl: 'admin-api/guests'
+    adminGuestUrl: 'admin-api/guests',
+    //socket
+    socketUrl: 'http://localhost:8080/socket'
   }
 };
